@@ -1,0 +1,15 @@
+/server/Makefile.Debug
+/server/Makefile.Release
+/server/Makefile
+
+/3rd/build
+
+/3rd/lib
+
+/server/release
+/server/debug
+
+/Makefile
+/3rd/qhttpserver/Makefile
+/3rd/qhttpserver/Makefile.Debug
+/3rd/qhttpserver/Makefile.Release
