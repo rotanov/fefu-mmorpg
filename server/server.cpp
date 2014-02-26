@@ -21,6 +21,11 @@ MyServer::MyServer()
     server->listen(QHostAddress::Any, 6543);
 }
 
+MyServer::~MyServer()
+{
+
+}
+
 void MyServer::handleRequest(QHttpRequest *req, QHttpResponse *resp)
 {
 //    Q_UNUSED(req);
@@ -39,7 +44,7 @@ void MyServer::handleRequest(QHttpRequest *req, QHttpResponse *resp)
     resp->setHeader("Cache-control", "no-cache, no-store");
 
     std::cerr << path.toStdString() << std::endl;
-    QFile index("D:/dev/fefu-mmorpg/static" + path);
+    QFile index("static" + path);
 
 //    resp->setHeader("Content-Type", "text/html; charset=utf-8");
 

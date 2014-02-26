@@ -10,6 +10,7 @@ class MyServer : public QObject
 
 public:
     MyServer();
+    virtual ~MyServer();
 
 private slots:
     void handleRequest(QHttpRequest *req, QHttpResponse *resp);

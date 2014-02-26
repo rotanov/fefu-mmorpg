@@ -21,4 +21,4 @@ win32 {
 SOURCES += server.cpp \
     main.cpp
 
-HEADERS += server.h \
+HEADERS += server.hpp
