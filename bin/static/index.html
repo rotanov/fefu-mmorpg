@@ -24,6 +24,8 @@ type="image/x-icon"/> -->
 <script type="text/javascript"
 src="jquery.js"></script>
 
+
+
 </head>
 
 <body>
@@ -33,12 +35,11 @@ src="jquery.js"></script>
         <h1>Authentication</h1>
     </div>
 </div>
-
 <div id="content" class="postform">
-    <form method="post" onSubmit="">
+    <form >
         <div class="formrow">
             <label for="login">Login</label>
-            <input type="text" id="login" name="login"/>
+            <input type="text" id="username" name="login"/>
         <div/>
 
         <div class="formrow">
@@ -47,11 +48,32 @@ src="jquery.js"></script>
         <div/>        
         
         
-        <input type="submit" value="register" name="submit"/>
-        <input type="submit" value="login" name="submit"/>
+        <input type="button" value="register" id="register" name="submit"/>
+        <input type="button" value="login" id="login" name="submit"/>
     </form>
 </div>
 
+<script type="text/javascript">
+	function json(action){
+		var js = {
+			"action": action,	
+			"login": $("#username").val(),
+			"password": $("#password").val(),
+		}
+	    $.ajax({
+			type:'post',
+			dataType : "json", 
+	        url:location.href,
+	        data:JSON.stringify(js)
+		});
+	}
+    $('#register').click(function(){
+		json("register");
+    });
+	$('#login').click(function(){
+		json("login");
+    });
+</script>
 <!--
 <div class="postform">
     <form action="" method="post">
@@ -67,5 +89,6 @@ src="jquery.js"></script>
 </footer>
 
 </body>
+	
 
 </html>
