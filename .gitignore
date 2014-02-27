@@ -13,3 +13,8 @@
 /3rd/qhttpserver/Makefile
 /3rd/qhttpserver/Makefile.Debug
 /3rd/qhttpserver/Makefile.Release
+/3rd/QtWebsocket/Makefile
+/3rd/QtWebsocket/Makefile.Debug
+/3rd/QtWebsocket/Makefile.Release
+/3rd/QtWebsocket/debug
+/3rd/QtWebsocket/release
