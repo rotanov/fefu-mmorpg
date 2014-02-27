@@ -7,7 +7,10 @@ QMAKE_CXXFLAGS += -std=c++11
 
 CONFIG += debug
 
-INCLUDEPATH += ../3rd/qhttpserver
+INCLUDEPATH += ../3rd/qhttpserver \
+    ../3rd/QtWebsocket \
+    ../3rd/rapidjson
+
 LIBS += -L../3rd/lib
 DESTDIR = ../bin
 
@@ -18,7 +21,13 @@ win32 {
     LIBS += -lqhttpserver
 }
 
+LIBS += -lQtWebsocket
+
 SOURCES += server.cpp \
+    ServerThreaded.cpp \
+    SocketThread.cpp \
     main.cpp
 
-HEADERS += server.hpp
+HEADERS += server.hpp \
+    ServerThreaded.h \
+    SocketThread.h
