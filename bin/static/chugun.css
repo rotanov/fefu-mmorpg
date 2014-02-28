@@ -77,6 +77,15 @@ h1, form
   }
 }
 
+@media screen
+{
+  body>div#content
+  {
+    position: fixed;
+	margin-left: 280px; 
+  }
+}
+
 * html body
 {
   overflow: hidden;    

@@ -1,30 +1,29 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>select server</title>
+	<title>select server</title>
 
-<meta http-equiv="Content-Type"
-content="text/html; charset=UTF-8"/>
+	<meta http-equiv="Content-Type"
+		  content="application/json; charset=UTF-8"/>
 
-<link href="favicon.ico" rel="shortcut icon">
+	<link href="favicon.ico" rel="shortcut icon">
 
 <!-- <link rel="icon"
 href="favicon.ico"
 type="image/x-icon"/> -->
 
-<link rel="stylesheet"
-      href="chugun.css"
-      type="text/css"
-      media="screen"
-      charset="utf-8"/>
-    
-<link href="http://fonts.googleapis.com/css?family=Asap:400,700,400italic,700italic&subset=latin,latin-ext"
-      rel="stylesheet">
+	<link rel="stylesheet"
+		  href="chugun.css"
+		  type="text/css"
+		  media="screen"
+		  charset="utf-8"/>
+	
+    <link href="http://fonts.googleapis.com/css?family=Asap:400,700,400italic,700italic&subset=latin,latin-ext"
+          rel="stylesheet">
 
-<script type="text/javascript"
-src="jquery.js"></script>
-
-
+	<script type="text/javascript" src="jquery.js"></script>
 
 </head>
 
@@ -36,59 +35,59 @@ src="jquery.js"></script>
     </div>
 </div>
 <div id="content" class="postform">
-    <form >
-        <div class="formrow">
-            <label for="login">Login</label>
-            <input type="text" id="username" name="login"/>
-        <div/>
-
-        <div class="formrow">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password"/>
-        <div/>        
-        
-        
-        <input type="button" value="register" id="register" name="submit"/>
-        <input type="button" value="login" id="login" name="submit"/>
+    <form>
+        <table>
+            <tr>			
+                <div class="formrow">
+                    <label for="login">Login</label>
+                    <input type="text" id="username" name="login"/>
+                <div/>			
+            </tr>
+            <tr>				
+                <div class="formrow">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password"/>
+                <div/>  			
+            </tr>
+            <tr>			
+                <input type="button" value="register" id="register" name="submit"/>
+                <input type="button" value="login" id="login" name="submit"/>
+            </tr>
+        </table>
     </form>
 </div>
 
 <script type="text/javascript">
-	function json(action){
-		var js = {
-			"action": action,	
-			"login": $("#username").val(),
-			"password": $("#password").val(),
-		}
-	    $.ajax({
-			type:'post',
-			dataType : "json", 
-	        url:location.href,
-	        data:JSON.stringify(js)
-		});
-	}
+    function json(action){
+        var js = {
+            "action": action,	
+            "login": $("#username").val(),
+            "password": $("#password").val(),
+        }
+        $.ajax({
+            type: "post",
+            dataType: "json", 
+            url: location.href,
+            data: JSON.stringify(js),
+            success: function(response) { 
+                console.log(response);
+            },
+            error: function (ajaxRequest, ajaxOptions, thrownError) {
+                console.log(thrownError);					
+            }
+        });
+    }
     $('#register').click(function(){
-		json("register");
+        json("register");
     });
 	$('#login').click(function(){
-		json("login");
+        json("login");
     });
 </script>
-<!--
-<div class="postform">
-    <form action="" method="post">
-        <textarea name="body" rows="10" id="posttext"></textarea>
-        <input type="submit" name="form.submitted" value="Post"/>
-        <input class="button" type="button" id="reformat-posts" name="reformat-posts" value="Reformat posts"/>
-    </form>
-</div>
--->
 
 <footer id="footer">
-
 </footer>
 
-</body>
-	
+</body>	
 
 </html>
