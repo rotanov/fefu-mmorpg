@@ -1,6 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>select server</title>
@@ -8,7 +6,7 @@
 	<meta http-equiv="Content-Type"
 		  content="application/json; charset=UTF-8"/>
 
-	<link href="favicon.ico" rel="shortcut icon">
+	<link href="favicon.ico" rel="shortcut icon"/>
 
 <!-- <link rel="icon"
 href="favicon.ico"
@@ -20,10 +18,11 @@ type="image/x-icon"/> -->
 		  media="screen"
 		  charset="utf-8"/>
 	
-    <link href="http://fonts.googleapis.com/css?family=Asap:400,700,400italic,700italic&subset=latin,latin-ext"
-          rel="stylesheet">
+    <!--link href="http://fonts.googleapis.com/css?family=Asap:400,700,400italic,700italic&subset=latin,latin-ext"
+          rel="stylesheet"-->
 
 	<script type="text/javascript" src="jquery.js"></script>
+	<script type="text/javascript" src="./jquery1.10.min.js"></script>
 
 </head>
 
@@ -35,19 +34,19 @@ type="image/x-icon"/> -->
     </div>
 </div>
 <div id="content" class="postform">
-    <form>
+    <form id = "formregister">
         <table>
             <tr>			
                 <div class="formrow">
-                    <label for="login">Login</label>
+                    <label  for="username">Login</label>
                     <input type="text" id="username" name="login"/>
-                <div/>			
+                </div>			
             </tr>
             <tr>				
                 <div class="formrow">
-                    <label for="password">Password</label>
+                    <label  for="password">Password</label>
                     <input type="password" id="password" name="password"/>
-                <div/>  			
+                </div>  			
             </tr>
             <tr>			
                 <input type="button" value="register" id="register" name="submit"/>
@@ -69,11 +68,20 @@ type="image/x-icon"/> -->
             dataType: "json", 
             url: location.href,
             data: JSON.stringify(js),
-            success: function(response) { 
-                console.log(response);
-            },
+			ContentType:'application/json; charset=utf-8',
+            success:  function (data){
+				 var items = [];
+						 
+				$.each(data, function(key, val){
+				items.push('<div id="content" class="postform">'  + key + ' '  + val + '</li> </div>');
+				});
+				$('<ul/>', {
+					html: items.join('')
+				}).appendTo('body');
+				$("#formregister").hide();
+			},
             error: function (ajaxRequest, ajaxOptions, thrownError) {
-                console.log(thrownError);					
+				console.log(thrownError);					
             }
         });
     }
