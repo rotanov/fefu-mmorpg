@@ -22,7 +22,7 @@ type="image/x-icon"/> -->
           rel="stylesheet"-->
 
 	<script type="text/javascript" src="jquery.js"></script>
-	<script type="text/javascript" src="./jquery1.10.min.js"></script>
+	<script type = "text/javascript" src="tests.js"></script>
 
 </head>
 
@@ -51,6 +51,7 @@ type="image/x-icon"/> -->
             <tr>			
                 <input type="button" value="register" id="register" name="submit"/>
                 <input type="button" value="login" id="login" name="submit"/>
+                <input type="button" value="test" id="test" name="submit"/>
             </tr>
         </table>
     </form>
@@ -68,27 +69,30 @@ type="image/x-icon"/> -->
             dataType: "json", 
             url: location.href,
             data: JSON.stringify(js),
-			ContentType:'application/json; charset=utf-8',
+			ContentType: "application/json; charset=utf-8",
             success:  function (data){
 			    $("#formregister").hide();
 				var items = [];						 
 				$.each(data, function(key, val){
-				    items.push('<li>' + key + ' ' + val + '</li>');
+				    items.push("<li>" + key + " " + val + "</li>");
 				});
-				$('<ul/>', {
-					html: items.join('')
-				}).appendTo('#content');				
+				$("<ul/>", {
+					html: items.join("")
+				}).appendTo("#content");				
 			},
             error: function (ajaxRequest, ajaxOptions, thrownError) {
 				console.log(thrownError);					
             }
         });
     }
-    $('#register').click(function(){
+    $("#register").click(function(){
         json("register");
     });
-	$('#login').click(function(){
+	$("#login").click(function(){
         json("login");
+    });
+	$("#test").click(function(){
+        runTests();
     });
 </script>
 

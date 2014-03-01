@@ -93,10 +93,15 @@ void Authentication(QByteArray data_, QHttpResponse *resp)
     QVariantMap jsonData = qVariant.toMap();
 
     QMap<QString, QVariant>::iterator iter = jsonData.find("action");
+    if (!QString::compare(iter.value().toString(), QString("clear")))
+    {
+        db.clear();
+        return;
+    }
     QString userLogin = jsonData.find("login").value().toString();
     QString userPassword = jsonData.find("password").value().toString();
 
-    QRegExp rx("[^A-Za-z0-9]+");
+    QRegExp rx("[A-Za-z0-9]+");
     QVariantMap answer;
     bool error = false;
 
@@ -108,16 +113,16 @@ void Authentication(QByteArray data_, QHttpResponse *resp)
             answer.insert("result", "loginExists");
             error = true;
         }
+        else if (!rx.exactMatch(userLogin))
+        {
+            resp->writeHead(200);
+            answer.insert("result", "badLogin");
+            error = true;
+        }
         else if (userPassword.length() < minPrasswordLength)
         {
             resp->writeHead(200);
             answer.insert("result", "badPassword");
-            error = true;
-        }
-        else if (rx.exactMatch(userLogin))
-        {
-            resp->writeHead(200);
-            answer.insert("result", "badLogin");
             error = true;
         }
         else
