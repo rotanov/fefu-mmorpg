@@ -33,18 +33,18 @@ type="image/x-icon"/> -->
         <h1>Authentication</h1>
     </div>
 </div>
-<div id="content" class="postform">
-    <form id = "formregister">
+<div id="content">
+    <form id="formregister">
         <table>
             <tr>			
                 <div class="formrow">
-                    <label  for="username">Login</label>
+                    <label for="username">Login</label>
                     <input type="text" id="username" name="login"/>
                 </div>			
             </tr>
             <tr>				
                 <div class="formrow">
-                    <label  for="password">Password</label>
+                    <label for="password">Password</label>
                     <input type="password" id="password" name="password"/>
                 </div>  			
             </tr>
@@ -70,15 +70,14 @@ type="image/x-icon"/> -->
             data: JSON.stringify(js),
 			ContentType:'application/json; charset=utf-8',
             success:  function (data){
-				 var items = [];
-						 
+			    $("#formregister").hide();
+				var items = [];						 
 				$.each(data, function(key, val){
-				items.push('<div id="content" class="postform">'  + key + ' '  + val + '</li> </div>');
+				    items.push('<li>' + key + ' ' + val + '</li>');
 				});
 				$('<ul/>', {
 					html: items.join('')
-				}).appendTo('body');
-				$("#formregister").hide();
+				}).appendTo('#content');				
 			},
             error: function (ajaxRequest, ajaxOptions, thrownError) {
 				console.log(thrownError);					

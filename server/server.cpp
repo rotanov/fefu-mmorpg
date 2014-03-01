@@ -1,6 +1,7 @@
 #include "server.hpp"
 
 #include <QFile>
+#include <QRegExp>
 #include <QJsonDocument>
 
 
@@ -13,6 +14,7 @@
 #include <iostream>
 
 QMap<QString, QString> db;
+size_t minPrasswordLength = 3;
 void Authentication(QByteArray data_, QHttpResponse *resp);
 
 /// Server
@@ -51,12 +53,6 @@ void MyServer::handleRequest(QHttpRequest *req, QHttpResponse *resp)
     std::cerr << path.toStdString() << std::endl;
     QFile index("static" + path);
 
-   /* if (!data_.isEmpty() )
-    {
-        Authentication(data, resp);
-       return;
-    }
-    */
 //    resp->setHeader("Content-Type", "text/html; charset=utf-8");
 
     QByteArray body;
@@ -89,9 +85,7 @@ void MyServer::data(const QByteArray& data)
 {
     data_ = data;
     Authentication(data_, response_);
-   // return;
 }
-
 
 void Authentication(QByteArray data_, QHttpResponse *resp)
 {
@@ -101,19 +95,36 @@ void Authentication(QByteArray data_, QHttpResponse *resp)
     QMap<QString, QVariant>::iterator iter = jsonData.find("action");
     QString userLogin = jsonData.find("login").value().toString();
     QString userPassword = jsonData.find("password").value().toString();
+
+    QRegExp rx("[^A-Za-z0-9]+");
     QVariantMap answer;
     bool error = false;
-    QJsonDocument json;
-    if (!QString::compare(iter.value().toString() , QString("register")))
+
+    if (!QString::compare(iter.value().toString(), QString("register")))
     {
         if (db.find(userLogin) != db.end())
         {
-             resp->writeHead(200);
-             answer.insert("result","loginExists");
-             error = true;
+            resp->writeHead(200);
+            answer.insert("result", "loginExists");
+            error = true;
+        }
+        else if (userPassword.length() < minPrasswordLength)
+        {
+            resp->writeHead(200);
+            answer.insert("result", "badPassword");
+            error = true;
+        }
+        else if (rx.exactMatch(userLogin))
+        {
+            resp->writeHead(200);
+            answer.insert("result", "badLogin");
+            error = true;
+        }
+        else
+        {
+            db.insert(userLogin, userPassword);
         }
 
-        db.insert(userLogin, userPassword);
         QMap<QString, QString>::const_iterator i;
         for (i = db.constBegin(); i != db.constEnd(); ++i)
             qDebug() << i.key() << ":" << i.value();
@@ -121,24 +132,22 @@ void Authentication(QByteArray data_, QHttpResponse *resp)
 
     if (!QString::compare(iter.value().toString(), QString("login")))
     {
-        if (db.find(userLogin) == db.end())
-        {
-             resp->writeHead(200);
-             answer.insert("result","badLogin");
-             error = true;
-        }
-        else if (QString::compare(db[userLogin], userPassword))
+        if (db.find(userLogin) == db.end() ||
+            QString::compare(db[userLogin], userPassword))
         {
             resp->writeHead(200);
-            answer.insert("result","badPassword");
+            answer.insert("result", "invalidCredentials");
             error = true;
-        }
+        } 
     }
+
     if (!error)
     {
         resp->writeHead(200);
-        answer.insert("result","ok");
+        answer.insert("result", "ok");
     }
+
+    QJsonDocument json;
     json =  QJsonDocument::fromVariant(answer);
     resp->end(json.toJson());
     return;
