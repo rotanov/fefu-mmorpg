@@ -4,7 +4,6 @@
 #include <QRegExp>
 #include <QJsonDocument>
 
-
 #include <qhttpserver.h>
 #include <qhttprequest.h>
 #include <qhttpresponse.h>
@@ -15,7 +14,9 @@
 
 QMap<QString, QString> db;
 size_t minPrasswordLength = 3;
-void Authentication(QByteArray data_, QHttpResponse *resp);
+void Authentication(QByteArray data_, QHttpResponse* resp);
+QVariantMap Registration(QString userLogin, QString userPassword);
+QVariantMap Login(QString userLogin, QString userPassword);
 
 /// Server
 
@@ -87,7 +88,7 @@ void MyServer::data(const QByteArray& data)
     Authentication(data_, response_);
 }
 
-void Authentication(QByteArray data_, QHttpResponse *resp)
+void Authentication(QByteArray data_, QHttpResponse* resp)
 {
     QVariant qVariant = QJsonDocument::fromJson(data_).toVariant();
     QVariantMap jsonData = qVariant.toMap();
@@ -101,59 +102,66 @@ void Authentication(QByteArray data_, QHttpResponse *resp)
     QString userLogin = jsonData.find("login").value().toString();
     QString userPassword = jsonData.find("password").value().toString();
 
-    QRegExp rx("[A-Za-z0-9]+");
     QVariantMap answer;
-    bool error = false;
-
     if (!QString::compare(iter.value().toString(), QString("register")))
     {
-        if (db.find(userLogin) != db.end())
+        answer = Registration(userLogin, userPassword);
+        if (answer["result"] == "ok")
         {
-            resp->writeHead(200);
-            answer.insert("result", "loginExists");
-            error = true;
+            /*start session*/
+            Login(userLogin, userPassword);
         }
-        else if (!rx.exactMatch(userLogin))
-        {
-            resp->writeHead(200);
-            answer.insert("result", "badLogin");
-            error = true;
-        }
-        else if (userPassword.length() < minPrasswordLength)
-        {
-            resp->writeHead(200);
-            answer.insert("result", "badPassword");
-            error = true;
-        }
-        else
-        {
-            db.insert(userLogin, userPassword);
-        }
-
-        QMap<QString, QString>::const_iterator i;
-        for (i = db.constBegin(); i != db.constEnd(); ++i)
-            qDebug() << i.key() << ":" << i.value();
     }
-
-    if (!QString::compare(iter.value().toString(), QString("login")))
+    else if (!QString::compare(iter.value().toString(), QString("login")))
     {
-        if (db.find(userLogin) == db.end() ||
-            QString::compare(db[userLogin], userPassword))
-        {
-            resp->writeHead(200);
-            answer.insert("result", "invalidCredentials");
-            error = true;
-        } 
+        answer = Login(userLogin, userPassword);
     }
-
-    if (!error)
-    {
-        resp->writeHead(200);
-        answer.insert("result", "ok");
-    }
-
     QJsonDocument json;
-    json =  QJsonDocument::fromVariant(answer);
+    json = QJsonDocument::fromVariant(answer);
+    resp->writeHead(200);
     resp->end(json.toJson());
     return;
+}
+
+QVariantMap Registration(QString userLogin, QString userPassword)
+{
+    QVariantMap answer;
+    QRegExp rx("[A-Za-z0-9]+");
+    if (db.find(userLogin) != db.end())
+    {
+        answer.insert("result", "loginExists");
+    }
+    else if (!rx.exactMatch(userLogin))
+    {
+        answer.insert("result", "badLogin");
+    }
+    else if (userPassword.length() < minPrasswordLength)
+    {
+        answer.insert("result", "badPassword");
+    }
+    else
+    {
+        answer.insert("result", "ok");
+        db.insert(userLogin, userPassword);
+    }
+    QMap<QString, QString>::const_iterator i;
+    for (i = db.constBegin(); i != db.constEnd(); ++i)
+        qDebug() << i.key() << ":" << i.value();
+    return answer;
+}
+
+QVariantMap Login(QString userLogin, QString userPassword)
+{
+    QVariantMap answer;
+    if (db.find(userLogin) == db.end() ||
+        QString::compare(db[userLogin], userPassword))
+    {
+        answer.insert("result", "invalidCredentials");
+    }
+    else
+    {
+        answer.insert("result", "ok");
+        /*start session*/
+    }
+    return answer;
 }
