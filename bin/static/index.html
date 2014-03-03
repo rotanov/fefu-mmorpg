@@ -1,66 +1,50 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>select server</title>
+<title>Authorization</title>
+<meta charset="UTF-8">
 
-	<meta http-equiv="Content-Type"
-		  content="application/json; charset=UTF-8"/>
+<link href="favicon.ico"
+      rel="shortcut icon"/>
 
-	<link href="favicon.ico" rel="shortcut icon"/>
-
-<!-- <link rel="icon"
-href="favicon.ico"
-type="image/x-icon"/> -->
-
-	<link rel="stylesheet"
-		  href="chugun.css"
-		  type="text/css"
-		  media="screen"
-		  charset="utf-8"/>
-	
-    <!--link href="http://fonts.googleapis.com/css?family=Asap:400,700,400italic,700italic&subset=latin,latin-ext"
-          rel="stylesheet"-->
-
-	<script type="text/javascript" src="jquery.js"></script>
-	<script type = "text/javascript" src="tests.js"></script>
-
+<link rel="stylesheet"
+      href="chugun.css"
+      type="text/css"
+      media="screen"
+      charset="utf-8"/>
+    
+<script type="text/javascript" src="jquery.js"></script>
+<script type = "text/javascript" src="tests.js"></script>
 </head>
 
 <body>
-
 <div id="left-sidebar">
     <div class="navigation">
-        <h1>Authentication</h1>
+        <h1>Authorization</h1>
     </div>
 </div>
+
 <div id="content">
     <form id="formregister">
-        <table>
-            <tr>			
-                <div class="formrow">
-                    <label for="username">Login</label>
-                    <input type="text" id="username" name="login"/>
-                </div>			
-            </tr>
-            <tr>				
-                <div class="formrow">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password"/>
-                </div>  			
-            </tr>
-            <tr>			
-                <input type="button" value="register" id="register" name="submit"/>
-                <input type="button" value="login" id="login" name="submit"/>
-                <input type="button" value="test" id="test" name="submit"/>
-            </tr>
-        </table>
+        <div class="formrow">
+            <label for="username">Login</label>
+            <input type="text" id="username" name="login"/>
+        </div>          
+
+        <div class="formrow">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password"/>
+        </div>              
+
+        <input type="button" value="register" id="register" name="submit"/>
+        <input type="button" value="login" id="login" name="submit"/>
+        <input type="button" value="test" id="test" name="submit"/>
     </form>
 </div>
 
 <script type="text/javascript">
     function json(action){
         var js = {
-            "action": action,	
+            "action": action,
             "login": $("#username").val(),
             "password": $("#password").val(),
         }
@@ -69,29 +53,29 @@ type="image/x-icon"/> -->
             dataType: "json", 
             url: location.href,
             data: JSON.stringify(js),
-			ContentType: "application/json; charset=utf-8",
+            ContentType: "application/json; charset=utf-8",
             success:  function (data){
-			    $("#formregister").hide();
-				var items = [];						 
-				$.each(data, function(key, val){
-				    items.push("<li>" + key + " " + val + "</li>");
-				});
-				$("<ul/>", {
-					html: items.join("")
-				}).appendTo("#content");				
-			},
+                $("#formregister").hide();
+                var items = [];
+                $.each(data, function(key, val){
+                    items.push("<li>" + key + " " + val + "</li>");
+                });
+                $("<ul/>", {
+                    html: items.join("")
+                }).appendTo("#content");
+            },
             error: function (ajaxRequest, ajaxOptions, thrownError) {
-				console.log(thrownError);					
+                console.log(thrownError);
             }
         });
     }
     $("#register").click(function(){
         json("register");
     });
-	$("#login").click(function(){
+    $("#login").click(function(){
         json("login");
     });
-	$("#test").click(function(){
+    $("#test").click(function(){
         runTests();
     });
 </script>
@@ -99,6 +83,6 @@ type="image/x-icon"/> -->
 <footer id="footer">
 </footer>
 
-</body>	
+</body> 
 
 </html>

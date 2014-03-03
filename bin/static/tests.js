@@ -65,7 +65,7 @@ function runTests()
 	
 	enterJson = {
         "action": "register",
-        "login": "Яблоко", 
+        "login": "РЇР±Р»РѕРєРѕ", 
         "password": "123",
     };
     etalonJson = {
