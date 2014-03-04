@@ -8,6 +8,7 @@ namespace Ui
 }
 
 class DebugStream;
+class Server;
 
 class MainWindow : public QMainWindow
 {
@@ -17,8 +18,12 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+private slots:
+    void on_qpbToggleServerState_clicked();
+
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow *ui = NULL;
     DebugStream* debugStreamCout_ = NULL;
     DebugStream* debugStreamCerr_ = NULL;
+    Server* server_ = NULL;
 };

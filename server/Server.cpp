@@ -10,9 +10,9 @@
 #include <QCryptographicHash>
 #include <QTime>
 
-#include <qhttpserver.h>
-#include <qhttprequest.h>
-#include <qhttpresponse.h>
+#include "qhttpserver.h"
+#include "qhttprequest.h"
+#include "qhttpresponse.h"
 
 
 QMap<QString, QString> db;
@@ -25,23 +25,21 @@ QVariantMap Login(QString userLogin, QString userPassword);
 QVariantMap Logout(QByteArray sid);
 
 
-/// Server
-
-MyServer::MyServer()
+Server::Server()
 {
-    QHttpServer *server = new QHttpServer(this);
-    connect(server, SIGNAL(newRequest(QHttpRequest*, QHttpResponse*)),
-            this, SLOT(handleRequest(QHttpRequest*, QHttpResponse*)));
-
-    server->listen(QHostAddress::Any, 6543);
+    httpServer_ = new QHttpServer(this);
+    connect(httpServer_
+            , SIGNAL(newRequest(QHttpRequest*, QHttpResponse*))
+            , this
+            , SLOT(handleRequest(QHttpRequest*, QHttpResponse*)));
 }
 
-MyServer::~MyServer()
+Server::~Server()
 {
-
+    delete httpServer_;
 }
 
-void MyServer::handleRequest(QHttpRequest *req, QHttpResponse *resp)
+void Server::handleRequest(QHttpRequest *req, QHttpResponse *resp)
 {
 //    Q_UNUSED(req);
 
@@ -65,31 +63,31 @@ void MyServer::handleRequest(QHttpRequest *req, QHttpResponse *resp)
 
     QByteArray body;
 
-   if (!index.open(QIODevice::ReadOnly))
-   {
+    if (!index.open(QIODevice::ReadOnly))
+    {
         body = "404 not found";
         resp->setHeader("Content-Length", QString::number(body.size()));
         resp->setHeader("Content-Type", "text/plain; charset=utf-8");
         resp->writeHead(404);
         resp->end(body);
         return;
-   }
+    }
 
-   if (method != 3)
-   {
+    if (method != 3)
+    {
         body = index.readAll();
         resp->setHeader("Content-Length", QString::number(body.size()));
         resp->writeHead(200);
         resp->end(body);
-   }
+    }
 }
 
-void MyServer::dataEnd()
+void Server::dataEnd()
 {
     response_;
 }
 
-void MyServer::data(const QByteArray& data)
+void Server::data(const QByteArray& data)
 {
     data_ = data;
     Authentication(data_, response_);
@@ -203,4 +201,41 @@ QVariantMap Logout (QByteArray sid)
         sids.erase(iter);
     }
     return answer;
+}
+
+
+void Server::Start()
+{
+    if (!running_)
+    {
+        running_ = httpServer_->listen(port_);
+
+        if (!running_)
+        {
+            qDebug() << "Unable to start http server.";
+        }
+        else
+        {
+            qDebug() << "Server started.";
+        }
+    }
+    else
+    {
+        qDebug() << "Server already running.";
+    }
+}
+
+
+void Server::Stop()
+{
+    if (running_)
+    {
+        httpServer_->close();
+        running_ = false;
+        qDebug() << "Server stopped.";
+    }
+    else
+    {
+        qDebug() << "Attempt to stop server while it's not running.";
+    }
 }

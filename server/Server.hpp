@@ -1,18 +1,19 @@
 #pragma once
 
-#include "qhttpserverfwd.h"
-
 #include <QObject>
 
-/// Server
+#include "qhttpserverfwd.h"
 
-class MyServer : public QObject
+class Server : public QObject
 {
     Q_OBJECT
 
 public:
-    MyServer();
-    virtual ~MyServer();
+    Server();
+    virtual ~Server();
+
+    void Start();
+    void Stop();
 
 private slots:
     void handleRequest(QHttpRequest *req, QHttpResponse *resp);
@@ -20,7 +21,11 @@ private slots:
     void data(const QByteArray& data);
 
 private:
-    QHttpRequest* request_;
-    QHttpResponse* response_;
+    QHttpServer* httpServer_;
+    QHttpRequest* request_ = NULL;
+    QHttpResponse* response_ = NULL;
     QByteArray data_;
+    bool running_ = false;
+
+    static const quint16 port_ = 6543;
 };
