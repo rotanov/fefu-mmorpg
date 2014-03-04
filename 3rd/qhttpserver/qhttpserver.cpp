@@ -92,6 +92,7 @@ QHttpServer::QHttpServer(QObject *parent) : QObject(parent), m_tcpServer(0)
 
 QHttpServer::~QHttpServer()
 {
+    close();
 }
 
 void QHttpServer::newConnection()
