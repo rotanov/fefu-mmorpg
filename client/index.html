@@ -11,10 +11,9 @@
       type="text/css"
       media="screen"
       charset="utf-8"/>
-    
-<script type="text/javascript" src="jquery.js"></script>
-<script type = "text/javascript" src="tests.js"></script>
-<script type="text/javascript" src="authorization.js"></script>
+
+<script data-main="scripts/main"
+        src="scripts/require.js"></script>
 </head>
 
 <body>
@@ -44,20 +43,7 @@
 		<input type="button" id="logout" value="Exit" name="submit" style="visibility: hidden"/> 
 	</form>
 </div>
-<script type="text/javascript">
-    $("#register").click(function(){
-        json("register");
-    });
-    $("#login").click(function(){
-        json("login");
-    });
-    $("#test").click(function(){
-        runTests();
-    });
-	$("#logout").click(function(){
-        Exit();
-    });
-</script>
+
 <footer id="footer">
 </footer>
 
