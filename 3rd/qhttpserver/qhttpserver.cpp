@@ -129,5 +129,10 @@ bool QHttpServer::listen(quint16 port)
 void QHttpServer::close()
 {
     if (m_tcpServer)
+    {
         m_tcpServer->close();
+        // Added this so we can invoke `listen` again without triggering assert
+        delete m_tcpServer;
+        m_tcpServer = NULL;
+    }
 }
