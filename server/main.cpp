@@ -1,15 +1,11 @@
-#include "server.hpp"
-#include "ServerThreaded.h"
-
-#include <QCoreApplication>
+#include "MainWindow.hpp"
+#include <QApplication>
 
 int main(int argc, char **argv)
 {
-    QCoreApplication app(argc, argv);
-    std::cout << QObject::tr("main thread : 0x%1")
-                 .arg(QString::number((unsigned int)QThread::currentThreadId(), 16))
-                 .toStdString() << std::endl;
-    ServerThreaded myThreadedServer;
-    MyServer server;
-    app.exec();
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+
+    return a.exec();
 }
