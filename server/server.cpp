@@ -3,6 +3,8 @@
 #include <QFile>
 #include <QRegExp>
 #include <QJsonDocument>
+#include <QCryptographicHash>
+#include <QTime>
 
 #include <qhttpserver.h>
 #include <qhttprequest.h>
@@ -13,12 +15,13 @@
 #include <iostream>
 
 QMap<QString, QString> db;
+QMap<QByteArray,QString> sids;
 size_t minPrasswordLength = 6;
 size_t maxPrasswordLength = 36;
 void Authentication(QByteArray data_, QHttpResponse* resp);
 QVariantMap Registration(QString userLogin, QString userPassword);
 QVariantMap Login(QString userLogin, QString userPassword);
-QVariantMap Logout();
+QVariantMap Logout(QByteArray sid);
 
 
 /// Server
@@ -77,7 +80,7 @@ void MyServer::handleRequest(QHttpRequest *req, QHttpResponse *resp)
         resp->setHeader("Content-Length", QString::number(body.size()));
         resp->writeHead(200);
         resp->end(body);
-    }
+   }
 }
 
 void MyServer::dataEnd()
@@ -105,7 +108,8 @@ void Authentication(QByteArray data_, QHttpResponse* resp)
     if (!QString::compare(iter.value().toString(), QString("logout")))
     {
          QJsonDocument json;
-         json = QJsonDocument::fromVariant(Logout());
+         QByteArray sid = jsonData.find("sid").value().toByteArray();
+         json = QJsonDocument::fromVariant(Logout(sid));
          resp->writeHead(200);
          resp->end(json.toJson());
          return;
@@ -120,7 +124,7 @@ void Authentication(QByteArray data_, QHttpResponse* resp)
         if (answer["result"] == "ok")
         {
             /*start session*/
-            Login(userLogin, userPassword);
+            answer = Login(userLogin, userPassword);
         }
     }
     else if (!QString::compare(iter.value().toString(), QString("login")))
@@ -173,14 +177,29 @@ QVariantMap Login(QString userLogin, QString userPassword)
     else
     {
         answer.insert("result", "ok");
-        /*start session*/
+        QTime midnight(0,0,0);
+        qsrand(midnight.secsTo(QTime::currentTime()));
+        QByteArray id ;
+        id.append(QString(qrand()));
+        QByteArray sid = QCryptographicHash::hash(id, QCryptographicHash::Md5);
+        sids.insert(sid.toHex(), userLogin);
+        answer.insert("sid", sid.toHex());
     }
     return answer;
 }
 
-QVariantMap Logout()
+QVariantMap Logout (QByteArray sid)
 {
     QVariantMap answer;
-    answer.insert("result", "ok");
+    if (sids.find(sid) == sids.end())
+    {
+        answer.insert("result", "badSid");
+    }
+    else
+    {
+        answer.insert("result", "ok");
+        QMap<QByteArray,QString>::iterator iter = sids.find(sid);
+        sids.erase(iter);
+    }
     return answer;
 }
