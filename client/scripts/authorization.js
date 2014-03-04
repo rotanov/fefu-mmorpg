@@ -25,7 +25,7 @@ define(["jquery"], function($){
                                 }
                                 else
                                     items.push("<li>" + key + " " + val + "</li>");
-                                if (val=="ok") 
+                                if (val=="ok" && action == "login" ) 
                                 {
                                     var obBut = document.getElementById("logout");
                                     obBut.style.visibility = "visible"; 
