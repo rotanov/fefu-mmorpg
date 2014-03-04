@@ -106,6 +106,7 @@ void Server::dataEnd()
 
     emit newFEMPRequest(request, response);
 
+    response_->setHeader("Content-Type", "application/json; charset=utf-8");
     response_->writeHead(QHttpResponse::STATUS_OK);
     auto responseJSON = QJsonDocument::fromVariant(response).toJson();
     qDebug() << "response JSON: " << responseJSON;
