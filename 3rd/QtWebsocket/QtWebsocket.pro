@@ -14,6 +14,10 @@ TARGET = QtWebsocket
 TEMPLATE = lib
 CONFIG += staticlib
 
+CONFIG(debug, debug|release) {
+    win32: TARGET = $$join(TARGET,,,d)
+}
+
 SOURCES += \
     QWsServer.cpp \
     QWsSocket.cpp \
