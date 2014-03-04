@@ -9,21 +9,11 @@
 #include <QJsonDocument>
 #include <QCryptographicHash>
 #include <QTime>
+#include <QFileInfo>
 
 #include "qhttpserver.h"
 #include "qhttprequest.h"
 #include "qhttpresponse.h"
-
-
-QMap<QString, QString> db;
-QMap<QByteArray,QString> sids;
-size_t minPrasswordLength = 6;
-size_t maxPrasswordLength = 36;
-void Authentication(QByteArray data_, QHttpResponse* resp);
-QVariantMap Registration(QString userLogin, QString userPassword);
-QVariantMap Login(QString userLogin, QString userPassword);
-QVariantMap Logout(QByteArray sid);
-
 
 Server::Server()
 {
@@ -39,170 +29,96 @@ Server::~Server()
     delete httpServer_;
 }
 
-void Server::handleRequest(QHttpRequest *req, QHttpResponse *resp)
+void Server::handleRequest(QHttpRequest *request, QHttpResponse *response)
 {
-//    Q_UNUSED(req);
+    auto method = request->method();
 
-    connect(req, SIGNAL(end()), this, SLOT(dataEnd()));
-    connect(req, SIGNAL(data(QByteArray)), this, SLOT(data(QByteArray)));
-
-    response_ = resp;
-
-    auto uri = req->url();
-    auto& headers = req->headers();
-    auto path = req->path();
-    auto method = req->method();
-    auto data = req->body();
-
-    resp->setHeader("Cache-control", "no-cache, no-store");
-
-    std::cerr << path.toStdString() << std::endl;
-    QFile index("../client" + path);
-
-//    resp->setHeader("Content-Type", "text/html; charset=utf-8");
-
-    QByteArray body;
-
-    if (!index.open(QIODevice::ReadOnly))
+    switch (method)
     {
-        body = "404 not found";
-        resp->setHeader("Content-Length", QString::number(body.size()));
-        resp->setHeader("Content-Type", "text/plain; charset=utf-8");
-        resp->writeHead(404);
-        resp->end(body);
-        return;
-    }
+        case QHttpRequest::HTTP_GET:
+        {
+            auto path = request->path();
+            qDebug() << path;
 
-    if (method != 3)
-    {
-        body = index.readAll();
-        resp->setHeader("Content-Length", QString::number(body.size()));
-        resp->writeHead(200);
-        resp->end(body);
+            response->setHeader("Cache-control", "no-cache, no-store");
+
+            auto extension = QFileInfo(path).suffix();
+
+            if (extension == "htm"
+                || extension == "html")
+            {
+                response->setHeader("Content-Type", "text/html; charset=utf-8");
+            }
+            else if (extension == "css")
+            {
+                response->setHeader("Content-Type", "text/css; charset=utf-8");
+            }
+            else if (extension == "js")
+            {
+                response->setHeader("Content-Type", "application/javascript; charset=utf-8");
+            }
+            else
+            {
+                response->setHeader("Content-Type", "text/plain; charset=utf-8");
+            }
+
+            QFile index("../client" + path);
+            QByteArray body;
+
+            if (!index.open(QIODevice::ReadOnly))
+            {
+                body = "404 not found";
+                response->setHeader("Content-Length", QString::number(body.size()));
+                response->setHeader("Content-Type", "text/plain; charset=utf-8");
+                response->writeHead(QHttpResponse::STATUS_NOT_FOUND);
+                response->end(body);
+            }
+            else
+            {
+                body = index.readAll();
+                response->setHeader("Content-Length", QString::number(body.size()));
+                response->writeHead(QHttpResponse::STATUS_OK);
+                response->end(body);
+            }
+        }
+            break;
+
+        case QHttpRequest::HTTP_POST:
+        {
+            response_ = response;
+            connect(request, SIGNAL(end()), this, SLOT(dataEnd()));
+            connect(request, SIGNAL(data(QByteArray)), this, SLOT(data(QByteArray)));
+        }
+            break;
+
+        default:
+        {
+            qDebug() << "Unsupported HTTP method.";
+        }
     }
 }
 
 void Server::dataEnd()
 {
-    response_;
+    qDebug() << "request JSON: " << data_;
+    QVariantMap request = QJsonDocument::fromJson(data_).toVariant().toMap();
+    QVariantMap response;
+
+    emit newFEMPRequest(request, response);
+
+    response_->writeHead(QHttpResponse::STATUS_OK);
+    auto responseJSON = QJsonDocument::fromVariant(response).toJson();
+    qDebug() << "response JSON: " << responseJSON;
+    response_->end(responseJSON);
+
+    response_ = NULL;
+    data_.clear();
 }
 
 void Server::data(const QByteArray& data)
 {
-    data_ = data;
-    Authentication(data_, response_);
+    data_.append(data);
 }
-
-void Authentication(QByteArray data_, QHttpResponse* resp)
-{
-    QVariant qVariant = QJsonDocument::fromJson(data_).toVariant();
-    QVariantMap jsonData = qVariant.toMap();
-
-    QMap<QString, QVariant>::iterator iter = jsonData.find("action");
-    if (!QString::compare(iter.value().toString(), QString("clear")))
-    {
-        db.clear();
-        return;
-    }
-    if (!QString::compare(iter.value().toString(), QString("logout")))
-    {
-         QJsonDocument json;
-         QByteArray sid = jsonData.find("sid").value().toByteArray();
-         json = QJsonDocument::fromVariant(Logout(sid));
-         resp->writeHead(200);
-         resp->end(json.toJson());
-         return;
-    }
-    QString userLogin = jsonData.find("login").value().toString();
-    QString userPassword = jsonData.find("password").value().toString();
-
-    QVariantMap answer;
-    if (!QString::compare(iter.value().toString(), QString("register")))
-    {
-        answer = Registration(userLogin, userPassword);
-        if (answer["result"] == "ok")
-        {
-            /*start session*/
-            answer = Login(userLogin, userPassword);
-        }
-    }
-    else if (!QString::compare(iter.value().toString(), QString("login")))
-    {
-        answer = Login(userLogin, userPassword);
-    }
-    QJsonDocument json;
-    json = QJsonDocument::fromVariant(answer);
-    resp->writeHead(200);
-    resp->end(json.toJson());
-    return;
-}
-
-QVariantMap Registration(QString userLogin, QString userPassword)
-{
-    QVariantMap answer;
-    QRegExp rx("[A-Za-z0-9]+");
-    if (db.find(userLogin) != db.end())
-    {
-        answer.insert("result", "loginExists");
-    }
-    else if (!rx.exactMatch(userLogin))
-    {
-        answer.insert("result", "badLogin");
-    }
-    else if (userPassword.length() < minPrasswordLength
-            || userPassword.length() > maxPrasswordLength)
-    {
-        answer.insert("result", "badPassword");
-    }
-    else
-    {
-        answer.insert("result", "ok");
-        db.insert(userLogin, userPassword);
-    }
-    QMap<QString, QString>::const_iterator i;
-    for (i = db.constBegin(); i != db.constEnd(); ++i)
-        qDebug() << i.key() << ":" << i.value();
-    return answer;
-}
-
-QVariantMap Login(QString userLogin, QString userPassword)
-{
-    QVariantMap answer;
-    if (db.find(userLogin) == db.end() ||
-        QString::compare(db[userLogin], userPassword))
-    {
-        answer.insert("result", "invalidCredentials");
-    }
-    else
-    {
-        answer.insert("result", "ok");
-        QTime midnight(0,0,0);
-        qsrand(midnight.secsTo(QTime::currentTime()));
-        QByteArray id ;
-        id.append(QString(qrand()));
-        QByteArray sid = QCryptographicHash::hash(id, QCryptographicHash::Md5);
-        sids.insert(sid.toHex(), userLogin);
-        answer.insert("sid", sid.toHex());
-    }
-    return answer;
-}
-
-QVariantMap Logout (QByteArray sid)
-{
-    QVariantMap answer;
-    if (sids.find(sid) == sids.end())
-    {
-        answer.insert("result", "badSid");
-    }
-    else
-    {
-        answer.insert("result", "ok");
-        QMap<QByteArray,QString>::iterator iter = sids.find(sid);
-        sids.erase(iter);
-    }
-    return answer;
-}
-
 
 void Server::Start()
 {
@@ -238,4 +154,137 @@ void Server::Stop()
     {
         qDebug() << "Attempt to stop server while it's not running.";
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void GameServer::HandleRegister(const QVariantMap& request, QVariantMap& response)
+{
+    QRegExp rx("[0-9a-zA-Z]+");
+
+    QString login = request["login"].toString();
+    QString password = request["password"].toString();
+
+    bool passHasInvalidChars = false;
+
+    for (int i = 0; i < password.size(); i++)
+    {
+        if (!password[i].isPrint())
+        {
+            passHasInvalidChars = true;
+            break;
+        }
+    }
+
+    if (db.find(login) != db.end())
+    {
+        WriteResult_(response, EFEMPResult::LOGIN_EXISTS);
+    }
+    else if (!rx.exactMatch(login)
+             || login.size() < minLoginLength_
+             || login.size() > maxLoginLength_)
+    {
+        WriteResult_(response, EFEMPResult::BAD_LOGIN);
+    }
+    else if (password.size() < minPrasswordLength_
+             || password.size() > maxPrasswordLength_
+             || passHasInvalidChars)
+    {
+        WriteResult_(response, EFEMPResult::BAD_PASS);
+    }
+    else
+    {
+        WriteResult_(response, EFEMPResult::OK);
+        db.insert(login, password);
+    }
+
+    for (auto i = db.begin(); i != db.end(); ++i)
+    {
+        qDebug() << i.key() << ":" << i.value();
+    }
+}
+
+void GameServer::HandleLogin(const QVariantMap& request, QVariantMap& response)
+{
+    auto login = request["login"].toString();
+    auto password = request["password"].toString();
+
+    if (db.find(login) == db.end()
+        || db[login] != password)
+    {
+        WriteResult_(response, EFEMPResult::INVALID_CREDENTIALS);
+    }
+    else
+    {
+        WriteResult_(response, EFEMPResult::OK);
+        QTime midnight(0,0,0);
+        qsrand(midnight.secsTo(QTime::currentTime()));
+        QByteArray id ;
+        id.append(QString(qrand()));
+        QByteArray sid = QCryptographicHash::hash(id, QCryptographicHash::Md5);
+        sids.insert(sid.toHex(), login);
+        response["sid"] = sid.toHex();
+    }
+}
+
+void GameServer::HandleLogout(const QVariantMap& request, QVariantMap& response)
+{
+    auto sid = request["sid"].toByteArray();
+
+    if (sids.find(sid) == sids.end())
+    {
+        WriteResult_(response, EFEMPResult::BAD_SID);
+    }
+    else
+    {
+        WriteResult_(response, EFEMPResult::OK);
+        auto iter = sids.find(sid);
+        sids.erase(iter);
+    }
+}
+
+void GameServer::HandleClearDB(const QVariantMap& request, QVariantMap& response)
+{
+    db.clear();
+}
+
+GameServer::GameServer()
+{
+    requestHandlers_["register"] = &GameServer::HandleRegister;
+    requestHandlers_["login"] = &GameServer::HandleLogin;
+    requestHandlers_["logout"] = &GameServer::HandleLogout;
+    requestHandlers_["clearDb"] = &GameServer::HandleClearDB;
+}
+
+GameServer::~GameServer()
+{
+
+}
+
+void GameServer::handleFEMPRequest(const QVariantMap& request, QVariantMap& response)
+{
+    auto actionIt = request.find("action");
+    if (actionIt == request.end())
+    {
+        WriteResult_(response, EFEMPResult::INVALID_REQUEST);
+        return;
+    }
+
+    QString action = actionIt.value().toString();
+    qDebug() << "FEMP action: " << action;
+    auto handlerIt = requestHandlers_.find(action);
+
+    if (handlerIt == requestHandlers_.end())
+    {
+        WriteResult_(response, EFEMPResult::INVALID_REQUEST);
+        return;
+    }
+
+    auto handler = handlerIt.value();
+    (this->*handler)(request, response);
+}
+
+void GameServer::WriteResult_(QVariantMap& response, const EFEMPResult result)
+{
+    response["result"] = fempResultToString[static_cast<unsigned>(result)];
 }

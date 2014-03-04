@@ -9,6 +9,7 @@ namespace Ui
 
 class DebugStream;
 class Server;
+class GameServer;
 
 class MainWindow : public QMainWindow
 {
@@ -26,4 +27,5 @@ private:
     DebugStream* debugStreamCout_ = NULL;
     DebugStream* debugStreamCerr_ = NULL;
     Server* server_ = NULL;
+    GameServer* gameServer_ = NULL;
 };
