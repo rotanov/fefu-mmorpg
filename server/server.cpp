@@ -58,7 +58,7 @@ void MyServer::handleRequest(QHttpRequest *req, QHttpResponse *resp)
     resp->setHeader("Cache-control", "no-cache, no-store");
 
     std::cerr << path.toStdString() << std::endl;
-    QFile index("static" + path);
+    QFile index("../client" + path);
 
 //    resp->setHeader("Content-Type", "text/html; charset=utf-8");
 
