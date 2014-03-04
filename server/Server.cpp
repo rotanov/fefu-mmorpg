@@ -1,4 +1,8 @@
-#include "server.hpp"
+#include "Server.hpp"
+
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
 
 #include <QFile>
 #include <QRegExp>
@@ -10,9 +14,6 @@
 #include <qhttprequest.h>
 #include <qhttpresponse.h>
 
-#include <cstdio>
-#include <cstdlib>
-#include <iostream>
 
 QMap<QString, QString> db;
 QMap<QByteArray,QString> sids;

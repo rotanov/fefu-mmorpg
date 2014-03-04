@@ -23,11 +23,11 @@ win32 {
 
 LIBS += -lQtWebsocket
 
-SOURCES += server.cpp \
+SOURCES += Server.cpp \
     ServerThreaded.cpp \
     SocketThread.cpp \
     main.cpp
 
-HEADERS += server.hpp \
+HEADERS += Server.hpp \
     ServerThreaded.h \
     SocketThread.h
