@@ -99,11 +99,6 @@ void Authentication(QByteArray data_, QHttpResponse* resp)
     QVariantMap jsonData = qVariant.toMap();
 
     QMap<QString, QVariant>::iterator iter = jsonData.find("action");
-    if (!QString::compare(iter.value().toString(), QString("clear")))
-    {
-        db.clear();
-        return;
-    }
     if (!QString::compare(iter.value().toString(), QString("logout")))
     {
          QJsonDocument json;
@@ -140,7 +135,7 @@ void Authentication(QByteArray data_, QHttpResponse* resp)
 QVariantMap Registration(QString userLogin, QString userPassword)
 {
     QVariantMap answer;
-    QRegExp rx("[A-Za-z0-9]+");
+    QRegExp rx("[A-Za-z0-9]{2,36}");
     if (db.find(userLogin) != db.end())
     {
         answer.insert("result", "loginExists");
