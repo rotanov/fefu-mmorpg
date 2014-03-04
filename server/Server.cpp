@@ -160,7 +160,7 @@ void Server::Stop()
 
 void GameServer::HandleRegister(const QVariantMap& request, QVariantMap& response)
 {
-    QRegExp rx("[0-9a-zA-Z]+");
+    QRegExp rx("[0-9a-zA-Z]{2,36}");
 
     QString login = request["login"].toString();
     QString password = request["password"].toString();

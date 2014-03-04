@@ -1,4 +1,4 @@
-require(['jquery', 'authorization', 'tests'], function($, auth, tests) {
+require(["jquery", "authorization", "test"], function($, auth, test) {
 
     $("#register").click(function(){
         auth.json("register");
@@ -7,7 +7,8 @@ require(['jquery', 'authorization', 'tests'], function($, auth, tests) {
         auth.json("login");
     });
     $("#test").click(function(){
-        tests.runTests();
+        $("#formregister").hide();
+        test.runTests();
     });
     $("#logout").click(function(){
         auth.Exit();
