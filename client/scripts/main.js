@@ -12,5 +12,10 @@ require(['jquery', 'authorization', 'tests'], function($, auth, tests) {
     $("#logout").click(function(){
         auth.Exit();
     });
+	 $("#Ok").click(function()
+	{
+		var url = document.getElementById('href');
+		window.location = url.value;
+	})
 
 });
