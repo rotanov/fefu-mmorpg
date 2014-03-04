@@ -38,12 +38,14 @@ SOURCES += Server.cpp \
     ServerThreaded.cpp \
     SocketThread.cpp \
     main.cpp \
-    MainWindow.cpp
+    MainWindow.cpp \
+    DebugStream.cpp
 
 HEADERS += Server.hpp \
     ServerThreaded.h \
     SocketThread.h \
-    MainWindow.hpp
+    MainWindow.hpp \
+    DebugStream.hpp
 
 FORMS += \
     mainwindow.ui

@@ -1,6 +1,7 @@
 #include "MainWindow.hpp"
 #include "ui_mainwindow.h"
 
+#include "DebugStream.hpp"
 #include "server.hpp"
 #include "ServerThreaded.h"
 
@@ -9,6 +10,11 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    debugStreamCout_ = new DebugStream(std::cout, ui->qpteLog);
+    debugStreamCerr_ = new DebugStream(std::cerr, ui->qpteLog);
+
+    ui->qpteLog->setFont(QFont("Consolas", 12));
 
     ServerThreaded* myThreadedServer = new ServerThreaded;
     MyServer* server = new MyServer;
@@ -20,4 +26,6 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete debugStreamCout_;
+    delete debugStreamCerr_;
 }

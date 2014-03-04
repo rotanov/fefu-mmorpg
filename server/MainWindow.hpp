@@ -7,6 +7,8 @@ namespace Ui
     class MainWindow;
 }
 
+class DebugStream;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -17,4 +19,6 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    DebugStream* debugStreamCout_ = NULL;
+    DebugStream* debugStreamCerr_ = NULL;
 };

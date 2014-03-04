@@ -1,8 +1,49 @@
+#include <iostream>
+
 #include "MainWindow.hpp"
 #include <QApplication>
+#include <QtMessageHandler>
+
+void HandleQDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    QByteArray localMsg = msg.toLocal8Bit();
+//    FILE* logfile = fopen("logFilename.log", "a");
+//    fprintf(logfile, "%s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+//    fclose(logfile);
+
+    static char* messageDescriptions [] =
+    {
+        "Debug",
+        "Warning",
+        "Critical",
+        "Fatal",
+    };
+
+    QString completeMessage = QString(messageDescriptions[type])
+                              + QString(": %1 (%2:%3, %4)\n");
+
+    completeMessage = completeMessage
+                      .arg(localMsg.constData())
+                      .arg(context.file)
+                      .arg(context.line)
+                      .arg(context.function);
+
+    std::cerr << completeMessage.toStdString();
+//    std::cout << completeMessage.toStdString();
+
+//    std::cerr.flush();
+    std::cout.flush();
+
+    fprintf(stderr, "%s", completeMessage.toStdString().c_str());
+
+    fflush(stderr);
+    fflush(stdout);
+}
 
 int main(int argc, char **argv)
 {
+    qInstallMessageHandler(HandleQDebugMessageOutput);
+
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
