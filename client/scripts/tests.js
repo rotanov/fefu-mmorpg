@@ -38,7 +38,7 @@ define(["jquery"], function($) {
             type: "post",
             dataType: "json", 
             url: location.href,
-            data: JSON.stringify({"action": "clear"}),
+            data: JSON.stringify({"action": "clearDb"}),
             success:  function (data){
                 console.log("success");         
             },
@@ -55,7 +55,7 @@ define(["jquery"], function($) {
             enterJson = {
                 "action": "register",
                 "login": "Apple", 
-                "password": "123",
+                "password": "123123",
             };
             etalonJson = {
                 "result": "ok"
@@ -100,7 +100,7 @@ define(["jquery"], function($) {
             enterJson = {
                 "action": "login",
                 "login": "Apple", 
-                "password": "123",
+                "password": "123123",
             };
             etalonJson = {
                 "result": "ok"
