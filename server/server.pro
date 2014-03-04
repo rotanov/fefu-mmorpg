@@ -12,7 +12,6 @@ QMAKE_CXXFLAGS += -std=c++11
 INCLUDEPATH += \
     ../3rd/qhttpserver \
     ../3rd/QtWebsocket \
-    ../3rd/rapidjson \
 
 LIBS += -L../3rd/lib
 DESTDIR = ../bin
