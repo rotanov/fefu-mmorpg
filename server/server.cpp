@@ -13,10 +13,13 @@
 #include <iostream>
 
 QMap<QString, QString> db;
-size_t minPrasswordLength = 3;
+size_t minPrasswordLength = 6;
+size_t maxPrasswordLength = 36;
 void Authentication(QByteArray data_, QHttpResponse* resp);
 QVariantMap Registration(QString userLogin, QString userPassword);
 QVariantMap Login(QString userLogin, QString userPassword);
+QVariantMap Logout();
+
 
 /// Server
 
@@ -99,6 +102,14 @@ void Authentication(QByteArray data_, QHttpResponse* resp)
         db.clear();
         return;
     }
+    if (!QString::compare(iter.value().toString(), QString("logout")))
+    {
+         QJsonDocument json;
+         json = QJsonDocument::fromVariant(Logout());
+         resp->writeHead(200);
+         resp->end(json.toJson());
+         return;
+    }
     QString userLogin = jsonData.find("login").value().toString();
     QString userPassword = jsonData.find("password").value().toString();
 
@@ -135,7 +146,8 @@ QVariantMap Registration(QString userLogin, QString userPassword)
     {
         answer.insert("result", "badLogin");
     }
-    else if (userPassword.length() < minPrasswordLength)
+    else if (userPassword.length() < minPrasswordLength
+            || userPassword.length() > maxPrasswordLength)
     {
         answer.insert("result", "badPassword");
     }
@@ -163,5 +175,12 @@ QVariantMap Login(QString userLogin, QString userPassword)
         answer.insert("result", "ok");
         /*start session*/
     }
+    return answer;
+}
+
+QVariantMap Logout()
+{
+    QVariantMap answer;
+    answer.insert("result", "ok");
     return answer;
 }

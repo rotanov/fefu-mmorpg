@@ -39,6 +39,9 @@
         <input type="button" value="login" id="login" name="submit"/>
         <input type="button" value="test" id="test" name="submit"/>
     </form>
+	<form id="formexit" >
+		<input type="button" id="logout" value="Exit" name="submit" style="visibility: hidden"/> 
+	</form>
 </div>
 
 <script type="text/javascript">
@@ -59,6 +62,10 @@
                 var items = [];
                 $.each(data, function(key, val){
                     items.push("<li>" + key + " " + val + "</li>");
+					if (val=="ok") {
+						var obBut = document.getElementById("logout");
+						obBut.style.visibility = "visible"; 
+					}
                 });
                 $("<ul/>", {
                     html: items.join("")
@@ -69,6 +76,28 @@
             }
         });
     }
+	function Exit() {
+		var js = {
+            "action": "logout",
+        }
+		$.ajax({
+            type: "post",
+            dataType: "json", 
+            url: location.href,
+            data: JSON.stringify(js),
+            ContentType: "application/json; charset=utf-8",
+            success:  function (data){
+				$("#formexit").hide();
+                var items = [];
+                $.each(data, function(key, val){
+                    items.push("<li>" + key + " " + val + "</li>");
+                });
+                $("<ul/>", {
+                    html: items.join("")
+                }).appendTo("#content");
+            }
+        });
+	}
     $("#register").click(function(){
         json("register");
     });
@@ -77,6 +106,9 @@
     });
     $("#test").click(function(){
         runTests();
+    });
+	$("#logout").click(function(){
+        Exit();
     });
 </script>
 
