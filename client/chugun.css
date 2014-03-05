@@ -1,8 +1,8 @@
 textarea
 {
-  margin-right:auto;
-  margin-left:auto;
-  width:100%;
+  margin-right: auto;
+  margin-left: auto;
+  width: 100%;
   font-family: 'Verdana', Fallback, sans-serif;
 }
 
@@ -10,28 +10,6 @@ body
 {
   margin: 0;
   padding: 0 0 0 500;
-}
-
-div#left-sidebar
-{
-  position: absolute;
-  top:0;
-  left:0;
-  padding-top: 20px;
-  padding-left: 20px;
-  padding-right: 20px;
-  height:100%;
-  /*background-color: #bfdc7a;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#bfdc7a), to(#8ebf45)); 
-  background-image: -webkit-linear-gradient(top, #bfdc7a, #8ebf45); 
-  background-image:    -moz-linear-gradient(top, #bfdc7a, #8ebf45); 
-  background-image:     -ms-linear-gradient(top, #bfdc7a, #8ebf45); 
-  background-image:      -o-linear-gradient(top, #bfdc7a, #8ebf45);
-  color: #6a6340;
-  -webkit-box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.3);
-  -moz-box-shadow:    0px 0px 3px rgba(0, 0, 0, 0.3);
-  box-shadow:         0px 0px 3px rgba(0, 0, 0, 0.3);*/
-  display: inline-block;
 }
 
 label
@@ -58,34 +36,54 @@ label
 
 h1, form
 {
-  font-family: "Asap",Helvetica,Arial,sans-serif;
+  font-family: "Asap", Helvetica, Arial, sans-serif;
 }
 
-/*@media screen
+.div-top
 {
-  body>div#left-sidebar
-  {
-    position: fixed;
-  }
-}*/
-
-@media screen
-{
-  body>div#content
-  {
-    /*position: fixed;*/
-	margin-left: 280px; 
-	margin-top: 20px; 
-  }
+  float: right;
 }
 
 * html body
 {
-  overflow: hidden;    
+  overflow: hidden;
 }
 
-* html div#content
+#formregister
 {
+  position: absolute;
+  top: 0px;
+  padding: 15px 3% 15px 3%;
+  margin: 35px 35px 0 0;
+  background: rgb(247, 247, 247);
+  border: 1px solid rgba(147, 184, 189,0.8);
+  box-shadow:
+  0pt 2px 5px rgba(105, 108, 109,  0.7),
+  0px 0px 8px 5px rgba(208, 223, 226, 0.4) inset;
+  border-radius: 5px;
+ }
+
+#formregister
+{
+  z-index: 22;
+}
+
+#container
+{
+  width: 100%;
   height: 100%;
-  overflow: auto;
+  position: relative;
+}
+
+#content-top
+{
+  line-height: 15px;
+  width: 100%;
+  margin-top: -60px;
+  text-align: right;
+}
+
+#content-top a
+{
+  text-decoration: none;
 }

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <head>
 <title>Authorization</title>
 <meta charset="UTF-8">
@@ -11,49 +11,55 @@
       type="text/css"
       media="screen"
       charset="utf-8"/>
-	  
+
 <link rel="stylesheet"
       href="mocha.css"
       type="text/css"
       media="screen"
-      charset="utf-8"/>	  
+      charset="utf-8"/>
 
 <script data-main="scripts/main"
         src="scripts/require.js"></script>
 </head>
 
 <body>
-<div id="left-sidebar">
-    <div class="navigation">
-        <h1>Authorization</h1>
+
+<div id="container">
+    <div id="content-top">
+        <div class="div-top">
+            <a href=""><input type="button" value="home" name="submit"/></a>
+        </div>
+        <div class="div-top">
+            <input type="button" value="test" id="test" name="submit"/>
+        </div>
+        <div class="div-top">
+            <input type="button" id="logout" value="exit" name="submit" style="visibility: hidden"/>
+        </div>
     </div>
-</div>
 
-<div id="content">
-    <form id="formregister">
-        <div class="formrow">
-            <label for="username">Login</label>
-            <input type="text" id="username" name="login"/>
-        </div>          
+    <div id="content">
+        <form id="formregister">
+            <div class="formrow">
+                <label for="username">Login</label>
+                <input type="text" id="username" name="login"/>
+            </div>
 
-        <div class="formrow">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password"/>
-        </div>              
+            <div class="formrow">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password"/>
+            </div>
 
-        <input type="button" value="register" id="register" name="submit"/>
-        <input type="button" value="login" id="login" name="submit"/>
-        <input type="button" value="test" id="test" name="submit"/>
-    </form>
-	<form id="formexit" >
-		<input type="button" id="logout" value="Exit" name="submit" style="visibility: hidden"/> 
-	</form>
-	<div id="mocha"></div>
+            <input type="button" value="register" id="register" name="submit"/>
+            <input type="button" value="login" id="login" name="submit"/>
+        </form>
+        <div id="result"></div>
+    </div>
+    <div id="mocha"></div>
 </div>
 
 <footer id="footer">
 </footer>
 
-</body> 
+</body>
 
 </html>

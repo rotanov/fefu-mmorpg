@@ -1,22 +1,21 @@
 require(["jquery", "authorization", "test"], function($, auth, test) {
 
-    $("#register").click(function(){
-        auth.json("register");
+    $("#register").click(function() {
+        auth.handle("register");
     });
-    $("#login").click(function(){
-        auth.json("login");
+    $("#login").click(function() {
+        auth.handle("login");
     });
-    $("#test").click(function(){
-        $("#formregister").hide();
+    $("#test").click(function() {
+        $("#content").hide();
         test.runTests();
     });
-    $("#logout").click(function(){
-        auth.Exit();
+    $("#logout").click(function() {
+        auth.exit();
     });
-	 $("#Ok").click(function()
-	{
-		var url = document.getElementById('href');
-		window.location = url.value;
-	})
+    $("#Ok").click(function() {
+        var url = document.getElementById("href");
+        window.location = url.value;
+    })
 
 });

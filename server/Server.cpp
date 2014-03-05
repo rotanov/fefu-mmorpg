@@ -182,8 +182,8 @@ void GameServer::HandleRegister(const QVariantMap& request, QVariantMap& respons
         WriteResult_(response, EFEMPResult::LOGIN_EXISTS);
     }
     else if (!rx.exactMatch(login)
-             || login.size() < minLoginLength_
-             || login.size() > maxLoginLength_)
+             /*|| login.size() < minLoginLength_
+             || login.size() > maxLoginLength_*/)
     {
         WriteResult_(response, EFEMPResult::BAD_LOGIN);
     }
