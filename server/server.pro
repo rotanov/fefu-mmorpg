@@ -19,17 +19,17 @@ CONFIG(debug, debug|release) {
     DEFINES += \
         _DEBUG \
 
+    LIBS += -lQtWebsocketd
     LIBS += -lqhttpserverd
     TARGET = server-debug
 
 } else {
 
+    LIBS += -lQtWebsocket
     LIBS += -lqhttpserver
     TARGET = server-release
 
 }
-
-LIBS += -lQtWebsocket
 
 SOURCES += Server.cpp \
     ServerThreaded.cpp \
