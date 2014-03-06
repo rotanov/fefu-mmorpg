@@ -9,9 +9,10 @@ require(["jquery", "authorization", "test"], function($, auth, test) {
     $("#test").click(function() {
         $("#content").hide();
         test.runTests();
+        test.clearDB();
     });
     $("#logout").click(function() {
-        auth.exit();
+        auth.handle("logout");
     });
     $("#Ok").click(function() {
         var url = document.getElementById("href");

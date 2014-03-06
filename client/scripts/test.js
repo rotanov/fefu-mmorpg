@@ -1,6 +1,5 @@
 ﻿define(["jquery", "mocha", "chai"], function($, m, chai) {
 
-
     function serverHandler(enterJson) {
         var response;
         $.ajax({
