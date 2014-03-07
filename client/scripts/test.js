@@ -42,7 +42,7 @@
             mocha.setup("bdd");
             var assert = chai.assert;
 
-            describe.only("Testing request handler [function handle()]", function() {
+            describe.only("Testing request handler [function jsonHandle()]", function() {
                 var enterJson1 = {
                     "action": "register",
                     "login": "IvanPes",

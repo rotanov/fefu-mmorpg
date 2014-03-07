@@ -1,10 +1,10 @@
 require(["jquery", "authorization", "test"], function($, auth, test) {
 
     $("#register").click(function() {
-        auth.handle("register");
+        auth.jsonHandle("register", auth.registerCallback);
     });
     $("#login").click(function() {
-        auth.handle("login");
+        auth.jsonHandle("login", auth.loginCallback);
     });
     $("#test").click(function() {
         $("#content").hide();
@@ -12,7 +12,7 @@ require(["jquery", "authorization", "test"], function($, auth, test) {
         test.clearDB();
     });
     $("#logout").click(function() {
-        auth.handle("logout");
+        auth.jsonHandle("logout", auth.logoutCallback);
     });
     $("#Ok").click(function() {
         var url = document.getElementById("href");

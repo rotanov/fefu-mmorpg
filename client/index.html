@@ -33,11 +33,12 @@
             <input type="button" value="test" id="test" name="submit"/>
         </div>
         <div class="div-top">
-            <input type="button" id="logout" value="exit" name="submit" style="visibility: hidden"/>
+            <input type="button" id="logout" value="exit" name="submit" class="hide"/>
         </div>
     </div>
 
     <div id="content">
+        <h3>Sing up / sing in</h3>
         <form id="formregister">
             <div class="formrow">
                 <label for="username">Login</label>
@@ -49,12 +50,12 @@
                 <input type="password" id="password" name="password"/>
             </div>
 
-            <input type="button" value="register" id="register" name="submit"/>
-            <input type="button" value="login" id="login" name="submit"/>
+            <input type="button" value="sign up" id="register" name="submit"/>
+            <input type="button" value="sign in" id="login" name="submit"/>
         </form>
-        <div id="result"></div>
     </div>
     <div id="mocha"></div>
+    <div id="serverAnswer"></div>
 </div>
 
 <footer id="footer">

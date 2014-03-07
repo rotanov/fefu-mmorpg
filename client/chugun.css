@@ -51,7 +51,6 @@ h1, form
 
 #formregister
 {
-  position: absolute;
   top: 0px;
   padding: 15px 3% 15px 3%;
   margin: 35px 35px 0 0;
@@ -61,18 +60,22 @@ h1, form
   0pt 2px 5px rgba(105, 108, 109,  0.7),
   0px 0px 8px 5px rgba(208, 223, 226, 0.4) inset;
   border-radius: 5px;
- }
-
-#formregister
-{
   z-index: 22;
-}
+  float: left;
+  position: absolute;
+ }
 
 #container
 {
   width: 100%;
   height: 100%;
   position: relative;
+}
+
+#content
+{
+
+  display: block;
 }
 
 #content-top
@@ -86,4 +89,23 @@ h1, form
 #content-top a
 {
   text-decoration: none;
+}
+
+#serverAnswer
+{
+  text-align: left;
+  float: left;
+  display: block;
+  position: relative;
+  margin: 160px 0px 0px 0px;
+}
+
+.show
+{
+  visibility: visible;
+}
+
+.hide
+{
+  visibility: hidden;
 }
