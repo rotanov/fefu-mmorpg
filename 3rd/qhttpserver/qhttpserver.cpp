@@ -101,7 +101,7 @@ void QHttpServer::newConnection()
 
     while (m_tcpServer->hasPendingConnections()) {
         QHttpConnection *connection =
-            new QHttpConnection(m_tcpServer->nextPendingConnection(), this);
+            new QHttpConnection(m_tcpServer->nextPendingConnection(), m_tcpServer);
         connect(connection, SIGNAL(newRequest(QHttpRequest *, QHttpResponse *)), this,
                 SIGNAL(newRequest(QHttpRequest *, QHttpResponse *)));
     }
