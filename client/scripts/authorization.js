@@ -51,21 +51,21 @@ define(["jquery"], function($) {
                     "password": $("#password").val(),
                 }
             }
-            $.ajax({
-            type: "post",
-            dataType: "json",
-            url: url,
-            data: JSON.stringify(js),
-            ContentType: "application/json; charset=utf-8",
-            success: function(data) {
-                    document.getElementById("formregister").reset();
-                    $("#server-answer").empty();
-                    callback(data);
-            },
-            error: function(ajaxRequest, ajaxOptions, thrownError) {
-                    console.log(thrownError);
-            }
-         });
+			
+            var xml = new XMLHttpRequest();
+            xml.open("POST", url, true);
+            xml.responseType = "json";
+			
+            xml.onload = function() {
+                document.getElementById("formregister").reset();
+                $("#server-answer").empty();
+                callback(this.response);
+			};			
+
+            xml.onerror = function() {
+            console.log(response);
+            };
+            xml.send(JSON.stringify(js));
         }
     };
 

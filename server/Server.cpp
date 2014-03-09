@@ -63,6 +63,7 @@ void Server::handleRequest(QHttpRequest *request, QHttpResponse *response)
             auto path = request->path();
             qDebug() << path;
 
+            response->setHeader("Access-Control-Allow-Origin", "*");
             response->setHeader("Cache-control", "no-cache, no-store");
 
             auto extension = QFileInfo(path).suffix();
@@ -136,6 +137,7 @@ void Server::dataEnd()
 
     emit newFEMPRequest(request, response);
 
+    response_->setHeader("Access-Control-Allow-Origin", "*");
     response_->setHeader("Content-Type", "application/json; charset=utf-8");
     response_->writeHead(QHttpResponse::STATUS_OK);
     auto responseJSON = QJsonDocument::fromVariant(response).toJson();
