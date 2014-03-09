@@ -19,9 +19,25 @@ Server::Server()
 {
     httpServer_ = new QHttpServer(this);
     connect(httpServer_
-            , SIGNAL(newRequest(QHttpRequest*, QHttpResponse*))
+            , &QHttpServer::newRequest
             , this
-            , SLOT(handleRequest(QHttpRequest*, QHttpResponse*)));
+            , &Server::handleRequest);
+
+    int port = WS_PORT;
+    wsServer_ = new QtWebsocket::QWsServer(this);
+    if (!wsServer_->listen(QHostAddress::Any, port))
+    {
+        std::cout << QObject::tr("Error: Can't launch server").toStdString() << std::endl;
+        std::cout << QObject::tr("QWsServer error : %1").arg(wsServer_->errorString()).toStdString() << std::endl;
+    }
+    else
+    {
+        std::cout << QObject::tr("Server is listening port %1").arg(port).toStdString() << std::endl;
+    }
+    QObject::connect(wsServer_
+                     , SIGNAL(newConnection())
+                     , this
+                     , SLOT(processNewWSConnection()));
 }
 
 Server::~Server()
@@ -29,9 +45,16 @@ Server::~Server()
     delete httpServer_;
 }
 
+// KLUDGE: shall fail for multiple clients with different host
+static QString host = "";
+
 void Server::handleRequest(QHttpRequest *request, QHttpResponse *response)
 {
     auto method = request->method();
+    QRegExp ipFromHost("(.*):.*");
+    host = request->header("host");
+    ipFromHost.indexIn(host);
+    host = ipFromHost.cap(1);
 
     switch (method)
     {
@@ -86,8 +109,15 @@ void Server::handleRequest(QHttpRequest *request, QHttpResponse *response)
         case QHttpRequest::HTTP_POST:
         {
             response_ = response;
-            connect(request, SIGNAL(end()), this, SLOT(dataEnd()));
-            connect(request, SIGNAL(data(QByteArray)), this, SLOT(data(QByteArray)));
+            connect(request
+                    , &QHttpRequest::end
+                    , this
+                    , &Server::dataEnd);
+
+            connect(request
+                    , &QHttpRequest::data
+                    , this
+                    , &Server::data);
         }
             break;
 
@@ -116,6 +146,25 @@ void Server::dataEnd()
     data_.clear();
 }
 
+void Server::processNewWSConnection()
+{
+    std::cout << QObject::tr("Client connected").toStdString() << std::endl;
+
+    // Get the connecting socket
+    QtWebsocket::QWsSocket* socket = wsServer_->nextPendingConnection();
+
+    // Create a new thread and giving to him the socket
+    SocketThread* thread = new SocketThread(socket);
+
+    // connect for message broadcast
+    QObject::connect(socket, SIGNAL(frameReceived(QString)), this, SIGNAL(broadcastMessage(QString)));
+    QObject::connect(this, SIGNAL(broadcastMessage(QString)), thread, SLOT(sendMessage(QString)));
+
+    // Starting the thread
+    thread->start();
+}
+
+
 void Server::data(const QByteArray& data)
 {
     data_.append(data);
@@ -125,7 +174,7 @@ void Server::Start()
 {
     if (!running_)
     {
-        running_ = httpServer_->listen(port_);
+        running_ = httpServer_->listen(HTTP_PORT);
 
         if (!running_)
         {
@@ -177,7 +226,7 @@ void GameServer::HandleRegister(const QVariantMap& request, QVariantMap& respons
         }
     }
 
-    if (db.find(login) != db.end())
+    if (db_.find(login) != db_.end())
     {
         WriteResult_(response, EFEMPResult::LOGIN_EXISTS);
     }
@@ -196,10 +245,10 @@ void GameServer::HandleRegister(const QVariantMap& request, QVariantMap& respons
     else
     {
         WriteResult_(response, EFEMPResult::OK);
-        db.insert(login, password);
+        db_.insert(login, password);
     }
 
-    for (auto i = db.begin(); i != db.end(); ++i)
+    for (auto i = db_.begin(); i != db_.end(); ++i)
     {
         qDebug() << i.key() << ":" << i.value();
     }
@@ -210,8 +259,8 @@ void GameServer::HandleLogin(const QVariantMap& request, QVariantMap& response)
     auto login = request["login"].toString();
     auto password = request["password"].toString();
 
-    if (db.find(login) == db.end()
-        || db[login] != password)
+    if (db_.find(login) == db_.end()
+        || db_[login] != password)
     {
         WriteResult_(response, EFEMPResult::INVALID_CREDENTIALS);
     }
@@ -223,8 +272,9 @@ void GameServer::HandleLogin(const QVariantMap& request, QVariantMap& response)
         QByteArray id ;
         id.append(QString(qrand()));
         QByteArray sid = QCryptographicHash::hash(id, QCryptographicHash::Md5);
-        sids.insert(sid.toHex(), login);
+        sids_.insert(sid.toHex(), login);
         response["sid"] = sid.toHex();
+        response["webSocket"] = "ws://" + host + ":" + QString::number(Server::WS_PORT);
     }
 }
 
@@ -232,21 +282,21 @@ void GameServer::HandleLogout(const QVariantMap& request, QVariantMap& response)
 {
     auto sid = request["sid"].toByteArray();
 
-    if (sids.find(sid) == sids.end())
+    if (sids_.find(sid) == sids_.end())
     {
         WriteResult_(response, EFEMPResult::BAD_SID);
     }
     else
     {
         WriteResult_(response, EFEMPResult::OK);
-        auto iter = sids.find(sid);
-        sids.erase(iter);
+        auto iter = sids_.find(sid);
+        sids_.erase(iter);
     }
 }
 
 void GameServer::HandleClearDB(const QVariantMap& request, QVariantMap& response)
 {
-    db.clear();
+    db_.clear();
 }
 
 GameServer::GameServer()
@@ -288,4 +338,76 @@ void GameServer::handleFEMPRequest(const QVariantMap& request, QVariantMap& resp
 void GameServer::WriteResult_(QVariantMap& response, const EFEMPResult result)
 {
     response["result"] = fempResultToString[static_cast<unsigned>(result)];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+SocketThread::SocketThread(QtWebsocket::QWsSocket* wsSocket) :
+    socket(wsSocket)
+{
+    // Set this thread as parent of the socket
+    // This will push the socket in the good thread when using moveToThread on the parent
+    if (socket)
+    {
+        socket->setParent(this);
+    }
+
+    // Move this thread object in the thread himsleft
+    // Thats necessary to exec the event loop in this thread
+    moveToThread(this);
+}
+
+SocketThread::~SocketThread()
+{
+}
+
+void SocketThread::run()
+{
+    std::cout << tr("connect done in thread : 0x%1")
+        .arg(QString::number((unsigned int)QThread::currentThreadId(), 16))
+        .toStdString() << std::endl;
+
+    // Connecting the socket signals here to exec the slots in the new thread
+    QObject::connect(socket, SIGNAL(frameReceived(QString)), this, SLOT(processMessage(QString)));
+    QObject::connect(socket, SIGNAL(disconnected()), this, SLOT(socketDisconnected()));
+    QObject::connect(socket, SIGNAL(pong(quint64)), this, SLOT(processPong(quint64)));
+    QObject::connect(this, SIGNAL(finished()), this, SLOT(finished()), Qt::DirectConnection);
+
+    // Launch the event loop to exec the slots
+    exec();
+}
+
+void SocketThread::finished()
+{
+    this->moveToThread(QCoreApplication::instance()->thread());
+    this->deleteLater();
+}
+
+void SocketThread::processMessage(QByteArray message)
+{
+    // ANY PROCESS HERE IS DONE IN THE SOCKET THREAD !
+
+    std::cout << tr("thread 0x%1 | %2")
+        .arg(QString::number((unsigned int)QThread::currentThreadId(), 16))
+        .arg(message).toStdString() << std::endl;
+}
+
+void SocketThread::sendMessage(QByteArray message)
+{
+    socket->write(message);
+}
+
+void SocketThread::processPong(quint64 elapsedTime)
+{
+    std::cout << tr("ping: %1 ms").arg(elapsedTime).toStdString() << std::endl;
+}
+
+void SocketThread::socketDisconnected()
+{
+    std::cout << tr("Client disconnected, thread finished").toStdString() << std::endl;
+
+    // Prepare the socket to be deleted after last events processed
+    socket->deleteLater();
+
+    // finish the thread execution (that quit the event loop launched by exec)
+    quit();
 }

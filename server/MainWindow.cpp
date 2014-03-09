@@ -2,14 +2,11 @@
 #include "ui_mainwindow.h"
 
 #include "DebugStream.hpp"
-#include "server.hpp"
-#include "ServerThreaded.h"
+#include "Server.hpp"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , server_(new Server)
-    , gameServer_(new GameServer)
 {
     ui->setupUi(this);
     this->setWindowTitle("Server Control");
@@ -18,11 +15,13 @@ MainWindow::MainWindow(QWidget *parent)
     debugStreamCout_ = new DebugStream(std::cout, ui->qpteLog);
     debugStreamCerr_ = new DebugStream(std::cerr, ui->qpteLog);
 
+    server_ = new Server;
+    gameServer_ = new GameServer;
 
     connect(server_
-            , SIGNAL(newFEMPRequest(const QVariantMap&, QVariantMap&))
+            , &Server::newFEMPRequest
             , gameServer_
-            , SLOT(handleFEMPRequest(const QVariantMap&, QVariantMap&)));
+            , &GameServer::handleFEMPRequest);
 
 //    ServerThreaded* myThreadedServer = new ServerThreaded;
 

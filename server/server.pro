@@ -32,15 +32,11 @@ CONFIG(debug, debug|release) {
 }
 
 SOURCES += Server.cpp \
-    ServerThreaded.cpp \
-    SocketThread.cpp \
     main.cpp \
     MainWindow.cpp \
     DebugStream.cpp
 
 HEADERS += Server.hpp \
-    ServerThreaded.h \
-    SocketThread.h \
     MainWindow.hpp \
     DebugStream.hpp
 

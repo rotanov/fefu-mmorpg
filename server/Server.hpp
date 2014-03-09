@@ -7,22 +7,59 @@
 #include <QObject>
 #include <QMap>
 #include <QString>
+#include <QtCore>
+#include <QtNetwork>
+#include <QThread>
 
 #include "qhttpserverfwd.h"
+#include "QWsServer.h"
+#include "QWsSocket.h"
+
+class SocketThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    SocketThread(QtWebsocket::QWsSocket* wsSocket);
+    ~SocketThread();
+
+    QtWebsocket::QWsSocket* socket;
+    void run();
+
+private slots:
+    void processMessage(QByteArray message);
+    void sendMessage(QByteArray message);
+    void processPong(quint64 elapsedTime);
+    void socketDisconnected();
+    void finished();
+
+signals:
+    void messageReceived(QString frame);
+
+private:
+
+};
 
 class Server : public QObject
 {
     Q_OBJECT
 
+signals:
+    void broadcastMessage(QString message);
+    void newFEMPRequest(const QVariantMap& request, QVariantMap& response);
+
+public slots:
+    void processNewWSConnection();
+
 public:
+    static const quint16 HTTP_PORT = 6543;
+    static const quint16 WS_PORT = 6544;
+
     Server();
     virtual ~Server();
 
     void Start();
     void Stop();
-
-signals:
-    void newFEMPRequest(const QVariantMap& request, QVariantMap& response);
 
 private slots:
     void handleRequest(QHttpRequest *request, QHttpResponse *response);
@@ -31,11 +68,10 @@ private slots:
 
 private:
     QHttpServer* httpServer_;
+    QtWebsocket::QWsServer* wsServer_;
     QHttpResponse* response_ = NULL;
     QByteArray data_;
-    bool running_ = false;
-
-    static const quint16 port_ = 6543;
+    bool running_ = false;    
 };
 
 enum class EFEMPResult
@@ -73,7 +109,7 @@ public:
     virtual ~GameServer();
 
 public slots:
-    void handleFEMPRequest(const QVariantMap& request, QVariantMap& response);
+    void handleFEMPRequest(const QVariantMap& request, QVariantMap& response);    
 
 private:
     typedef void (GameServer::*HandlerType)(const QVariantMap& request, QVariantMap& response);
@@ -91,6 +127,6 @@ private:
     static const int minLoginLength_ = 2;
     static const int maxLoginLength_ = 36;
 
-    QMap<QString, QString> db;
-    QMap<QByteArray, QString> sids;
+    QMap<QString, QString> db_;
+    QMap<QByteArray, QString> sids_;
 };
