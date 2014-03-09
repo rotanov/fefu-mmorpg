@@ -31,7 +31,7 @@ label
 .formrow
 {
   display: block;
-  margin-bottom: 30px;
+  margin-bottom: 15px;
 }
 
 h1, form
@@ -91,13 +91,13 @@ h1, form
   text-decoration: none;
 }
 
-#serverAnswer
+#server-answer
 {
   text-align: left;
   float: left;
   display: block;
   position: relative;
-  margin: 160px 0px 0px 0px;
+  margin: 180px 0px 0px 0px;
 }
 
 .show

@@ -1,11 +1,13 @@
 require(["jquery", "authorization", "test"], function($, auth, test) {
 
+    var url = $("#server").val();
+
     $("#register").click(function() {
-        auth.jsonHandle("register", auth.registerCallback);
+        auth.jsonHandle("register", auth.registerCallback, url);
     });
 
     $("#login").click(function() {
-        auth.jsonHandle("login", auth.loginCallback);
+        auth.jsonHandle("login", auth.loginCallback, url);
     });
 
     $("#test").click(function() {
@@ -15,16 +17,11 @@ require(["jquery", "authorization", "test"], function($, auth, test) {
     });
 
     $("#logout").click(function() {
-        auth.jsonHandle("logout", auth.logoutCallback);
+        auth.jsonHandle("logout", auth.logoutCallback, url);
     });
 
-    $("#Ok").click(function() {
-        var url = document.getElementById("href");
-        window.location = url.value;
-    })
-
-    $(document).ready(function(){
-        $("#href").attr("value", location.origin);
+    $(document).ready(function() {
+        $("#server").attr("value", location.origin);
     });
 
 });
