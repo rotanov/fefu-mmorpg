@@ -4,11 +4,19 @@
 #include <vector>
 #include <string>
 
+#include <QObject>
 #include <QPlainTextEdit>
 #include <QByteArray>
 
-class DebugStream : public std::basic_streambuf<char>
+class DebugStream
+        : public QObject
+        , public std::basic_streambuf<char>
 {
+    Q_OBJECT
+
+signals:
+    void appendLog(const QString& text);
+
 public:
     DebugStream(std::ostream& stream, QPlainTextEdit* text_edit);
     virtual ~DebugStream();

@@ -4,6 +4,12 @@ DebugStream::DebugStream(std::ostream &stream, QPlainTextEdit *text_edit)
     : stream_(stream)
 {
     logWindow_ = text_edit;
+
+    QObject::connect(this
+                     , &DebugStream::appendLog
+                     , logWindow_
+                     , &QPlainTextEdit::appendPlainText);
+
     oldBuffer_ = stream.rdbuf();
     stream.rdbuf(this);
 }
@@ -13,7 +19,7 @@ DebugStream::~DebugStream()
     // output anything that is left
     if (!string_.empty())
     {
-        logWindow_->appendPlainText(string_.c_str());
+        emit appendLog(QString(string_.c_str()));
     }
 
     stream_.rdbuf(oldBuffer_);
@@ -23,7 +29,7 @@ std::basic_streambuf<char>::int_type DebugStream::overflow(std::basic_streambuf<
 {
     if (v == '\n')
     {
-        logWindow_->appendPlainText(string_.c_str());
+        emit appendLog(QString(string_.c_str()));
         string_.erase(string_.begin(), string_.end());
     }
     else
@@ -45,7 +51,7 @@ std::streamsize DebugStream::xsputn(const char *p, std::streamsize n)
         if (pos != std::string::npos)
         {
             std::string tmp(string_.begin(), string_.begin() + pos);
-            logWindow_->appendPlainText(tmp.c_str());
+            emit appendLog(QString(tmp.c_str()));
             string_.erase(string_.begin(), string_.begin() + pos + 1);
         }
     }
