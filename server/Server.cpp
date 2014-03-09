@@ -382,7 +382,7 @@ void SocketThread::finished()
     this->deleteLater();
 }
 
-void SocketThread::processMessage(QByteArray message)
+void SocketThread::processMessage(QString message)
 {
     // ANY PROCESS HERE IS DONE IN THE SOCKET THREAD !
 
@@ -391,7 +391,7 @@ void SocketThread::processMessage(QByteArray message)
         .arg(message).toStdString() << std::endl;
 }
 
-void SocketThread::sendMessage(QByteArray message)
+void SocketThread::sendMessage(QString message)
 {
     socket->write(message);
 }

@@ -27,8 +27,8 @@ public:
     void run();
 
 private slots:
-    void processMessage(QByteArray message);
-    void sendMessage(QByteArray message);
+    void processMessage(QString message);
+    void sendMessage(QString message);
     void processPong(quint64 elapsedTime);
     void socketDisconnected();
     void finished();
