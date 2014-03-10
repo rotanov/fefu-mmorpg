@@ -124,7 +124,13 @@ void Server::handleRequest(QHttpRequest *request, QHttpResponse *response)
 
         default:
         {
-            qDebug() << "Unsupported HTTP method.";
+            QByteArray body;
+            body = "404 not found";
+            response->setHeader("Content-Length", QString::number(body.size()));
+            response->setHeader("Content-Type", "text/plain; charset=utf-8");
+            response->writeHead(QHttpResponse::STATUS_NOT_FOUND);
+            response->end(body);
+            qDebug() << "Unsupported HTTP method: " << method;
         }
     }
 }

@@ -1,31 +1,34 @@
-require(["jquery", "authorization", "test"], function($, auth, test) {
-    var url = "";
+require(["jquery", "authorization", "test", "utils"], function ($, auth, test, utils) {
+
     $("#register").click(function() {
-        url = $("#server").val();
-        auth.jsonHandle("register", auth.registerCallback, url);
-        $("#server").attr("value", url);
+        auth.jsonHandle("register", auth.registerCallback);
     });
 
     $("#login").click(function() {
-        url = $("#server").val();
-        auth.jsonHandle("login", auth.loginCallback, url);
-        $("#server").attr("value", url);
+        auth.jsonHandle("login", auth.loginCallback);
     });
 
     $("#test").click(function() {
         $("#content").hide();
         test.runTests();
-        test.clearDB();
     });
 
-    $("#logout").click(function(){
-        url = $("#server").val();
-        auth.jsonHandle("logout", auth.logoutCallback, url);
-        $("#server").attr("value", url);
+    $("#logout").click(function() {
+        auth.jsonHandle("logout", auth.logoutCallback);
     });
 
     $(document).ready(function() {
-        $("#server").attr("value", location.origin);
+        $("#server-address").change(function() {
+            utils.setServerAddress($("#server-address").val());
+        });
+
+        var serverAddress = location.origin
+        if (location.protocol == "file:") {
+            serverAddress = "http://localhost:6543";
+            utils.setServerAddress(serverAddress);
+        }
+
+        $("#server-address").attr("value", serverAddress);
     });
 
 });
