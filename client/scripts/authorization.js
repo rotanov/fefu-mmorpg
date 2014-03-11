@@ -1,8 +1,13 @@
 define(["jquery", "utils"], function ($, utils) {
     var sid;
+    var wsUri;
 
     function getSid() {
         return sid;
+    }
+
+    function getWebSocket() {
+        return wsUri;
     }
 
     function registerCallback(data) {
@@ -42,12 +47,14 @@ define(["jquery", "utils"], function ($, utils) {
         }
 
         sid = data.sid;
+        wsUri = data.webSocket;
     }
 
     function logoutCallback(data) {
         if (data.result == "ok") {
             $("#server-answer").text("Lets to register or sign in.").css("color", "green");
             $("#logout").css("visibility", "hidden");
+            $("#start").css("visibility", "hidden");
 
         } else if (data.result == "badSid") {
             $("#server-answer").text("Invalid session ID.").css("color", "red");

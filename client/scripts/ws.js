@@ -1,6 +1,6 @@
 define(["jquery", "authorization"], function ($, auth) {
 
-    var wsUri = "ws://localhost:6544";
+    var wsUri = auth.getWebSocket();
     var id = null;
     var sid = auth.getSid();
     var tick = null;
