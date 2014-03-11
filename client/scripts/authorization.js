@@ -40,7 +40,8 @@ define(["jquery", "utils", "ws", "games"], function ($, utils, ws, games) {
         sid = data.sid;
         wsUri = data.webSocket;
         ws.startGame(sid, wsUri);
-        location.href = "http://localhost:6543/map.html";
+        var url = location.href
+        location.href = url.replace(url.substr(url.lastIndexOf("/") + 1), "map.html");
     }
 
     function logoutCallback(data) {

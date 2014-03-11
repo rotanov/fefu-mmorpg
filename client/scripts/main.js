@@ -25,10 +25,10 @@ require(["jquery","phaser", "authorization", "test", "utils", "ws", "games"], fu
         var serverAddress = location.origin
         if (location.protocol == "file:") {
             serverAddress = "http://localhost:6543";
-            utils.setServerAddress(serverAddress);
         }
 
         $("#server-address").attr("value", serverAddress);
+        utils.setServerAddress(serverAddress);
     });
 
 });
