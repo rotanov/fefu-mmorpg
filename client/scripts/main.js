@@ -17,10 +17,6 @@ require(["jquery", "authorization", "test", "utils", "ws"], function ($, auth, t
         auth.jsonHandle("logout", auth.logoutCallback);
     });
 
-    $("#start").click(function() {
-        ws.startGame();
-    });
-
     $(document).ready(function() {
         $("#server-address").change(function() {
             utils.setServerAddress($("#server-address").val());

@@ -1,8 +1,6 @@
 define(["jquery", "authorization"], function ($, auth) {
 
-    var wsUri = auth.getWebSocket();
     var id = null;
-    var sid = auth.getSid();
     var tick = null;
     var soket = null;
     var dictionary;
@@ -32,7 +30,7 @@ define(["jquery", "authorization"], function ($, auth) {
 
     var actor = new Actor(id);
 
-    function startGame() {
+    function startGame(sid, wsUri) {
 
         if (!window.WebSocket) {
             document.body.innerHTML = "WebSocket is not supported.";

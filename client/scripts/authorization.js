@@ -1,14 +1,6 @@
-define(["jquery", "utils"], function ($, utils) {
+define(["jquery", "utils", "ws"], function ($, utils, ws) {
     var sid;
     var wsUri;
-
-    function getSid() {
-        return sid;
-    }
-
-    function getWebSocket() {
-        return wsUri;
-    }
 
     function registerCallback(data) {
 
@@ -40,7 +32,6 @@ define(["jquery", "utils"], function ($, utils) {
         if(data.result == "ok") {
             $("#server-answer").text("Authentication is successful.").css("color", "green");
             $("#logout").css("visibility", "visible");
-            $("#start").css("visibility", "visible");
 
         } else if (data.result == "invalidCredentials") {
             $("#server-answer").text("Invalid login or password.").css("color", "red");
@@ -48,13 +39,13 @@ define(["jquery", "utils"], function ($, utils) {
 
         sid = data.sid;
         wsUri = data.webSocket;
+        ws.startGame(sid, wsUri);
     }
 
     function logoutCallback(data) {
         if (data.result == "ok") {
             $("#server-answer").text("Lets to register or sign in.").css("color", "green");
             $("#logout").css("visibility", "hidden");
-            $("#start").css("visibility", "hidden");
 
         } else if (data.result == "badSid") {
             $("#server-answer").text("Invalid session ID.").css("color", "red");
@@ -87,8 +78,7 @@ define(["jquery", "utils"], function ($, utils) {
         registerCallback: registerCallback,
         loginCallback: loginCallback,
         logoutCallback: logoutCallback,
-        jsonHandle: jsonHandle,
-        getSid: getSid
+        jsonHandle: jsonHandle
     };
 
 });
