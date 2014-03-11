@@ -1,6 +1,6 @@
-require(["jquery", "authorization"], function ($, auth) {
+define(["jquery", "authorization"], function ($, auth) {
 
-    var wsUri = "ws://localhost:6544"
+    var wsUri = "ws://localhost:6544";
     var id = null;
     var sid = auth.getSid();
     var tick = null;
@@ -22,13 +22,13 @@ require(["jquery", "authorization"], function ($, auth) {
         };
 
         this.move = function(direction) {
-            soket.send(JSON.stringify({
+            socket.send(JSON.stringify({
                 "action": "move",
                 "direction": direction,
                 "tick": tick
             }));
         };
-    };
+    }
 
     var actor = new Actor(id);
 
@@ -42,11 +42,11 @@ require(["jquery", "authorization"], function ($, auth) {
 
         socket.onopen = function() {
             console.log("Connection open.");
-            soket.send(JSON.stringify({
+            socket.send(JSON.stringify({
                 action: "examine", 
                 id: actor.id
             }));
-            soket.send(JSON.stringify({
+            socket.send(JSON.stringify({
                 action: "getDictionary"
             }));
         }
@@ -118,12 +118,12 @@ require(["jquery", "authorization"], function ($, auth) {
                     actor.move("south");
                     console.log("down")
                     break;
-            }
+            };
         }
     }
 
     return {
         startGame: startGame
-    }
+    };
 
 });
