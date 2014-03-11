@@ -1,4 +1,4 @@
-define(["jquery", "utils", "ws"], function ($, utils, ws) {
+define(["jquery", "utils", "ws", "games"], function ($, utils, ws, games) {
     var sid;
     var wsUri;
 
@@ -40,6 +40,7 @@ define(["jquery", "utils", "ws"], function ($, utils, ws) {
         sid = data.sid;
         wsUri = data.webSocket;
         ws.startGame(sid, wsUri);
+        location.href = "http://localhost:6543/map.html";
     }
 
     function logoutCallback(data) {

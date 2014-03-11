@@ -1,4 +1,4 @@
-require(["jquery", "authorization", "test", "utils", "ws"], function ($, auth, test, utils, ws) {
+require(["jquery","phaser", "authorization", "test", "utils", "ws", "games"], function ($,phaser, auth, test, utils, ws, games) {
 
     $("#register").click(function() {
         auth.jsonHandle("register", auth.registerCallback);
