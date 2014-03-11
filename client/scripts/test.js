@@ -16,8 +16,7 @@
 
     return {
         clearDB: clearDB,
-        runTests: function()
-        {
+        runTests: function() {
             document.title = "test";
             mocha.setup("bdd");
             var assert = chai.assert;

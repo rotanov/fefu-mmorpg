@@ -28,13 +28,12 @@ define(["jquery", "mocha", "chai"], function ($, mocha, chai) {
                         console.log("postRequest: failure");
                     }
                 }
-            };            
+            };
         }
-        
+
         xml.send(JSON.stringify(object));
 
-        if (sync)
-        {
+        if (sync) {
             if(xml.status === 200) {
                 if (onLoad) {
                     onLoad($.parseJSON(xml.responseText));
@@ -44,7 +43,7 @@ define(["jquery", "mocha", "chai"], function ($, mocha, chai) {
                 console.log("postRequest: failure");
             }
         }
-    }    
+    }
 
     return {
         getServerAddress: getServerAddress,

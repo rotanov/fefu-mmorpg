@@ -1,6 +1,10 @@
 define(["jquery", "utils"], function ($, utils) {
     var sid;
 
+    function getSid() {
+        return sid;
+    }
+
     function registerCallback(data) {
 
         var serverAnswer = $("#server-answer");
@@ -31,6 +35,7 @@ define(["jquery", "utils"], function ($, utils) {
         if(data.result == "ok") {
             $("#server-answer").text("Authentication is successful.").css("color", "green");
             $("#logout").css("visibility", "visible");
+            $("#start").css("visibility", "visible");
 
         } else if (data.result == "invalidCredentials") {
             $("#server-answer").text("Invalid login or password.").css("color", "red");
@@ -41,7 +46,7 @@ define(["jquery", "utils"], function ($, utils) {
 
     function logoutCallback(data) {
         if (data.result == "ok") {
-            $("#server-answer").text("Lets to sign up or sign in.").css("color", "green");
+            $("#server-answer").text("Lets to register or sign in.").css("color", "green");
             $("#logout").css("visibility", "hidden");
 
         } else if (data.result == "badSid") {
@@ -75,7 +80,8 @@ define(["jquery", "utils"], function ($, utils) {
         registerCallback: registerCallback,
         loginCallback: loginCallback,
         logoutCallback: logoutCallback,
-        jsonHandle: jsonHandle
+        jsonHandle: jsonHandle,
+        getSid: getSid
     };
 
 });

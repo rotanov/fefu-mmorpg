@@ -1,4 +1,4 @@
-require(["jquery", "authorization", "test", "utils"], function ($, auth, test, utils) {
+require(["jquery", "authorization", "test", "utils", "ws"], function ($, auth, test, utils, ws) {
 
     $("#register").click(function() {
         auth.jsonHandle("register", auth.registerCallback);
@@ -15,6 +15,10 @@ require(["jquery", "authorization", "test", "utils"], function ($, auth, test, u
 
     $("#logout").click(function() {
         auth.jsonHandle("logout", auth.logoutCallback);
+    });
+
+    $("#start").click(function() {
+        ws.startGame();
     });
 
     $(document).ready(function() {
