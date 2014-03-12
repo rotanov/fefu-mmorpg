@@ -2,205 +2,164 @@ define(["phaser", "utils", "ws"],
 function (phaser, utils, ws) {
 
     var game = null;
-    var dictionary = null;
-
-        
-
-    function Start() { 
-        // 640, 480
-         game = new phaser.Game(1024, 600, phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update});
-    }
-
-    function requestDictionary() {
-        return JSON.stringify( {
-                 ".": "grass",
-                 "#": "wall",
-            });
-
-    }
-
-    function requestLook() {
-        return JSON.stringify({"map":
-                        [
-                            ["#", "#", ".", "#", "#", "#"],
-                            [".", ".", ".", ".", ".", "."],
-                            [".", ".", ".", ".", ".", "."],
-                            [".", ".", ".", ".", ".", "."]
-                        ],
-                "actors": [
-                        {"type": "player",
-                        "id": 1,
-                        "x": 4,
-                        "y": 2 }           
-                ]        
-            });
-    }
-
-    function requestLook1() {
-        return JSON.stringify({"map":
-                        [
-                            ["#", "#", ".", "#", "#", "."],
-                            [".", ".", ".", ".", ".", "."],
-                            [".", ".", ".", ".", ".", "."],
-                            [".", ".", ".", ".", ".", "."]
-                        ],
-                "actors": [
-                        {"type": "player",
-                        "id": 1,
-                        "x": 5,
-                        "y": 2 }           
-                ]        
-            });
-    }
     var dictionary;
 
-    function DictionaryParser() {
-        var data = JSON.parse(requestDictionary());
-        if (data["."])
-            game.load.image(data["."], 'assets/'+data["."]+'.png');
-        if (data["#"])    
-            game.load.image(data["#"], 'assets/'+data["#"]+'.png');
-        dictionary = data;   
-    }
-
-    function preload() {
-        DictionaryParser();
-        game.load.image('player', 'assets/tank4.png');
-    }
-
-    function createPlayer(x, y) {
-        var bet = game.add.sprite(x, y, 'player');
-        bet.anchor.setTo(0.5, 0.5);
-        bet.body.collideWorldBounds = true;
-        bet.body.bounce.setTo(1, 1);
-        bet.body.immovable = true
-        return bet;
-    }
-
-    var player;
     var upKey;
     var downKey;
     var leftKey;
     var rightKey;
+
     var stepX = 171;
     var stepY = 160;
-    var map_object;
-    var object = new Array();
-    var actors = new Array();
 
-    function Render() { 
-        var data = JSON.parse(requestLook());
-        return data;
+    var walls;
+    var player;
+    var actors;
+
+    var currWallsPosition;
+
+    function Start() { 
+        // 640, 480
+        game = new phaser.Game(
+            1024, 600,
+            phaser.AUTO,
+            "",
+            {
+                preload: onPreload,
+                create: onCreate,
+                update: onUpdate
+            }
+        );
     }
 
-    function Render_map(map) {
-        var ans = new Array();
-        for (var i = 0; i < map.length; i++)  {
+    function loadMapElem() {
+        var data = ws.getDictionary();
+        if (data["."])
+            game.load.image(data["."], "assets/" + data["."] + ".png");
+        if (data["#"])
+            game.load.image(data["#"], "assets/" + data["#"] + ".png");
+        dictionary = data;
+    }
+
+    function onPreload() {
+        loadMapElem();
+        game.load.image("player", "assets/tank.png");
+    }
+
+    function onCreate() {
+        game.add.tileSprite(0, 0, 1024, 640, "grass");
+
+        ws.look();
+        setTimeout(
+            function() {
+                var data = ws.getLookData();
+                currWallsPosition = data.map;
+                walls = renderWalls(data.map);
+                //actors = renderActors(data.actors);
+                player = createPlayer(game.world.centerX, game.world.centerY);
+
+                upKey = game.input.keyboard.addKey(phaser.Keyboard.UP);
+                downKey = game.input.keyboard.addKey(phaser.Keyboard.DOWN);
+                leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT);
+                rightKey = game.input.keyboard.addKey(phaser.Keyboard.RIGHT);
+            }, 
+            3000
+        );
+    }
+
+    function onUpdate() {
+        ws.look();
+        setTimeout(
+            function() {
+                var data = ws.getLookData();
+                updateWallsPosition(data.map);
+                //updateActorsPosition(data.actors);
+
+                if (upKey.isDown)  {
+                   player.y--;
+
+                } else if (downKey.isDown) {
+                    player.y++;
+                }
+
+                if (leftKey.isDown) {
+                    player.x--;
+
+                } else if (rightKey.isDown) {
+                    player.x++;
+                }
+            },
+            3000
+        );
+    }
+
+    function createPlayer(x, y) {
+        var actor = game.add.sprite(x, y, "player");
+        //actor.anchor.setTo(0.5, 0.5);
+        //actor.body.collideWorldBounds = true;
+        //actor.body.bounce.setTo(1, 1);
+        //actor.body.immovable = true
+        return actor;
+    }
+
+    function renderWalls(map) {
+        var result = new Array();
+        for (var i = 0; i < map.length; i++) {
             for (var j = 0; j < map[i].length; j++ ) {
-                if (map[i][j] == "#"){
-                    ans.push(game.add.sprite(j*stepY, i*stepX, 'wall'));
-                    ans[ans.length-1].inputEnabled = true;
+                if (map[i][j] == "#") {
+                    result.push(game.add.sprite(j*stepY, i*stepX, "wall"));
                 }
-            
             }
         }
-        return ans;
+        return result;
     }
 
-    function Render_actors(map) {
-        var ans = new Array();
-        for (var i = 0; i < map.length; i++)  { 
-            var play = map[i];
-            ans[play.id] = game.add.sprite(play.x*stepY, play.y*stepX, play.type);
+    function renderActors(actors) {
+        var result = new Array();
+        for (var i = 0; i < actors.length; i++) {
+            var actor = actors[i];
+            result[actor.id] = game.add.sprite (
+                actor.x * stepY,
+                actor.y * stepX,
+                actor.type
+            );
         }
-        return ans;
+        return result;
     }
 
-    function create() {
-        game.add.tileSprite(0, 0, 1024, 640, 'grass');
-        var data = Render();
-        map_object = data.map;
-        object = Render_map(map_object);
-        actors = Render_actors(data.actors);
-        player = createPlayer(game.world.centerX, game.world.centerY);
-        upKey = game.input.keyboard.addKey(phaser.Keyboard.UP);
-        downKey = game.input.keyboard.addKey(phaser.Keyboard.DOWN);
-        leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT);
-        rightKey = game.input.keyboard.addKey(phaser.Keyboard.RIGHT);
-    }
-
-    function Update_map(map){
+    function updateWallsPosition(map) {
         var count = 0;
-        for (var i = 0; i < map.length; i++)  {
-            for (var j = 0; j < map[i].length; j++ ){
-                if (map[i][j] == "#" && map_object[i][j] != "#"){
-                    object.push(game.add.sprite(j*stepY, i*stepX, 'wall'));
-                }
-                else if (map[i][j] == "." && map_object[i][j] == "#"){
-                    object[count].destroy(); 
-                }
-                else if (map[i][j] == "#" && map_object[i][j] == "#")
+        for (var i = 0; i < map.length; i++) {
+            for (var j = 0; j < map[i].length; j++ ) {
+                if (map[i][j] == "#" && currWallsPosition[i][j] != "#") {
+                    walls.push(game.add.sprite(j*stepY, i*stepX, "wall"));
+
+                } else if (map[i][j] == "." && currWallsPosition[i][j] == "#") {
+                    walls[count].destroy();
+
+                } else if (map[i][j] == "#" && currWallsPosition[i][j] == "#") {
                     count++;
+                }
             }
         }
-        map_object = map;
+        currWallsPosition = map;
     }
 
-    function Update_actors(map){
-        for (var i = 0; i < map.length; i++)  { 
-            var play = map[i];
-            if (actors[play.id]){
-                actors[play.id].x = play.x*stepY;
-                actors[play.id].y = play.y*stepX;
+    function updateActorsPosition(map) {
+        for (var i = 0; i < map.length; i++) {
+            var actor = map[i];
+            if (actors[actor.id]) {
+                actors[actor.id].x = actor.x * stepY;
+                actors[actor.id].y = actor.y * stepX;
+
             } else {
-                actors[play.id] = game.add.sprite(play.x*stepY, play.y*stepX, play.type);
+                actors[actor.id] = game.add.sprite (
+                    actor.x * stepY,
+                    actor.y * stepX,
+                    actor.type
+                );
             }
         }
-    }
-                
-    function update() {
-        // Call this from outside when signal is recieved, not for every frame
-        var data = JSON.parse(requestLook());
-        Update_map(data.map);
-        Update_actors(data.actors);
-        if (upKey.isDown)
-        {
-               
-            //if (Move(north).result == "ok") {
-                player.y--;
-            //} else  {
-            
-           // }
-            
-        }
-        else if (downKey.isDown)
-        {       
-        
-           // if (Move(south).result == "ok") {
-                player.y++;
-           // } else  {
-                
-           // }    
-        }
-
-        if (leftKey.isDown)
-        {
-           // if (Move(west).result == "ok") {
-                player.x--;
-           // } else  {
-            
-          //  }
-        }
-        else if (rightKey.isDown)
-        {
-           // if (Move(east).result == "ok") {
-                player.x++;
-          //  } else  {
-            
-          //  }
-        }
-        
-
     }
 
     return {

@@ -1,9 +1,9 @@
 define(["jquery", "utils", "ws", "game"],
 function ($, utils, ws, game) {
 
+    var id;
     var sid;
     var wsUri;
-    var id;
 
     function registerCallback(data) {
 
@@ -26,16 +26,15 @@ function ($, utils, ws, game) {
 
         } else if (data.result === "badPassword") {
             serverAnswer.text("Password: minimal length is 6 symbols and "
-                + "maximum length is 36 symbols. Any character is "
-                + "allowed except white space and TAB").css("color", "red");
+                + "maximum length is 36 symbols.").css("color", "red");
         }
     }
 
     function loginCallback(data) {
-        if(data.result === "ok") {
-            $("#server-answer").text("Authentication is successful.").css("color", "green");
+        if (data.result === "ok") {
+            //$("#server-answer").text("Authentication is successful.").css("color", "green");
             $("#logout").css("visibility", "visible");
-            $("#formregister").hide();
+            $("#content").hide();
 
         } else if (data.result === "invalidCredentials") {
             $("#server-answer").text("Invalid login or password.").css("color", "red");
@@ -44,9 +43,12 @@ function ($, utils, ws, game) {
         sid = data.sid;
         wsUri = data.webSocket;
         ws.startGame(sid, wsUri);
-        game.start();
-        // var url = location.href;
-        // location.href = url.replace(url.substr(url.lastIndexOf("/") + 1), "map.html");
+        setTimeout(
+            function() {
+                game.start();
+            }, 
+            3000
+        );
     }
 
     function logoutCallback(data) {

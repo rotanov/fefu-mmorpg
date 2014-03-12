@@ -2,10 +2,12 @@ define(["jquery", "authorization"],
 function ($, auth) {
 
     var id = 1;
-    var tick = null;
-    var soket = null;
     var sid_ = null;
+    var tick = null;
+    var socket = null;
+
     var dictionary;
+    var lookData;
 
     function Actor(id) {
         this.id = id;
@@ -45,21 +47,10 @@ function ($, auth) {
 
         socket.onopen = function() {
             console.log("Connection open.");
-            socket.send(JSON.stringify({
-                action: "examine", 
-                id: actor.id,
-                "sid": sid
-            }));
 
             socket.send(JSON.stringify({
                 action: "getDictionary",
-                "sid": sid
-            }));
-
-            socket.send(JSON.stringify({
-                action: "look",
-                id: 1,
-                "sid": sid
+                "sid": sid_
             }));
         }
 
@@ -90,18 +81,17 @@ function ($, auth) {
             } else if (data.result == "badId") {
                 console.log("Error: badId");
 
-            } else if (data.result == "ok") {
-                actor.init(data);
+            /*} else if (data.result == "ok") {
+                actor.init(data);*/
 
             //Get Dictionary
             } else if (data.dictionary) {
                 dictionary = data.dictionary;
-            }
 
             //Look
-            /*  map: [[...]]
-                actors: [{...}, ...]
-            */
+            } else if (data.map/* && data.actors*/) {
+                lookData = data;
+            }
         }
 
         socket.onerror = function(error) {
@@ -113,29 +103,44 @@ function ($, auth) {
                 //Left
                 case 37:
                     actor.move("east");
-                    console.log("left");
                     break;
                 //Up
                 case 38:
                     actor.move("north");
-                    console.log("up");
                     break;
                 //Right
                 case 39:
                     actor.move("west");
-                    console.log("right");
                     break;
                 //Down
                 case 40:
                     actor.move("south");
-                    console.log("down")
                     break;
             };
         }
     }
 
+    function look() {
+        socket.send(JSON.stringify({
+            "action": "look",
+            "id": 1,
+            "sid": sid_
+        }));
+    }
+
+    function getLookData () {
+        return lookData;
+    }
+
+    function getDictionary () {
+        return dictionary;
+    }
+
     return {
-        startGame: startGame
+        startGame: startGame,
+        look: look,
+        getLookData: getLookData,
+        getDictionary: getDictionary
     };
 
 });
