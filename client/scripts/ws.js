@@ -1,8 +1,10 @@
-define(["jquery", "authorization"], function ($, auth) {
+define(["jquery", "authorization"],
+function ($, auth) {
 
-    var id = null;
+    var id = 1;
     var tick = null;
     var soket = null;
+    var sid_ = null;
     var dictionary;
 
     function Actor(id) {
@@ -21,9 +23,10 @@ define(["jquery", "authorization"], function ($, auth) {
 
         this.move = function(direction) {
             socket.send(JSON.stringify({
-                "action": "move",
-                "direction": direction,
-                "tick": tick
+                action: "move",
+                direction: direction,
+                tick: tick,
+                sid: sid_
             }));
         };
     }
@@ -31,6 +34,8 @@ define(["jquery", "authorization"], function ($, auth) {
     var actor = new Actor(id);
 
     function startGame(sid, wsUri) {
+
+        sid_ = sid;
 
         if (!window.WebSocket) {
             document.body.innerHTML = "WebSocket is not supported.";
@@ -42,10 +47,19 @@ define(["jquery", "authorization"], function ($, auth) {
             console.log("Connection open.");
             socket.send(JSON.stringify({
                 action: "examine", 
-                id: actor.id
+                id: actor.id,
+                "sid": sid
             }));
+
             socket.send(JSON.stringify({
-                action: "getDictionary"
+                action: "getDictionary",
+                "sid": sid
+            }));
+
+            socket.send(JSON.stringify({
+                action: "look",
+                id: 1,
+                "sid": sid
             }));
         }
 
@@ -63,7 +77,7 @@ define(["jquery", "authorization"], function ($, auth) {
         socket.onmessage = function(event) {
             var data = JSON.parse(event.data);
 
-            console.log("Data received: " + data);
+            console.log("Data received: " + event.data);
 
             //Tick
             if (data.tick) {
