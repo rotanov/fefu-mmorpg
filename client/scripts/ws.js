@@ -129,11 +129,11 @@ function ($) {
     }
 
     function getLookData () {
-        return lookData;
+        return JSON.stringify(lookData);
     }
 
     function getDictionary () {
-        return dictionary;
+        return JSON.stringify(dictionary);
     }
 
     return {

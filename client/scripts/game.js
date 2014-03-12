@@ -33,7 +33,8 @@ function (phaser, utils, ws) {
     }
 
     function loadMapElem() {
-        var data = ws.getDictionary();
+        var dic = ws.getDictionary();
+        var data = JSON.parse(dic);
         if (data["."])
             game.load.image(data["."], "assets/" + data["."] + ".png");
         if (data["#"])
@@ -52,7 +53,8 @@ function (phaser, utils, ws) {
         ws.look();
         setTimeout(
             function() {
-                var data = ws.getLookData();
+                var response = ws.getLookData();
+                var data = JSON.parse(response);
                 currWallsPosition = data.map;
                 walls = renderWalls(data.map);
                 //actors = renderActors(data.actors);
@@ -71,8 +73,9 @@ function (phaser, utils, ws) {
         ws.look();
         setTimeout(
             function() {
-                var data = ws.getLookData();
-                updateWallsPosition(data.map);
+                var response = ws.getLookData();
+                var data = JSON.parse(response);
+                updateWallsPosition([data.map]);
                 //updateActorsPosition(data.actors);
 
                 if (upKey.isDown)  {
