@@ -1,5 +1,5 @@
-define(["jquery", "authorization"],
-function ($, auth) {
+define(["jquery"],
+function ($) {
 
     var id = 1;
     var sid_ = null;
