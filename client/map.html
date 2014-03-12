@@ -4,7 +4,7 @@
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <script src="scripts/phaser.js"></script>
         <script type="text/javascript">
-         var game = new Phaser.Game(1024,600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update});
+        var game = new Phaser.Game(1024,600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update});
                 function requestDictionary() {
                     return JSON.stringify( {
                              ".": "grass",
@@ -30,6 +30,22 @@
                         })
                 }
                 
+                function requestLook1() {
+                    return JSON.stringify({"map":
+                                    [
+                                        ["#", "#", ".", "#", "#", "."],
+                                        [".", ".", ".", ".", ".", "."],
+                                        [".", ".", ".", ".", ".", "."],
+                                        [".", ".", ".", ".", ".", "."]
+                                    ],
+                            "actors": [
+                                    {"type": "player",
+                                    "id": 1,
+                                    "x": 5,
+                                    "y": 2 }           
+                            ]        
+                        })
+                }
                 var dictionary;
                 
                 function DictionaryParser() {
@@ -62,43 +78,87 @@
                 var rightKey;
                 var stepX = 171;
                 var stepY = 160;
+                var map_object;
                 var object = new Array();
+                var actors = new Array();
                 
-                function Rendering() {
+                function Render() { 
                     var data = JSON.parse(requestLook());
-                    var map = data.map;
+                    return data;
+                }
+                
+                function Render_map(map) {
                     var ans = new Array();
                     for (var i = 0; i < map.length; i++)  {
                         for (var j = 0; j < map[i].length; j++ ) {
                             if (map[i][j] == "#"){
                                 ans.push(game.add.sprite(j*stepY, i*stepX, 'wall'));
+                                ans[ans.length-1].inputEnabled = true;
                             }
                         
                         }
                     }
-                    map = data.actors;
+                    return ans;
+                }
+                
+                function Render_actors(map) {
+                    var ans = new Array();
                     for (var i = 0; i < map.length; i++)  { 
                         var play = map[i];
-                        ans.push(game.add.sprite(play.x*stepY, play.y*stepX, play.type));
+                        ans[play.id] = game.add.sprite(play.x*stepY, play.y*stepX, play.type);
                     }
                     return ans;
                 }
                 
                 function create() {
                     game.add.tileSprite(0, 0, 1024, 640, 'grass');
-                    object = Rendering();
+                    var data = Render();
+                    map_object = data.map;
+                    object = Render_map(map_object);
+                    actors = Render_actors(data.actors);
                     player = createPlayer(game.world.centerX, game.world.centerY);
                     upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
                     downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
                     leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
                     rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
                 }
-
-
+                
+                function Update_map(map){
+                    var count = 0;
+                    for (var i = 0; i < map.length; i++)  {
+                        for (var j = 0; j < map[i].length; j++ ){
+                            if (map[i][j] == "#" && map_object[i][j] != "#"){
+                                object.push(game.add.sprite(j*stepY, i*stepX, 'wall'));
+                            }
+                            else if (map[i][j] == "." && map_object[i][j] == "#"){
+                                object[count].destroy(); 
+                            }
+                            else if (map[i][j] == "#" && map_object[i][j] == "#")
+                                count++;
+                        }
+                    }
+                    map_object = map;
+                }
+                
+                function Update_actors(map){
+                    for (var i = 0; i < map.length; i++)  { 
+                        var play = map[i];
+                        if (actors[play.id]){
+                            actors[play.id].x = play.x*stepY;
+                            actors[play.id].y = play.y*stepX;
+                        } else {
+                            actors[play.id] = game.add.sprite(play.x*stepY, play.y*stepX, play.type);
+                        }
+                    }
+                }
+                            
                 function update() {
-                    object = Rendering();
+                    var data = JSON.parse(requestLook());
+                    Update_map(data.map);
+                    Update_actors(data.actors);
                     if (upKey.isDown)
                     {
+                           
                         //if (Move(north).result == "ok") {
                             player.y--;
                         //} else  {
@@ -107,7 +167,8 @@
                         
                     }
                     else if (downKey.isDown)
-                    {
+                    {       
+                    
                        // if (Move(south).result == "ok") {
                             player.y++;
                        // } else  {
@@ -133,8 +194,7 @@
                     }
                     
 
-                } 
-    
+                }
 
         </script>
 
