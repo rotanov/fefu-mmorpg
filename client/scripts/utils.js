@@ -1,4 +1,5 @@
-define(["jquery", "mocha", "chai"], function ($, mocha, chai) {
+define(["jquery", "mocha", "chai"],
+function ($, mocha, chai) {
 
     var serverAddress_ = "http://localhost:6543";
 

@@ -1,4 +1,5 @@
-﻿define(["jquery", "mocha", "chai", "authorization", "utils"], function ($, m, chai, auth, utils) {
+﻿define(["jquery", "mocha", "chai", "authorization", "utils"],
+function ($, m, chai, auth, utils) {
 
     function serverHandler(object) {
         var responseResult;
