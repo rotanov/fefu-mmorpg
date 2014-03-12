@@ -34,6 +34,7 @@ public:
     QPlainTextEdit *qpteLog;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
+    QPushButton *qpbClear;
     QPushButton *qpbToggleServerState;
     QMenuBar *menubar;
     QStatusBar *statusbar;
@@ -57,6 +58,11 @@ public:
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         horizontalLayout->addItem(horizontalSpacer);
+
+        qpbClear = new QPushButton(centralwidget);
+        qpbClear->setObjectName(QStringLiteral("qpbClear"));
+
+        horizontalLayout->addWidget(qpbClear);
 
         qpbToggleServerState = new QPushButton(centralwidget);
         qpbToggleServerState->setObjectName(QStringLiteral("qpbToggleServerState"));
@@ -83,6 +89,7 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
+        qpbClear->setText(QApplication::translate("MainWindow", "&Clear", 0));
         qpbToggleServerState->setText(QApplication::translate("MainWindow", "&Start", 0));
     } // retranslateUi
 

@@ -19,6 +19,9 @@ class SocketThread : public QThread
 {
     Q_OBJECT
 
+signals:
+    void newFEMPRequest(const QVariantMap& request, QVariantMap& response);
+
 public:
     SocketThread(QtWebsocket::QWsSocket* wsSocket);
     ~SocketThread();
@@ -115,10 +118,15 @@ private:
     typedef void (GameServer::*HandlerType)(const QVariantMap& request, QVariantMap& response);
     QMap<QString, HandlerType> requestHandlers_;
 
-    void HandleRegister(const QVariantMap& request, QVariantMap& response);
+    void HandleClearDB(const QVariantMap& request, QVariantMap& response);
     void HandleLogin(const QVariantMap& request, QVariantMap& response);
     void HandleLogout(const QVariantMap& request, QVariantMap& response);
-    void HandleClearDB(const QVariantMap& request, QVariantMap& response);
+    void HandleRegister(const QVariantMap& request, QVariantMap& response);
+
+    void HandleExamine(const QVariantMap& request, QVariantMap& response);
+    void HandleGetDictionary(const QVariantMap& request, QVariantMap& response);
+    void HandleLook(const QVariantMap& request, QVariantMap& response);
+    void HandleMove(const QVariantMap& request, QVariantMap& response);
 
     void WriteResult_(QVariantMap& response, const EFEMPResult result);
 
@@ -126,7 +134,19 @@ private:
     static const int maxPrasswordLength_ = 36;
     static const int minLoginLength_ = 2;
     static const int maxLoginLength_ = 36;
+    int lastId = 1;
 
-    QMap<QString, QString> db_;
+    struct Player
+    {
+        float x;
+        float y;
+        int id;
+        QString login;
+    };
+
+    std::vector<Player> players_;
+
+    char levelMap_[512][512];
+    QMap<QString, QString> loginToPass_;
     QMap<QByteArray, QString> sids_;
 };

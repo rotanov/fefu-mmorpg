@@ -21,7 +21,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(server_
             , &Server::newFEMPRequest
             , gameServer_
-            , &GameServer::handleFEMPRequest);
+            , &GameServer::handleFEMPRequest
+            , Qt::DirectConnection);
 
 //    ServerThreaded* myThreadedServer = new ServerThreaded;
 
@@ -55,4 +56,9 @@ void MainWindow::on_qpbToggleServerState_clicked()
     }
 
     running = !running;
+}
+
+void MainWindow::on_qpbClear_clicked()
+{
+    ui->qpteLog->clear();
 }

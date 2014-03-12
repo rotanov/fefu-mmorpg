@@ -20,13 +20,14 @@ void HandleQDebugMessageOutput(QtMsgType type, const QMessageLogContext &context
     };
 
     QString completeMessage = QString(messageDescriptions[type])
-                              + QString(": %1 (%2:%3, %4)\n");
+                              + QString(": %1\n");// (%2:%3, %4)\n");
 
     completeMessage = completeMessage
-                      .arg(localMsg.constData())
-                      .arg(context.file)
-                      .arg(context.line)
-                      .arg(context.function);
+                      .arg(localMsg.constData());
+//  uncomment for additional info
+//                      .arg(context.file)
+//                      .arg(context.line)
+//                      .arg(context.function);
 
     std::cerr << completeMessage.toStdString();
 //    std::cout << completeMessage.toStdString();
