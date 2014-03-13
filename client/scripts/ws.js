@@ -130,10 +130,10 @@ function ($) {
     
     function move(direction) {
         socket.send(JSON.stringify({
-                "action": "move",
-                "direction": direction,
-                "tick": tick,
-                "sid": sid_
+            "action": "move",
+            "direction": direction,
+            "tick": tick,
+            "sid": sid_
         }));
     }
     
@@ -154,12 +154,12 @@ function ($) {
     }
 
     return {
-        startGame: startGame,
         look: look,
+        move: move,
         timeout: timeout,
+        startGame: startGame,
         getLookData: getLookData,
         getDictionary: getDictionary,
-        move: move
     };
 
 });
