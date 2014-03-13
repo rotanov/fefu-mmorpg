@@ -9,7 +9,7 @@ function ($) {
     var dictionary;
     var lookData;
 
-    function Actor(id) {
+   /*  function Actor(id) {
         this.id = id;
         this.type = null;
         this.login = null;
@@ -33,7 +33,7 @@ function ($) {
         };
     }
 
-    var actor = new Actor(id);
+    var actor = new Actor(id); */
 
     function startGame(sid, wsUri) {
 
@@ -98,7 +98,7 @@ function ($) {
             console.log("Error detected: " + error.message);
         }
 
-        document.onkeydown = function(event) {
+       /* document.onkeydown = function(event) {
             switch(event.keyCode) {
                 //Left
                 case 37:
@@ -117,7 +117,7 @@ function ($) {
                     actor.move("south");
                     break;
             };
-        }
+        }*/
     }
 
     function look() {
@@ -127,11 +127,20 @@ function ($) {
             "sid": sid_
         }));
     }
-
+    
+    function move(direction) {
+        socket.send(JSON.stringify({
+                "action": "move",
+                "direction": direction,
+                "tick": tick,
+                "sid": sid_
+        }));
+    }
+    
     function getLookData () {
         return JSON.stringify(lookData);
     }
-
+  
     function getDictionary () {
         return JSON.stringify(dictionary);
     }
@@ -149,7 +158,8 @@ function ($) {
         look: look,
         timeout: timeout,
         getLookData: getLookData,
-        getDictionary: getDictionary
+        getDictionary: getDictionary,
+        move: move
     };
 
 });
