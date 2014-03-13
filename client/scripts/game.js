@@ -51,6 +51,10 @@ function (phaser, utils, ws) {
         game.add.tileSprite(0, 0, 1024, 640, "grass");
 
         ws.look();
+        upKey = game.input.keyboard.addKey(phaser.Keyboard.UP);
+        downKey = game.input.keyboard.addKey(phaser.Keyboard.DOWN);
+        leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT);
+        rightKey = game.input.keyboard.addKey(phaser.Keyboard.RIGHT);
         setTimeout(
             function() {
                 var response = ws.getLookData();
@@ -59,49 +63,43 @@ function (phaser, utils, ws) {
                 walls = renderWalls(data.map);
                 //actors = renderActors(data.actors);
                 player = createPlayer(game.world.centerX, game.world.centerY);
-
-                upKey = game.input.keyboard.addKey(phaser.Keyboard.UP);
-                downKey = game.input.keyboard.addKey(phaser.Keyboard.DOWN);
-                leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT);
-                rightKey = game.input.keyboard.addKey(phaser.Keyboard.RIGHT);
+                
+               
             }, 
-            3000
+            300
         );
-    }
-
+   }
+    
+     
     function onUpdate() {
         ws.look();
+        if (upKey.isDown)  {
+            ws.move("north");
+        } else if (downKey.isDown) {
+            ws.move("south");
+        }
+        if (leftKey.isDown) {
+            ws.move("east");
+        } else if (rightKey.isDown) {
+            ws.move("west");
+        }
         setTimeout(
             function() {
                 var response = ws.getLookData();
                 var data = JSON.parse(response);
-                updateWallsPosition([data.map]);
+                updateWallsPosition(data.map);
                 //updateActorsPosition(data.actors);
-
-                if (upKey.isDown)  {
-                   player.y--;
-
-                } else if (downKey.isDown) {
-                    player.y++;
-                }
-
-                if (leftKey.isDown) {
-                    player.x--;
-
-                } else if (rightKey.isDown) {
-                    player.x++;
-                }
-            },
-            3000
+           },
+            300
         );
     }
 
     function createPlayer(x, y) {
         var actor = game.add.sprite(x, y, "player");
-        //actor.anchor.setTo(0.5, 0.5);
-        //actor.body.collideWorldBounds = true;
-        //actor.body.bounce.setTo(1, 1);
-        //actor.body.immovable = true
+        actor.anchor.setTo(0.5, 0.5);
+        actor.body.collideWorldBounds = true;
+        actor.body.bounce.setTo(1, 1);
+        actor.body.immovable = true
         return actor;
     }
 
@@ -146,7 +144,7 @@ function (phaser, utils, ws) {
             }
         }
         currWallsPosition = map;
-    }
+    } 
 
     function updateActorsPosition(map) {
         for (var i = 0; i < map.length; i++) {
