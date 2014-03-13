@@ -49,51 +49,43 @@ function (phaser, utils, ws) {
 
     function onCreate() {
         game.add.tileSprite(0, 0, 1024, 640, "grass");
+        $.when(ws.look(), ws.timeout(200, ws.getLookData))
+        .done(function (look, lookData) {
+            var data = JSON.parse(lookData);
+            currWallsPosition = data.map;
+            walls = renderWalls(data.map);
+            //actors = renderActors(data.actors);
+            player = createPlayer(game.world.centerX, game.world.centerY);
 
-        ws.look();
-        setTimeout(
-            function() {
-                var response = ws.getLookData();
-                var data = JSON.parse(response);
-                currWallsPosition = data.map;
-                walls = renderWalls(data.map);
-                //actors = renderActors(data.actors);
-                player = createPlayer(game.world.centerX, game.world.centerY);
+            upKey = game.input.keyboard.addKey(phaser.Keyboard.UP);
+            downKey = game.input.keyboard.addKey(phaser.Keyboard.DOWN);
+            leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT);
+            rightKey = game.input.keyboard.addKey(phaser.Keyboard.RIGHT);
+        });
 
-                upKey = game.input.keyboard.addKey(phaser.Keyboard.UP);
-                downKey = game.input.keyboard.addKey(phaser.Keyboard.DOWN);
-                leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT);
-                rightKey = game.input.keyboard.addKey(phaser.Keyboard.RIGHT);
-            }, 
-            3000
-        );
     }
 
     function onUpdate() {
-        ws.look();
-        setTimeout(
-            function() {
-                var response = ws.getLookData();
-                var data = JSON.parse(response);
-                updateWallsPosition([data.map]);
-                //updateActorsPosition(data.actors);
+        $.when(ws.look(), ws.timeout(200, ws.getLookData))
+        .done(function (look, lookData) {
+            var data = JSON.parse(lookData);
+            updateWallsPosition([data.map]);
+            //updateActorsPosition(data.actors);
 
-                if (upKey.isDown)  {
-                   player.y--;
+            if (upKey.isDown)  {
+                player.y--;
 
-                } else if (downKey.isDown) {
-                    player.y++;
-                }
+            } else if (downKey.isDown) {
+                player.y++;
+            }
 
-                if (leftKey.isDown) {
-                    player.x--;
+            if (leftKey.isDown) {
+                player.x--;
 
-                } else if (rightKey.isDown) {
-                    player.x++;
-                }
-            },
-            3000
-        );
+            } else if (rightKey.isDown) {
+                player.x++;
+            }
+        });
     }
 
     function createPlayer(x, y) {

@@ -43,12 +43,7 @@ function ($, utils, ws, game) {
         sid = data.sid;
         wsUri = data.webSocket;
         ws.startGame(sid, wsUri);
-        setTimeout(
-            function() {
-                game.start();
-            }, 
-            3000
-        );
+        $.when(ws.timeout(100, function() {})).done(function() {game.start();});
     }
 
     function logoutCallback(data) {

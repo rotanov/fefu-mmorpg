@@ -136,9 +136,18 @@ function ($) {
         return JSON.stringify(dictionary);
     }
 
+    function timeout(x, callback) {
+        var dfd = $.Deferred();
+        setTimeout(function () {
+            dfd.resolve(callback());
+        }, x);
+        return dfd.promise();
+    }
+
     return {
         startGame: startGame,
         look: look,
+        timeout: timeout,
         getLookData: getLookData,
         getDictionary: getDictionary
     };
