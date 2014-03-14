@@ -49,6 +49,11 @@ function (phaser, utils, ws) {
 
     function onCreate() {
         game.add.tileSprite(0, 0, 1024, 640, "grass");
+        upKey = game.input.keyboard.addKey(phaser.Keyboard.UP);
+        downKey = game.input.keyboard.addKey(phaser.Keyboard.DOWN);
+        leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT);
+        rightKey = game.input.keyboard.addKey(phaser.Keyboard.RIGHT);
+
         $.when(ws.look(), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
             var data = JSON.parse(lookData);
@@ -56,34 +61,29 @@ function (phaser, utils, ws) {
             walls = renderWalls(data.map);
             //actors = renderActors(data.actors);
             player = createPlayer(game.world.centerX, game.world.centerY);
-
-            upKey = game.input.keyboard.addKey(phaser.Keyboard.UP);
-            downKey = game.input.keyboard.addKey(phaser.Keyboard.DOWN);
-            leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT);
-            rightKey = game.input.keyboard.addKey(phaser.Keyboard.RIGHT);
         });
     }
 
     function onUpdate() {
+        if (upKey.isDown) {
+            ws.move("north");
+
+        } else if (downKey.isDown) {
+            ws.move("south");
+        }
+
+        if (leftKey.isDown) {
+            ws.move("east");
+
+        } else if (rightKey.isDown) {
+            ws.move("west");
+        }
+
         $.when(ws.look(), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
             var data = JSON.parse(lookData);
-            updateWallsPosition([data.map]);
+            updateWallsPosition(data.map);
             //updateActorsPosition(data.actors);
-
-            if (upKey.isDown)  {
-                player.y--;
-
-            } else if (downKey.isDown) {
-                player.y++;
-            }
-
-            if (leftKey.isDown) {
-                player.x--;
-
-            } else if (rightKey.isDown) {
-                player.x++;
-            }
         });
    }
 

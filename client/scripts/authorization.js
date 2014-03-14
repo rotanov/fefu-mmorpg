@@ -35,15 +35,14 @@ function ($, utils, ws, game) {
             //$("#server-answer").text("Authentication is successful.").css("color", "green");
             $("#logout").css("visibility", "visible");
             $("#content").hide();
+            sid = data.sid;
+            wsUri = data.webSocket;
+            ws.startGame(sid, wsUri);
+            $.when(ws.timeout(4000, function() {})).done(function() {game.start();});
 
         } else if (data.result === "invalidCredentials") {
             $("#server-answer").text("Invalid login or password.").css("color", "red");
         }
-
-        sid = data.sid;
-        wsUri = data.webSocket;
-        ws.startGame(sid, wsUri);
-        $.when(ws.timeout(100, function() {})).done(function() {game.start();});
     }
 
     function logoutCallback(data) {
