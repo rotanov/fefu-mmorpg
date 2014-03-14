@@ -65,29 +65,6 @@ function (phaser, utils, ws) {
     }
 
     function onUpdate() {
-<<<<<<< HEAD
-        $.when(ws.look(), ws.timeout(200, ws.getLookData))
-        .done(function (look, lookData) {
-            var data = JSON.parse(lookData);
-            for (var i = 0 ; i < walls.length; i++)
-                walls[i].destroy();
-            walls =renderWalls(data.map);
-            //updateActorsPosition(data.actors);
-
-            if (upKey.isDown)  {
-                ws.move("north");
-
-            } else if (downKey.isDown) {
-                ws.move("south");
-            }
-
-            if (leftKey.isDown) {
-                ws.move("east");
-
-            } else if (rightKey.isDown) {
-                ws.move("west");
-            }
-=======
         if (upKey.isDown) {
             ws.move("north");
 
@@ -105,9 +82,10 @@ function (phaser, utils, ws) {
         $.when(ws.look(), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
             var data = JSON.parse(lookData);
-            updateWallsPosition(data.map);
+            for (var i = 0 ; i < walls.length; i++)
+                walls[i].destroy();
+            walls =renderWalls(data.map);
             //updateActorsPosition(data.actors);
->>>>>>> 84dd6ccd3932f9ed25e56deda8c91ee28b5ad2b2
         });
    }
 
