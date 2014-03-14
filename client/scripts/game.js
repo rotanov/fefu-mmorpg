@@ -18,7 +18,7 @@ function (phaser, utils, ws) {
 
     var currWallsPosition;
 
-    function Start() { 
+    function Start() {
         // 640, 480
         game = new phaser.Game(
             1024, 600,
@@ -73,10 +73,10 @@ function (phaser, utils, ws) {
         }
 
         if (leftKey.isDown) {
-            ws.move("east");
+            ws.move("west");
 
         } else if (rightKey.isDown) {
-            ws.move("west");
+            ws.move("east");
         }
 
         $.when(ws.look(), ws.timeout(200, ws.getLookData))
@@ -84,7 +84,7 @@ function (phaser, utils, ws) {
             var data = JSON.parse(lookData);
             for (var i = 0 ; i < walls.length; i++)
                 walls[i].destroy();
-            walls =renderWalls(data.map);
+            walls = renderWalls(data.map);
             //updateActorsPosition(data.actors);
         });
    }
