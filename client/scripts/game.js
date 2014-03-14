@@ -12,7 +12,7 @@ function (phaser, utils, ws) {
     var stepX = 171;
     var stepY = 160;
 
-    var walls;
+    var walls = new Array();
     var player;
     var actors;
 
@@ -68,21 +68,23 @@ function (phaser, utils, ws) {
         $.when(ws.look(), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
             var data = JSON.parse(lookData);
-            updateWallsPosition([data.map]);
+            for (var i = 0 ; i < walls.length; i++)
+                walls[i].destroy();
+            walls =renderWalls(data.map);
             //updateActorsPosition(data.actors);
 
             if (upKey.isDown)  {
-                player.y--;
+                ws.move("north");
 
             } else if (downKey.isDown) {
-                player.y++;
+                ws.move("south");
             }
 
             if (leftKey.isDown) {
-                player.x--;
+                ws.move("east");
 
             } else if (rightKey.isDown) {
-                player.x++;
+                ws.move("west");
             }
         });
    }
@@ -120,24 +122,6 @@ function (phaser, utils, ws) {
         }
         return result;
     }
-
-    function updateWallsPosition(map) {
-        var count = 0;
-        for (var i = 0; i < map.length; i++) {
-            for (var j = 0; j < map[i].length; j++ ) {
-                if (map[i][j] == "#" && currWallsPosition[i][j] != "#") {
-                    walls.push(game.add.sprite(j*stepY, i*stepX, "wall"));
-
-                } else if (map[i][j] == "." && currWallsPosition[i][j] == "#") {
-                    walls[count].destroy();
-
-                } else if (map[i][j] == "#" && currWallsPosition[i][j] == "#") {
-                    count++;
-                }
-            }
-        }
-        currWallsPosition = map;
-    } 
 
     function updateActorsPosition(map) {
         for (var i = 0; i < map.length; i++) {
