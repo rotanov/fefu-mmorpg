@@ -85,7 +85,7 @@ function ($, m, chai, auth, utils) {
                     it("(8) should return badLogin [too long]", function() {
                         assert.equal("badLogin", serverHandler({
                             "action": "register",
-                            "login": "AaaaBbbbCcccDdddEeeeFfffGgggHhhh",
+                            "login": "AaaaaBbbbbCccccDddddEeeeeFffffGggggHhhhh",
                             "password": "0123456"
                         }).result)
                     })
@@ -113,7 +113,7 @@ function ($, m, chai, auth, utils) {
                     })
 
                     it("(11) should return invalidCredentials"
-                        "[login does not exist]", function() {
+                        + "[login does not exist]", function() {
                         assert.equal("invalidCredentials", serverHandler({
                             "action": "login",
                             "login": "Unknown",
