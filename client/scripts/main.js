@@ -9,13 +9,13 @@ function ($,phaser, auth, test, utils, ws) {
         auth.jsonHandle("login", auth.loginCallback);
     });
 
+    $("#logout").click(function() {
+        auth.jsonHandle("logout", auth.logoutCallback);
+    });
+
     $("#test").click(function() {
         $("#content").hide();
         test.runTests();
-    });
-
-    $("#logout").click(function() {
-        auth.jsonHandle("logout", auth.logoutCallback);
     });
 
     $(document).ready(function() {

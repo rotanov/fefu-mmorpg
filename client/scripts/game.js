@@ -19,7 +19,6 @@ function (phaser, utils, ws) {
     var currWallsPosition;
 
     function Start() {
-        // 640, 480
         game = new phaser.Game(
             1024, 600,
             phaser.AUTO,
@@ -45,6 +44,7 @@ function (phaser, utils, ws) {
     function onPreload() {
         loadMapElem();
         game.load.image("player", "assets/tank.png");
+        game.load.image("walk", "assets/zombie-a/zombie-a-0-00.png");
     }
 
     function onCreate() {
@@ -87,7 +87,7 @@ function (phaser, utils, ws) {
             walls = renderWalls(data.map);
             //updateActorsPosition(data.actors);
         });
-   }
+    }
 
     function createPlayer(x, y) {
         var actor = game.add.sprite(x, y, "player");

@@ -54,17 +54,6 @@ function ($) {
             }));
         }
 
-        socket.onclose = function(event) {
-            if (event.wasClean) {
-                console.log("Connection closed.");
-
-            } else {
-                console.log("Connection is lost.");
-            }
-
-            console.log("[Code: " + event.code + ", reason: " + event.reason +"]");
-        }
-
         socket.onmessage = function(event) {
             var data = JSON.parse(event.data);
 
@@ -97,27 +86,18 @@ function ($) {
         socket.onerror = function(error) {
             console.log("Error detected: " + error.message);
         }
+    }
 
-       /* document.onkeydown = function(event) {
-            switch(event.keyCode) {
-                //Left
-                case 37:
-                    actor.move("east");
-                    break;
-                //Up
-                case 38:
-                    actor.move("north");
-                    break;
-                //Right
-                case 39:
-                    actor.move("west");
-                    break;
-                //Down
-                case 40:
-                    actor.move("south");
-                    break;
-            };
-        }*/
+    function quitGame() {
+        socket.onclose = function(event) {
+            if (event.wasClean) {
+                console.log("Connection closed.");
+
+            } else {
+                console.log("Connection is lost.");
+            }
+            console.log("[Code: " + event.code + ", reason: " + event.reason +"]");
+        }
     }
 
     function look() {
@@ -158,6 +138,7 @@ function ($) {
         move: move,
         timeout: timeout,
         startGame: startGame,
+        quitGame: quitGame,
         getLookData: getLookData,
         getDictionary: getDictionary,
     };

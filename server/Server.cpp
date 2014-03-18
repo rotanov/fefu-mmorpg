@@ -223,10 +223,15 @@ void Server::Stop()
 
 ////////////////////////////////////////////////////////////////////////////////
 
+
+bool ExactMatch(QString pattern, QString str)
+{
+    QRegExp rx(pattern);
+    return rx.exactMatch(str);
+}
+
 void GameServer::HandleRegister(const QVariantMap& request, QVariantMap& response)
 {
-    QRegExp rx("[0-9a-zA-Z]{2,36}");
-
     QString login = request["login"].toString();
     QString password = request["password"].toString();
 
@@ -245,12 +250,11 @@ void GameServer::HandleRegister(const QVariantMap& request, QVariantMap& respons
     {
         WriteResult_(response, EFEMPResult::LOGIN_EXISTS);
     }
-    else if (!rx.exactMatch(login))
+    else if (!ExactMatch("[0-9a-zA-Z]{2,36}", login))
     {
         WriteResult_(response, EFEMPResult::BAD_LOGIN);
     }
-    else if (password.size() < minPrasswordLength_
-             || password.size() > maxPrasswordLength_
+    else if (!ExactMatch(".{6,36}", password)
              || passHasInvalidChars)
     {
         WriteResult_(response, EFEMPResult::BAD_PASS);
