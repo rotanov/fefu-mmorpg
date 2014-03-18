@@ -3,7 +3,6 @@ function ($,phaser, auth, test, utils, ws) {
 
     $("#register").click(function() {
         auth.jsonHandle("register", auth.registerCallback)
-        auth.jsonHandle("login", auth.loginCallback)
     })
 
     $("#login").click(function() {

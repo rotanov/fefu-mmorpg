@@ -70,8 +70,9 @@ function ($) {
             } else if (data.result == "badId") {
                 console.log("Error: badId")
 
-            /*} else if (data.result == "ok") {
-                actor.init(data);*/
+            //} else if (data.result == "ok") {
+                /*actor.init(data);*/
+            //    console.log("LOGOUT "+data.result)
 
             //Get Dictionary
             } else if (data.dictionary) {
@@ -116,12 +117,19 @@ function ($) {
             "sid": sid_
         }))
     }
-    
-    function getLookData () {
+
+    function logout() {
+        socket.send(JSON.stringify({
+            "action": "logout",
+            "sid": sid_
+        }))
+    }
+
+    function getLookData() {
         return JSON.stringify(lookData)
     }
   
-    function getDictionary () {
+    function getDictionary() {
         return JSON.stringify(dictionary)
     }
 
@@ -136,6 +144,7 @@ function ($) {
     return {
         look: look,
         move: move,
+        logout: logout,
         timeout: timeout,
         startGame: startGame,
         quitGame: quitGame,

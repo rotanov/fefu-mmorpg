@@ -42,7 +42,7 @@ function (phaser, utils, ws) {
 
     function onPreload() {
         loadMapElem()
-        game.load.image("player", "assets/player1.png")
+        game.load.image("player", "assets/player.png")
     }
 
     function onCreate() {

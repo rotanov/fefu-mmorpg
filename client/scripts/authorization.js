@@ -14,7 +14,8 @@ function ($, utils, ws, game) {
             serverAnswer.text("Data is null, request might be failed.").css("color", "red")
 
         } else if (data.result === "ok") {
-            serverAnswer.text("Registration is successful.").css("color", "green")
+            //serverAnswer.text("Registration is successful.").css("color", "green")
+            jsonHandle("login", loginCallback)
 
         } else if (data.result === "loginExists") {
             serverAnswer.text("This login already exists.")
@@ -23,10 +24,12 @@ function ($, utils, ws, game) {
             serverAnswer.text("Login: minimal length is 2 symbols and "
                 + "maximum length is 36 symbols. Allowed charset is "
                 + "latin symbols and numbers.").css("color", "red")
+            $("#username, #password").val("")
 
         } else if (data.result === "badPassword") {
             serverAnswer.text("Password: minimal length is 6 symbols and "
                 + "maximum length is 36 symbols.").css("color", "red")
+            $("#username, #password").val("")
         }
     }
 
@@ -80,7 +83,6 @@ function ($, utils, ws, game) {
         }
 
         utils.postRequest(js, function (response) {
-            $("#username, #password").val("")
             $("#server-answer").empty()
             callback(response)
         });
