@@ -59,7 +59,7 @@ function (phaser, utils, ws) {
             walls = renderWalls(data.map)
             //actors = renderActors(data.actors)
             player = createPlayer(game.world.centerX, game.world.centerY)
-        });
+        })
     }
 
     function onUpdate() {
@@ -89,9 +89,9 @@ function (phaser, utils, ws) {
     function createPlayer(x, y) {
         var actor = game.add.sprite(x, y, "player")
         actor.anchor.setTo(0.5, 0.5);
-//        actor.body.collideWorldBounds = true
-  //      actor.body.bounce.setTo(1, 1)
-    //    actor.body.immovable = true
+        //actor.body.collideWorldBounds = true
+        //actor.body.bounce.setTo(1, 1)
+        //actor.body.immovable = true
         return actor
     }
 

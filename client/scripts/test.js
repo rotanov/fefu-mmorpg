@@ -1,4 +1,4 @@
-﻿define(["jquery", "mocha", "chai", "authorization", "utils","ws"],
+﻿define(["jquery", "mocha", "chai", "authorization", "utils", "ws"],
 function ($, m, chai, auth, utils, ws) {
 
     function serverHandler(object) {
@@ -14,30 +14,30 @@ function ($, m, chai, auth, utils, ws) {
     function clearDB() {
         utils.postRequest({"action": "clearDb"}, function() {}, true)
     }
-    
+
     function startWebSoket(sid,wsUri) {
         ws.startGame(sid, wsUri)
     }
-    
+
     function dictionary() {
         var data = JSON.parse(ws.getDictionary())
         var result = "bad"
         if (data['.'] && data['#'])
             result = "ok"
-        return result    
+        return result
     }
-   
+
     function LookData() {
         ws.look()
         var data = ws.getLookData()
         return data
     }
-    
+
     function MoveData(direction) {
         ws.move(direction)
         return "ok"
     }
-   
+
     return {
         clearDB: clearDB,
         runTests: function() {
@@ -178,39 +178,49 @@ function ($, m, chai, auth, utils, ws) {
                         }).result)
                     })
                 })
-                
-                describe("WebSoket", function() {
+
+                describe.only("WebSoket", function(done) {
+
                     serverHandler({
-                           "action": "register",
-                            "login": "Pavel",
-                            "password": "111111"
-                     })
+                        "action": "register",
+                        "login": "Pavel",
+                        "password": "111111"
+                    })
+
                     data = serverHandler({
-                            "action": "login",
-                            "login": "Pavel",
-                            "password": "111111"
-                        })
-                    var wsUri = data.webSocket
-                    startWebSoket(data.sid, wsUri)
-                    
+                        "action": "login",
+                        "login": "Pavel",
+                        "password": "111111"
+                    })
+
+                    beforeEach(function(done) {
+                        ws.timeout(
+                            2000, 
+                            function() {
+                                startWebSoket(data.sid, data.webSocket)
+                                done();
+                            }
+                        )
+                    })
+
                     describe("Dictionary", function() {
                         it("(16) should return ok", function() {
                             assert.equal("ok", dictionary())
-                            })
+                        })
                     })
-                    
-                    /* describe("Look", function() {
+
+                    describe("Look", function() {
                         it("(17) should return ok", function() {
                             assert.equal("ok", LookData().result)
-                            })
-                    }) */
-                
+                        })
+                    })
+
                     describe("Move", function() {
                         it("(18) should return ok", function() {
                             assert.equal("ok", MoveData("west"))
-                            })
+                        })
                     })
-                
+
                 })
             })
 

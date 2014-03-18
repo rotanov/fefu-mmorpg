@@ -89,10 +89,10 @@ function ($) {
     }
 
     function quitGame() {
-        socket.onclose = function(event) {alert("CLOSED")
+        socket.onclose = function(event) {
             if (event.wasClean) {
                 console.log("Connection closed.")
-                
+
             } else {
                 console.log("Connection is lost.")
             }
