@@ -1,6 +1,7 @@
 QT += core
 QT += gui
 QT += network
+QT += sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TEMPLATE = app
@@ -18,6 +19,7 @@ CONFIG(debug, debug|release) {
 
     DEFINES += \
         _DEBUG \
+        QT_DEBUG_PLUGINS \
 
     LIBS += -lQtWebsocketd
     LIBS += -lqhttpserverd
@@ -34,11 +36,17 @@ CONFIG(debug, debug|release) {
 SOURCES += Server.cpp \
     main.cpp \
     MainWindow.cpp \
-    DebugStream.cpp
+    DebugStream.cpp \
+    GameServer.cpp \
+    WebSocketThread.cpp \
+    PermaStorage.cpp
 
 HEADERS += Server.hpp \
     MainWindow.hpp \
-    DebugStream.hpp
+    DebugStream.hpp \
+    GameServer.hpp \
+    WebSocketThread.hpp \
+    PermaStorage.hpp
 
 FORMS += \
     mainwindow.ui

@@ -3,6 +3,7 @@
 
 #include "DebugStream.hpp"
 #include "Server.hpp"
+#include "GameServer.hpp"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -24,7 +25,13 @@ MainWindow::MainWindow(QWidget *parent)
             , &GameServer::handleFEMPRequest
             , Qt::DirectConnection);
 
-//    ServerThreaded* myThreadedServer = new ServerThreaded;
+    connect(server_
+            , &Server::wsAddressChanged
+            , gameServer_
+            , &GameServer::setWSAddress
+            , Qt::DirectConnection);
+
+    qDebug() << "my library path : "<< qApp->libraryPaths();
 
 //    std::cout << QObject::tr("main thread : 0x%1")
 //                 .arg(QString::number((unsigned int)QThread::currentThreadId(), 16))
