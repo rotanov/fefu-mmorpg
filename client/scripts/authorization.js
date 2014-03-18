@@ -37,7 +37,7 @@ function ($, utils, ws, game) {
         if (data.result === "ok") {
             $("#server-answer").text("Authentication is successful.").css("color", "green")
             $("#logout").css("visibility", "visible")
-            sid = data.sid;
+            sid = data.sid
             wsUri = data.webSocket
             ws.startGame(sid, wsUri)
             $.when(ws.timeout(
