@@ -9,10 +9,9 @@ function (phaser, utils, ws) {
     var leftKey;
     var rightKey;
 
-    var stepX = 171;
-    var stepY = 160;
-
-    var walls = new Array();
+    var stepX = 64;
+    var stepY = 64;
+    var walls;
     var player;
     var actors;
 
@@ -20,7 +19,7 @@ function (phaser, utils, ws) {
 
     function Start() {
         game = new phaser.Game(
-            1024, 600,
+            576, 448,
             phaser.AUTO,
             "",
             {
@@ -43,12 +42,11 @@ function (phaser, utils, ws) {
 
     function onPreload() {
         loadMapElem();
-        game.load.image("player", "assets/tank.png");
-        game.load.image("walk", "assets/zombie-a/zombie-a-0-00.png");
+        game.load.image("player", "assets/player1.png");
     }
 
     function onCreate() {
-        game.add.tileSprite(0, 0, 1024, 640, "grass");
+        game.add.tileSprite(0, 0, 576, 448, "grass");
         upKey = game.input.keyboard.addKey(phaser.Keyboard.UP);
         downKey = game.input.keyboard.addKey(phaser.Keyboard.DOWN);
         leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT);
@@ -82,8 +80,7 @@ function (phaser, utils, ws) {
         $.when(ws.look(), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
             var data = JSON.parse(lookData);
-            for (var i = 0 ; i < walls.length; i++)
-                walls[i].destroy();
+            walls.destroy();
             walls = renderWalls(data.map);
             //updateActorsPosition(data.actors);
         });
@@ -94,20 +91,20 @@ function (phaser, utils, ws) {
         actor.anchor.setTo(0.5, 0.5);
         actor.body.collideWorldBounds = true;
         actor.body.bounce.setTo(1, 1);
-        actor.body.immovable = true
+        actor.body.immovable = true;
         return actor;
     }
 
     function renderWalls(map) {
-        var result = new Array();
+        wall = game.add.group();
         for (var i = 0; i < map.length; i++) {
             for (var j = 0; j < map[i].length; j++ ) {
                 if (map[i][j] == "#") {
-                    result.push(game.add.sprite(j*stepY, i*stepX, "wall"));
+                    wall.create(j*stepY, i*stepX, "wall");
                 }
-            }
+             }
         }
-        return result;
+        return wall;
     }
 
     function renderActors(actors) {
@@ -124,19 +121,26 @@ function (phaser, utils, ws) {
     }
 
     function updateActorsPosition(map) {
+        vis = new Array;
         for (var i = 0; i < map.length; i++) {
             var actor = map[i];
             if (actors[actor.id]) {
                 actors[actor.id].x = actor.x * stepY;
                 actors[actor.id].y = actor.y * stepX;
-
+                vis[actor.id] = true;
             } else {
                 actors[actor.id] = game.add.sprite (
                     actor.x * stepY,
                     actor.y * stepX,
                     actor.type
                 );
+                vis[actor.id] = true;
             }
+        }
+        for (var i = 0; i < map.length; i++) { 
+            var actor = map[i];
+            if (!vis[actor.id])
+                actors[actor.id].destroy();
         }
     }
 
