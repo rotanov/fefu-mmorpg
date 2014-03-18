@@ -18,18 +18,19 @@ function ($, utils, ws, game) {
             jsonHandle("login", loginCallback)
 
         } else if (data.result === "loginExists") {
-            serverAnswer.text("This login already exists.")
+            $("#username, #password").val("")
+            serverAnswer.text("This login already exists.").css("color", "red")
 
         } else if (data.result === "badLogin") {
+            $("#username, #password").val("")
             serverAnswer.text("Login: minimal length is 2 symbols and "
                 + "maximum length is 36 symbols. Allowed charset is "
                 + "latin symbols and numbers.").css("color", "red")
-            $("#username, #password").val("")
 
         } else if (data.result === "badPassword") {
+            $("#username, #password").val("")
             serverAnswer.text("Password: minimal length is 6 symbols and "
                 + "maximum length is 36 symbols.").css("color", "red")
-            $("#username, #password").val("")
         }
     }
 
