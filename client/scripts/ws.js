@@ -70,9 +70,8 @@ function ($) {
             } else if (data.result == "badId") {
                 console.log("Error: badId")
 
-            //} else if (data.result == "ok") {
-                /*actor.init(data);*/
-            //    console.log("LOGOUT "+data.result)
+            /*} else if (data.result == "ok") {
+                actor.init(data);*/
 
             //Get Dictionary
             } else if (data.dictionary) {
@@ -90,10 +89,10 @@ function ($) {
     }
 
     function quitGame() {
-        socket.onclose = function(event) {
+        socket.onclose = function(event) {alert("CLOSED")
             if (event.wasClean) {
                 console.log("Connection closed.")
-
+                
             } else {
                 console.log("Connection is lost.")
             }
