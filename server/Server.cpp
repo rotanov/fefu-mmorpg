@@ -17,22 +17,14 @@
 Server::Server()
 {
     httpServer_ = new QHttpServer(this);
+
     connect(httpServer_
             , &QHttpServer::newRequest
             , this
             , &Server::handleRequest);
 
-    int port = WS_PORT;
     wsServer_ = new QtWebsocket::QWsServer(this);
-    if (!wsServer_->listen(QHostAddress::Any, port))
-    {
-        std::cout << QObject::tr("Error: Can't launch server").toStdString() << std::endl;
-        std::cout << QObject::tr("QWsServer error : %1").arg(wsServer_->errorString()).toStdString() << std::endl;
-    }
-    else
-    {
-        std::cout << QObject::tr("Server is listening port %1").arg(port).toStdString() << std::endl;
-    }
+
     QObject::connect(wsServer_
                      , SIGNAL(newConnection())
                      , this
@@ -193,10 +185,23 @@ void Server::Start()
         if (!running_)
         {
             qDebug() << "Unable to start http server.";
+            return;
         }
         else
         {
             qDebug() << "Server started.";
+        }
+
+        if (!wsServer_->listen(QHostAddress::Any, WS_PORT))
+        {
+            std::cout << QObject::tr("Error: Can't launch server").toStdString() << std::endl;
+            std::cout << QObject::tr("QWsServer error : %1").arg(wsServer_->errorString()).toStdString() << std::endl;
+            httpServer_->close();
+            running_ = false;
+        }
+        else
+        {
+            std::cout << QObject::tr("Server is listening port %1").arg(WS_PORT).toStdString() << std::endl;
         }
     }
     else
@@ -211,6 +216,7 @@ void Server::Stop()
     if (running_)
     {
         httpServer_->close();
+        wsServer_->close();
         running_ = false;
         qDebug() << "Server stopped.";
     }

@@ -2,6 +2,11 @@
 
 #include <QObject>
 #include <QMap>
+#include <QVariantMap>
+#include <QTimer>
+#include <QTime>
+
+#include "PermaStorage.hpp"
 
 enum class EFEMPResult
 {
@@ -37,15 +42,20 @@ public:
     GameServer();
     virtual ~GameServer();
 
+    bool Start();
+    void Stop();
+
 public slots:
     void handleFEMPRequest(const QVariantMap& request, QVariantMap& response);
     void setWSAddress(QString address);
+    void tick();
 
 private:
     typedef void (GameServer::*HandlerType)(const QVariantMap& request, QVariantMap& response);
     QMap<QString, HandlerType> requestHandlers_;
 
-    void HandleClearDB(const QVariantMap& request, QVariantMap& response);
+    void HandleSetUpConstants(const QVariantMap& request, QVariantMap& response);
+    void HandleStartTesting(const QVariantMap& request, QVariantMap& response);
     void HandleLogin(const QVariantMap& request, QVariantMap& response);
     void HandleLogout(const QVariantMap& request, QVariantMap& response);
     void HandleRegister(const QVariantMap& request, QVariantMap& response);
@@ -78,4 +88,16 @@ private:
     QMap<QByteArray, QString> sids_;
 
     QString wsAddress_;
+
+    PermaStorage storage_;
+
+    QTimer* timer_ = NULL;
+    QTime time_;
+    float lastTime_ = 0.0f;
+
+    float playerVelocity_ = 1.0;
+    float slideThreshold_ = 0.1;
+    int ticksPerSecond_ = 60;
+    int screenRowCount_ = 7;
+    int screenColumnCount_ = 9;
 };

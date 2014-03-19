@@ -43,7 +43,9 @@ void HandleQDebugMessageOutput(QtMsgType type, const QMessageLogContext &context
 
 int main(int argc, char **argv)
 {
+#if (_DEBUG)
     qInstallMessageHandler(HandleQDebugMessageOutput);
+#endif
 
     QApplication a(argc, argv);
     MainWindow w;
