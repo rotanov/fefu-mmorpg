@@ -50,7 +50,7 @@ GameServer::GameServer()
     {
         for (int j = 1; j < 511; j++)
         {
-            levelMap_[i][j] = std::vector<char>({'#', '.', '.', ','})[rand() % 4];
+            levelMap_[i][j] = std::vector<char>({'#', '.', '.', '.'})[rand() % 4];
         }
     }
 
@@ -175,6 +175,28 @@ void GameServer::tick()
     float dt = (time_.elapsed() - lastTime_) * 0.001f;
     lastTime_ = time_.elapsed();
     qDebug() << "tick: " << dt;
+
+    for (auto& p : players_)
+    {
+        auto& direction = p.direction;
+        if (direction == "north")
+        {
+            p.y -= playerVelocity_ * dt;
+        }
+        else if (direction == "south")
+        {
+            p.y += playerVelocity_ * dt;
+        }
+        else if (direction == "west")
+        {
+            p.x -= playerVelocity_ * dt;
+        }
+        else if (direction == "east")
+        {
+            p.x += playerVelocity_ * dt;
+        }
+        p.direction = "";
+    }
 }
 
 void GameServer::HandleSetUpConstants(const QVariantMap& request, QVariantMap& response)
@@ -259,22 +281,7 @@ void GameServer::HandleMove(const QVariantMap& request, QVariantMap& response)
     {
         if (p.login == login)
         {
-            if (direction == "north")
-            {
-                p.y -= 0.1f;
-            }
-            else if (direction == "south")
-            {
-                p.y += 0.1f;
-            }
-            else if (direction == "west")
-            {
-                p.x -= 0.1f;
-            }
-            else if (direction == "east")
-            {
-                p.x += 0.1f;
-            }
+            p.direction = direction;
             return;
         }
     }
@@ -286,12 +293,21 @@ void GameServer::HandleLook(const QVariantMap& request, QVariantMap& response)
 {
     auto sid = request["sid"].toByteArray();
     auto login = sids_[sid];
+
     for (auto& p : players_)
     {
         if (p.login == login)
         {
+            response["x"] = p.x;
+            response["y"] = p.y;
+
 //            int [9][7] area;
             QVariantList rows;
+
+            int minX = p.x - 4;
+            int maxX = p.x + 4;
+            int minY = p.y - 3;
+            int maxY = p.y + 3;
 
             for (int j = p.y - 3; j <= p.y + 3; j++)
             {
@@ -310,7 +326,22 @@ void GameServer::HandleLook(const QVariantMap& request, QVariantMap& response)
                 rows.push_back(row);
             }
 
+            QVariantList actors;
+            for (auto& p : players_)
+            {
+                QVariantMap actor;
+                if (p.y >= minY && p.y <= maxY && p.x >= minX && p.x <= maxX)
+                {
+                    actor["type"] = "player";
+                    actor["x"] = p.x;
+                    actor["y"] = p.y;
+                    actor["id"] = p.id;
+                }
+                actors << actor;
+            }
+
             response["map"] = rows;
+            response["actors"] = actors;
             return;
         }
     }
