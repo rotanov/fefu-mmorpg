@@ -59,11 +59,8 @@ function (phaser, utils, ws) {
             var data = JSON.parse(lookData)
             currWallsPosition = data.map
             walls = renderWalls(data.map)
-<<<<<<< HEAD
             gPlayerX = data.x
             gPlayerY = data.y
-=======
->>>>>>> 7fda0a13893ea0919d6d1f6521cd8ed626edf951
             actors = renderActors(data.actors)
             player = createPlayer(game.world.centerX, game.world.centerY)
         })
@@ -89,11 +86,8 @@ function (phaser, utils, ws) {
             var data = JSON.parse(lookData)
             walls.destroy()
             walls = renderWalls(data.map)
-<<<<<<< HEAD
             gPlayerX = data.x
             gPlayerY = data.y
-=======
->>>>>>> 7fda0a13893ea0919d6d1f6521cd8ed626edf951
             updateActorsPosition(data.actors)
         });
     }
