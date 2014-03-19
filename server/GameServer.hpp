@@ -78,6 +78,7 @@ private:
         float x;
         float y;
         int id;
+        QString direction;
         QString login;
     };
 
@@ -95,7 +96,7 @@ private:
     QTime time_;
     float lastTime_ = 0.0f;
 
-    float playerVelocity_ = 1.0;
+    float playerVelocity_ = 100.0;
     float slideThreshold_ = 0.1;
     int ticksPerSecond_ = 60;
     int screenRowCount_ = 7;

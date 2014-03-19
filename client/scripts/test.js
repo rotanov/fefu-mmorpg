@@ -178,8 +178,8 @@ function ($, m, chai, auth, utils, ws) {
                         }).result)
                     })
                 })
-
-                describe.only("WebSoket", function(done) {
+//.only
+                describe("WebSoket", function(done) {
 
                     serverHandler({
                         "action": "register",

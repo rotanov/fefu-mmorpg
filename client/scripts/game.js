@@ -57,7 +57,7 @@ function (phaser, utils, ws) {
             var data = JSON.parse(lookData)
             currWallsPosition = data.map
             walls = renderWalls(data.map)
-            //actors = renderActors(data.actors)
+            actors = renderActors(data.actors)
             player = createPlayer(game.world.centerX, game.world.centerY)
         })
     }
@@ -82,7 +82,7 @@ function (phaser, utils, ws) {
             var data = JSON.parse(lookData)
             walls.destroy()
             walls = renderWalls(data.map)
-            //updateActorsPosition(data.actors)
+            updateActorsPosition(data.actors)
         });
     }
 
