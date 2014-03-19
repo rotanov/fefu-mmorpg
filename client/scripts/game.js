@@ -113,7 +113,7 @@ function (phaser, utils, ws) {
         return wall
     }
     
-    function addActor (x,y, type) {
+    function addActor (x, y, type) {
         return game.add.sprite (
                x,
                y,
@@ -127,8 +127,8 @@ function (phaser, utils, ws) {
         for (var i = 0; i < actors.length; i++) {
             var actor = actors[i];
             result[actor.id] = addActor(
-               (gPlayerX - actor.x + 9*0,5)* stepX
-               (gPlayerY - actor.x + 7*0,5)* stepX
+               (gPlayerX - actor.x + 9*0,5)* stepX,
+               (gPlayerY - actor.x + 7*0,5)* stepX,
                 actor.type
             )
         }
@@ -140,13 +140,13 @@ function (phaser, utils, ws) {
         for (var i = 0; i < map.length; i++) {
             var actor = map[i]
             if (actors[actor.id]) {
-                actors[actor.id].x = (gPlayerX - actor.x + 9*0,5)* stepX
-                actors[actor.id].y = (gPlayerY - actor.x + 7*0,5)* stepX
+                actors[actor.id].x = (gPlayerX - actor.x + 9*0,5) * stepX
+                actors[actor.id].y = (gPlayerY - actor.x + 7*0,5) * stepX
                 vis[actor.id] = true
             } else {
                 actors[actor.id] = addActor (
-                    (gPlayerX - actor.x + 9*0,5)* stepX
-                    (gPlayerY - actor.x + 7*0,5)* stepX
+                    (gPlayerX - actor.x + 9*0,5) * stepX,
+                    (gPlayerY - actor.x + 7*0,5) * stepX,
                     actor.type
                 )
                 vis[actor.id] = true
@@ -154,8 +154,9 @@ function (phaser, utils, ws) {
         }
         for (var i = 0; i < map.length; i++) { 
             var actor = map[i]
-            if (!vis[actor.id])
+            if (!vis[actor.id]) {
                 actors[actor.id].destroy()
+            }
         }
     }
 
