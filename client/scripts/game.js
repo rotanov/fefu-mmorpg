@@ -11,6 +11,8 @@ function (phaser, utils, ws) {
 
     var stepX = 64
     var stepY = 64
+    var gPlayerX  
+    var gPlayerY  
     var walls
     var player
     var actors
@@ -57,7 +59,9 @@ function (phaser, utils, ws) {
             var data = JSON.parse(lookData)
             currWallsPosition = data.map
             walls = renderWalls(data.map)
-            //actors = renderActors(data.actors)
+            gPlayerX = data.x
+            gPlayerY = data.y
+            actors = renderActors(data.actors)
             player = createPlayer(game.world.centerX, game.world.centerY)
         })
     }
@@ -82,7 +86,9 @@ function (phaser, utils, ws) {
             var data = JSON.parse(lookData)
             walls.destroy()
             walls = renderWalls(data.map)
-            //updateActorsPosition(data.actors)
+            gPlayerX = data.x
+            gPlayerY = data.y
+            updateActorsPosition(data.actors)
         });
     }
 
@@ -106,14 +112,23 @@ function (phaser, utils, ws) {
         }
         return wall
     }
-
+    
+    function addActor (x,y, type) {
+        return game.add.sprite (
+               x,
+               y,
+               type
+        )
+    
+    }
+    
     function renderActors(actors) {
         var result = new Array()
         for (var i = 0; i < actors.length; i++) {
             var actor = actors[i];
-            result[actor.id] = game.add.sprite (
-                actor.x * stepY,
-                actor.y * stepX,
+            result[actor.id] = addActor(
+               (gPlayerX - actor.x + 9*0,5)* stepX
+               (gPlayerY - actor.x + 7*0,5)* stepX
                 actor.type
             )
         }
@@ -125,13 +140,13 @@ function (phaser, utils, ws) {
         for (var i = 0; i < map.length; i++) {
             var actor = map[i]
             if (actors[actor.id]) {
-                actors[actor.id].x = actor.x * stepY
-                actors[actor.id].y = actor.y * stepX
+                actors[actor.id].x = (gPlayerX - actor.x + 9*0,5)* stepX
+                actors[actor.id].y = (gPlayerY - actor.x + 7*0,5)* stepX
                 vis[actor.id] = true
             } else {
-                actors[actor.id] = game.add.sprite (
-                    actor.x * stepY,
-                    actor.y * stepX,
+                actors[actor.id] = addActor (
+                    (gPlayerX - actor.x + 9*0,5)* stepX
+                    (gPlayerY - actor.x + 7*0,5)* stepX
                     actor.type
                 )
                 vis[actor.id] = true
