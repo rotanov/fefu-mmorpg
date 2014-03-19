@@ -7,6 +7,7 @@
 #include <QTime>
 
 #include "PermaStorage.hpp"
+#include "Player.hpp"
 
 enum class EFEMPResult
 {
@@ -67,20 +68,7 @@ private:
 
     void WriteResult_(QVariantMap& response, const EFEMPResult result);
 
-    static const int minPrasswordLength_ = 6;
-    static const int maxPrasswordLength_ = 36;
-    static const int minLoginLength_ = 2;
-    static const int maxLoginLength_ = 36;
     int lastId = 1;
-
-    struct Player
-    {
-        float x;
-        float y;
-        int id;
-        QString direction;
-        QString login;
-    };
 
     std::vector<Player> players_;
 
@@ -96,7 +84,7 @@ private:
     QTime time_;
     float lastTime_ = 0.0f;
 
-    float playerVelocity_ = 100.0;
+    float playerVelocity_ = 1.0;
     float slideThreshold_ = 0.1;
     int ticksPerSecond_ = 60;
     int screenRowCount_ = 7;

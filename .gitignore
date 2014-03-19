@@ -25,3 +25,7 @@
 /fefu-mmorpg.pro.user.3.0-pre1
 /fefu-mmorpg.sublime-project
 /fefu-mmorpg.sublime-workspace
+
+/fefu-mmorpg.pro.user
+/bin/server-debug.exe
+/bin/server-release.exe

@@ -9,12 +9,6 @@
 
 #include "PermaStorage.hpp"
 
-bool ExactMatch(QString pattern, QString str)
-{
-    QRegExp rx(pattern);
-    return rx.exactMatch(str);
-}
-
 GameServer::GameServer()
 {
     QTime midnight(0, 0, 0);
@@ -145,11 +139,11 @@ void GameServer::HandleRegister(const QVariantMap& request, QVariantMap& respons
     {
         WriteResult_(response, EFEMPResult::LOGIN_EXISTS);
     }
-    else if (!ExactMatch("[0-9a-zA-Z]{2,36}", login))
+    else if (!QRegExp("[0-9a-zA-Z]{2,36}").exactMatch(login))
     {
         WriteResult_(response, EFEMPResult::BAD_LOGIN);
-    }
-    else if (!ExactMatch(".{6,36}", password)
+    }    
+    else if (!QRegExp(".{6,36}").exactMatch(password)
              || passHasInvalidChars)
     {
         WriteResult_(response, EFEMPResult::BAD_PASS);
@@ -174,28 +168,22 @@ void GameServer::tick()
 {
     float dt = (time_.elapsed() - lastTime_) * 0.001f;
     lastTime_ = time_.elapsed();
-    qDebug() << "tick: " << dt;
 
     for (auto& p : players_)
     {
-        auto& direction = p.direction;
-        if (direction == "north")
+        auto v = directionToVector[static_cast<unsigned>(p.GetDirection())] * playerVelocity_;
+        p.SetVelocity(v);
+        p.Update(dt);
+        int x = p.GetPosition().x;
+        int y = p.GetPosition().y;
+
+        if (levelMap_[x][y] == '#')
         {
-            p.y -= playerVelocity_ * dt;
+            p.SetVelocity(-v);
+            p.Update(dt);
         }
-        else if (direction == "south")
-        {
-            p.y += playerVelocity_ * dt;
-        }
-        else if (direction == "west")
-        {
-            p.x -= playerVelocity_ * dt;
-        }
-        else if (direction == "east")
-        {
-            p.x += playerVelocity_ * dt;
-        }
-        p.direction = "";
+
+        p.SetDirection(EActorDirection::NONE);
     }
 }
 
@@ -229,22 +217,23 @@ void GameServer::HandleLogin(const QVariantMap& request, QVariantMap& response)
         // TODO: take out
         {
             Player player;
-            player.id = lastId;
+            player.SetId(lastId);
             lastId++;
-            player.login = login;
+            player.SetLogin(login);
 
             int x;
             int y;
+
             do
             {
                 x = rand() % 510 + 1;
                 y = rand() % 510 + 1;
             } while (levelMap_[x][y] == '#');
-            player.x = x;
-            player.y = y;
+
+            player.SetPosition(Vector2(x, y));
             players_.push_back(player);
 
-            response["id"] = player.id;
+            response["id"] = player.GetId();
         }
     }
 }
@@ -279,9 +268,9 @@ void GameServer::HandleMove(const QVariantMap& request, QVariantMap& response)
 
     for (auto& p : players_)
     {
-        if (p.login == login)
+        if (p.GetLogin() == login)
         {
-            p.direction = direction;
+            p.SetDirection(direction);
             return;
         }
     }
@@ -296,23 +285,24 @@ void GameServer::HandleLook(const QVariantMap& request, QVariantMap& response)
 
     for (auto& p : players_)
     {
-        if (p.login == login)
+        if (p.GetLogin() == login)
         {
-            response["x"] = p.x;
-            response["y"] = p.y;
+            auto pos = p.GetPosition();
+            response["x"] = pos.x;
+            response["y"] = pos.y;
 
 //            int [9][7] area;
             QVariantList rows;
 
-            int minX = p.x - 4;
-            int maxX = p.x + 4;
-            int minY = p.y - 3;
-            int maxY = p.y + 3;
+            int minX = pos.x - 4;
+            int maxX = pos.x + 4;
+            int minY = pos.y - 3;
+            int maxY = pos.y + 3;
 
-            for (int j = p.y - 3; j <= p.y + 3; j++)
+            for (int j = pos.y - 3; j <= pos.y + 3; j++)
             {
                 QVariantList row;
-                for (int i = p.x - 4; i <= p.x + 4; i++)
+                for (int i = pos.x - 4; i <= pos.x + 4; i++)
                 {
                     if (j < 0 || j > 511 || i < 0 || i > 511)
                     {
@@ -330,12 +320,15 @@ void GameServer::HandleLook(const QVariantMap& request, QVariantMap& response)
             for (auto& p : players_)
             {
                 QVariantMap actor;
-                if (p.y >= minY && p.y <= maxY && p.x >= minX && p.x <= maxX)
+                if (p.GetPosition().y >= minY
+                    && p.GetPosition().y <= maxY
+                    && p.GetPosition().x >= minX
+                    && p.GetPosition().x <= maxX)
                 {
                     actor["type"] = "player";
-                    actor["x"] = p.x;
-                    actor["y"] = p.y;
-                    actor["id"] = p.id;
+                    actor["x"] = p.GetPosition().x;
+                    actor["y"] = p.GetPosition().y;
+                    actor["id"] = p.GetId();
                 }
                 actors << actor;
             }
@@ -352,13 +345,13 @@ void GameServer::HandleExamine(const QVariantMap& request, QVariantMap& response
     auto id = request["id"].toInt();
     for (auto& p : players_)
     {
-        if (p.id == id)
+        if (p.GetId() == id)
         {
             response["type"] = "player";
-            response["login"] = p.login;
-            response["x"] = p.x;
-            response["y"] = p.y;
-            response["id"] = p.id;
+            response["login"] = p.GetLogin();
+            response["x"] = p.GetPosition().x;
+            response["y"] = p.GetPosition().y;
+            response["id"] = p.GetId();
             return;
         }
     }

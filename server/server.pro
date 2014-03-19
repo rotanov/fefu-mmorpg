@@ -11,6 +11,7 @@ QMAKE_CXXFLAGS += -std=c++11
 INCLUDEPATH += \
     ../3rd/qhttpserver \
     ../3rd/QtWebsocket \
+    ../3rd/deku2d \
 
 LIBS += -L../3rd/lib
 DESTDIR = ../bin
@@ -39,14 +40,22 @@ SOURCES += Server.cpp \
     DebugStream.cpp \
     GameServer.cpp \
     WebSocketThread.cpp \
-    PermaStorage.cpp
+    PermaStorage.cpp \
+    Actor.cpp \
+    Player.cpp \
+    GameObject.cpp \
+    Monster.cpp \
 
 HEADERS += Server.hpp \
     MainWindow.hpp \
     DebugStream.hpp \
     GameServer.hpp \
     WebSocketThread.hpp \
-    PermaStorage.hpp
+    PermaStorage.hpp \
+    Actor.hpp \
+    Player.hpp \
+    GameObject.hpp \
+    Monster.hpp \
 
 FORMS += \
     mainwindow.ui
