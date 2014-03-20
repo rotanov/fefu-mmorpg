@@ -62,7 +62,7 @@ function (phaser, utils, ws) {
             gPlayerX = data.x
             gPlayerY = data.y
             actors = renderActors(data.actors)
-            player = createPlayer(game.world.centerX, game.world.centerY)
+           // player = createPlayer(game.world.centerX, game.world.centerY)
         })
     }
 
@@ -84,17 +84,21 @@ function (phaser, utils, ws) {
         $.when(ws.look(), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
             var data = JSON.parse(lookData)
+            walls.kill()
             walls.destroy()
             walls = renderWalls(data.map)
             gPlayerX = data.x
             gPlayerY = data.y
-            updateActorsPosition(data.actors)
+            for(key in actors){
+              actors[key].destroy();
+            }
+            actors = renderActors(data.actors)
         });
     }
 
     function createPlayer(x, y) {
         var actor = game.add.sprite(x, y, "player")
-        actor.anchor.setTo(0.5, 0.5);
+        //actor.anchor.setTo(0.5, 0.5);
         //actor.body.collideWorldBounds = true
         //actor.body.bounce.setTo(1, 1)
         //actor.body.immovable = true
@@ -112,53 +116,20 @@ function (phaser, utils, ws) {
         }
         return wall
     }
-    
-    function addActor (x, y, type) {
-        return game.add.sprite (
-               x,
-               y,
-               type
-        )
-    
-    }
-    
+
     function renderActors(actors) {
         var result = new Array()
         for (var i = 0; i < actors.length; i++) {
             var actor = actors[i];
-            result[actor.id] = addActor(
-               (gPlayerX - actor.x + 9*0,5)* stepX,
-               (gPlayerY - actor.x + 7*0,5)* stepX,
+            result[actor.id] = game.add.sprite (
+               (gPlayerX - actor.x + 9*0,5 - 1.0) * stepX,
+               (gPlayerY - actor.y + 7*0,5 - 2) * stepY,
                 actor.type
             )
         }
         return result
     }
 
-    function updateActorsPosition(map) {
-        vis = new Array
-        for (var i = 0; i < map.length; i++) {
-            var actor = map[i]
-            if (actors[actor.id]) {
-                actors[actor.id].x = (gPlayerX - actor.x + 9*0,5) * stepX
-                actors[actor.id].y = (gPlayerY - actor.x + 7*0,5) * stepX
-                vis[actor.id] = true
-            } else {
-                actors[actor.id] = addActor (
-                    (gPlayerX - actor.x + 9*0,5) * stepX,
-                    (gPlayerY - actor.x + 7*0,5) * stepX,
-                    actor.type
-                )
-                vis[actor.id] = true
-            }
-        }
-        for (var i = 0; i < map.length; i++) { 
-            var actor = map[i]
-            if (!vis[actor.id]) {
-                actors[actor.id].destroy()
-            }
-        }
-    }
 
     return {
         start: Start
