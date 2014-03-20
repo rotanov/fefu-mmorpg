@@ -24,7 +24,7 @@ namespace Deku2D
 
 		__INLINE Vector2(const std::vector<float> &values)
 		{
-			if (values.size() >= 2 )
+			if (values.size() >= 2)
 			{
 				x = values[0];
 				y = values[1];
@@ -64,7 +64,7 @@ namespace Deku2D
 			return Vector2(x * t, y * t);
 		}
 
-		friend __INLINE  Vector2 operator *(float k, const Vector2 &V)
+        friend __INLINE Vector2 operator *(float k, const Vector2 &V)
 		{
 			return Vector2(V.x * k, V.y * k);
 		}
@@ -168,6 +168,7 @@ namespace Deku2D
 		{
 			const Vector2 V2_NAN = Vector2(static_cast<float>(std::numeric_limits<float>::quiet_NaN()));
 			const Vector2 V2_ZERO = Vector2(0.0f, 0.0f);
+            const Vector2 V2_IDENTITY = Vector2(1.0f, 1.0f);
 			const Vector2 V2_LEFT = Vector2(-1.0f, 0.0f);
 			const Vector2 V2_RIGHT	= (-V2_LEFT);
 			const Vector2 V2_UP = Vector2(0.0f, 1.0f);
@@ -210,6 +211,12 @@ namespace Deku2D
         r.x = RoundBy(x.x, by);
         r.y = RoundBy(x.y, by);
         return r;
+    }
+
+    template<>
+    __INLINE Vector2 Abs(const Vector2 &x)
+    {
+        return Vector2(std::fabs(x.x), std::fabs(x.y));
     }
 
 }	//	namespace Deku2D
