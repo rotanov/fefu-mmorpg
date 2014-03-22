@@ -78,6 +78,8 @@ void GameServer::Stop()
 
 void GameServer::handleFEMPRequest(const QVariantMap& request, QVariantMap& response)
 {
+    response["action"] = request["action"];
+
     auto actionIt = request.find("action");
     if (actionIt == request.end())
     {
@@ -109,9 +111,7 @@ void GameServer::handleFEMPRequest(const QVariantMap& request, QVariantMap& resp
     }
 
     auto handler = handlerIt.value();
-    (this->*handler)(request, response);
-
-    response["action"] = request["action"];
+    (this->*handler)(request, response);    
 
     if (response.find("result") == response.end())
     {
