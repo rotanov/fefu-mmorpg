@@ -13,11 +13,11 @@ function (phaser, utils, ws) {
     var stepY = 64
     var gPlayerX  
     var gPlayerY  
-    var walls
+    var walls = [];
     var player
-    var actors
+    var actors = [];
 
-    var currWallsPosition
+    var currWallsPosition = null;
 
     function Start() {
         game = new phaser.Game(
@@ -57,12 +57,11 @@ function (phaser, utils, ws) {
         $.when(ws.look(), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
             var data = JSON.parse(lookData)
-            currWallsPosition = data.map
             walls = renderWalls(data.map)
             gPlayerX = data.x
             gPlayerY = data.y
             actors = renderActors(data.actors)
-           // player = createPlayer(game.world.centerX, game.world.centerY)
+            player = createPlayer(game.world.centerX, game.world.centerY)
         })
     }
 
@@ -84,52 +83,62 @@ function (phaser, utils, ws) {
         $.when(ws.look(), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
             var data = JSON.parse(lookData)
-            walls.kill()
-            walls.destroy()
-            walls = renderWalls(data.map)
+            for (var key in walls) {
+               walls[key].destroy();
+            }
+            walls.length = 0;
+            renderWalls(data.map)
             gPlayerX = data.x
             gPlayerY = data.y
-            for(key in actors){
-              actors[key].destroy();
+            for (var key in actors) {
+               actors[key].destroy();
             }
-            actors = renderActors(data.actors)
+            actors.length = 0;
+            renderActors(data.actors)
         });
     }
-
+    
+    function createWalls() {
+        var wall = []
+        for (var i = 0; i < 9; i++) {
+            for (var j = 0; j < 7; j++ ) {
+                    wall[i*7+j] = game.add.sprite(i*stepX, j*stepY, 'wall');
+                    wall[i*7+j].visible = false;         
+            }
+        }
+        return wall
+    } 
+    
     function createPlayer(x, y) {
         var actor = game.add.sprite(x, y, "player")
-        //actor.anchor.setTo(0.5, 0.5);
-        //actor.body.collideWorldBounds = true
-        //actor.body.bounce.setTo(1, 1)
-        //actor.body.immovable = true
+        actor.anchor.setTo(0.5, 0.5);
         return actor
     }
 
     function renderWalls(map) {
-        wall = game.add.group()
-        for (var i = 0; i < map.length; i++) {
+         for (var i = 0; i < map.length; i++) {
             for (var j = 0; j < map[i].length; j++ ) {
                 if (map[i][j] == "#") {
-                    wall.create(j*stepY, i*stepX, "wall")
-                }
-             }
+                     walls.push(game.add.sprite(i*stepX, j*stepY, 'wall'));
+                     walls[walls.length - 1].enabled = true;
+                }            
+            }
         }
-        return wall
+        return walls
     }
 
-    function renderActors(actors) {
-        var result = new Array()
-        for (var i = 0; i < actors.length; i++) {
-            var actor = actors[i];
-            result[actor.id] = game.add.sprite (
-               (gPlayerX - actor.x + 9*0,5 - 1.0) * stepX,
-               (gPlayerY - actor.y + 7*0,5 - 2) * stepY,
-                actor.type
-            )
+    function renderActors(actor) {
+        for (var i = 0; i < actor.length; i++) {
+                actors[actor[i].id] = game.add.sprite (
+                (gPlayerX - actor[i].x + 9*0,5 - 1.0) * stepX,
+                (gPlayerY - actor[i].y + 7*0,5 - 2) * stepY,
+                actor[i].type )
+                actors[actor[i].id].enabled = true;
         }
-        return result
+        return actors
     }
-
+    
+    
 
     return {
         start: Start
