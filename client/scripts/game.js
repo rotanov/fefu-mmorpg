@@ -11,15 +11,18 @@ function (phaser, utils, ws) {
 
     var stepX = 64
     var stepY = 64
-    var gPlayerX  
-    var gPlayerY  
+    var gPlayerX
+    var gPlayerY
     var walls = [];
     var player
     var actors = [];
 
     var currWallsPosition = null;
 
-    function Start() {
+    var id_
+    var sid_
+
+    function Start(id, sid) {
         game = new phaser.Game(
             576, 448,
             phaser.AUTO,
@@ -30,11 +33,12 @@ function (phaser, utils, ws) {
                 update: onUpdate
             }
         )
+        id_ = id
+        sid_ = sid
     }
 
     function loadMapElem() {
-        var dic = ws.getDictionary()
-        var data = JSON.parse(dic)
+        var data = ws.getDictionary().dictionary
         if (data["."])
             game.load.image(data["."], "assets/" + data["."] + ".png")
         if (data["#"])
@@ -54,47 +58,45 @@ function (phaser, utils, ws) {
         leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT)
         rightKey = game.input.keyboard.addKey(phaser.Keyboard.RIGHT)
 
-        $.when(ws.look(), ws.timeout(200, ws.getLookData))
+        $.when(ws.look(sid_), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
-            var data = JSON.parse(lookData)
-            walls = renderWalls(data.map)
-            gPlayerX = data.x
-            gPlayerY = data.y
-            actors = renderActors(data.actors)
+            walls = renderWalls(lookData.map)
+            gPlayerX = lookData.x
+            gPlayerY = lookData.y
+            actors = renderActors(lookData.actors)
             player = createPlayer(game.world.centerX, game.world.centerY)
         })
     }
 
     function onUpdate() {
         if (upKey.isDown) {
-            ws.move("north")
+            ws.move("north", ws.getTick(), sid_)
 
         } else if (downKey.isDown) {
-            ws.move("south")
+            ws.move("south", ws.getTick(), sid_)
         }
 
         if (leftKey.isDown) {
-            ws.move("west")
+            ws.move("west", ws.getTick(), sid_)
 
         } else if (rightKey.isDown) {
-            ws.move("east")
+            ws.move("east", ws.getTick(), sid_)
         }
 
-        $.when(ws.look(), ws.timeout(200, ws.getLookData))
+        $.when(ws.look(sid_), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
-            var data = JSON.parse(lookData)
             for (var key in walls) {
                walls[key].destroy();
             }
             walls.length = 0;
-            renderWalls(data.map)
-            gPlayerX = data.x
-            gPlayerY = data.y
+            renderWalls(lookData.map)
+            gPlayerX = lookData.x
+            gPlayerY = lookData.y
             for (var key in actors) {
                actors[key].destroy();
             }
             actors.length = 0;
-            renderActors(data.actors)
+            renderActors(lookData.actors)
         });
     }
     
@@ -121,7 +123,7 @@ function (phaser, utils, ws) {
                 if (map[i][j] == "#") {
                      walls.push(game.add.sprite(i*stepX, j*stepY, 'wall'));
                      walls[walls.length - 1].enabled = true;
-                }            
+                }
             }
         }
         return walls
@@ -137,8 +139,6 @@ function (phaser, utils, ws) {
         }
         return actors
     }
-    
-    
 
     return {
         start: Start
