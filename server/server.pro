@@ -45,6 +45,7 @@ SOURCES += Server.cpp \
     Player.cpp \
     GameObject.cpp \
     Monster.cpp \
+    ../3rd/deku2d/2de_Math.cpp \
 
 HEADERS += Server.hpp \
     MainWindow.hpp \
