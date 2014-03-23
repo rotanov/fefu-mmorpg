@@ -11,15 +11,19 @@ function (phaser, utils, ws) {
 
     var stepX = 64
     var stepY = 64
-    var gPlayerX  
-    var gPlayerY  
+    var gPlayerX
+    var gPlayerY
     var walls = [];
     var player
     var actors = [];
+    var step = false
 
     var currWallsPosition = null;
 
-    function Start() {
+    var id_
+    var sid_
+
+    function Start(id, sid) {
         game = new phaser.Game(
             576, 448,
             phaser.AUTO,
@@ -30,11 +34,12 @@ function (phaser, utils, ws) {
                 update: onUpdate
             }
         )
+        id_ = id
+        sid_ = sid
     }
 
     function loadMapElem() {
-        var dic = ws.getDictionary()
-        var data = JSON.parse(dic)
+        var data = ws.getDictionary().dictionary
         if (data["."])
             game.load.image(data["."], "assets/" + data["."] + ".png")
         if (data["#"])
@@ -54,60 +59,82 @@ function (phaser, utils, ws) {
         leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT)
         rightKey = game.input.keyboard.addKey(phaser.Keyboard.RIGHT)
 
-        $.when(ws.look(), ws.timeout(200, ws.getLookData))
+        $.when(ws.look(sid_), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
-            var data = JSON.parse(lookData)
-            walls = renderWalls(data.map)
-            gPlayerX = data.x
-            gPlayerY = data.y
-            actors = renderActors(data.actors)
+<<<<<<< HEAD
+            for (var i = 0; i < 7; i++) {
+                for (var j = 0; j < 9; j++ ) {
+                         walls[i*9+j] = game.add.sprite(j*stepX, i*stepY, 'wall');
+                         walls[i*9+j].visible = false;
+                }
+            }
+            renderWalls(lookData.map)
+            gPlayerX = lookData.x
+            gPlayerY = lookData.y
+            renderActors(lookData.actors)
+=======
+            walls = renderWalls(lookData.map)
+            gPlayerX = lookData.x
+            gPlayerY = lookData.y
+            actors = renderActors(lookData.actors)
             player = createPlayer(game.world.centerX, game.world.centerY)
+>>>>>>> c810652eb14090780d495db2eb2fc1b783ee4f15
         })
     }
 
     function onUpdate() {
         if (upKey.isDown) {
-            ws.move("north")
+            ws.move("north", ws.getTick(), sid_)
+<<<<<<< HEAD
+=======
 
+>>>>>>> c810652eb14090780d495db2eb2fc1b783ee4f15
         } else if (downKey.isDown) {
-            ws.move("south")
+            ws.move("south", ws.getTick(), sid_)
         }
 
         if (leftKey.isDown) {
-            ws.move("west")
+            ws.move("west", ws.getTick(), sid_)
 
         } else if (rightKey.isDown) {
-            ws.move("east")
+            ws.move("east", ws.getTick(), sid_)
         }
 
-        $.when(ws.look(), ws.timeout(200, ws.getLookData))
+        $.when(ws.look(sid_), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
-            var data = JSON.parse(lookData)
+<<<<<<< HEAD
+            renderWalls(lookData.map)
+            gPlayerX = lookData.x
+            gPlayerY = lookData.y
+=======
             for (var key in walls) {
                walls[key].destroy();
             }
             walls.length = 0;
-            renderWalls(data.map)
-            gPlayerX = data.x
-            gPlayerY = data.y
+            renderWalls(lookData.map)
+            gPlayerX = lookData.x
+            gPlayerY = lookData.y
             for (var key in actors) {
                actors[key].destroy();
             }
             actors.length = 0;
-            renderActors(data.actors)
+>>>>>>> c810652eb14090780d495db2eb2fc1b783ee4f15
+            renderActors(lookData.actors)
         });
     }
     
-    function createWalls() {
-        var wall = []
-        for (var i = 0; i < 9; i++) {
-            for (var j = 0; j < 7; j++ ) {
-                    wall[i*7+j] = game.add.sprite(i*stepX, j*stepY, 'wall');
-                    wall[i*7+j].visible = false;         
-            }
-        }
-        return wall
-    } 
+    
+    function coordinate(x,coord,g) {
+        return (x - coord + g*0.5-0.5) * stepX;
+    }  
+    
+    function createActors(actor) {
+            actors[actor.id] = game.add.sprite (
+                coordinate(gPlayerX,actor.x,9),
+                coordinate(gPlayerY,actor.y,7),
+                actor.type )
+            actors[actor.id].enabled = true;
+    }
     
     function createPlayer(x, y) {
         var actor = game.add.sprite(x, y, "player")
@@ -119,26 +146,39 @@ function (phaser, utils, ws) {
          for (var i = 0; i < map.length; i++) {
             for (var j = 0; j < map[i].length; j++ ) {
                 if (map[i][j] == "#") {
+<<<<<<< HEAD
+                    walls[i*9+j].visible = true;
+                } else {
+                    walls[i*9+j].visible = false;
+=======
                      walls.push(game.add.sprite(i*stepX, j*stepY, 'wall'));
                      walls[walls.length - 1].enabled = true;
-                }            
+>>>>>>> c810652eb14090780d495db2eb2fc1b783ee4f15
+                }
             }
         }
-        return walls
     }
-
+      
+    
     function renderActors(actor) {
+        var vis = []
         for (var i = 0; i < actor.length; i++) {
-                actors[actor[i].id] = game.add.sprite (
-                (gPlayerX - actor[i].x + 9*0,5 - 1.0) * stepX,
-                (gPlayerY - actor[i].y + 7*0,5 - 2) * stepY,
-                actor[i].type )
-                actors[actor[i].id].enabled = true;
+            if (actors[actor[i].id]) {
+                actors[actor[i].id].x = coordinate(gPlayerX,actor[i].x,9)
+                actors[actor[i].id].y = coordinate(gPlayerY,actor[i].y,7)
+            } else {
+                createActors(actor[i])
+            }
+            vis[actor[i].id] = true;
         }
-        return actors
+        for (var key in actors) { 
+            if (!vis[key]) {
+                actors[key].destroy()
+                actors.splice(actors.indexOf(key),1)
+            }
+            
+        }
     }
-    
-    
 
     return {
         start: Start

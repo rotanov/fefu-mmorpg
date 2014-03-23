@@ -1,13 +1,15 @@
 define(["jquery"],
 function ($) {
 
-    var id = 1
-    var sid_ = null
-    var tick = null
-    var socket = null
+    var id_
+    var sid_
+    var tick
+    var socket
 
-    var dictionary
+    var dictionData
     var lookData
+    var moveData
+    var examineData
 
    /*  function Actor(id) {
         this.id = id;
@@ -35,8 +37,8 @@ function ($) {
 
     var actor = new Actor(id); */
 
-    function startGame(sid, wsUri) {
-
+    function startGame(id, sid, wsUri) {
+        id_ = id
         sid_ = sid
 
         if (!window.WebSocket) {
@@ -47,16 +49,11 @@ function ($) {
 
         socket.onopen = function() {
             console.log("Connection open.")
-
-            socket.send(JSON.stringify({
-                action: "getDictionary",
-                "sid": sid_
-            }))
+            dictionary(sid_)
         }
 
         socket.onmessage = function(event) {
             var data = JSON.parse(event.data)
-
             console.log("Data received: " + event.data)
 
             //Tick
@@ -64,22 +61,24 @@ function ($) {
                 tick = data.tick
 
             //Examine
-            } else if (data.result == "badSid") {
-                console.log("Error: badSid.")
+            } else if (data.action === "examine") {
 
-            } else if (data.result == "badId") {
-                console.log("Error: badId")
-
-            /*} else if (data.result == "ok") {
-                actor.init(data);*/
+                examineData = data
+                if (data.result == "ok") {
+                    //actor.init(data);
+                }
 
             //Get Dictionary
-            } else if (data.dictionary) {
-                dictionary = data.dictionary
+            } else if (data.action == "getDictionary") {
+                dictionData = data
 
             //Look
-            } else if (data.map/* && data.actors*/) {
+            } else if (data.action == "look") {
                 lookData = data
+
+            //Move
+            } else if (data.action == "move") {
+                moveData = data
             }
         }
 
@@ -100,36 +99,62 @@ function ($) {
         }
     }
 
-    function look() {
+    function examine(id, sid) {
         socket.send(JSON.stringify({
-            "action": "look",
-            "id": 1,
-            "sid": sid_
+            "action": "examine",
+            "id": id,
+            "sid": sid
         }))
     }
-    
-    function move(direction) {
+
+    function look(sid) {
+        socket.send(JSON.stringify({
+            "action": "look",
+            "sid": sid
+        }))
+    }
+
+    function move(direction, tick, sid) {
         socket.send(JSON.stringify({
             "action": "move",
             "direction": direction,
             "tick": tick,
-            "sid": sid_
+            "sid": sid
         }))
     }
 
-    function logout() {
+    function dictionary(sid) {
+        socket.send(JSON.stringify({
+            action: "getDictionary",
+            "sid": sid
+        }))
+    }
+
+    function logout(sid) {
         socket.send(JSON.stringify({
             "action": "logout",
-            "sid": sid_
+            "sid": sid
         }))
     }
 
     function getLookData() {
-        return JSON.stringify(lookData)
+        return lookData
     }
-  
+
+    function getMoveData() {
+        return moveData
+    }
+
+    function getExamineData() {
+        return examineData
+    }
+
     function getDictionary() {
-        return JSON.stringify(dictionary)
+        return dictionData
+    }
+
+    function getTick() {
+        return tick
     }
 
     function timeout(x, callback) {
@@ -143,12 +168,17 @@ function ($) {
     return {
         look: look,
         move: move,
+        examine: examine,
+        dictionary: dictionary,
         logout: logout,
         timeout: timeout,
         startGame: startGame,
         quitGame: quitGame,
+        getTick: getTick,
         getLookData: getLookData,
-        getDictionary: getDictionary,
+        getMoveData: getMoveData,
+        getExamineData: getExamineData,
+        getDictionary: getDictionary
     }
 
 })
