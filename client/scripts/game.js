@@ -22,12 +22,13 @@ function (phaser, utils, ws) {
 
     var id_
     var sid_
+    var mapGlobal
 
     function Start(id, sid) {
         game = new phaser.Game(
             576, 448,
-            phaser.AUTO,
-            "",
+           phaser.CANVAS, 
+           "",
             {
                 preload: onPreload,
                 create: onCreate,
@@ -48,12 +49,21 @@ function (phaser, utils, ws) {
     }
 
     function onPreload() {
+        game.load.tilemap('map', 'assets/tilemap.json', null, phaser.Tilemap.TILED_JSON);
         loadMapElem()
+        game.load.image("tileset", "assets/tileset.png")
         game.load.image("player", "assets/player.png")
     }
 
     function onCreate() {
-        game.add.tileSprite(0, 0, 576, 448, "grass")
+        mapGlobal = game.add.tilemap('map');
+
+        mapGlobal.addTilesetImage('tileset');
+      
+        var layer = mapGlobal.createLayer('Tile Layer 1');
+        
+        layer.resizeWorld();
+        
         upKey = game.input.keyboard.addKey(phaser.Keyboard.UP)
         downKey = game.input.keyboard.addKey(phaser.Keyboard.DOWN)
         leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT)
@@ -61,12 +71,6 @@ function (phaser, utils, ws) {
 
         $.when(ws.look(sid_), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
-            for (var i = 0; i < 7; i++) {
-                for (var j = 0; j < 9; j++ ) {
-                         walls[i*9+j] = game.add.sprite(j*stepX, i*stepY, 'wall');
-                         walls[i*9+j].visible = false;
-                }
-            }
             renderWalls(lookData.map)
             gPlayerX = lookData.x
             gPlayerY = lookData.y
@@ -99,31 +103,25 @@ function (phaser, utils, ws) {
     
     
     function coordinate(x,coord,g) {
-        return (x - coord + g*0.5-0.5) * stepX;
+        return ((x - coord-0.5) + g*0.5) * stepX;
     }  
     
     function createActors(actor) {
             actors[actor.id] = game.add.sprite (
-                coordinate(gPlayerX,actor.x,9),
-                coordinate(gPlayerY,actor.y,7),
+                coordinate(gPlayerX,actor.x,7.0),
+                coordinate(gPlayerY,actor.y,9.0),
                 actor.type )
             actors[actor.id].enabled = true;
     }
     
-    function createPlayer(x, y) {
-        var actor = game.add.sprite(x, y, "player")
-        actor.anchor.setTo(0.5, 0.5);
-        return actor
-    }
 
     function renderWalls(map) {
          for (var i = 0; i < map.length; i++) {
             for (var j = 0; j < map[i].length; j++ ) {
                 if (map[i][j] == "#") {
-                    walls[i*9+j].visible = true;
+                   mapGlobal.replace(1, 3, j, i, 1, 1) 
                 } else {
-                    walls[i*9+j].visible = false;
-
+                   mapGlobal.replace(3, 1, j, i, 1, 1)
                 }
             }
         }

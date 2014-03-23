@@ -1,20 +1,20 @@
-{ "height":1,
+{ "height":7,
  "layers":[
         {
-         "data":[3],
-         "height":1,
+         "data":[1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1],
+         "height":7,
          "name":"Tile Layer 1",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
-         "width":1,
+         "width":9,
          "x":0,
          "y":0
         }],
  "orientation":"orthogonal",
  "properties":
     {
-
+         
     },
  "tileheight":64,
  "tilesets":[
