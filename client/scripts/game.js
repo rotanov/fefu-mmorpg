@@ -16,6 +16,7 @@ function (phaser, utils, ws) {
     var walls = [];
     var player
     var actors = [];
+    var step = false
 
     var currWallsPosition = null;
 
@@ -60,18 +61,22 @@ function (phaser, utils, ws) {
 
         $.when(ws.look(sid_), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
-            walls = renderWalls(lookData.map)
+            for (var i = 0; i < 7; i++) {
+                for (var j = 0; j < 9; j++ ) {
+                         walls[i*9+j] = game.add.sprite(j*stepX, i*stepY, 'wall');
+                         walls[i*9+j].visible = false;
+                }
+            }
+            renderWalls(lookData.map)
             gPlayerX = lookData.x
             gPlayerY = lookData.y
-            actors = renderActors(lookData.actors)
-            player = createPlayer(game.world.centerX, game.world.centerY)
+            renderActors(lookData.actors)
         })
     }
 
     function onUpdate() {
         if (upKey.isDown) {
             ws.move("north", ws.getTick(), sid_)
-
         } else if (downKey.isDown) {
             ws.move("south", ws.getTick(), sid_)
         }
@@ -85,31 +90,25 @@ function (phaser, utils, ws) {
 
         $.when(ws.look(sid_), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
-            for (var key in walls) {
-               walls[key].destroy();
-            }
-            walls.length = 0;
             renderWalls(lookData.map)
             gPlayerX = lookData.x
             gPlayerY = lookData.y
-            for (var key in actors) {
-               actors[key].destroy();
-            }
-            actors.length = 0;
             renderActors(lookData.actors)
         });
     }
     
-    function createWalls() {
-        var wall = []
-        for (var i = 0; i < 9; i++) {
-            for (var j = 0; j < 7; j++ ) {
-                    wall[i*7+j] = game.add.sprite(i*stepX, j*stepY, 'wall');
-                    wall[i*7+j].visible = false;         
-            }
-        }
-        return wall
-    } 
+    
+    function coordinate(x,coord,g) {
+        return (x - coord + g*0.5-0.5) * stepX;
+    }  
+    
+    function createActors(actor) {
+            actors[actor.id] = game.add.sprite (
+                coordinate(gPlayerX,actor.x,9),
+                coordinate(gPlayerY,actor.y,7),
+                actor.type )
+            actors[actor.id].enabled = true;
+    }
     
     function createPlayer(x, y) {
         var actor = game.add.sprite(x, y, "player")
@@ -121,23 +120,34 @@ function (phaser, utils, ws) {
          for (var i = 0; i < map.length; i++) {
             for (var j = 0; j < map[i].length; j++ ) {
                 if (map[i][j] == "#") {
-                     walls.push(game.add.sprite(i*stepX, j*stepY, 'wall'));
-                     walls[walls.length - 1].enabled = true;
+                    walls[i*9+j].visible = true;
+                } else {
+                    walls[i*9+j].visible = false;
+
                 }
             }
         }
-        return walls
     }
-
+      
+    
     function renderActors(actor) {
+        var vis = []
         for (var i = 0; i < actor.length; i++) {
-                actors[actor[i].id] = game.add.sprite (
-                (gPlayerX - actor[i].x + 9*0,5 - 1.0) * stepX,
-                (gPlayerY - actor[i].y + 7*0,5 - 2) * stepY,
-                actor[i].type )
-                actors[actor[i].id].enabled = true;
+            if (actors[actor[i].id]) {
+                actors[actor[i].id].x = coordinate(gPlayerX,actor[i].x,9)
+                actors[actor[i].id].y = coordinate(gPlayerY,actor[i].y,7)
+            } else {
+                createActors(actor[i])
+            }
+            vis[actor[i].id] = true;
         }
-        return actors
+        for (var key in actors) { 
+            if (!vis[key]) {
+                actors[key].destroy()
+                actors.splice(actors.indexOf(key),1)
+            }
+            
+        }
     }
 
     return {
