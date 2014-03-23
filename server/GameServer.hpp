@@ -72,7 +72,7 @@ private:
 
     std::vector<Player> players_;
 
-    static const int MAP_SIZE = 512;
+    static const int MAP_SIZE = 64;
     char levelMap_[MAP_SIZE][MAP_SIZE];
     QMap<QString, QString> loginToPass_;
     QMap<QByteArray, QString> sids_;

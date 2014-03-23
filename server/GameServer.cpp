@@ -246,11 +246,11 @@ void GameServer::tick()
         int x = p.GetPosition().x;
         int y = p.GetPosition().y;
 
-//        if (levelMap_[x][y] == '#')
-//        {
-//            p.SetVelocity(-v);
-//            p.Update(dt);
-//        }
+        if (levelMap_[x][y] == '#')
+        {
+            p.SetVelocity(-v);
+            p.Update(dt);
+        }
 
         p.SetDirection(EActorDirection::NONE);
     }
@@ -277,8 +277,14 @@ void GameServer::HandleLogin(const QVariantMap& request, QVariantMap& response)
     }
     else
     {
-        QByteArray id = QString(qrand()).toLatin1();
-        QByteArray sid = QCryptographicHash::hash(id, QCryptographicHash::Sha1);
+        QByteArray sid;
+
+        do
+        {
+            QByteArray id = QString::number(qrand()).toLatin1();
+            sid = QCryptographicHash::hash(id, QCryptographicHash::Sha1);
+        } while (sids_.find(sid) != sids_.end());
+
         sids_.insert(sid.toHex(), login);
         response["sid"] = sid.toHex();
         response["webSocket"] = wsAddress_;
