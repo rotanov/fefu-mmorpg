@@ -72,7 +72,8 @@ private:
 
     std::vector<Player> players_;
 
-    char levelMap_[512][512];
+    static const int MAP_SIZE = 512;
+    char levelMap_[MAP_SIZE][MAP_SIZE];
     QMap<QString, QString> loginToPass_;
     QMap<QByteArray, QString> sids_;
 
@@ -84,7 +85,7 @@ private:
     QTime time_;
     float lastTime_ = 0.0f;
 
-    float playerVelocity_ = 1.0;
+    float playerVelocity_ = 10.0;
     float slideThreshold_ = 0.1;
     int ticksPerSecond_ = 60;
     int screenRowCount_ = 7;
