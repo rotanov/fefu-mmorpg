@@ -61,7 +61,6 @@ function (phaser, utils, ws) {
 
         $.when(ws.look(sid_), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
-<<<<<<< HEAD
             for (var i = 0; i < 7; i++) {
                 for (var j = 0; j < 9; j++ ) {
                          walls[i*9+j] = game.add.sprite(j*stepX, i*stepY, 'wall');
@@ -72,23 +71,12 @@ function (phaser, utils, ws) {
             gPlayerX = lookData.x
             gPlayerY = lookData.y
             renderActors(lookData.actors)
-=======
-            walls = renderWalls(lookData.map)
-            gPlayerX = lookData.x
-            gPlayerY = lookData.y
-            actors = renderActors(lookData.actors)
-            player = createPlayer(game.world.centerX, game.world.centerY)
->>>>>>> c810652eb14090780d495db2eb2fc1b783ee4f15
         })
     }
 
     function onUpdate() {
         if (upKey.isDown) {
             ws.move("north", ws.getTick(), sid_)
-<<<<<<< HEAD
-=======
-
->>>>>>> c810652eb14090780d495db2eb2fc1b783ee4f15
         } else if (downKey.isDown) {
             ws.move("south", ws.getTick(), sid_)
         }
@@ -102,23 +90,9 @@ function (phaser, utils, ws) {
 
         $.when(ws.look(sid_), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
-<<<<<<< HEAD
             renderWalls(lookData.map)
             gPlayerX = lookData.x
             gPlayerY = lookData.y
-=======
-            for (var key in walls) {
-               walls[key].destroy();
-            }
-            walls.length = 0;
-            renderWalls(lookData.map)
-            gPlayerX = lookData.x
-            gPlayerY = lookData.y
-            for (var key in actors) {
-               actors[key].destroy();
-            }
-            actors.length = 0;
->>>>>>> c810652eb14090780d495db2eb2fc1b783ee4f15
             renderActors(lookData.actors)
         });
     }
@@ -146,14 +120,10 @@ function (phaser, utils, ws) {
          for (var i = 0; i < map.length; i++) {
             for (var j = 0; j < map[i].length; j++ ) {
                 if (map[i][j] == "#") {
-<<<<<<< HEAD
                     walls[i*9+j].visible = true;
                 } else {
                     walls[i*9+j].visible = false;
-=======
-                     walls.push(game.add.sprite(i*stepX, j*stepY, 'wall'));
-                     walls[walls.length - 1].enabled = true;
->>>>>>> c810652eb14090780d495db2eb2fc1b783ee4f15
+
                 }
             }
         }
