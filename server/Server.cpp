@@ -53,6 +53,10 @@ void Server::handleRequest(QHttpRequest *request, QHttpResponse *response)
         case QHttpRequest::HTTP_GET:
         {
             auto path = request->path();
+            if (path == "/")
+            {
+                path = "/index.html";
+            }
             qDebug() << path;
 
             response->setHeader("Access-Control-Allow-Origin", "*");
