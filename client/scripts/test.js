@@ -150,7 +150,7 @@ function ($, m, chai, auth, utils, ws) {
                 })
             })
 
-            describe.only("WebSoket", function(done) {
+            describe.only("WebSocket", function(done) {
                 serverHandler({
                     "action": "register",
                     "login": "Pavel",
@@ -328,7 +328,8 @@ function ($, m, chai, auth, utils, ws) {
 
     return {
         clearDB: clearDB,
-        runTests: runTests
+        runTests: runTests,
+        serverHandler: serverHandler
     }
 
 })
