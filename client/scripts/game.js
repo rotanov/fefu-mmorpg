@@ -102,14 +102,14 @@ function (phaser, utils, ws) {
     }
     
     
-    function coordinate(x,coord,g) {
-        return ((x - coord-0.5) + g*0.5) * stepX;
+    function coordinate(x, coord, g) {
+        return (-Math.round(x - coord)-0.5  + g*0.5 )* stepX;
     }  
     
     function createActors(actor) {
             actors[actor.id] = game.add.sprite (
-                coordinate(gPlayerX,actor.x,7.0),
-                coordinate(gPlayerY,actor.y,9.0),
+                coordinate(gPlayerX,actor.x,9.0),
+                coordinate(gPlayerY,actor.y,7.0),
                 actor.type )
             actors[actor.id].enabled = true;
     }
@@ -132,8 +132,8 @@ function (phaser, utils, ws) {
         var vis = []
         for (var i = 0; i < actor.length; i++) {
             if (actors[actor[i].id]) {
-                actors[actor[i].id].x = coordinate(gPlayerX,actor[i].x,9)
-                actors[actor[i].id].y = coordinate(gPlayerY,actor[i].y,7)
+                actors[actor[i].id].x = coordinate(gPlayerX,actor[i].x,9.0) 
+                actors[actor[i].id].y = coordinate(gPlayerY,actor[i].y,7.0) 
             } else {
                 createActors(actor[i])
             }
