@@ -24,16 +24,16 @@ GameServer::GameServer()
             , &GameServer::tick);
     timer_->setInterval(1000.0f / static_cast<float>(ticksPerSecond_));
 
-    requestHandlers_["startTesting"] = &GameServer::HandleStartTesting;
-    requestHandlers_["setUpConst"] = &GameServer::HandleSetUpConstants;
-    requestHandlers_["login"] = &GameServer::HandleLogin;
-    requestHandlers_["logout"] = &GameServer::HandleLogout;
-    requestHandlers_["register"] = &GameServer::HandleRegister;
+    requestHandlers_["startTesting"] = &GameServer::HandleStartTesting_;
+    requestHandlers_["setUpConst"] = &GameServer::HandleSetUpConstants_;
+    requestHandlers_["login"] = &GameServer::HandleLogin_;
+    requestHandlers_["logout"] = &GameServer::HandleLogout_;
+    requestHandlers_["register"] = &GameServer::HandleRegister_;
 
-    requestHandlers_["examine"] = &GameServer::HandleExamine;
-    requestHandlers_["getDictionary"] = &GameServer::HandleGetDictionary;
-    requestHandlers_["look"] = &GameServer::HandleLook;
-    requestHandlers_["move"] = &GameServer::HandleMove;
+    requestHandlers_["examine"] = &GameServer::HandleExamine_;
+    requestHandlers_["getDictionary"] = &GameServer::HandleGetDictionary_;
+    requestHandlers_["look"] = &GameServer::HandleLook_;
+    requestHandlers_["move"] = &GameServer::HandleMove_;
 
     // TODO: extract to level map generation module
     for (int i = 0; i < MAP_SIZE; i++)
@@ -48,7 +48,7 @@ GameServer::GameServer()
     {
         for (int j = 1; j < MAP_SIZE - 1; j++)
         {
-            levelMap_[i][j] = std::vector<char>({'#', '.'})[(rand() + rand() + rand()) % 2];
+            levelMap_[i][j] = '.';//std::vector<char>({'#', '.'})[(rand() + rand() + rand()) % 2];
         }
     }
 
@@ -188,7 +188,7 @@ void GameServer::handleFEMPRequest(const QVariantMap& request, QVariantMap& resp
     }
 }
 
-void GameServer::HandleRegister(const QVariantMap& request, QVariantMap& response)
+void GameServer::HandleRegister_(const QVariantMap& request, QVariantMap& response)
 {
     QString login = request["login"].toString();
     QString password = request["password"].toString();
@@ -204,7 +204,7 @@ void GameServer::HandleRegister(const QVariantMap& request, QVariantMap& respons
         }
     }
 
-    if (loginToPass_.find(login) != loginToPass_.end())
+    if (storage_.IfLoginPresent(login))
     {
         WriteResult_(response, EFEMPResult::LOGIN_EXISTS);
     }
@@ -219,12 +219,11 @@ void GameServer::HandleRegister(const QVariantMap& request, QVariantMap& respons
     }
     else
     {
-        loginToPass_.insert(login, password);
-    }
-
-    for (auto i = loginToPass_.begin(); i != loginToPass_.end(); ++i)
-    {
-        qDebug() << i.key() << ":" << i.value();
+        QByteArray salt = QString::number(qrand()).toLatin1();
+        QByteArray passwordWithSalt = password.toUtf8();
+        passwordWithSalt.append(salt);
+        QByteArray hash = QCryptographicHash::hash(passwordWithSalt, QCryptographicHash::Sha3_256);
+        storage_.AddUser(login, QString(hash.toBase64()), QString(salt.toBase64()));
     }
 }
 
@@ -256,7 +255,7 @@ void GameServer::tick()
     }
 }
 
-void GameServer::HandleSetUpConstants(const QVariantMap& request, QVariantMap& response)
+void GameServer::HandleSetUpConstants_(const QVariantMap& request, QVariantMap& response)
 {
     playerVelocity_ = request["playerVelocity"].toFloat();
     slideThreshold_ = request["slideThreshold"].toFloat();
@@ -265,13 +264,25 @@ void GameServer::HandleSetUpConstants(const QVariantMap& request, QVariantMap& r
     screenColumnCount_ = request["screenColumnCount"].toInt();
 }
 
-void GameServer::HandleLogin(const QVariantMap& request, QVariantMap& response)
+void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
 {
     auto login = request["login"].toString();
     auto password = request["password"].toString();
 
-    if (loginToPass_.find(login) == loginToPass_.end()
-        || loginToPass_[login] != password)
+    if (!storage_.IfLoginPresent(login))
+    {
+        WriteResult_(response, EFEMPResult::INVALID_CREDENTIALS);
+        return;
+    }
+
+    QByteArray salt = QByteArray::fromBase64(storage_.GetSalt(login).toLatin1());
+    QByteArray refPassHash = QByteArray::fromBase64(storage_.GetPassHash(login).toLatin1());
+
+    QByteArray passwordWithSalt = password.toUtf8();
+    passwordWithSalt.append(salt);
+    QByteArray passHash = QCryptographicHash::hash(passwordWithSalt, QCryptographicHash::Sha3_256);
+
+    if (passHash != refPassHash)
     {
         WriteResult_(response, EFEMPResult::INVALID_CREDENTIALS);
     }
@@ -313,20 +324,19 @@ void GameServer::HandleLogin(const QVariantMap& request, QVariantMap& response)
     }
 }
 
-void GameServer::HandleLogout(const QVariantMap& request, QVariantMap& response)
+void GameServer::HandleLogout_(const QVariantMap& request, QVariantMap& response)
 {
     auto sid = request["sid"].toByteArray();
     auto iter = sids_.find(sid);
     sids_.erase(iter);
 }
 
-void GameServer::HandleStartTesting(const QVariantMap& request, QVariantMap& response)
+void GameServer::HandleStartTesting_(const QVariantMap& request, QVariantMap& response)
 {
-    loginToPass_.clear();
     storage_.Reset();
 }
 
-void GameServer::HandleGetDictionary(const QVariantMap& request, QVariantMap& response)
+void GameServer::HandleGetDictionary_(const QVariantMap& request, QVariantMap& response)
 {
     QVariantMap dictionary;
     dictionary["#"] = "wall";
@@ -334,7 +344,7 @@ void GameServer::HandleGetDictionary(const QVariantMap& request, QVariantMap& re
     response["dictionary"] = dictionary;
 }
 
-void GameServer::HandleMove(const QVariantMap& request, QVariantMap& response)
+void GameServer::HandleMove_(const QVariantMap& request, QVariantMap& response)
 {
     auto sid = request["sid"].toByteArray();
     auto login = sids_[sid];
@@ -353,7 +363,7 @@ void GameServer::HandleMove(const QVariantMap& request, QVariantMap& response)
     WriteResult_(response, EFEMPResult::BAD_ID);
 }
 
-void GameServer::HandleLook(const QVariantMap& request, QVariantMap& response)
+void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
 {
     auto sid = request["sid"].toByteArray();
     auto login = sids_[sid];
@@ -415,7 +425,7 @@ void GameServer::HandleLook(const QVariantMap& request, QVariantMap& response)
     }
 }
 
-void GameServer::HandleExamine(const QVariantMap& request, QVariantMap& response)
+void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& response)
 {
     auto id = request["id"].toInt();
     for (auto& p : players_)

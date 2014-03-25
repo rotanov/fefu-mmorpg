@@ -55,16 +55,16 @@ private:
     typedef void (GameServer::*HandlerType)(const QVariantMap& request, QVariantMap& response);
     QMap<QString, HandlerType> requestHandlers_;
 
-    void HandleSetUpConstants(const QVariantMap& request, QVariantMap& response);
-    void HandleStartTesting(const QVariantMap& request, QVariantMap& response);
-    void HandleLogin(const QVariantMap& request, QVariantMap& response);
-    void HandleLogout(const QVariantMap& request, QVariantMap& response);
-    void HandleRegister(const QVariantMap& request, QVariantMap& response);
+    void HandleSetUpConstants_(const QVariantMap& request, QVariantMap& response);
+    void HandleStartTesting_(const QVariantMap& request, QVariantMap& response);
+    void HandleLogin_(const QVariantMap& request, QVariantMap& response);
+    void HandleLogout_(const QVariantMap& request, QVariantMap& response);
+    void HandleRegister_(const QVariantMap& request, QVariantMap& response);
 
-    void HandleExamine(const QVariantMap& request, QVariantMap& response);
-    void HandleGetDictionary(const QVariantMap& request, QVariantMap& response);
-    void HandleLook(const QVariantMap& request, QVariantMap& response);
-    void HandleMove(const QVariantMap& request, QVariantMap& response);
+    void HandleExamine_(const QVariantMap& request, QVariantMap& response);
+    void HandleGetDictionary_(const QVariantMap& request, QVariantMap& response);
+    void HandleLook_(const QVariantMap& request, QVariantMap& response);
+    void HandleMove_(const QVariantMap& request, QVariantMap& response);
 
     void WriteResult_(QVariantMap& response, const EFEMPResult result);
 
@@ -72,9 +72,8 @@ private:
 
     std::vector<Player> players_;
 
-    static const int MAP_SIZE = 64;
+    static const int MAP_SIZE = 16;
     char levelMap_[MAP_SIZE][MAP_SIZE];
-    QMap<QString, QString> loginToPass_;
     QMap<QByteArray, QString> sids_;
 
     QString wsAddress_;

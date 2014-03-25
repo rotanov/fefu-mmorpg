@@ -5,6 +5,7 @@
 #include <QSqlDriver>
 #include <QSqlError>
 #include <QDebug>
+#include <QSqlRecord>
 
 PermaStorage::PermaStorage()
 {
@@ -50,24 +51,94 @@ void PermaStorage::Reset()
 void PermaStorage::DropAll()
 {
     QSqlQuery q;
-    q.exec("drop table users");
-    qDebug() << q.lastError();
+    q.prepare("DROP TABLE users");
+    ExecQuery_(q);
 }
 
 void PermaStorage::InitSchema()
 {
-    QSqlQuery query;
-    bool ret;
-    ret = query.exec("create table users "
-        "(id integer primary key, "
-        "login varchar(36), "
-        "pass varchar(36), "
-        "sid varchar(40),"
-        "x real,"
-        "y real)");
+    QSqlQuery q;
+    bool ret = q.exec(R"=(create table users
+        (
+            id serial primary key,
+            login varchar(36),
+            pass varchar(128),
+            salt varchar(64),
+            sid varchar(40),
+            x real,
+            y real
+        )
+    )=");
 
+    if (!ret)
+    {
+        qDebug() << q.lastError();
+    }
+}
+
+void PermaStorage::AddUser(const QString login, const QString passHash, const QString salt)
+{
+    QSqlQuery q;
+    q.prepare(R"=(INSERT INTO users (login, pass, salt)
+        VALUES (:login, :passhash, :salt)
+    )=");
+    q.bindValue(":login", login);
+    q.bindValue(":passhash", passHash);
+    q.bindValue(":salt", salt);
+    ExecQuery_(q);
+}
+
+QString PermaStorage::GetSalt(const QString login)
+{
+    QSqlQuery q;
+    q.prepare("SELECT salt FROM users WHERE login = :login");
+    q.bindValue(":login", login);
+    if (ExecQuery_(q))
+    {
+        q.next();
+        return q.value("salt").toString();
+    }
+    else
+    {
+        return "";
+    }
+}
+
+QString PermaStorage::GetPassHash(const QString login)
+{
+    QSqlQuery q;
+    q.prepare("SELECT pass FROM users WHERE login = :login");
+    q.bindValue(":login", login);
+    if (ExecQuery_(q))
+    {
+        q.next();
+        return q.value("pass").toString();
+    }
+    else
+    {
+        return "";
+    }
+}
+
+bool PermaStorage::IfLoginPresent(const QString login)
+{
+    QSqlQuery q;
+    q.prepare("SELECT login FROM users WHERE login = :login");
+    q.bindValue(":login", login);
+    ExecQuery_(q);
+    if (q.next())
+    {
+        return true;
+    }
+    return false;
+}
+
+bool PermaStorage::ExecQuery_(QSqlQuery& query)
+{
+    bool ret = query.exec();
     if (!ret)
     {
         qDebug() << query.lastError();
     }
+    return ret;
 }
