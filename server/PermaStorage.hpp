@@ -21,4 +21,5 @@ private:
     QSqlDatabase db_;
 
     bool ExecQuery_(QSqlQuery& query);
+    bool ExecQuery_(QString query);
 };

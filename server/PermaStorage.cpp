@@ -50,30 +50,22 @@ void PermaStorage::Reset()
 
 void PermaStorage::DropAll()
 {
-    QSqlQuery q;
-    q.prepare("DROP TABLE users");
-    ExecQuery_(q);
+    ExecQuery_("DROP TABLE users");
 }
 
 void PermaStorage::InitSchema()
 {
-    QSqlQuery q;
-    bool ret = q.exec(R"=(create table users
+    ExecQuery_(R"=(
+        create table users
         (
-            id serial primary key,
-            login varchar(36),
-            pass varchar(128),
-            salt varchar(64),
-            sid varchar(40),
-            x real,
-            y real
+            login varchar(36) primary key,
+            pass varchar(128) NOT NULL,
+            salt varchar(64) NOT NULL,
+            sid varchar(40) NOT NULL DEFAULT '',
+            x real NOT NULL DEFAULT 0.0,
+            y real NOT NULL DEFAULT 0.0
         )
     )=");
-
-    if (!ret)
-    {
-        qDebug() << q.lastError();
-    }
 }
 
 void PermaStorage::AddUser(const QString login, const QString passHash, const QString salt)
@@ -139,6 +131,17 @@ bool PermaStorage::ExecQuery_(QSqlQuery& query)
     if (!ret)
     {
         qDebug() << query.lastError();
+    }
+    return ret;
+}
+
+bool PermaStorage::ExecQuery_(QString query)
+{
+    QSqlQuery q;
+    bool ret = q.exec(query);
+    if (!ret)
+    {
+        qDebug() << q.lastError();
     }
     return ret;
 }
