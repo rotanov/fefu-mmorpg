@@ -56,7 +56,7 @@ void PermaStorage::DropAll()
 void PermaStorage::InitSchema()
 {
     ExecQuery_(R"=(
-        create table users
+        create table if not exists users
         (
             login varchar(36) primary key,
             pass varchar(128) NOT NULL,
