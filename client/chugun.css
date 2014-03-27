@@ -3,13 +3,7 @@ textarea
   margin-right: auto;
   margin-left: auto;
   width: 100%;
-  font-family: 'Verdana', Fallback, sans-serif;
-}
-
-body
-{
-  margin: 0;
-  padding: 0 0 0 500;
+  font-family: Fallback, sans-serif;
 }
 
 label
@@ -22,13 +16,7 @@ label
   width: 180px;
 }
 
-#registerform
-{
-  display: block;
-  width: 512px;
-}
-
-.formrow
+.form-row
 {
   display: block;
   margin-bottom: 15px;
@@ -36,7 +24,7 @@ label
 
 h1, form
 {
-  font-family: "Asap", Helvetica, Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
 }
 
 .div-top
@@ -49,11 +37,11 @@ h1, form
   overflow: hidden;
 }
 
-#formregister
+#form-register
 {
   top: 0px;
   padding: 15px 3% 15px 3%;
-  margin: 35px 35px 0 0;
+  margin: 65px 35px 0 0;
   background: rgb(247, 247, 247);
   border: 1px solid rgba(147, 184, 189,0.8);
   box-shadow:
@@ -63,7 +51,7 @@ h1, form
   z-index: 22;
   float: left;
   position: absolute;
- }
+}
 
 #container
 {
@@ -74,21 +62,15 @@ h1, form
 
 #content
 {
-
+  width: 90%;
   display: block;
 }
 
-#content-top
+#content-right
 {
-  line-height: 15px;
-  width: 100%;
-  margin-top: -60px;
-  text-align: right;
-}
-
-#content-top a
-{
-  text-decoration: none;
+  float: right;
+  width: 10%;
+  margin-top: -80px;
 }
 
 #server-answer
