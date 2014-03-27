@@ -18,10 +18,11 @@ function ($,phaser, auth, test, utils, ws, consts) {
         $("#mocha").empty()
         var response = test.serverHandler(consts)
         if (response.result == "invalidRequest") {
-            $("#server-answer").text("Data is null, request " 
+            $("#server-answer").text("Data is null, request "
                 + "might be failed.").css("color", "red")
         } else {
-            test.runTests()
+            var list = document.getElementById("tests")
+            test.testHandler(list)
         }
     })
 
