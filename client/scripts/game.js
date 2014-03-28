@@ -2,7 +2,6 @@ define(["phaser", "utils", "ws"],
 function (phaser, utils, ws) {
 
     var game = null
-    var dictionary
 
     var upKey
     var downKey
@@ -17,9 +16,9 @@ function (phaser, utils, ws) {
     var step = 64
     var gPlayerX
     var gPlayerY
-    var actors = [];
+    var actors = []
 
-    var currWallsPosition = null;
+    var currWallsPosition = null
 
     var id_
     var sid_
@@ -28,7 +27,7 @@ function (phaser, utils, ws) {
     function Start(id, sid) {
         game = new phaser.Game(
             576, 448,
-           phaser.CANVAS, 
+           phaser.CANVAS,
            "",
             {
                 preload: onPreload,
@@ -46,11 +45,10 @@ function (phaser, utils, ws) {
             game.load.image(data["."], "assets/" + data["."] + ".png")
         if (data["#"])
             game.load.image(data["#"], "assets/" + data["#"] + ".png")
-        dictionary = data
     }
 
     function onPreload() {
-        game.load.tilemap('map', 'assets/tilemap.json', null, phaser.Tilemap.TILED_JSON);
+        game.load.tilemap("map", "assets/tilemap.json", null, phaser.Tilemap.TILED_JSON);
         loadMapElem()
         game.load.image("tileset", "assets/tileset1.png")
         game.load.image("player", "assets/player.png")
@@ -58,14 +56,12 @@ function (phaser, utils, ws) {
     }
 
     function onCreate() {
-        mapGlobal = game.add.tilemap('map');
+        mapGlobal = game.add.tilemap("map")
+        mapGlobal.addTilesetImage("tileset")
 
-        mapGlobal.addTilesetImage('tileset');
-      
-        var layer = mapGlobal.createLayer('Tile Layer 1');
-        
-        layer.resizeWorld();
-        
+        var layer = mapGlobal.createLayer("Tile Layer 1")
+        layer.resizeWorld()
+
         upKey = game.input.keyboard.addKey(phaser.Keyboard.UP)
         downKey = game.input.keyboard.addKey(phaser.Keyboard.DOWN)
         leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT)
@@ -79,24 +75,25 @@ function (phaser, utils, ws) {
             renderActors(lookData.actors)
         })
     }
-    
+
     function onUpdate() {
         if (upKey.isDown) {
             if (pressDown){
                 pressDown = false
-            } else if ( !pressLeft && !pressRight && !pressUp) {
+            } else if (!pressLeft && !pressRight && !pressUp) {
                 pressUp = true
             } else {
-                pressLeft = pressRight = pressUp = false 
+                pressLeft = pressRight = pressUp = false
                 ws.move("north", ws.getTick(), sid_)
             }
+
         } else if (downKey.isDown) {
             if (pressUp){
                 pressUp = false
-            } else if ( !pressLeft && !pressRight && !pressDown) {
+            } else if (!pressLeft && !pressRight && !pressDown) {
                 pressDown = true
             } else {
-                pressLeft = pressRight = pressDown = false 
+                pressLeft = pressRight = pressDown = false
                 ws.move("south", ws.getTick(), sid_)
             }
         }
@@ -104,12 +101,13 @@ function (phaser, utils, ws) {
         if (leftKey.isDown) {
              if (pressRight){
                 pressRight = false
-            } else if ( !pressDown && !pressUp && !pressLeft) {
+            } else if (!pressDown && !pressUp && !pressLeft) {
                 pressLeft = true
             } else {
-                pressLeft = pressDown = pressUp = false 
+                pressLeft = pressDown = pressUp = false
                ws.move("west", ws.getTick(), sid_)
             }
+
         } else if (rightKey.isDown) {
              if (pressLeft){
                 pressLeft = false
@@ -127,22 +125,21 @@ function (phaser, utils, ws) {
             gPlayerX = lookData.x
             gPlayerY = lookData.y
             renderActors(lookData.actors)
-        });
+        })
     }
-    
-    
+
     function coordinate(x, coord, g) {
-        return (-Math.round(x - coord+0.45)-0.5 + g*0.5 )* step;
-    }  
-    
-    function createActors(actor) {
-            actors[actor.id] = game.add.sprite (
-                coordinate(gPlayerX,actor.x,9.0),
-                coordinate(gPlayerY,actor.y,7.0),
-                actor.type )
-            actors[actor.id].enabled = true;
+        return (-Math.round(x - coord + 0.45) - 0.5 + g * 0.5 ) * step;
     }
-    
+
+    function createActors(actor) {
+        actors[actor.id] = game.add.sprite (
+            coordinate(gPlayerX, actor.x, 9.0),
+            coordinate(gPlayerY, actor.y, 7.0),
+            actor.type
+        )
+        actors[actor.id].enabled = true
+    }
 
     function renderWalls(map) {
         for (var i = 0 ; i < map.length; i++) {
@@ -268,25 +265,23 @@ function (phaser, utils, ws) {
             }
         }
     }
-      
-    
+
     function renderActors(actor) {
         var vis = []
         for (var i = 0; i < actor.length; i++) {
             if (actors[actor[i].id]) {
-                actors[actor[i].id].x = coordinate(gPlayerX,actor[i].x,9.0) 
-                actors[actor[i].id].y = coordinate(gPlayerY,actor[i].y,7.0) 
+                actors[actor[i].id].x = coordinate(gPlayerX, actor[i].x, 9.0)
+                actors[actor[i].id].y = coordinate(gPlayerY, actor[i].y, 7.0)
             } else {
                 createActors(actor[i])
             }
-            vis[actor[i].id] = true;
+            vis[actor[i].id] = true
         }
-        for (var key in actors) { 
+        for (var key in actors) {
             if (!vis[key]) {
                 actors[key].destroy()
-                actors.splice(actors.indexOf(key),1)
+                actors.splice(actors.indexOf(key), 1)
             }
-            
         }
     }
 
