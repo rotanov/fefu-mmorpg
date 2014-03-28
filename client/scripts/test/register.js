@@ -1,5 +1,5 @@
-define(["jquery", "test/mocha", "test/chai", "utils", "ws"],
-function ($, m, chai, utils, ws) {
+define(["test/mocha", "test/chai", "utils", "ws"],
+function (m, chai, utils, ws) {
 
     function testRegister(assert) {
         describe.only("Register", function() {
