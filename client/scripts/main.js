@@ -16,6 +16,7 @@ function ($,phaser, auth, test, utils, ws, consts) {
     $("#test").click(function() {
         $("#content").hide()
         $("#mocha").empty()
+        test.serverHandler({"action": "startTesting"})
         var response = test.serverHandler(consts)
         if (response.result == "invalidRequest") {
             $("#server-answer").text("Data is null, request "
