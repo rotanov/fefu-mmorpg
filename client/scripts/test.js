@@ -17,7 +17,6 @@ function ($, m, chai, utils, ws) {
                         break
                 }
                 mocha.run()
-                clearDB()
             }
         }
     }
@@ -30,10 +29,6 @@ function ($, m, chai, utils, ws) {
         }, true)
 
         return responseResult
-    }
-
-    function clearDB() {
-        utils.postRequest({"action": "clearDb"}, function() {}, true)
     }
 
     function testRegister(assert) {
