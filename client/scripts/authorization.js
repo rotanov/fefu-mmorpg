@@ -39,6 +39,7 @@ function ($, utils, ws, game) {
                     200,
                     function() {
                         $("#content").hide()
+                        $("#test-form").hide()
                     }
                 )
             ).done(
