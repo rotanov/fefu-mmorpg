@@ -1,5 +1,5 @@
-require(["jquery","phaser", "authorization", "test/test", "utils", "consts"],
-function ($,phaser, auth, test, utils, consts) {
+require(["jquery","phaser", "authorization", "test/test", "utils", "packages"],
+function ($,phaser, auth, test, utils, packages) {
 
     $("#register").click(function() {
         auth.jsonHandle("register", auth.registerCallback)
@@ -16,8 +16,8 @@ function ($,phaser, auth, test, utils, consts) {
     $("#test").click(function() {
         $("#content").hide()
         $("#mocha").empty()
-        utils.serverHandler({"action": "startTesting"})
-        var response = utils.serverHandler(consts)
+        utils.serverHandler(packages.startTest())
+        var response = utils.serverHandler(packages.consts())
         if (response.result == "invalidRequest") {
             $("#server-answer").text("Data is null, request "
                 + "might be failed.").css("color", "red")
