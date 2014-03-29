@@ -37,20 +37,29 @@ h1, form
   overflow: hidden;
 }
 
-#form-register
+#form-register, #actors
 {
   top: 0px;
-  padding: 15px 3% 15px 3%;
-  margin: 65px 35px 0 0;
-  background: rgb(247, 247, 247);
-  border: 1px solid rgba(147, 184, 189,0.8);
-  box-shadow:
-  0pt 2px 5px rgba(105, 108, 109,  0.7),
-  0px 0px 8px 5px rgba(208, 223, 226, 0.4) inset;
   border-radius: 5px;
   z-index: 22;
   float: left;
+}
+
+#form-register
+{
+  margin: 65px 35px 0 0;
+  padding: 15px 3% 15px 3%;
+  background: rgb(247, 247, 247);
+  border: 1px solid rgba(147, 184, 189, 0.8);
+  box-shadow:
+    0pt 2px 5px rgba(105, 108, 109, 0.7),
+    0px 0px 8px 5px rgba(208, 223, 226, 0.4) inset;
   position: absolute;
+}
+
+#actors
+{
+  padding: 5px 15px 5px 5px;
 }
 
 #container
@@ -62,14 +71,14 @@ h1, form
 
 #content
 {
-  width: 90%;
+  width: 80%;
   display: block;
 }
 
 #content-right
 {
   float: right;
-  width: 10%;
+  width: 20%;
   margin-top: -80px;
 }
 
