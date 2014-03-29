@@ -1,6 +1,8 @@
 define(["jquery", "utils", "ws", "game"],
 function ($, utils, ws, game) {
 
+    var sid_
+
     function registerCallback(data) {
 
         var serverAnswer = $("#server-answer")
@@ -34,6 +36,7 @@ function ($, utils, ws, game) {
         if (data.result === "ok") {
             $("#server-answer").text("Authentication is successful.").css("color", "green")
             $("#logout").css("visibility", "visible")
+            sid_ = data.sid
             ws.startGame(data.id, data.sid, data.webSocket)
             $.when(ws.timeout(
                     200,
@@ -67,7 +70,7 @@ function ($, utils, ws, game) {
         if (action == "logout") {
             var js = {
                 "action": "logout",
-                "sid": sid
+                "sid": sid_
             }
 
         } else {
