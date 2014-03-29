@@ -297,7 +297,6 @@ function (phaser, utils, ws, actor) {
     document.onclick = function(event) {
         event = event || window.event
         var id = getActorID(event.pageX, event.pageY)
-        alert(id)
         if (id) {
             $.when(ws.examine(id), ws.timeout(200, ws.getExamineData))
             .done(function (examine, examineData) {
