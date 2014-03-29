@@ -62,7 +62,7 @@ function (phaser, utils, ws, actor) {
         mapGlobal = game.add.tilemap("map")
         mapGlobal.addTilesetImage("tileset")
 
-        var layer = mapGlobal.createLayer("Tile Layer 1")
+        layer = mapGlobal.createLayer("Tile Layer 1")
         layer.resizeWorld()
  
         upKey = game.input.keyboard.addKey(phaser.Keyboard.UP)
