@@ -11,32 +11,6 @@ function ($) {
     var moveData
     var examineData
 
-   /*  function Actor(id) {
-        this.id = id;
-        this.type = null;
-        this.login = null;
-        this.x = null;
-        this.y = null;
-
-        this.init = function(data) {
-            this.type = data.type;
-            this.login = data.login;
-            this.x = data.x;
-            this.y = data.y;
-        };
-
-        this.move = function(direction) {
-            socket.send(JSON.stringify({
-                action: "move",
-                direction: direction,
-                tick: tick,
-                sid: sid_
-            }));
-        };
-    }
-
-    var actor = new Actor(id); */
-
     function startGame(id, sid, wsUri) {
         id_ = id
         sid_ = sid
@@ -99,11 +73,10 @@ function ($) {
         }
     }
 
-    function examine(id, sid) {
+    function examine(id) {
         socket.send(JSON.stringify({
             "action": "examine",
-            "id": id,
-            "sid": sid
+            "id": id
         }))
     }
 
