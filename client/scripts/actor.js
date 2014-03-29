@@ -17,6 +17,7 @@ function ($) {
     }
 
     Actor.prototype.drawInf = function() {
+        $("#actors").empty()
         for (var key in this.data) {
             $("<div/>", {})
             .text(key + ": " + this.data[key])
