@@ -1,5 +1,5 @@
-define(["phaser", "utils", "ws"],
-function (phaser, utils, ws) {
+﻿define(["phaser", "utils", "ws", "actor"],
+function (phaser, utils, ws, actor) {
 
     var game = null
 
@@ -129,7 +129,7 @@ function (phaser, utils, ws) {
     }
 
     function coordinate(x, coord, g) {
-        return (-Math.round(x - coord + 0.45) - 0.5 + g * 0.5 ) * step;
+        return (-Math.round(x - coord + 0.45) - 0.5 + g * 0.5 ) * step
     }
 
     function createActors(actor) {
