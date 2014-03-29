@@ -285,6 +285,31 @@ function (phaser, utils, ws, actor) {
         }
     }
 
+    function getActorID(x, y) {
+        for (var id in actors) {
+            if (Math.abs(actors[id].x - x) < 100 && //!!!
+                Math.abs(actors[id].y - y) < 100) { //!!!
+                return id
+            }
+        }
+    }
+
+    document.onclick = function(event) {
+        event = event || window.event
+        var id = getActorID(event.pageX, event.pageY)
+        alert(id)
+        if (id) {
+            $.when(ws.examine(id), ws.timeout(200, ws.getExamineData))
+            .done(function (examine, examineData) {
+                if (examineData.result == "ok") {
+                    var gamer = actor.newActor(id)
+                    gamer.init(examineData)
+                    gamer.drawInf()
+                }
+            })
+        }
+    }
+
     return {
         start: Start
     }
