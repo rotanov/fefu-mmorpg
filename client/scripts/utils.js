@@ -46,10 +46,21 @@ function ($) {
         }
     }
 
+    function serverHandler(object) {
+        var responseResult
+
+        postRequest(object, function (response) {
+            responseResult = response
+        }, true)
+
+        return responseResult
+    }
+
     return {
         getServerAddress: getServerAddress,
         setServerAddress: setServerAddress,
-        postRequest: postRequest
+        postRequest: postRequest,
+        serverHandler: serverHandler
     }
 
 })

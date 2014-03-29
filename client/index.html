@@ -25,41 +25,59 @@
 <body>
 
 <div id="container">
-    <div id="content-top">
-        <div class="div-top">
-            <a href="/index.html"><input type="button" value="home" name="submit"/></a>
-        </div>
-        <div class="div-top">
-            <input type="button" value="test" id="test" name="submit"/>
-        </div>
-        <div class="div-top">
-            <input type="button" id="logout" value="exit" name="submit" class="hide"/>
-        </div>
-    </div>
 
     <div id="content">
         <h3>Authorization</h3>
-        <form id="formregister">
-            <div class="formrow">
+
+        <form id="form-register">
+            <div class="form-row">
                 <label for="server-address">Server</label>
                 <input id="server-address" type="url"/>
             </div>
             
-            <div class="formrow">
+            <div class="form-row">
                 <label for="username">Login</label>
                 <input type="text" id="username" name="login"/>
             </div>
 
-            <div class="formrow">
+            <div class="form-row">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password"/>
             </div>
 
-            <input type="button" value="Register" id="register" name="submit"/>
-            <input type="button" value="Sign in" id="login" name="submit"/>
+            <input type="button" value="Register" id="register"/>
+            <input type="button" value="Sign in" id="login" />
         </form>
-    <div id="server-answer"></div>
+
+        <div id="server-answer"></div>
     </div>
+
+    <div id="content-right">
+        <h3>Options</h3>
+
+        <div>
+            <a href="/index.html"><input type="button" value="home" name="submit"/></a>
+        </div>
+
+        <div>
+            <form id="test-form">
+                <select multiple required id="tests" name="tests">
+                    <option disabled>test</option>
+                    <option value="register">register</option>
+                    <option selected value="websocket">websocket</option>
+                </select><br/>
+                <input type="button" value="test" id="test"/>
+            </form>
+        </div>
+
+        <div>
+            <input type="button" id="logout" value="exit" class="hide"/>
+        </div>
+
+        <h3>Information</h3>
+        <div id="actors"></div>
+    </div>
+
     <div id="mocha"></div>
 </div>
 
