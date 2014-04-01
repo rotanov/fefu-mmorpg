@@ -28,7 +28,7 @@ function ($) {
     }
 
     function newActor(id) {
-        return actor = new Actor(id)
+        return new Actor(id)
     }
 
     return {
