@@ -21,7 +21,6 @@ public:
 
 private slots:
     void on_qpbToggleServerState_clicked();
-
     void on_qpbClear_clicked();
 
 private:

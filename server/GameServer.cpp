@@ -11,8 +11,10 @@
 #include <QPixmap>
 
 #include "PermaStorage.hpp"
+#include "utils.hpp"
 
 GameServer::GameServer()
+    : levelMap_(11, 9)
 {
     QTime midnight(0, 0, 0);
     qsrand(midnight.secsTo(QTime::currentTime()));
@@ -35,76 +37,13 @@ GameServer::GameServer()
     requestHandlers_["look"] = &GameServer::HandleLook_;
     requestHandlers_["move"] = &GameServer::HandleMove_;
 
-    // TODO: extract to level map generation module
-    for (int i = 0; i < MAP_SIZE; i++)
+    QImage map(levelMap_.GetColumnCount(), levelMap_.GetRowCount(), QImage::Format_ARGB32);
+
+    for (int i = 0; i < levelMap_.GetRowCount(); i++)
     {
-        levelMap_[0][i] = '#';
-        levelMap_[MAP_SIZE - 1][i] = '#';
-        levelMap_[i][0] = '#';
-        levelMap_[i][MAP_SIZE - 1] = '#';
-    }
-
-    for (int i = 1; i < MAP_SIZE - 1; i++)
-    {
-        for (int j = 1; j < MAP_SIZE - 1; j++)
+        for (int j = 0; j < levelMap_.GetColumnCount(); j++)
         {
-            levelMap_[i][j] = '.';//std::vector<char>({'#', '.'})[(rand() + rand() + rand()) % 2];
-        }
-    }
-
-    int temp[MAP_SIZE][MAP_SIZE];
-
-    for (int s = 0; s < 5; s++)
-    {
-        for (int i = 0; i < MAP_SIZE; i++)
-        {
-            for (int j = 0; j < MAP_SIZE; j++)
-            {
-                if (i == 0 || j == 0 || i == MAP_SIZE - 1 || j == MAP_SIZE - 1)
-                {
-                    temp[i][j] = '#';
-                }
-                else
-                {
-                    int c = 0;
-                    for (int k = -1; k < 2; k++)
-                    {
-                        for (int l = -1; l < 2; l++)
-                        {
-                            if (levelMap_[i + k][j + l] == '#')
-                            {
-                                c++;
-                            }
-                        }
-                    }
-                    if (c >= 5)
-                    {
-                        temp[i][j] = '#';
-                    }
-                    else
-                    {
-                        temp[i][j] = '.';
-                    }
-                }
-            }
-        }
-
-        for (int i = 0; i < MAP_SIZE; i++)
-        {
-            for (int j = 0; j < MAP_SIZE; j++)
-            {
-                levelMap_[i][j] = temp[i][j];
-            }
-        }
-    }
-
-    QImage map(MAP_SIZE, MAP_SIZE, QImage::Format_ARGB32);
-
-    for (int i = 0; i < MAP_SIZE; i++)
-    {
-        for (int j = 0; j < MAP_SIZE; j++)
-        {
-            if (levelMap_[i][j] == '#')
+            if (levelMap_.GetCell(j, i) == '#')
             {
                 map.setPixel(j, i, qRgba(0, 0, 0, 255));
             }
@@ -245,7 +184,7 @@ void GameServer::tick()
         int x = p.GetPosition().x;
         int y = p.GetPosition().y;
 
-        if (levelMap_[x][y] == '#')
+        if (levelMap_.GetCell(x, y) == '#')
         {
             p.SetVelocity(-v);
             p.Update(dt);
@@ -312,9 +251,9 @@ void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
 
             do
             {
-                x = rand() % (MAP_SIZE - 2) + 1;
-                y = rand() % (MAP_SIZE - 2) + 1;
-            } while (levelMap_[x][y] == '#');
+                x = rand() % (levelMap_.GetColumnCount() - 2) + 1;
+                y = rand() % (levelMap_.GetRowCount() - 2) + 1;
+            } while (levelMap_.GetCell(x, y) == '#');
 
             player.SetPosition(Vector2(x, y));
             players_.push_back(player);
@@ -389,13 +328,16 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
                 QVariantList row;
                 for (int i = pos.x - 4; i <= pos.x + 4; i++)
                 {
-                    if (j < 0 || j > MAP_SIZE - 1 || i < 0 || i > MAP_SIZE - 1)
+                    if (j < 0
+                        || j > levelMap_.GetRowCount() - 1
+                        || i < 0
+                        || i > levelMap_.GetColumnCount() - 1)
                     {
                         row.push_back("#");
                     }
                     else
                     {
-                        row.push_back(QString(levelMap_[i][j]));
+                        row.push_back(QString(levelMap_.GetCell(i, j)));
                     }
                 }
                 rows.push_back(row);

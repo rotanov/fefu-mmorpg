@@ -46,6 +46,8 @@ SOURCES += Server.cpp \
     GameObject.cpp \
     Monster.cpp \
     ../3rd/deku2d/2de_Math.cpp \
+    utils.cpp \
+    LevelMap.cpp
 
 HEADERS += Server.hpp \
     MainWindow.hpp \
@@ -57,6 +59,8 @@ HEADERS += Server.hpp \
     Player.hpp \
     GameObject.hpp \
     Monster.hpp \
+    utils.hpp \
+    LevelMap.hpp
 
 FORMS += \
     mainwindow.ui

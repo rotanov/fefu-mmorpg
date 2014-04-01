@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <QTime>
 
+#include "LevelMap.hpp"
 #include "PermaStorage.hpp"
 #include "Player.hpp"
 
@@ -72,8 +73,7 @@ private:
 
     std::vector<Player> players_;
 
-    static const int MAP_SIZE = 16;
-    char levelMap_[MAP_SIZE][MAP_SIZE];
+    LevelMap levelMap_;
     QMap<QByteArray, QString> sids_;
 
     QString wsAddress_;
