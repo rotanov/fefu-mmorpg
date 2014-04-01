@@ -107,6 +107,7 @@ void GameServer::handleFEMPRequest(const QVariantMap& request, QVariantMap& resp
 
     if (action != "register"
         && action != "login"
+        && action != "examine"
         && action != "startTesting"
         && action != "setUpConst")
     {

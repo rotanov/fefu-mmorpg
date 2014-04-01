@@ -3,13 +3,7 @@ textarea
   margin-right: auto;
   margin-left: auto;
   width: 100%;
-  font-family: 'Verdana', Fallback, sans-serif;
-}
-
-body
-{
-  margin: 0;
-  padding: 0 0 0 500;
+  font-family: Fallback, sans-serif;
 }
 
 label
@@ -22,13 +16,7 @@ label
   width: 180px;
 }
 
-#registerform
-{
-  display: block;
-  width: 512px;
-}
-
-.formrow
+.form-row
 {
   display: block;
   margin-bottom: 15px;
@@ -36,7 +24,7 @@ label
 
 h1, form
 {
-  font-family: "Asap", Helvetica, Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
 }
 
 .div-top
@@ -49,21 +37,30 @@ h1, form
   overflow: hidden;
 }
 
-#formregister
+#form-register, #actors
 {
   top: 0px;
-  padding: 15px 3% 15px 3%;
-  margin: 35px 35px 0 0;
-  background: rgb(247, 247, 247);
-  border: 1px solid rgba(147, 184, 189,0.8);
-  box-shadow:
-  0pt 2px 5px rgba(105, 108, 109,  0.7),
-  0px 0px 8px 5px rgba(208, 223, 226, 0.4) inset;
   border-radius: 5px;
   z-index: 22;
   float: left;
+}
+
+#form-register
+{
+  margin: 65px 35px 0 0;
+  padding: 15px 3% 15px 3%;
+  background: rgb(247, 247, 247);
+  border: 1px solid rgba(147, 184, 189, 0.8);
+  box-shadow:
+    0pt 2px 5px rgba(105, 108, 109, 0.7),
+    0px 0px 8px 5px rgba(208, 223, 226, 0.4) inset;
   position: absolute;
- }
+}
+
+#actors
+{
+  padding: 5px 15px 5px 5px;
+}
 
 #container
 {
@@ -74,21 +71,15 @@ h1, form
 
 #content
 {
-
+  width: 80%;
   display: block;
 }
 
-#content-top
+#content-right
 {
-  line-height: 15px;
-  width: 100%;
-  margin-top: -60px;
-  text-align: right;
-}
-
-#content-top a
-{
-  text-decoration: none;
+  float: right;
+  width: 20%;
+  margin-top: -80px;
 }
 
 #server-answer
@@ -97,7 +88,7 @@ h1, form
   float: left;
   display: block;
   position: relative;
-  margin: 180px 0px 0px 0px;
+  margin: 220px 0px 0px 0px;
 }
 
 .show
