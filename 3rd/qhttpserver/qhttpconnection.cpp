@@ -61,8 +61,15 @@ QHttpConnection::QHttpConnection(QTcpSocket *socket, QObject *parent)
 
 QHttpConnection::~QHttpConnection()
 {
-    delete m_socket;
-    m_socket = 0;
+//  The socket is created as a child of the server, which means that it is
+//  automatically deleted when the QTcpServer object is destroyed. It is still
+//  a good idea to delete the object explicitly when you are done with it, to avoid wasting memory.
+
+//  I commented it out so there won't be double delete if QTcpSocket has already deen deleted.
+//  There's still something wrong however
+
+//    delete m_socket;
+//    m_socket = 0;
 
     free(m_parser);
     m_parser = 0;

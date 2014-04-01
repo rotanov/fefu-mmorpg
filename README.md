@@ -8,6 +8,4 @@ https://github.com/antlafarge/QtWebsocket
 
 https://github.com/nikhilm/qhttpserver
 
-https://code.google.com/p/rapidjson/
-
 Qt

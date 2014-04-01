@@ -1,33 +1,66 @@
-TARGET = server
-
+QT += core
+QT += gui
 QT += network
-QT -= gui
+QT += sql
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+TEMPLATE = app
 
 QMAKE_CXXFLAGS += -std=c++11
 
-CONFIG += debug
-
-INCLUDEPATH += ../3rd/qhttpserver \
+INCLUDEPATH += \
+    ../3rd/qhttpserver \
     ../3rd/QtWebsocket \
-    ../3rd/rapidjson
+    ../3rd/deku2d \
 
 LIBS += -L../3rd/lib
 DESTDIR = ../bin
 
-win32 {
-    debug: LIBS += -lqhttpserverd
-    else: LIBS += -lqhttpserver
+CONFIG(debug, debug|release) {
+
+    DEFINES += \
+        _DEBUG \
+        QT_DEBUG_PLUGINS \
+
+    LIBS += -lQtWebsocketd
+    LIBS += -lqhttpserverd
+    TARGET = server-debug
+
 } else {
+
+    LIBS += -lQtWebsocket
     LIBS += -lqhttpserver
+    TARGET = server-release
+
 }
 
-LIBS += -lQtWebsocket
+SOURCES += Server.cpp \
+    main.cpp \
+    MainWindow.cpp \
+    DebugStream.cpp \
+    GameServer.cpp \
+    WebSocketThread.cpp \
+    PermaStorage.cpp \
+    Actor.cpp \
+    Player.cpp \
+    GameObject.cpp \
+    Monster.cpp \
+    ../3rd/deku2d/2de_Math.cpp \
+    utils.cpp \
+    LevelMap.cpp
 
-SOURCES += server.cpp \
-    ServerThreaded.cpp \
-    SocketThread.cpp \
-    main.cpp
+HEADERS += Server.hpp \
+    MainWindow.hpp \
+    DebugStream.hpp \
+    GameServer.hpp \
+    WebSocketThread.hpp \
+    PermaStorage.hpp \
+    Actor.hpp \
+    Player.hpp \
+    GameObject.hpp \
+    Monster.hpp \
+    utils.hpp \
+    LevelMap.hpp
 
-HEADERS += server.hpp \
-    ServerThreaded.h \
-    SocketThread.h
+FORMS += \
+    mainwindow.ui

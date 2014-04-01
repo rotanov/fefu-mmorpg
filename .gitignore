@@ -18,3 +18,15 @@
 /3rd/QtWebsocket/Makefile.Release
 /3rd/QtWebsocket/debug
 /3rd/QtWebsocket/release
+
+/server/object_script.server-debug.Debug
+/server/object_script.server-release.Release
+
+/fefu-mmorpg.pro.user.3.0-pre1
+/fefu-mmorpg.sublime-project
+/fefu-mmorpg.sublime-workspace
+
+/fefu-mmorpg.pro.user
+/bin/server-debug.exe
+/bin/server-release.exe
+/bin/level-map.png

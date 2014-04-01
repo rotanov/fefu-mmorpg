@@ -1,15 +1,55 @@
-#include "server.hpp"
-#include "ServerThreaded.h"
+#include <iostream>
 
-#include <QCoreApplication>
+#include "MainWindow.hpp"
+#include <QApplication>
+#include <QtMessageHandler>
+
+void HandleQDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    QByteArray localMsg = msg.toLocal8Bit();
+//    FILE* logfile = fopen("logFilename.log", "a");
+//    fprintf(logfile, "%s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+//    fclose(logfile);
+
+    static char* messageDescriptions [] =
+    {
+        "Debug",
+        "Warning",
+        "Critical",
+        "Fatal",
+    };
+
+    QString completeMessage = QString(messageDescriptions[type])
+                              + QString(": %1\n");// (%2:%3, %4)\n");
+
+    completeMessage = completeMessage
+                      .arg(localMsg.constData());
+//  uncomment for additional info
+//                      .arg(context.file)
+//                      .arg(context.line)
+//                      .arg(context.function);
+
+    std::cerr << completeMessage.toStdString();
+//    std::cout << completeMessage.toStdString();
+
+//    std::cerr.flush();
+    std::cout.flush();
+
+    fprintf(stderr, "%s", completeMessage.toStdString().c_str());
+
+    fflush(stderr);
+    fflush(stdout);
+}
 
 int main(int argc, char **argv)
 {
-    QCoreApplication app(argc, argv);
-    std::cout << QObject::tr("main thread : 0x%1")
-                 .arg(QString::number((unsigned int)QThread::currentThreadId(), 16))
-                 .toStdString() << std::endl;
-    ServerThreaded myThreadedServer;
-    MyServer server;
-    app.exec();
+#if (_DEBUG)
+    qInstallMessageHandler(HandleQDebugMessageOutput);
+#endif
+
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+
+    return a.exec();
 }

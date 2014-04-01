@@ -92,6 +92,7 @@ QHttpServer::QHttpServer(QObject *parent) : QObject(parent), m_tcpServer(0)
 
 QHttpServer::~QHttpServer()
 {
+    close();
 }
 
 void QHttpServer::newConnection()
@@ -100,7 +101,7 @@ void QHttpServer::newConnection()
 
     while (m_tcpServer->hasPendingConnections()) {
         QHttpConnection *connection =
-            new QHttpConnection(m_tcpServer->nextPendingConnection(), this);
+            new QHttpConnection(m_tcpServer->nextPendingConnection(), m_tcpServer);
         connect(connection, SIGNAL(newRequest(QHttpRequest *, QHttpResponse *)), this,
                 SIGNAL(newRequest(QHttpRequest *, QHttpResponse *)));
     }
@@ -129,5 +130,10 @@ bool QHttpServer::listen(quint16 port)
 void QHttpServer::close()
 {
     if (m_tcpServer)
+    {
         m_tcpServer->close();
+        // Added this so we can invoke `listen` again without triggering assert
+        delete m_tcpServer;
+        m_tcpServer = NULL;
+    }
 }

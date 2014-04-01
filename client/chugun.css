@@ -1,0 +1,102 @@
+textarea
+{
+  margin-right: auto;
+  margin-left: auto;
+  width: 100%;
+  font-family: Fallback, sans-serif;
+}
+
+label
+{
+  color: #444444;
+  display: block;
+  float: left;
+  font-size: 22px;
+  padding: 0;
+  width: 180px;
+}
+
+.form-row
+{
+  display: block;
+  margin-bottom: 15px;
+}
+
+h1, form
+{
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.div-top
+{
+  float: right;
+}
+
+* html body
+{
+  overflow: hidden;
+}
+
+#form-register, #actors
+{
+  top: 0px;
+  border-radius: 5px;
+  z-index: 22;
+  float: left;
+}
+
+#form-register
+{
+  margin: 65px 35px 0 0;
+  padding: 15px 3% 15px 3%;
+  background: rgb(247, 247, 247);
+  border: 1px solid rgba(147, 184, 189, 0.8);
+  box-shadow:
+    0pt 2px 5px rgba(105, 108, 109, 0.7),
+    0px 0px 8px 5px rgba(208, 223, 226, 0.4) inset;
+  position: absolute;
+}
+
+#actors
+{
+  padding: 5px 15px 5px 5px;
+}
+
+#container
+{
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#content
+{
+  width: 80%;
+  display: block;
+}
+
+#content-right
+{
+  float: right;
+  width: 20%;
+  margin-top: -80px;
+}
+
+#server-answer
+{
+  text-align: left;
+  float: left;
+  display: block;
+  position: relative;
+  margin: 220px 0px 0px 0px;
+}
+
+.show
+{
+  visibility: visible;
+}
+
+.hide
+{
+  visibility: hidden;
+}
