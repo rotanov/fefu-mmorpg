@@ -97,7 +97,6 @@ function (m, chai, utils, ws) {
                     setTimeout(done, 200)
                 })
 
-
                 it("should return ok", function() {
                     var data = ws.getExamineData()
                     assert.equal("ok", data.result)
@@ -144,7 +143,7 @@ function (m, chai, utils, ws) {
 
                     it("should return badSid", function() {
                         var data = ws.getExamineData()
-                         assert.equal("badSid", data.result)
+                        assert.equal("badSid", data.result)
                     })
                 })
 
@@ -157,7 +156,7 @@ function (m, chai, utils, ws) {
                 })
 
                 it("should return ok", function() {
-                    data = ws.getMoveData()
+                    var data = ws.getMoveData()
                     assert.equal("ok", data.result)
                 })
 
@@ -168,7 +167,7 @@ function (m, chai, utils, ws) {
                     })
 
                     it("should return badSid", function() {
-                        data = ws.getMoveData()
+                        var data = ws.getMoveData()
                         assert.equal("badSid", data.result)
                     })
                 })
