@@ -192,6 +192,11 @@ void GameServer::tick()
 
         p.SetDirection(EActorDirection::NONE);
     }
+
+    QVariantMap tickMessage;
+    tickMessage["tick"] = tick_;
+    emit broadcastMessage(QString(QJsonDocument::fromVariant(tickMessage).toJson()));
+    tick_++;
 }
 
 void GameServer::HandleSetUpConstants_(const QVariantMap& request, QVariantMap& response)

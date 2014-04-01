@@ -40,6 +40,9 @@ class GameServer : public QObject
 {
     Q_OBJECT
 
+signals:
+    void broadcastMessage(QString message);
+
 public:
     GameServer();
     virtual ~GameServer();
@@ -83,6 +86,7 @@ private:
     QTimer* timer_ = NULL;
     QTime time_;
     float lastTime_ = 0.0f;
+    unsigned tick_ = 0;
 
     float playerVelocity_ = 10.0;
     float slideThreshold_ = 0.1;

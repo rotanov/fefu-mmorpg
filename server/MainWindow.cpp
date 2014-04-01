@@ -33,6 +33,11 @@ MainWindow::MainWindow(QWidget *parent)
             , &GameServer::setWSAddress
             , Qt::DirectConnection);
 
+    connect(gameServer_
+            , &GameServer::broadcastMessage
+            , server_
+            , &Server::broadcastMessage);
+
     std::cout << QObject::tr("main thread : 0x%1")
                  .arg(QString::number((unsigned int)QThread::currentThreadId(), 16))
                  .toStdString() << std::endl;
