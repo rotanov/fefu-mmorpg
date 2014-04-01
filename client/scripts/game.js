@@ -18,6 +18,7 @@ function (phaser, utils, ws, actor) {
     var gPlayerY
 
     var actors = []
+    var id_actors = []
 
 
     var currWallsPosition = null
@@ -69,7 +70,7 @@ function (phaser, utils, ws, actor) {
         downKey = game.input.keyboard.addKey(phaser.Keyboard.DOWN)
         leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT)
         rightKey = game.input.keyboard.addKey(phaser.Keyboard.RIGHT)
-
+        
         $.when(ws.look(sid_), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
             renderWalls(lookData.map)
@@ -80,21 +81,29 @@ function (phaser, utils, ws, actor) {
     }
 
     function onUpdate() {
+        if (game.input.mousePointer.isDown) {
+            var id = getActorID()
+            if (id) {
+                $.when(ws.examine(id), ws.timeout(200, ws.getExamineData))
+                .done(function (examine, examineData) {
+                    if (examineData.result == "ok") {
+                        var gamer = actor.newActor(id)
+                        gamer.init(examineData)
+                        gamer.drawInf()
+                    }
+                })
+            }
+        }
         if (upKey.isDown) {
              ws.move("north", ws.getTick(), sid_)
-
         } else if (downKey.isDown) {
-        
             ws.move("south", ws.getTick(), sid_)
         }
 
         if (leftKey.isDown) {
-             
-                ws.move("west", ws.getTick(), sid_)
-
+            ws.move("west", ws.getTick(), sid_)
         } else if (rightKey.isDown) {
-          
-                ws.move("east", ws.getTick(), sid_)
+            ws.move("east", ws.getTick(), sid_)
         }
 
         $.when(ws.look(sid_), ws.timeout(200, ws.getLookData))
@@ -107,16 +116,19 @@ function (phaser, utils, ws, actor) {
     }
 
     function coordinate(x, coord, g) {
-        return (-(x - coord) - 0.5 + g * 0.5 ) * step
+        return (-(x - coord) + g * 0.5 ) * step
     }
 
     function createActors(actor) {
-        actors[actor.id] = game.add.sprite (
+        actors.push( game.add.sprite (
             coordinate(gPlayerX, actor.x, 9.0),
             coordinate(gPlayerY, actor.y, 7.0),
             actor.type
-        )
-        actors[actor.id].enabled = true
+        ))
+        actors[actors.length-1].name = actor.id
+        actors[actors.length-1].inputEnabled = true
+        actors[actors.length-1].anchor.setTo(0.5, 0.5)
+        id_actors[actor.id] = actors.length-1;
     }
 
     function renderWalls(map) {
@@ -153,32 +165,36 @@ function (phaser, utils, ws, actor) {
     function renderActors(actor) {
         var vis = []
         for (var i = 0; i < actor.length; i++) {
-            if (actors[actor[i].id]) {
-                actors[actor[i].id].x = coordinate(gPlayerX, actor[i].x, 9.0)
-                actors[actor[i].id].y = coordinate(gPlayerY, actor[i].y, 7.0)
+            if (actors[id_actors[actor[i].id]]) {
+                actors[id_actors[actor[i].id]].x = coordinate(gPlayerX, actor[i].x, 9.0)
+                actors[id_actors[actor[i].id]].y = coordinate(gPlayerY, actor[i].y, 7.0)
             } else {
                 createActors(actor[i])
             }
-            vis[actor[i].id] = true
+            vis[id_actors[actor[i].id]] = true
         }
-        for (var key in actors) {
-            if (!vis[key]) {
-                actors[key].destroy()
-                actors.splice(actors.indexOf(key), 1)
+        var k = actors.length
+        var j = 0
+        for (var i = 0; i < k; i++) {
+            if (!vis[i]) {
+                id_actors[actors[i-j].name] = -1;
+                actors[i-j].destroy();
+                actors.splice(i-j, 1);
+                j++
             }
         }
     }
 
-    function getActorID(x, y) {
-        for (var id in actors) {
-            if (Math.abs(actors[id].x - x) < 100 && //!!!
-                Math.abs(actors[id].y - y) < 100) { //!!!
-                return id
+    function getActorID() {
+        for (var i = 0; i < actors.length; i++) {
+            if (phaser.Rectangle.contains(actors[i].body, game.input.x, game.input.y)){
+                return actors[i].name
             }
         }
+        return 0
     }
 
-    document.onclick = function(event) {
+  /*   document.onclick = function(event) {
         event = event || window.event
         var id = getActorID(event.pageX, event.pageY)
         if (id) {
@@ -191,7 +207,7 @@ function (phaser, utils, ws, actor) {
                 }
             })
         }
-    }
+    }  */
 
     return {
         start: Start
