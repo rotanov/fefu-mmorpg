@@ -73,10 +73,11 @@ function ($) {
         }
     }
 
-    function examine(id) {
+    function examine(id, sid) {
         socket.send(JSON.stringify({
             "action": "examine",
-            "id": id
+            "id": id,
+            "sid": sid
         }))
     }
 

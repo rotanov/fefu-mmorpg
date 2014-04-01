@@ -93,9 +93,10 @@ function (m, chai, utils, ws) {
 
             describe("Examine", function() {
                 before(function(done) {
-                    ws.examine(userData.id)
+                    ws.examine(userData.id, userData.sid)
                     setTimeout(done, 200)
                 })
+
 
                 it("should return ok", function() {
                     var data = ws.getExamineData()
@@ -125,7 +126,7 @@ function (m, chai, utils, ws) {
 
                 describe("", function() {
                     before(function(done) {
-                        ws.examine(".")
+                       ws.examine(".", userData.sid)
                         setTimeout(done, 200)
                     })
 
@@ -134,6 +135,19 @@ function (m, chai, utils, ws) {
                         assert.equal("badId", data.result)
                     })
                 })
+
+                describe("", function() {
+                    before(function(done) {
+                        ws.examine(userData.id, ".")
+                        setTimeout(done, 200)
+                    })
+
+                    it("should return badSid", function() {
+                        var data = ws.getExamineData()
+                         assert.equal("badSid", data.result)
+                    })
+                })
+
             })
 
             describe("Move", function() {
