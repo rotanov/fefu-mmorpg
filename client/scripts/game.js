@@ -84,7 +84,7 @@ function (phaser, utils, ws, actor) {
         if (game.input.mousePointer.isDown) {
             var id = getActorID()
             if (id) {
-                $.when(ws.examine(id), ws.timeout(200, ws.getExamineData))
+                $.when(ws.examine(id, sid_), ws.timeout(200, ws.getExamineData))
                 .done(function (examine, examineData) {
                     if (examineData.result == "ok") {
                         var gamer = actor.newActor(id)
@@ -136,24 +136,8 @@ function (phaser, utils, ws, actor) {
             for (var j = 0; j < map[i].length; j++ ) {
                     if (map[i][j] == "#") {
                         mapGlobal.replace(3, 5, j, i, 1, 1)
-                        mapGlobal.replace(14, 7, j, i, 1, 1) 
-                        mapGlobal.replace(17, 20, j, i, 1, 1) 
-                        mapGlobal.replace(19, 23, j, i, 1, 1) 
-                        mapGlobal.replace(15, 1, j, i, 1, 1)  
-                        mapGlobal.replace(12, 6, j, i, 1, 1) 
-                        mapGlobal.replace(13, 2, j, i, 1, 1) 
-                        mapGlobal.replace(16, 22, j, i, 1, 1)  
-                        mapGlobal.replace(18, 21, j, i, 1, 1) 
 
                     } else {
-                        mapGlobal.replace(7, 14, j, i, 1, 1) 
-                        mapGlobal.replace(20, 17, j, i, 1, 1) 
-                        mapGlobal.replace(23, 19, j, i, 1, 1) 
-                        mapGlobal.replace(1, 15, j, i, 1, 1)  
-                        mapGlobal.replace(6, 12, j, i, 1, 1) 
-                        mapGlobal.replace(2, 13, j, i, 1, 1) 
-                        mapGlobal.replace(22, 16, j, i, 1, 1)  
-                        mapGlobal.replace(21, 18, j, i, 1, 1) 
                         mapGlobal.replace(5, 3, j, i, 1, 1)
                     }
             }
@@ -193,21 +177,6 @@ function (phaser, utils, ws, actor) {
         }
         return 0
     }
-
-  /*   document.onclick = function(event) {
-        event = event || window.event
-        var id = getActorID(event.pageX, event.pageY)
-        if (id) {
-            $.when(ws.examine(id), ws.timeout(200, ws.getExamineData))
-            .done(function (examine, examineData) {
-                if (examineData.result == "ok") {
-                    var gamer = actor.newActor(id)
-                    gamer.init(examineData)
-                    gamer.drawInf()
-                }
-            })
-        }
-    }  */
 
     return {
         start: Start
