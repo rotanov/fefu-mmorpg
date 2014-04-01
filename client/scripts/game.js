@@ -81,58 +81,20 @@ function (phaser, utils, ws, actor) {
 
     function onUpdate() {
         if (upKey.isDown) {
-            if (pressDown){
-                pressDown = false
-            } else if (!pressLeft && !pressRight && !pressUp) {
-                pressUp = true
-                layer._y -= 16
-            } else {
-                pressLeft = pressRight = pressUp = false 
-                layer._y += 16 
-                layer._x = 0
-                ws.move("north", ws.getTick(), sid_)
-            }
+             ws.move("north", ws.getTick(), sid_)
 
         } else if (downKey.isDown) {
-            if (pressUp){
-                pressUp = false
-            } else if (!pressLeft && !pressRight && !pressDown) {
-                pressDown = true
-                layer._y += 16
-            } else {
-                pressLeft = pressRight = pressDown = false
-                ws.move("south", ws.getTick(), sid_)
-                layer._y -= 16
-                layer._x = 0               
-                
-            }
+        
+            ws.move("south", ws.getTick(), sid_)
         }
 
         if (leftKey.isDown) {
-             if (pressRight){
-                pressRight = false
-            } else if (!pressDown && !pressUp && !pressLeft) {
-                pressLeft = true
-                layer._x -= 16
-            } else {
-                pressLeft = pressDown = pressUp = false 
+             
                 ws.move("west", ws.getTick(), sid_)
-                layer._x += 16
-                layer._y = 0
-            }
 
         } else if (rightKey.isDown) {
-             if (pressLeft){
-                pressLeft = false
-            } else if (!pressDown && !pressUp && !pressRight) {
-                pressRight = true
-                layer._x += 16 
-            } else {
-                pressUp = pressDown = pressRight = false
+          
                 ws.move("east", ws.getTick(), sid_)
-                layer._x -= 16
-                layer._y = 0
-            }
         }
 
         $.when(ws.look(sid_), ws.timeout(200, ws.getLookData))
@@ -145,7 +107,7 @@ function (phaser, utils, ws, actor) {
     }
 
     function coordinate(x, coord, g) {
-        return (-Math.round(x - coord + 0.45) - 0.5 + g * 0.5 ) * step
+        return (-(x - coord) - 0.5 + g * 0.5 ) * step
     }
 
     function createActors(actor) {
@@ -184,6 +146,8 @@ function (phaser, utils, ws, actor) {
                     }
             }
         }
+        layer._x = (gPlayerX*step) % 64 - 32
+        layer._y = (gPlayerY*step) % 64 - 32
     }
 
     function renderActors(actor) {
