@@ -1,5 +1,5 @@
-﻿define(["jquery", "test/mocha", "test/chai", "test/register", "test/websocket"],
-function ($, m, chai, tr, tw) {
+﻿define(["jquery", "test/mocha", "test/chai", "test/register", "test/websocket", "test/location"],
+function ($, m, chai, tr, tw, tl) {
 
     function testHandler (list) {
         document.title = "Test"
@@ -14,6 +14,9 @@ function ($, m, chai, tr, tw) {
                         break
                     case "websocket":
                         tw.testWebSocket(assert)
+                        break
+                    case "location":
+                        tl.testLocation(assert)
                         break
                 }
                 mocha.run()
