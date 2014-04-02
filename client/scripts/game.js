@@ -31,7 +31,7 @@ function (phaser, utils, ws, actor) {
     function Start(id, sid) {
         game = new phaser.Game(
             576, 448,
-            phaser.AVTO, 
+            phaser.CANVAS, 
             "",
             {
                 preload: onPreload,
@@ -54,7 +54,7 @@ function (phaser, utils, ws, actor) {
     function onPreload() {
         game.load.tilemap("map", "assets/tilemap.json", null, phaser.Tilemap.TILED_JSON);
         loadMapElem()
-        game.load.image("tileset", "assets/tileset1.png")
+        game.load.image("tileset", "assets/tileset.png")
         game.load.image("player", "assets/player.png")
         game.load.image("monstr", "assets/monstr.png")
     }
@@ -63,7 +63,7 @@ function (phaser, utils, ws, actor) {
         mapGlobal = game.add.tilemap("map")
         mapGlobal.addTilesetImage("tileset")
 
-        layer = mapGlobal.createLayer("Tile Layer 1")
+        layer = mapGlobal.createLayer("back")
         layer.resizeWorld()
  
         upKey = game.input.keyboard.addKey(phaser.Keyboard.UP)
@@ -135,10 +135,10 @@ function (phaser, utils, ws, actor) {
         for (var i = 0 ; i < map.length; i++) {
             for (var j = 0; j < map[i].length; j++ ) {
                     if (map[i][j] == "#") {
-                        mapGlobal.replace(3, 5, j, i, 1, 1)
+                        mapGlobal.replace(1, 3, j, i, 1, 1)
 
                     } else {
-                        mapGlobal.replace(5, 3, j, i, 1, 1)
+                        mapGlobal.replace(3, 1, j, i, 1, 1)
                     }
             }
         }
