@@ -123,9 +123,9 @@ function (phaser, utils, ws, actor) {
 
         $.when(ws.look(sid_), ws.timeout(200, ws.getLookData))
         .done(function (look, lookData) {
-            renderWalls(lookData.map)
             gPlayerX = lookData.x
             gPlayerY = lookData.y
+            renderWalls(lookData.map)
             renderActors(lookData.actors)
         })
     }
@@ -149,7 +149,8 @@ function (phaser, utils, ws, actor) {
     var tempTiles
 
     function renderWalls(map) {
-
+        layer._x = (gPlayerX * step) % 64 - 32
+        layer._y = (gPlayerY * step) % 64 - 32
         tempTiles = mapGlobal.copy(0, 0, 9, 7)
 
         for (var i = 0 ; i < map.length; i++) {
@@ -165,8 +166,6 @@ function (phaser, utils, ws, actor) {
 
         mapGlobal.paste(0, 0, tempTiles)
 
-        layer._x = (gPlayerX * step) % 64 - 32
-        layer._y = (gPlayerY * step) % 64 - 32
     }
 
     function renderActors(actor) {
