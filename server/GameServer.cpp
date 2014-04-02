@@ -14,7 +14,7 @@
 #include "utils.hpp"
 
 GameServer::GameServer()
-    : levelMap_(8, 5)
+    : levelMap_(48, 48)
 {
     QTime midnight(0, 0, 0);
     qsrand(midnight.secsTo(QTime::currentTime()));
@@ -36,6 +36,8 @@ GameServer::GameServer()
     requestHandlers_["getDictionary"] = &GameServer::HandleGetDictionary_;
     requestHandlers_["look"] = &GameServer::HandleLook_;
     requestHandlers_["move"] = &GameServer::HandleMove_;
+
+    GenRandSmoothMap(levelMap_);
 
     QImage map(levelMap_.GetColumnCount(), levelMap_.GetRowCount(), QImage::Format_ARGB32);
 
@@ -184,19 +186,11 @@ void GameServer::tick()
         int x = p.GetPosition().x;
         int y = p.GetPosition().y;
 
-//        if (levelMap_.GetCell(x + 0.5, y) == '#')
-//        {
-//            p.SetPosition(())
-//        }
-
-//        if (levelMap_.GetCell(x + 0.5, y) == '#'
-//            || levelMap_.GetCell(x - 0.5, y) == '#'
-//            || levelMap_.GetCell(x, y + 0.5) == '#'
-//            || levelMap_.GetCell(x, y - 0.5) == '#')
-//        {
-//            p.SetVelocity(-v);
-//            p.Update(dt);
-//        }
+        if (levelMap_.GetCell(x, y) == '#')
+        {
+            p.SetVelocity(-v);
+            p.Update(dt);
+        }
 
         p.SetDirection(EActorDirection::NONE);
     }
@@ -342,15 +336,15 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
 
             QVariantList rows;
 
-            int minX = pos.x - 4;
-            int maxX = pos.x + 4;
-            int minY = pos.y - 3;
-            int maxY = pos.y + 3;
+            int minX = static_cast<int>(pos.x) - 4;
+            int maxX = static_cast<int>(pos.x) + 4;
+            int minY = static_cast<int>(pos.y) - 3;
+            int maxY = static_cast<int>(pos.y) + 3;
 
-            for (int j = pos.y - 3; j <= pos.y + 3; j++)
+            for (int j = minY; j <= maxY; j++)
             {
                 QVariantList row;
-                for (int i = pos.x - 4; i <= pos.x + 4; i++)
+                for (int i = minX; i <= maxX; i++)
                 {
                     if (j < 0
                         || j > levelMap_.GetRowCount() - 1

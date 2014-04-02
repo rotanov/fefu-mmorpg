@@ -88,7 +88,7 @@ private:
     float lastTime_ = 0.0f;
     unsigned tick_ = 0;
 
-    float playerVelocity_ = 1.0;
+    float playerVelocity_ = 10.0;
     float slideThreshold_ = 0.1;
     int ticksPerSecond_ = 60;
     int screenRowCount_ = 7;
