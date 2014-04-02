@@ -28,15 +28,18 @@ function (phaser, utils, ws, actor) {
     var mapGlobal
     var layer
 
+    var fpsText
+
     function Start(id, sid) {
         game = new phaser.Game(
-            576, 448,
+            64 * 9, 64 * 7,
             phaser.CANVAS, 
             "",
             {
                 preload: onPreload,
                 create: onCreate,
-                update: onUpdate
+                update: onUpdate,
+                render: onRender
             }
         )
         id_ = id
@@ -60,6 +63,9 @@ function (phaser, utils, ws, actor) {
     }
 
     function onCreate() {
+
+        game.stage.backgroundColor = "#ffeebb"
+
         mapGlobal = game.add.tilemap("map")
         mapGlobal.addTilesetImage("tileset")
 
@@ -78,9 +84,18 @@ function (phaser, utils, ws, actor) {
             gPlayerY = lookData.y
             renderActors(lookData.actors)
         })
+
+        fpsText = game.add.text(37, 37, "test", {
+            font: "65px Arial",
+            fill: "#ff0044",
+            align: "left"
+        })
     }
 
     function onUpdate() {
+
+        fpsText.setText("FPS: " + game.time.fps)
+
         if (game.input.mousePointer.isDown) {
             var id = getActorID()
             if (id) {
@@ -131,19 +146,27 @@ function (phaser, utils, ws, actor) {
         id_actors[actor.id] = actors.length-1;
     }
 
+    var tempTiles
+
     function renderWalls(map) {
+
+        tempTiles = mapGlobal.copy(0, 0, 9, 7)
+
         for (var i = 0 ; i < map.length; i++) {
             for (var j = 0; j < map[i].length; j++ ) {
                     if (map[i][j] == "#") {
-                        mapGlobal.replace(1, 3, j, i, 1, 1)
+                        tempTiles[i * 9 + j + 1].index = 3
 
                     } else {
-                        mapGlobal.replace(3, 1, j, i, 1, 1)
+                        tempTiles[i * 9 + j + 1].index = 1
                     }
             }
         }
-        layer._x = (gPlayerX*step) % 64 - 32
-        layer._y = (gPlayerY*step) % 64 - 32
+
+        mapGlobal.paste(0, 0, tempTiles)
+
+        layer._x = (gPlayerX * step) % 64 - 32
+        layer._y = (gPlayerY * step) % 64 - 32
     }
 
     function renderActors(actor) {
@@ -176,6 +199,17 @@ function (phaser, utils, ws, actor) {
             }
         }
         return 0
+    }
+    var rectTop = new phaser.Rectangle(0, 0, 64 * 9, 32)
+    var rectBottom = new phaser.Rectangle(0, 64 * 7 - 32, 64 * 9, 32)
+    var rectLeft = new phaser.Rectangle(0, 0, 32, 64 * 7)
+    var rectRight = new phaser.Rectangle(64 * 9 - 32, 0, 32, 64 * 7)
+
+    function onRender() {    
+        game.debug.renderRectangle(rectTop, 'rgba(0,0,0,1)')
+        game.debug.renderRectangle(rectBottom, 'rgba(0,0,0,1)')
+        game.debug.renderRectangle(rectLeft, 'rgba(0,0,0,1)')
+        game.debug.renderRectangle(rectRight, 'rgba(0,0,0,1)')
     }
 
     return {
