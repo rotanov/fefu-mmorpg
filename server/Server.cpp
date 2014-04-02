@@ -133,7 +133,7 @@ void Server::handleRequest(QHttpRequest *request, QHttpResponse *response)
 
 void Server::dataEnd()
 {
-    qDebug() << "request JSON: " << data_;
+//    qDebug() << "request JSON: " << data_;
     QVariantMap request = QJsonDocument::fromJson(data_).toVariant().toMap();
     QVariantMap response;
 
@@ -143,7 +143,7 @@ void Server::dataEnd()
     response_->setHeader("Content-Type", "application/json; charset=utf-8");
     response_->writeHead(QHttpResponse::STATUS_OK);
     auto responseJSON = QJsonDocument::fromVariant(response).toJson();
-    qDebug() << "response JSON: " << responseJSON;
+//    qDebug() << "response JSON: " << responseJSON;
     response_->end(responseJSON);
 
     response_ = NULL;

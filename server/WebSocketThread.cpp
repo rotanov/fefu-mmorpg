@@ -46,15 +46,15 @@ void SocketThread::finished()
 void SocketThread::processMessage(QString message)
 {
     // ANY PROCESS HERE IS DONE IN THE SOCKET THREAD !
-    std::cout << tr("thread 0x%1 | %2")
-        .arg(QString::number((unsigned int)QThread::currentThreadId(), 16))
-        .arg(QString(message)).toStdString() << std::endl;
+//    std::cout << tr("thread 0x%1 | %2")
+//        .arg(QString::number((unsigned int)QThread::currentThreadId(), 16))
+//        .arg(QString(message)).toStdString() << std::endl;
 
    auto request = QJsonDocument::fromJson(message.toLatin1()).toVariant().toMap();
    QVariantMap response;
    emit newFEMPRequest(request, response);
    auto responseJSON = QJsonDocument::fromVariant(response).toJson();
-   qDebug() << "response JSON: " << responseJSON;
+//   qDebug() << "response JSON: " << responseJSON;
    socket->write(QString::fromLatin1(responseJSON));
 }
 

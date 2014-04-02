@@ -14,7 +14,7 @@
 #include "utils.hpp"
 
 GameServer::GameServer()
-    : levelMap_(11, 9)
+    : levelMap_(8, 5)
 {
     QTime midnight(0, 0, 0);
     qsrand(midnight.secsTo(QTime::currentTime()));
@@ -96,7 +96,7 @@ void GameServer::handleFEMPRequest(const QVariantMap& request, QVariantMap& resp
     }
 
     QString action = actionIt.value().toString();
-    qDebug() << "FEMP action: " << action;
+//    qDebug() << "FEMP action: " << action;
     auto handlerIt = requestHandlers_.find(action);
 
     if (handlerIt == requestHandlers_.end())
@@ -178,17 +178,25 @@ void GameServer::tick()
 
     for (auto& p : players_)
     {
-        auto v = directionToVector[static_cast<unsigned>(p.GetDirection())] * playerVelocity_;
+        auto v = directionToVector[static_cast<unsigned>(p.GetDirection())] * playerVelocity_ * (tick_ - p.GetClientTick());
         p.SetVelocity(v);
         p.Update(dt);
         int x = p.GetPosition().x;
         int y = p.GetPosition().y;
 
-        if (levelMap_.GetCell(x, y) == '#')
-        {
-            p.SetVelocity(-v);
-            p.Update(dt);
-        }
+//        if (levelMap_.GetCell(x + 0.5, y) == '#')
+//        {
+//            p.SetPosition(())
+//        }
+
+//        if (levelMap_.GetCell(x + 0.5, y) == '#'
+//            || levelMap_.GetCell(x - 0.5, y) == '#'
+//            || levelMap_.GetCell(x, y + 0.5) == '#'
+//            || levelMap_.GetCell(x, y - 0.5) == '#')
+//        {
+//            p.SetVelocity(-v);
+//            p.Update(dt);
+//        }
 
         p.SetDirection(EActorDirection::NONE);
     }
@@ -256,8 +264,8 @@ void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
 
             do
             {
-                x = rand() % (levelMap_.GetColumnCount() - 2) + 1;
-                y = rand() % (levelMap_.GetRowCount() - 2) + 1;
+                x = rand() % (levelMap_.GetColumnCount() - 2) + 1.5;
+                y = rand() % (levelMap_.GetRowCount() - 2) + 1.5;
             } while (levelMap_.GetCell(x, y) == '#');
 
             player.SetPosition(Vector2(x, y));
@@ -272,6 +280,14 @@ void GameServer::HandleLogout_(const QVariantMap& request, QVariantMap& response
 {
     auto sid = request["sid"].toByteArray();
     auto iter = sids_.find(sid);
+    for (int i = 0; i < players_.size(); i++)
+    {
+        if (players_[i].GetLogin() == iter.value())
+        {
+            players_.erase(players_.begin() + i);
+            break;
+        }
+    }
     sids_.erase(iter);
 }
 
@@ -292,6 +308,9 @@ void GameServer::HandleMove_(const QVariantMap& request, QVariantMap& response)
 {
     auto sid = request["sid"].toByteArray();
     auto login = sids_[sid];
+    unsigned tick = request["tick"].toUInt();
+
+//    qDebug() << "tick diff: " << tick_ - tick;
 
     auto direction = request["direction"].toString();
 
@@ -300,6 +319,7 @@ void GameServer::HandleMove_(const QVariantMap& request, QVariantMap& response)
         if (p.GetLogin() == login)
         {
             p.SetDirection(direction);
+            p.SetClientTick(tick);
             return;
         }
     }
@@ -320,7 +340,6 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
             response["x"] = pos.x;
             response["y"] = pos.y;
 
-//            int [9][7] area;
             QVariantList rows;
 
             int minX = pos.x - 4;
