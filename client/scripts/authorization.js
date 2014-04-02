@@ -60,6 +60,7 @@ function ($, utils, ws, game) {
         if (data.result === "ok") {
             $("#server-answer").text("Lets to register or sign in.").css("color", "green")
             $("#logout").css("visibility", "hidden")
+            location.href = utils.getServerAddress()
 
         } else if (data.result === "badSid") {
             $("#server-answer").text("Invalid session ID.").css("color", "red")
