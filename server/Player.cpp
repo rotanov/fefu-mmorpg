@@ -19,3 +19,13 @@ void Player::SetLogin(const QString login)
 {
     login_ = login;
 }
+
+unsigned Player::GetClientTick() const
+{
+    return clientTick_;
+}
+
+void Player::SetClientTick(const unsigned clientTick)
+{
+    clientTick_ = clientTick;
+}

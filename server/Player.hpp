@@ -12,7 +12,10 @@ public:
 
     QString GetLogin() const;
     void SetLogin(const QString login);
+    unsigned GetClientTick() const;
+    void SetClientTick(const unsigned clientTick);
 
 private:
     QString login_;
+    unsigned clientTick_ = 0;
 };
