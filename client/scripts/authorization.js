@@ -52,6 +52,7 @@ function ($, utils, ws, game) {
             )
 
         } else if (data.result === "invalidCredentials") {
+            $("#password").val("")
             $("#server-answer").text("Invalid login or password.").css("color", "red")
         }
     }
