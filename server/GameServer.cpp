@@ -93,7 +93,7 @@ void GameServer::handleFEMPRequest(const QVariantMap& request, QVariantMap& resp
     auto actionIt = request.find("action");
     if (actionIt == request.end())
     {
-        WriteResult_(response, EFEMPResult::INVALID_REQUEST);
+        WriteResult_(response, EFEMPResult::BAD_ACTION);
         return;
     }
 
@@ -103,7 +103,7 @@ void GameServer::handleFEMPRequest(const QVariantMap& request, QVariantMap& resp
 
     if (handlerIt == requestHandlers_.end())
     {
-        WriteResult_(response, EFEMPResult::INVALID_REQUEST);
+        WriteResult_(response, EFEMPResult::BAD_ACTION);
         return;
     }
 
