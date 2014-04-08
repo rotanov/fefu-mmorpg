@@ -4,7 +4,6 @@ function(packages, utils, ws) {
     function testLocation(assert) {
 
         describe.only("Location", function(done) {
-            var map = packages.startTest().map
             var playerVelocity = packages.consts().playerVelocity
             var ticksPerSecond = packages.consts().ticksPerSecond
 
@@ -14,7 +13,7 @@ function(packages, utils, ws) {
                 "password": "Location"
             })
 
-            userData = utils.serverHandler({
+            var userData = utils.serverHandler({
                 "action": "login",
                 "login": "Location",
                 "password": "Location"
@@ -23,6 +22,65 @@ function(packages, utils, ws) {
             before(function(done) {
                 ws.startGame(userData.id, userData.sid, userData.webSocket)
                 setTimeout(done, 200)
+            })
+
+            describe("Upload map to server", function() {
+                it("should return ok", function() {
+                    var map = [
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."]
+                    ]
+
+                    assert.equal("ok", utils.serverHandler({
+                        "action": "setUpMap",
+                        "map": map
+                    }).result)
+                })
+
+                it("should return badMap", function() {
+                    var map = [
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", "$", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."]
+                    ]
+
+                    assert.equal("badMap", utils.serverHandler({
+                        "action": "setUpMap",
+                        "map": map
+                    }).result)
+                })
+
+                it("should return badAction", function() {
+                    var map = [
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."]
+                    ]
+
+                    assert.equal("badAction", utils.serverHandler({
+                        "action": "uploadMap",
+                        "map": map
+                    }).result)
+                })
             })
 
             describe("Move left", function() {
