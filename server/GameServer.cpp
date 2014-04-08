@@ -29,6 +29,7 @@ GameServer::GameServer()
     requestHandlers_["startTesting"] = &GameServer::HandleStartTesting_;
     requestHandlers_["setUpConst"] = &GameServer::HandleSetUpConstants_;
     requestHandlers_["setUpMap"] = &GameServer::HandleSetUpMap_;
+    requestHandlers_["getConst"] = &GameServer::HandleGetConst_;
     requestHandlers_["login"] = &GameServer::HandleLogin_;
     requestHandlers_["logout"] = &GameServer::HandleLogout_;
     requestHandlers_["register"] = &GameServer::HandleRegister_;
@@ -112,7 +113,8 @@ void GameServer::handleFEMPRequest(const QVariantMap& request, QVariantMap& resp
         && action != "login"
         && action != "startTesting"
         && action != "setUpConst"
-        && action != "setUpMap")
+        && action != "setUpMap"
+        && action != "getConst")
     {
         if (request.find("sid") == request.end()
             || sids_.find(request["sid"].toByteArray()) == sids_.end())
@@ -218,6 +220,7 @@ void GameServer::HandleSetUpMap_(const QVariantMap& request, QVariantMap& respon
     for (int i = 0; i < screenRowCount_; i++)
     {
         auto row = data.toStringList();
+        qDebug() << "row: " << row;
         for (int j = 0; j < screenColumnCount_; j++)
         {
             auto cell = row[j];
@@ -228,6 +231,15 @@ void GameServer::HandleSetUpMap_(const QVariantMap& request, QVariantMap& respon
             }
         }
     }
+}
+
+void GameServer::HandleGetConst_(const QVariantMap& request, QVariantMap& response)
+{
+    response["playerVelocity"] = playerVelocity_;
+    response["slideThreshold"] = slideThreshold_;
+    response["ticksPerSecond"] = ticksPerSecond_;
+    response["screenRowCount"] = screenRowCount_;
+    response["screenColumnCount"] = screenColumnCount_;
 }
 
 void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
