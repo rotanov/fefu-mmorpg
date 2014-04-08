@@ -63,7 +63,7 @@ function(packages, utils, ws) {
                     }).result)
                 })
 
-                it("should return badAction", function() {
+                it("should return badAction [mast setUpMap]", function() {
                     var map = [
                         [".", ".", ".", ".", ".", ".", "."],
                         [".", ".", ".", ".", ".", ".", "."],
@@ -80,6 +80,35 @@ function(packages, utils, ws) {
                         "action": "uploadMap",
                         "map": map
                     }).result)
+                })
+            })
+
+            describe("Set Up / Get Constants", function() {
+                it("should return ok", function() {
+                    assert.equal("ok", utils.serverHandler(
+                        packages.consts()
+                    ).result)
+                })
+
+                it("should return badAction [mast setUpConst]", function() {
+                    assert.equal("badAction", utils.serverHandler({
+                        "action": "setUploadConst",
+                        "playerVelocity": 1.0,
+                        "slideThreshold": 0.1,
+                        "ticksPerSecond": 60,
+                        "screenRowCount": 7,
+                        "screenColumnCount": 9
+                    }).result)
+                })
+
+                it("should return ok", function() {
+                    var response = utils.serverHandler({"action": "getConst"})
+                    assert.equal("ok", response.result)
+                    assert.equal(packages.consts().playerVelocity, response.playerVelocity)
+                    assert.equal(packages.consts().slideThreshold, response.slideThreshold)
+                    assert.equal(packages.consts().ticksPerSecond, response.ticksPerSecond)
+                    assert.equal(packages.consts().screenRowCount, response.screenRowCount)
+                    assert.equal(packages.consts().screenColumnCount, response.screenColumnCount)
                 })
             })
 
