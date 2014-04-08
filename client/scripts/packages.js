@@ -2,7 +2,7 @@ define(
 function() {
 
     function consts() {
-        var packege = {
+        var pack = {
            "action": "setUpConst",
            "playerVelocity": 1.0,
            "slideThreshold": 0.1,
@@ -10,7 +10,7 @@ function() {
            "screenRowCount": 7,
            "screenColumnCount": 9,
         }
-        return packege
+        return pack
     }
 
     return {
