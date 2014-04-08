@@ -61,8 +61,9 @@ private:
     typedef void (GameServer::*HandlerType)(const QVariantMap& request, QVariantMap& response);
     QMap<QString, HandlerType> requestHandlers_;
 
-    void HandleSetUpConstants_(const QVariantMap& request, QVariantMap& response);
     void HandleStartTesting_(const QVariantMap& request, QVariantMap& response);
+    void HandleSetUpConstants_(const QVariantMap& request, QVariantMap& response);
+    void HandleSetUpMap_(const QVariantMap& request, QVariantMap& response);
     void HandleLogin_(const QVariantMap& request, QVariantMap& response);
     void HandleLogout_(const QVariantMap& request, QVariantMap& response);
     void HandleRegister_(const QVariantMap& request, QVariantMap& response);

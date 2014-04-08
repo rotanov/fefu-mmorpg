@@ -28,6 +28,7 @@ GameServer::GameServer()
 
     requestHandlers_["startTesting"] = &GameServer::HandleStartTesting_;
     requestHandlers_["setUpConst"] = &GameServer::HandleSetUpConstants_;
+    requestHandlers_["setUpMap"] = &GameServer::HandleSetUpMap_;
     requestHandlers_["login"] = &GameServer::HandleLogin_;
     requestHandlers_["logout"] = &GameServer::HandleLogout_;
     requestHandlers_["register"] = &GameServer::HandleRegister_;
@@ -93,7 +94,7 @@ void GameServer::handleFEMPRequest(const QVariantMap& request, QVariantMap& resp
     auto actionIt = request.find("action");
     if (actionIt == request.end())
     {
-        WriteResult_(response, EFEMPResult::INVALID_REQUEST);
+        WriteResult_(response, EFEMPResult::BAD_ACTION);
         return;
     }
 
@@ -103,14 +104,15 @@ void GameServer::handleFEMPRequest(const QVariantMap& request, QVariantMap& resp
 
     if (handlerIt == requestHandlers_.end())
     {
-        WriteResult_(response, EFEMPResult::INVALID_REQUEST);
+        WriteResult_(response, EFEMPResult::BAD_ACTION);
         return;
     }
 
     if (action != "register"
         && action != "login"
         && action != "startTesting"
-        && action != "setUpConst")
+        && action != "setUpConst"
+        && action != "setUpMap")
     {
         if (request.find("sid") == request.end()
             || sids_.find(request["sid"].toByteArray()) == sids_.end())
@@ -208,6 +210,24 @@ void GameServer::HandleSetUpConstants_(const QVariantMap& request, QVariantMap& 
     ticksPerSecond_ = request["ticksPerSecond"].toInt();
     screenRowCount_ = request["screenRowCount"].toInt();
     screenColumnCount_ = request["screenColumnCount"].toInt();
+}
+
+void GameServer::HandleSetUpMap_(const QVariantMap& request, QVariantMap& response)
+{
+    QVariant data = request["map"];
+    for (int i = 0; i < screenRowCount_; i++)
+    {
+        auto row = data.toStringList();
+        for (int j = 0; j < screenColumnCount_; j++)
+        {
+            auto cell = row[j];
+            if (cell != "#" || cell != ".")
+            {
+                WriteResult_(response, EFEMPResult::BAD_MAP);
+                return;
+            }
+        }
+    }
 }
 
 void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
