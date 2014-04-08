@@ -16,14 +16,23 @@ function ($,phaser, auth, test, utils, packages) {
     $("#test").click(function() {
         $("#content").hide()
         $("#mocha").empty()
-        utils.serverHandler(packages.startTest())
-        var response = utils.serverHandler(packages.consts())
-        if (response.result == "invalidRequest") {
-            $("#server-answer").text("Data is null, request "
-                + "might be failed.").css("color", "red")
-        } else {
-            var list = document.getElementById("tests")
-            test.testHandler(list)
+
+        var action = utils.serverHandler({"action": "startTesting"})
+        if (action.result == "ok") {
+            var response = utils.serverHandler(packages.consts())
+
+            if (response.result == "ok") {
+                var list = document.getElementById("tests")
+                test.testHandler(list)
+
+            } else if (response.result == "badAction") {
+                $("#server-answer").text("Invalid action.")
+                .css("color", "red")
+            }
+
+        } else if (action.result == "badAction") {
+            $("#server-answer").text("Invalid action.")
+            .css("color", "red")
         }
     })
 
