@@ -19,7 +19,8 @@ enum class EFEMPResult
     LOGIN_EXISTS,
     INVALID_CREDENTIALS,
     BAD_ID,
-    INVALID_REQUEST,
+    BAD_ACTION,
+    BAD_MAP,
 };
 
 const std::vector<QString> fempResultToString =
@@ -31,7 +32,8 @@ const std::vector<QString> fempResultToString =
     [EFEMPResult::LOGIN_EXISTS] = "loginExists",
     [EFEMPResult::INVALID_CREDENTIALS] = "invalidCredentials",
     [EFEMPResult::BAD_ID] = "badId",
-    [EFEMPResult::INVALID_REQUEST] = "invalidRequest",
+    [EFEMPResult::BAD_ACTION] = "badAction",
+    [EFEMPResult::BAD_MAP] = "badMap",
 };
 
 // TODO: separate module
