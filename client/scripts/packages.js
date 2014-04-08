@@ -12,25 +12,9 @@ function() {
         }
         return packege
     }
-    
-    function startTest() {
-        var packege = {
-            "action": "startTesting",
-            "map": [
-                ["#", ".", ".", ".", "."],
-                [".", ".", "#", ".", "."],
-                [".", ".", ".", ".", "#"],
-                [".", ".", ".", ".", "."],
-                [".", ".", ".", ".", "."],
-                [".", ".", ".", ".", "."]
-            ]
-        }
-        return packege
-    }
 
     return {
-        consts: consts,
-        startTest: startTest
+        consts: consts
     }
 
 })
