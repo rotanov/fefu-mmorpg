@@ -64,7 +64,7 @@ function (phaser, utils, ws, actor) {
 
     function onCreate() {
 
-        game.stage.backgroundColor = "#ffeebb"
+        //game.stage.backgroundColor = "#ffeebb"
 
         mapGlobal = game.add.tilemap("map")
         mapGlobal.addTilesetImage("tileset")
@@ -183,9 +183,9 @@ function (phaser, utils, ws, actor) {
         var j = 0
         for (var i = 0; i < k; i++) {
             if (!vis[i]) {
-                id_actors[actors[i-j].name] = -1;
-                actors[i-j].destroy();
-                actors.splice(i-j, 1);
+                id_actors[actors[i-j].name] = -1
+                actors[i-j].destroy()
+                actors.splice(i-j, 1)
                 j++
             }
         }
@@ -193,23 +193,29 @@ function (phaser, utils, ws, actor) {
 
     function getActorID() {
         for (var i = 0; i < actors.length; i++) {
-            if (phaser.Rectangle.contains(actors[i].body, game.input.x, game.input.y)){
+            if (phaser.Rectangle.contains(actors[i].body, game.input.x, game.input.y)) {
                 return actors[i].name
             }
         }
         return 0
     }
+
     var rectTop = new phaser.Rectangle(0, 0, 64 * 9, 32)
     var rectBottom = new phaser.Rectangle(0, 64 * 7 - 32, 64 * 9, 32)
     var rectLeft = new phaser.Rectangle(0, 0, 32, 64 * 7)
     var rectRight = new phaser.Rectangle(64 * 9 - 32, 0, 32, 64 * 7)
 
-    function onRender() {    
-        game.debug.renderRectangle(rectTop, 'rgba(0,0,0,1)')
-        game.debug.renderRectangle(rectBottom, 'rgba(0,0,0,1)')
-        game.debug.renderRectangle(rectLeft, 'rgba(0,0,0,1)')
-        game.debug.renderRectangle(rectRight, 'rgba(0,0,0,1)')
+    function onRender() {
+        game.debug.renderRectangle(rectTop, "rgba(0, 0, 0, 1)")
+        game.debug.renderRectangle(rectBottom, "rgba(0, 0, 0, 1)")
+        game.debug.renderRectangle(rectLeft, "rgba(0, 0, 0, 1)")
+        game.debug.renderRectangle(rectRight, "rgba(0, 0, 0, 1)")
     }
+
+    $("#logout").click(function() {
+        alert("Bay-bay")
+        game.destroy()
+    })
 
     return {
         start: Start
