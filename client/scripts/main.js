@@ -1,5 +1,5 @@
-require(["jquery","phaser", "authorization", "test/test", "utils", "packages"],
-function ($,phaser, auth, test, utils, packages) {
+﻿require(["jquery", "phaser", "authorization", "test/test", "utils", "packages"],
+function ($, phaser, auth, test, utils, packages) {
 
     $("#register").click(function() {
         auth.jsonHandle("register", auth.registerCallback)
@@ -49,5 +49,9 @@ function ($,phaser, auth, test, utils, packages) {
         $("#server-address").attr("value", serverAddress)
         utils.setServerAddress(serverAddress)
     })
+
+    window.onbeforeunload = function() {
+        auth.jsonHandle("logout", auth.logoutCallback);
+    }
 
 })
