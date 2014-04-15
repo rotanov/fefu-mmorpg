@@ -7,12 +7,8 @@ function (phaser, utils, ws, actor) {
     var downKey
     var leftKey
     var rightKey
-    
-    var pressUp = 0
-    var pressDown = 0
-    var pressLeft = 0
-    var pressRight = 0
-
+    var width = 9
+    var height = 7
     var step = 64
     var gPlayerX
     var gPlayerY
@@ -20,8 +16,6 @@ function (phaser, utils, ws, actor) {
     var actors = []
     var id_actors = []
 
-
-    var currWallsPosition = null
 
     var id_
     var sid_
@@ -31,8 +25,15 @@ function (phaser, utils, ws, actor) {
     var fpsText
 
     function Start(id, sid) {
+        $.when(ws.getConst(), ws.timeout(200, ws.getConstData))
+            .done(function (getConst, getConstData) {
+                if (getConstData.result == "ok") {
+                    height = getConstData.screenRowCount
+                    width  = getConstData.screenColumnCount
+                }
+            }) 
         game = new phaser.Game(
-            64 * 9, 64 * 7,
+            64 * width, 64 * height,
             phaser.CANVAS, 
             "",
             {
@@ -136,8 +137,8 @@ function (phaser, utils, ws, actor) {
 
     function createActors(actor) {
         actors.push( game.add.sprite (
-            coordinate(gPlayerX, actor.x, 9.0),
-            coordinate(gPlayerY, actor.y, 7.0),
+            coordinate(gPlayerX, actor.x, width),
+            coordinate(gPlayerY, actor.y, height),
             actor.type
         ))
         actors[actors.length-1].name = actor.id
@@ -151,15 +152,15 @@ function (phaser, utils, ws, actor) {
     function renderWalls(map) {
         layer._x = (gPlayerX * step) % 64 - 32
         layer._y = (gPlayerY * step) % 64 - 32
-        tempTiles = mapGlobal.copy(0, 0, 9, 7)
+        tempTiles = mapGlobal.copy(0, 0, width, height)
 
         for (var i = 0 ; i < map.length; i++) {
             for (var j = 0; j < map[i].length; j++ ) {
                     if (map[i][j] == "#") {
-                        tempTiles[i * 9 + j + 1].index = 3
+                        tempTiles[i * width + j + 1].index = 3
 
                     } else {
-                        tempTiles[i * 9 + j + 1].index = 1
+                        tempTiles[i * width + j + 1].index = 1
                     }
             }
         }
@@ -172,8 +173,8 @@ function (phaser, utils, ws, actor) {
         var vis = []
         for (var i = 0; i < actor.length; i++) {
             if (actors[id_actors[actor[i].id]]) {
-                actors[id_actors[actor[i].id]].x = coordinate(gPlayerX, actor[i].x, 9.0)
-                actors[id_actors[actor[i].id]].y = coordinate(gPlayerY, actor[i].y, 7.0)
+                actors[id_actors[actor[i].id]].x = coordinate(gPlayerX, actor[i].x, width)
+                actors[id_actors[actor[i].id]].y = coordinate(gPlayerY, actor[i].y, height)
             } else {
                 createActors(actor[i])
             }
@@ -200,10 +201,10 @@ function (phaser, utils, ws, actor) {
         return 0
     }
 
-    var rectTop = new phaser.Rectangle(0, 0, 64 * 9, 32)
-    var rectBottom = new phaser.Rectangle(0, 64 * 7 - 32, 64 * 9, 32)
-    var rectLeft = new phaser.Rectangle(0, 0, 32, 64 * 7)
-    var rectRight = new phaser.Rectangle(64 * 9 - 32, 0, 32, 64 * 7)
+    var rectTop = new phaser.Rectangle(0, 0, 64 * width, 32)
+    var rectBottom = new phaser.Rectangle(0, 64 * height - 32, 64 * width, 32)
+    var rectLeft = new phaser.Rectangle(0, 0, 32, 64 * height)
+    var rectRight = new phaser.Rectangle(64 * width - 32, 0, 32, 64 * height)
 
     function onRender() {
         game.debug.renderRectangle(rectTop, "rgba(0, 0, 0, 1)")
