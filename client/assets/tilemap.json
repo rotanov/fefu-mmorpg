@@ -93,8 +93,8 @@
     {
       "firstgid": 1,
       "image": "tileset.png",
-      "imageheight": 64,
-      "imagewidth": 192,
+      "imageheight": 192,
+      "imagewidth": 832,
       "margin": 0,
       "name": "tileset",
       "properties": {},
