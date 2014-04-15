@@ -10,6 +10,7 @@ function ($) {
     var lookData
     var moveData
     var examineData
+    var getConstData
 
     function startGame(id, sid, wsUri) {
         id_ = id
@@ -53,6 +54,9 @@ function ($) {
             //Move
             } else if (data.action == "move") {
                 moveData = data
+            //getConst
+            } else if (data.action == "getConst") {
+                getConstData = data
             }
         }
 
@@ -110,6 +114,11 @@ function ($) {
             "sid": sid
         }))
     }
+    function getConst() {
+        socket.send(JSON.stringify({
+            "action": "getConst"
+        }))
+    }
 
     function getLookData() {
         return lookData
@@ -130,7 +139,11 @@ function ($) {
     function getTick() {
         return tick
     }
-
+    
+    function getConstData() {
+        return getConstData
+    }
+    
     function timeout(x, callback) {
         var dfd = $.Deferred()
         setTimeout(function () {
@@ -145,6 +158,7 @@ function ($) {
         examine: examine,
         dictionary: dictionary,
         logout: logout,
+        getConst: getConst,
         timeout: timeout,
         startGame: startGame,
         quitGame: quitGame,
@@ -152,7 +166,8 @@ function ($) {
         getLookData: getLookData,
         getMoveData: getMoveData,
         getExamineData: getExamineData,
-        getDictionary: getDictionary
+        getDictionary: getDictionary,
+        getConstData: getConstData,
     }
 
 })

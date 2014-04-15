@@ -1,5 +1,5 @@
-require(["jquery","phaser", "authorization", "test/test", "utils", "packages"],
-function ($,phaser, auth, test, utils, packages) {
+﻿require(["jquery", "phaser", "authorization", "test/test", "utils", "packages"],
+function ($, phaser, auth, test, utils, packages) {
 
     $("#register").click(function() {
         auth.jsonHandle("register", auth.registerCallback)
@@ -16,14 +16,23 @@ function ($,phaser, auth, test, utils, packages) {
     $("#test").click(function() {
         $("#content").hide()
         $("#mocha").empty()
-        utils.serverHandler(packages.startTest())
-        var response = utils.serverHandler(packages.consts())
-        if (response.result == "invalidRequest") {
-            $("#server-answer").text("Data is null, request "
-                + "might be failed.").css("color", "red")
-        } else {
-            var list = document.getElementById("tests")
-            test.testHandler(list)
+
+        var action = utils.serverHandler({"action": "startTesting"})
+        if (action.result == "ok") {
+            var response = utils.serverHandler(packages.consts())
+
+            if (response.result == "ok") {
+                var list = document.getElementById("tests")
+                test.testHandler(list)
+
+            } else if (response.result == "badAction") {
+                $("#server-answer").text("Invalid action.")
+                .css("color", "red")
+            }
+
+        } else if (action.result == "badAction") {
+            $("#server-answer").text("Invalid action.")
+            .css("color", "red")
         }
     })
 
@@ -40,5 +49,9 @@ function ($,phaser, auth, test, utils, packages) {
         $("#server-address").attr("value", serverAddress)
         utils.setServerAddress(serverAddress)
     })
+
+    window.onbeforeunload = function() {
+        auth.jsonHandle("logout", auth.logoutCallback);
+    }
 
 })

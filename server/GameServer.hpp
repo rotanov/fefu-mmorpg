@@ -20,6 +20,7 @@ enum class EFEMPResult
     INVALID_CREDENTIALS,
     BAD_ID,
     BAD_ACTION,
+    BAD_MAP,
 };
 
 const std::vector<QString> fempResultToString =
@@ -31,7 +32,8 @@ const std::vector<QString> fempResultToString =
     [EFEMPResult::LOGIN_EXISTS] = "loginExists",
     [EFEMPResult::INVALID_CREDENTIALS] = "invalidCredentials",
     [EFEMPResult::BAD_ID] = "badId",
-    [EFEMPResult::INVALID_REQUEST] = "badAction",
+    [EFEMPResult::BAD_ACTION] = "badAction",
+    [EFEMPResult::BAD_MAP] = "badMap",
 };
 
 // TODO: separate module
@@ -59,8 +61,10 @@ private:
     typedef void (GameServer::*HandlerType)(const QVariantMap& request, QVariantMap& response);
     QMap<QString, HandlerType> requestHandlers_;
 
-    void HandleSetUpConstants_(const QVariantMap& request, QVariantMap& response);
     void HandleStartTesting_(const QVariantMap& request, QVariantMap& response);
+    void HandleSetUpConstants_(const QVariantMap& request, QVariantMap& response);
+    void HandleSetUpMap_(const QVariantMap& request, QVariantMap& response);
+    void HandleGetConst_(const QVariantMap& request, QVariantMap& response);
     void HandleLogin_(const QVariantMap& request, QVariantMap& response);
     void HandleLogout_(const QVariantMap& request, QVariantMap& response);
     void HandleRegister_(const QVariantMap& request, QVariantMap& response);
