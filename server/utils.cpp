@@ -28,7 +28,7 @@ void GenRandSmoothMap(LevelMap& levelMap)
     {
         for (int j = 1; j < cols - 1; j++)
         {
-            m.GetCell(j, i) = std::vector<char>({'#', '.'})[(rand() + rand() + rand()) % 2];
+            m.SetCell(j, i, std::vector<char>({'#', '.'})[(rand() + rand() + rand()) % 2]);
         }
     }
 
@@ -76,7 +76,7 @@ void GenRandSmoothMap(LevelMap& levelMap)
         {
             for (int j = 0; j < cols; j++)
             {
-                m.GetCell(j, i) = tempMap[i * cols + j];
+                m.SetCell(j, i, tempMap[i * cols + j]);
             }
         }
     }

@@ -14,7 +14,7 @@
 #include "utils.hpp"
 
 GameServer::GameServer()
-    : levelMap_(48, 48)
+    : levelMap_(64, 64)
 {
     QTime midnight(0, 0, 0);
     qsrand(midnight.secsTo(QTime::currentTime()));
@@ -59,6 +59,27 @@ GameServer::GameServer()
     }
 
     map.save("level-map.png");
+
+    int monsterCounter = 0;
+    for (int i = 0; i < levelMap_.GetRowCount(); i++)
+    {
+        for (int j = 0; j < levelMap_.GetColumnCount(); j++)
+        {
+            if (levelMap_.GetCell(j, i) != '#')
+            {
+                monsterCounter++;
+                if (monsterCounter % 5 == 0)
+                {
+                    Monster monster;
+                    monster.SetPosition(Vector2(j, i));
+                    monster.SetId(lastId_);
+                    monster.SetDirection(static_cast<EActorDirection>(rand() % 4 + 1));
+                    lastId_++;
+                    monsters_.push_back(monster);
+                }
+            }
+        }
+    }
 
     players_.reserve(1000);
 }
@@ -182,19 +203,66 @@ void GameServer::tick()
     float dt = (time_.elapsed() - lastTime_) * 0.001f;
     lastTime_ = time_.elapsed();
 
+    auto collideWithGrid = [=](GameObject* gameObject)
+    {
+        auto& p = *gameObject;
+
+        float x = p.GetPosition().x;
+        float y = p.GetPosition().y;
+
+        bool collided = false;
+
+        if (levelMap_.GetCell(x + 0.5f, y) == '#')
+        {
+            p.SetPosition(Vector2(truncf(x + 0.5f) - 0.5f, p.GetPosition().y));
+            collided = true;
+        }
+
+        if (levelMap_.GetCell(x - 0.5f, y) == '#')
+        {
+            p.SetPosition(Vector2(round(x - 0.5f) + 0.5f, p.GetPosition().y));
+            collided = true;
+        }
+
+        if (levelMap_.GetCell(x, y + 0.5f) == '#')
+        {
+            p.SetPosition(Vector2(p.GetPosition().x, round(y + 0.5f) - 0.5f));
+            collided = true;
+        }
+
+        if (levelMap_.GetCell(x, y - 0.5f) == '#')
+        {
+            p.SetPosition(Vector2(p.GetPosition().x, round(y - 0.5f) + 0.5f));
+            collided = true;
+        }
+
+        if (collided)
+        {
+            gameObject->OnCollideWorld();
+        }
+    };
+
+    for (auto& m : monsters_)
+    {
+        auto v = directionToVector[static_cast<unsigned>(m.GetDirection())]
+                * playerVelocity_;
+
+        collideWithGrid(&m);
+
+        m.SetVelocity(v);
+        m.Update(dt);
+    }
+
     for (auto& p : players_)
     {
-        auto v = directionToVector[static_cast<unsigned>(p.GetDirection())] * playerVelocity_ * (tick_ - p.GetClientTick());
+        auto v = directionToVector[static_cast<unsigned>(p.GetDirection())]
+                * playerVelocity_
+                * (tick_ - p.GetClientTick());
+
         p.SetVelocity(v);
         p.Update(dt);
-        int x = p.GetPosition().x;
-        int y = p.GetPosition().y;
 
-        if (levelMap_.GetCell(x, y) == '#')
-        {
-            p.SetVelocity(-v);
-            p.Update(dt);
-        }
+        collideWithGrid(&p);
 
         p.SetDirection(EActorDirection::NONE);
     }
@@ -281,8 +349,8 @@ void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
         // TODO: extract to CreatePlayer
         {
             Player player;
-            player.SetId(lastId);
-            lastId++;
+            player.SetId(lastId_);
+            lastId_++;
             player.SetLogin(login);
 
             int x;
@@ -362,11 +430,22 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
     {
         if (p.GetLogin() == login)
         {
+            QVariantList rows;
+
             auto pos = p.GetPosition();
+
             response["x"] = pos.x;
             response["y"] = pos.y;
 
-            QVariantList rows;
+            if (pos.x < 0.0f)
+            {
+                pos.x -= 1.0f - epsilon_;
+            }
+
+            if (pos.y < 0.0f)
+            {
+                pos.y -= 1.0f - epsilon_;
+            }
 
             int minX = static_cast<int>(pos.x) - 4;
             int maxX = static_cast<int>(pos.x) + 4;
@@ -378,22 +457,13 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
                 QVariantList row;
                 for (int i = minX; i <= maxX; i++)
                 {
-                    if (j < 0
-                        || j > levelMap_.GetRowCount() - 1
-                        || i < 0
-                        || i > levelMap_.GetColumnCount() - 1)
-                    {
-                        row.push_back("#");
-                    }
-                    else
-                    {
-                        row.push_back(QString(levelMap_.GetCell(i, j)));
-                    }
+                    row.push_back(QString(levelMap_.GetCell(i, j)));
                 }
                 rows.push_back(row);
             }
 
             QVariantList actors;
+            // TODO: spatial query. otherwise this will become a bottleneck
             for (auto& p : players_)
             {
                 QVariantMap actor;
@@ -406,6 +476,22 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
                     actor["x"] = p.GetPosition().x;
                     actor["y"] = p.GetPosition().y;
                     actor["id"] = p.GetId();
+                }
+                actors << actor;
+            }
+
+            for (auto& m : monsters_)
+            {
+                QVariantMap actor;
+                if (m.GetPosition().y >= minY
+                    && m.GetPosition().y <= maxY
+                    && m.GetPosition().x >= minX
+                    && m.GetPosition().x <= maxX)
+                {
+                    actor["type"] = "monster";
+                    actor["x"] = m.GetPosition().x;
+                    actor["y"] = m.GetPosition().y;
+                    actor["id"] = m.GetId();
                 }
                 actors << actor;
             }
@@ -426,6 +512,18 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
         {
             response["type"] = "player";
             response["login"] = p.GetLogin();
+            response["x"] = p.GetPosition().x;
+            response["y"] = p.GetPosition().y;
+            response["id"] = p.GetId();
+            return;
+        }
+    }
+
+    for (auto& p : monsters_)
+    {
+        if (p.GetId() == id)
+        {
+            response["type"] = "monster";
             response["x"] = p.GetPosition().x;
             response["y"] = p.GetPosition().y;
             response["id"] = p.GetId();
