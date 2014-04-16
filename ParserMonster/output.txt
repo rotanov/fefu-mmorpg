@@ -1,605 +1,578 @@
-1 
-2 11-headed hydra
-3 2-headed hydra
-4 3-headed hydra
-5 4-headed hydra
-6 5-headed hydra
-7 7-headed hydra
-8 9-headed hydra
-9 Acidic cytoplasm
-10 Acolyte
-11 Adunaphel the Quiet
-12 Aether hound
-13 Aether vortex
-14 Aimless-looking merchant
-15 Air elemental
-16 Air hound
-17 Akhorahil the Blind
-18 Algroth
-19 Ancalagon the Black
-20 Ancient black dragon
-21 Ancient blue dragon
-22 Ancient bronze dragon
-23 Ancient gold dragon
-24 Ancient green dragon
-25 Ancient multi-hued dragon
-26 Ancient red dragon
-27 Ancient white dragon
-28 Angamaitë of Umbar
-29 Apprentice
-30 Ar-Pharazôn the Golden
-31 Aranea
-32 Archlich
-33 Ariel, Queen of Air
-34 Arien, Maia of the Sun
-35 Atlas, the Titan
-36 Azog, King of the Uruk-Hai
-37 Baby black dragon
-38 Baby blue dragon
-39 Baby bronze dragon
-40 Baby gold dragon
-41 Baby green dragon
-42 Baby multi-hued dragon
-43 Baby red dragon
-44 Baby white dragon
-45 Balance drake
-46 Bandit
-47 Banshee
-48 Baphomet the Minotaur Lord
-49 Barbazu
-50 Barrow wight
-51 Basilisk
-52 Bat of Gorgoroth
-53 Battle-scarred veteran
-54 Beholder
-55 Beholder hive-mother
-56 Beorn, the Shape-Changer
-57 Berserker
-58 Bert the Stone Troll
-59 Bile Demon
-60 Bill the Stone Troll
-61 Black harpy
-62 Black knight
-63 Black mamba
-64 Black naga
-65 Black ogre
-66 Black ooze
-67 Black orc
-68 Black pudding
-69 Black reaver
-70 Black wraith
-71 Blink dog
-72 Bloodshot eye
-73 Bloodshot icky thing
-74 Blubbering icky thing
-75 Blubbering idiot
-76 Blue Wizard
-77 Blue dragon bat
-78 Blue icky thing
-79 Blue jelly
-80 Blue ooze
-81 Blue worm mass
-82 Blue yeek
-83 Bodak
-84 Boil-covered wretch
-85 Boldor, King of the Yeeks
-86 Bolg, Son of Azog
-87 Bone golem
-88 Brigand
-89 Brodda, the Easterling
-90 Bronze golem
-91 Brown mold
-92 Brown yeek
-93 Bullroarer the Hobbit
-94 Cantoras, the Skeletal Lord
-95 Carcharoth, the Jaws of Thirst
-96 Carrion crawler
-97 Castamir the Usurper
-98 Catoblepas
-99 Cave bear
-100 Cave ogre
-101 Cave orc
-102 Cave spider
-103 Cave troll
-104 Chaos drake
-105 Chaos hound
-106 Chaos vortex
-107 Chest mimic
-108 Chimaera
-109 Clay golem
-110 Clear hound
-111 Clear icky thing
-112 Clear mushroom patch
-113 Clear worm mass
-114 Cloud giant
-115 Colbran
-116 Cold hound
-117 Cold vortex
-118 Colossus
-119 Copperhead snake
-120 Craban
-121 Creeping adamantite coins
-122 Creeping copper coins
-123 Creeping gold coins
-124 Creeping mithril coins
-125 Creeping silver coins
-126 Crow
-127 Crystal drake
-128 Cutpurse
-129 Cyclops
-130 Dagashi
-131 Dark elf
-132 Dark elven druid
-133 Dark elven lord
-134 Dark elven mage
-135 Dark elven priest
-136 Dark elven sorcerer
-137 Dark elven warrior
-138 Dark hound
-139 Death drake
-140 Death knight
-141 Death mold
-142 Death quasit
-143 Death watch beetle
-144 Demilich
-145 Demonic quylthulg
-146 Demonologist
-147 Disenchanter bat
-148 Disenchanter eye
-149 Disenchanter mold
-150 Disenchanter worm mass
-151 Displacer beast
-152 Doombat
-153 Dracolich
-154 Dracolisk
-155 Draconic quylthulg
-156 Draebor, the Imp
-157 Draugluin, Sire of All Werewolves
-158 Dread
-159 Dreadlord
-160 Dreadmaster
-161 Drider
-162 Drolem
-163 Druid
-164 Dwar, Dog Lord of Waw
-165 Earth elemental
-166 Earth hound
-167 Earth spirit
-168 Easterling champion
-169 Easterling warrior
-170 Elder aranea
-171 Elder vampire
-172 Eldrak
-173 Emperor wight
-174 Enchantress
-175 Energy hound
-176 Energy vortex
-177 Eog golem
-178 Erinyes
-179 Ethereal dragon
-180 Ethereal drake
-181 Ethereal hound
-182 Ettin
-183 Evil eye
-184 Eye druj
-185 Eöl, the Dark Elf
-186 Fang, Farmer Maggot's dog
-187 Farmer Maggot
-188 Father Christmas
-189 Feagwath, the Undead Sorcerer
-190 Filthy street urchin
-191 Fire elemental
-192 Fire giant
-193 Fire hound
-194 Fire spirit
-195 Fire vortex
-196 Flesh golem
-197 Floating eye
-198 Forest troll
-199 Forest wight
-200 Frost giant
-201 Fruit bat
-202 Fundin Bluecloak
-203 Gallant
-204 Gauth
-205 Gelatinous cube
-206 Gelugon
-207 Ghast
-208 Ghost
-209 Ghoul
-210 Giant army ant
-211 Giant black ant
-212 Giant black dragon fly
-213 Giant black louse
-214 Giant blue ant
-215 Giant bronze dragon fly
-216 Giant brown bat
-217 Giant brown tick
-218 Giant clear centipede
-219 Giant fire ant
-220 Giant fire tick
-221 Giant firefly
-222 Giant flea
-223 Giant fruit fly
-224 Giant gold dragon fly
-225 Giant green dragon fly
-226 Giant green frog
-227 Giant grey rat
-228 Giant grey scorpion
-229 Giant red ant
-230 Giant red frog
-231 Giant red scorpion
-232 Giant roc
-233 Giant salamander
-234 Giant silver ant
-235 Giant spider
-236 Giant tan bat
-237 Giant tarantula
-238 Giant white ant
-239 Giant white centipede
-240 Giant white dragon fly
-241 Giant white louse
-242 Giant white mouse
-243 Giant white rat
-244 Giant white tick
-245 Giant yellow centipede
-246 Giant yellow scorpion
-247 Glabrezu
-248 Glaurung, Father of the Dragons
-249 Gnome mage
-250 Golfimbul, the Hill Orc Chief
-251 Gorbag, the Orc Captain
-252 Gorgimaera
-253 Gorlim, Betrayer of Barahir
-254 Gothmog, the High Captain of Balrogs
-255 Grand master mystic
-256 Grape jelly
-257 Grave wight
-258 Gravity hound
-259 Great Bile Wyrm
-260 Great Hell Wyrm
-261 Great Ice Wyrm
-262 Great Storm Wyrm
-263 Great Swamp Wyrm
-264 Great Wyrm of Balance
-265 Great Wyrm of Chaos
-266 Great Wyrm of Law
-267 Great Wyrm of Many Colours
-268 Great Wyrm of Perplexity
-269 Great Wyrm of Thunder
-270 Great crystal drake
-271 Greater Balrog
-272 Greater Maia
-273 Greater basilisk
-274 Greater demonic quylthulg
-275 Greater draconic quylthulg
-276 Greater mummy
-277 Greater rotting quylthulg
-278 Greater titan
-279 Green glutton ghost
-280 Green icky thing
-281 Green jelly
-282 Green mold
-283 Green naga
-284 Green ooze
-285 Green worm mass
-286 Grey icky thing
-287 Grey mold
-288 Grey mushroom patch
-289 Grey wraith
-290 Griffon
-291 Grip, Farmer Maggot's dog
-292 Grishnákh, the Hill Orc
-293 Grizzly bear
-294 Guardian naga
-295 Hairy mold
-296 Half-orc
-297 Half-troll
-298 Hand druj
-299 Harowen the Black Hand
-300 Hellhound
-301 Hezrou
-302 Hill giant
-303 Hill orc
-304 Hippogriff
-305 Hoarmurath of Dir
-306 Homunculus
-307 Horned Reaper
-308 Huan, Wolfhound of the Valar
-309 Hummerhorn
-310 Ibun, Son of Mîm
-311 Ice elemental
-312 Ice troll
-313 Illusionist
-314 Imp
-315 Impact hound
-316 Inertia hound
-317 Invisible stalker
-318 Iron golem
-319 Istar
-320 Itangast the Fire Drake
-321 Jabberwock
-322 Jackal
-323 Ji Indur Dawndeath
-324 Kavlax the Many-Headed
-325 Khamûl, the Black Easterling
-326 Khîm, Son of Mîm
-327 Killer brown beetle
-328 Killer fire beetle
-329 Killer iridescent beetle
-330 Killer red beetle
-331 Killer slicer beetle
-332 Killer stag beetle
-333 Killer white beetle
-334 King cobra
-335 Knight Templar
-336 Kobold
-337 Kobold archer
-338 Kobold shaman
-339 Kronos, Lord of the Titans
-340 Lagduf, the Snaga
-341 Large brown snake
-342 Large grey snake
-343 Large kobold
-344 Large white snake
-345 Large yellow snake
-346 Law drake
-347 Lemure
-348 Lesser Balrog
-349 Lesser Maia
-350 Lesser titan
-351 Lich
-352 Light hound
-353 Lokkak, the Ogre Chieftain
-354 Lorgan, Chief of the Easterlings
-355 Lost soul
-356 Lugdush, the Uruk
-357 Lungorthin, the Balrog of White Fire
-358 Lurker
-359 Maeglin, the Traitor of Gondolin
-360 Mage
-361 Magic mushroom patch
-362 Magma elemental
-363 Maia
-364 Manes
-365 Mangy-looking leper
-366 Manticore
-367 Marilith
-368 Master mystic
-369 Master quylthulg
-370 Master rogue
-371 Master thief
-372 Master vampire
-373 Master yeek
-374 Mature black dragon
-375 Mature blue dragon
-376 Mature bronze dragon
-377 Mature gold dragon
-378 Mature green dragon
-379 Mature multi-hued dragon
-380 Mature red dragon
-381 Mature white dragon
-382 Mean-looking mercenary
-383 Medusa, the Gorgon
-384 Memory moss
-385 Metallic blue centipede
-386 Metallic green centipede
-387 Metallic red centipede
-388 Mind flayer
-389 Minotaur
-390 Mirkwood spider
-391 Mithril golem
-392 Moaning spirit
-393 Morgoth, Lord of Darkness
-394 Mughash the Kobold Lord
-395 Multi-hued hound
-396 Mummified human
-397 Mummified orc
-398 Mummified troll
-399 Mystic
-400 Mîm, Betrayer of Turin
-401 Mûmak
-402 Nalfeshnee
-403 Necromancer
-404 Neekerbreeker
-405 Nether hound
-406 Nether worm mass
-407 Nether wraith
-408 Nexus hound
-409 Nexus quylthulg
-410 Nexus vortex
-411 Night lizard
-412 Night mare
-413 Nightcrawler
-414 Nighthawk
-415 Nightwalker
-416 Nightwing
-417 Ninja
-418 Nár, the Dwarf
-419 Ochre jelly
-420 Ogre
-421 Ogre chieftain
-422 Ogre mage
-423 Ogre shaman
-424 Olog
-425 Omarax, the Eye Tyrant
-426 Ooze elemental
-427 Orc captain
-428 Orc shaman
-429 Ossë, Herald of Ulmo
-430 Osyluth
-431 Paladin
-432 Panther
-433 Patriarch
-434 Pazuzu, Lord of Air
-435 Phantom
-436 Phase spider
-437 Pit Fiend
-438 Pitiful-looking beggar
-439 Plasma hound
-440 Plasma vortex
-441 Poltergeist
-442 Polyphemus, the Blind Cyclops
-443 Potion mimic
-444 Priest
-445 Pseudo-dragon
-446 Pukelman
-447 Purple mushroom patch
-448 Purple worm
-449 Qlzqqlzuup, the Emperor Quylthulg
-450 Quaker, Master of Earth
-451 Quasit
-452 Quylthulg
-453 Radagast the Brown
-454 Radiation eye
-455 Ranger
-456 Ranger Chieftain
-457 Rattlesnake
-458 Raven
-459 Red dragon bat
-460 Red jelly
-461 Red mold
-462 Red naga
-463 Red worm mass
-464 Red-Hatted Elf
-465 Ren the Unclean
-466 Ring mimic
-467 Rock lizard
-468 Rogrog the Black Troll
-469 Rot jelly
-470 Rotting quylthulg
-471 Sabre-tooth tiger
-472 Salamander
-473 Sangahyando of Umbar
-474 Saruman of Many Colours
-475 Sasquatch
-476 Sauron, the Sorcerer
-477 Scatha the Worm
-478 Scout
-479 Scrawny cat
-480 Scroll mimic
-481 Scruffy little dog
-482 Scruffy looking hobbit
-483 Shade
-484 Shadow
-485 Shadow drake
-486 Shagrat, the Orc Captain
-487 Shambling mound
-488 Shardstorm
-489 Shelob, Spider of Darkness
-490 Shimmering mold
-491 Shimmering vortex
-492 Shrieker mushroom patch
-493 Silent watcher
-494 Silver jelly
-495 Silver mouse
-496 Singing, happy drunk
-497 Skeleton ettin
-498 Skeleton human
-499 Skeleton kobold
-500 Skeleton orc
-501 Skeleton troll
-502 Skull druj
-503 Small kobold
-504 Smaug the Golden
-505 Smoke elemental
-506 Sméagol
-507 Snaga
-508 Soldier
-509 Soldier ant
-510 Sorcerer
-511 Spectator
-512 Spectre
-513 Spirit naga
-514 Spirit troll
-515 Spotted jelly
-516 Spotted mushroom patch
-517 Squint-eyed rogue
-518 Stegocentipede
-519 Stone giant
-520 Stone golem
-521 Stone troll
-522 Storm giant
-523 Storm of Unmagic
-524 Tengu
-525 The Balrog of Moria
-526 The Cat Lord
-527 The Lernaean Hydra
-528 The Mouth of Sauron
-529 The Phoenix
-530 The Queen Ant
-531 The Tarrasque
-532 The Witch-King of Angmar
-533 Thuringwethil, the Vampire Messenger
-534 Tiger
-535 Time hound
-536 Time vortex
-537 Tom the Stone Troll
-538 Trapper
-539 Troll chieftain
-540 Troll priest
-541 Tselakus, the Dreadlord
-542 Ufthak of Cirith Ungol
-543 Uglúk, the Uruk
-544 Uldor the Accursed
-545 Ulfang the Black
-546 Ulfast, Son of Ulfang
-547 Ulwarth, Son of Ulfang
-548 Umber hulk
-549 Undead beholder
-550 Ungoliant, the Unlight
-551 Uruk
-552 Uvatha the Horseman
-553 Vampire bat
-554 Vampire lord
-555 Vargo, Tyrant of Fire
-556 Vecna, the Emperor Lich
-557 Vibration hound
-558 Village idiot
-559 Vrock
-560 Waldern, King of Water
-561 Warg
-562 Water elemental
-563 Water hound
-564 Water spirit
-565 Water troll
-566 Water vortex
-567 Werebear
-568 Wererat
-569 Werewolf
-570 Wereworm
-571 White harpy
-572 White icky thing
-573 White jelly
-574 White wolf
-575 White worm mass
-576 White wraith
-577 Wild cat
-578 Will o' the wisp
-579 Winged Horror
-580 Wolf
-581 Wolf chieftain
-582 Wood spider
-583 Wormtongue, Agent of Saruman
-584 Wyvern
-585 Xaren
-586 Xorn
-587 Yellow jelly
-588 Yellow mold
-589 Yellow mushroom patch
-590 Yellow worm mass
-591 Yeti
-592 Young black dragon
-593 Young blue dragon
-594 Young bronze dragon
-595 Young gold dragon
-596 Young green dragon
-597 Young multi-hued dragon
-598 Young red dragon
-599 Young white dragon
-600 Zombified human
-601 Zombified kobold
-602 Zombified orc
+576 
+577 11-headed hydra
+578 2-headed hydra
+579 3-headed hydra
+580 4-headed hydra
+581 5-headed hydra
+582 7-headed hydra
+583 9-headed hydra
+584 Acidic cytoplasm
+585 Adunaphel the Quiet
+586 Aether hound
+587 Aether vortex
+588 Aimless-looking merchant
+589 Air elemental
+590 Air hound
+591 Air spirit
+592 Akhorahil the Blind
+593 Algroth
+594 Ancalagon the Black
+595 Ancient black dragon
+596 Ancient blue dragon
+597 Ancient bronze dragon
+598 Ancient gold dragon
+599 Ancient green dragon
+600 Ancient multi-hued dragon
+601 Ancient red dragon
+602 Ancient white dragon
+603 Angamaitë of Umbar
+604 Ar-Pharazôn the Golden
+605 Aranea
+606 Archlich
+607 Ariel, Queen of Air
+608 Arien, Maia of the Sun
+609 Atlas, the Titan
+610 Azog, King of the Uruk-Hai
+611 Baby black dragon
+612 Baby blue dragon
+613 Baby bronze dragon
+614 Baby gold dragon
+615 Baby green dragon
+616 Baby multi-hued dragon
+617 Baby red dragon
+618 Baby white dragon
+619 Balance drake
+620 Bandit
+621 Banshee
+622 Baphomet the Minotaur Lord
+623 Barbazu
+624 Barrow wight
+625 Basilisk
+626 Bat of Gorgoroth
+627 Battle-scarred veteran
+628 Beholder
+629 Beholder hive-mother
+630 Beorn, the Shape-Changer
+631 Berserker
+632 Bert the Stone Troll
+633 Bile Demon
+634 Bill the Stone Troll
+635 Black harpy
+636 Black mamba
+637 Black naga
+638 Black ogre
+639 Black ooze
+640 Black orc
+641 Black pudding
+642 Black reaver
+643 Black wraith
+644 Blink dog
+645 Bloodshot eye
+646 Bloodshot icky thing
+647 Blubbering icky thing
+648 Blubbering idiot
+649 Blue Wizard
+650 Blue dragon bat
+651 Blue icky thing
+652 Blue jelly
+653 Blue ooze
+654 Blue worm mass
+655 Blue yeek
+656 Bodak
+657 Boil-covered wretch
+658 Boldor, King of the Yeeks
+659 Bolg, Son of Azog
+660 Bone golem
+661 Brigand
+662 Brodda, the Easterling
+663 Bronze golem
+664 Brown mold
+665 Brown yeek
+666 Bullroarer the Hobbit
+667 Cantoras, the Skeletal Lord
+668 Carcharoth, the Jaws of Thirst
+669 Carrion crawler
+670 Castamir the Usurper
+671 Catoblepas
+672 Cave bear
+673 Cave ogre
+674 Cave orc
+675 Cave spider
+676 Cave troll
+677 Chaos drake
+678 Chaos hound
+679 Chaos vortex
+680 Chimaera
+681 Clay golem
+682 Clear hound
+683 Clear icky thing
+684 Clear mushroom patch
+685 Clear worm mass
+686 Cloud giant
+687 Colbran
+688 Cold hound
+689 Cold vortex
+690 Colossus
+691 Copperhead snake
+692 Creeping adamantite coins
+693 Creeping copper coins
+694 Creeping gold coins
+695 Creeping mithril coins
+696 Creeping silver coins
+697 Crow
+698 Crystal drake
+699 Cutpurse
+700 Cyclops
+701 Dagashi
+702 Dark elf
+703 Dark elven druid
+704 Dark elven mage
+705 Dark elven priest
+706 Dark elven sorcerer
+707 Dark elven warrior
+708 Dark hound
+709 Death drake
+710 Death mold
+711 Death quasit
+712 Death watch beetle
+713 Demilich
+714 Demonic quylthulg
+715 Disenchanter bat
+716 Disenchanter eye
+717 Disenchanter mold
+718 Disenchanter worm mass
+719 Displacer beast
+720 Doombat
+721 Dracolich
+722 Dracolisk
+723 Draconic quylthulg
+724 Draebor, the Imp
+725 Draugluin, Sire of All Werewolves
+726 Dread
+727 Dreadlord
+728 Dreadmaster
+729 Drider
+730 Drolem
+731 Druid
+732 Dwar, Dog Lord of Waw
+733 Earth elemental
+734 Earth hound
+735 Earth spirit
+736 Easterling champion
+737 Easterling warrior
+738 Elder aranea
+739 Elder vampire
+740 Eldrak
+741 Emperor wight
+742 Energy hound
+743 Energy vortex
+744 Eog golem
+745 Erinyes
+746 Ethereal dragon
+747 Ethereal drake
+748 Ethereal hound
+749 Ettin
+750 Evil eye
+751 Eye druj
+752 Eöl, the Dark Elf
+753 Fang, Farmer Maggot's dog
+754 Farmer Maggot
+755 Father Christmas
+756 Feagwath, the Undead Sorcerer
+757 Filthy street urchin
+758 Fire elemental
+759 Fire giant
+760 Fire hound
+761 Fire spirit
+762 Fire vortex
+763 Flesh golem
+764 Floating eye
+765 Forest troll
+766 Forest wight
+767 Frost giant
+768 Fruit bat
+769 Fundin Bluecloak
+770 Gauth
+771 Gelatinous cube
+772 Gelugon
+773 Ghast
+774 Ghost
+775 Ghoul
+776 Giant army ant
+777 Giant black ant
+778 Giant black dragon fly
+779 Giant black louse
+780 Giant blue ant
+781 Giant bronze dragon fly
+782 Giant brown bat
+783 Giant brown tick
+784 Giant clear centipede
+785 Giant fire ant
+786 Giant fire tick
+787 Giant firefly
+788 Giant flea
+789 Giant fruit fly
+790 Giant gold dragon fly
+791 Giant green dragon fly
+792 Giant green frog
+793 Giant grey ant
+794 Giant grey rat
+795 Giant grey scorpion
+796 Giant red ant
+797 Giant red frog
+798 Giant red scorpion
+799 Giant roc
+800 Giant salamander
+801 Giant silver ant
+802 Giant spider
+803 Giant tan bat
+804 Giant tarantula
+805 Giant white ant
+806 Giant white centipede
+807 Giant white dragon fly
+808 Giant white louse
+809 Giant white mouse
+810 Giant white rat
+811 Giant white tick
+812 Giant yellow centipede
+813 Giant yellow scorpion
+814 Glabrezu
+815 Glaurung, Father of the Dragons
+816 Golfimbul, the Hill Orc Chief
+817 Gorbag, the Orc Captain
+818 Gorgimaera
+819 Gorlim, Betrayer of Barahir
+820 Gothmog, the High Captain of Balrogs
+821 Grape jelly
+822 Grave wight
+823 Gravity hound
+824 Great Bile Wyrm
+825 Great Hell Wyrm
+826 Great Ice Wyrm
+827 Great Storm Wyrm
+828 Great Swamp Wyrm
+829 Great Wyrm of Balance
+830 Great Wyrm of Chaos
+831 Great Wyrm of Law
+832 Great Wyrm of Many Colours
+833 Great Wyrm of Perplexity
+834 Great Wyrm of Thunder
+835 Great crystal drake
+836 Greater Balrog
+837 Greater Maia
+838 Greater basilisk
+839 Greater demonic quylthulg
+840 Greater draconic quylthulg
+841 Greater mummy
+842 Greater rotting quylthulg
+843 Greater titan
+844 Green glutton ghost
+845 Green icky thing
+846 Green jelly
+847 Green mold
+848 Green naga
+849 Green ooze
+850 Green worm mass
+851 Grey icky thing
+852 Grey mold
+853 Grey mushroom patch
+854 Grey wraith
+855 Griffon
+856 Grip, Farmer Maggot's dog
+857 Grishnákh, the Hill Orc
+858 Grizzly bear
+859 Guardian naga
+860 Hairy mold
+861 Half-orc
+862 Half-troll
+863 Hand druj
+864 Harowen the Black Hand
+865 Hellhound
+866 Hezrou
+867 Hill giant
+868 Hill orc
+869 Hippogriff
+870 Hoarmurath of Dir
+871 Homunculus
+872 Horned Reaper
+873 Huan, Wolfhound of the Valar
+874 Hummerhorn
+875 Ibun, Son of Mîm
+876 Ice elemental
+877 Ice troll
+878 Imp
+879 Impact hound
+880 Inertia hound
+881 Invisible stalker
+882 Iron golem
+883 Istar
+884 Itangast the Fire Drake
+885 Jabberwock
+886 Jackal
+887 Ji Indur Dawndeath
+888 Kavlax the Many-Headed
+889 Khamûl, the Black Easterling
+890 Khîm, Son of Mîm
+891 Killer brown beetle
+892 Killer fire beetle
+893 Killer iridescent beetle
+894 Killer red beetle
+895 Killer slicer beetle
+896 Killer stag beetle
+897 Killer white beetle
+898 King cobra
+899 Kobold
+900 Kobold archer
+901 Kronos, Lord of the Titans
+902 Lagduf, the Snaga
+903 Large brown snake
+904 Large grey snake
+905 Large kobold
+906 Large white snake
+907 Large yellow snake
+908 Law drake
+909 Lemure
+910 Lesser Balrog
+911 Lesser titan
+912 Lich
+913 Light hound
+914 Lokkak, the Ogre Chieftain
+915 Lorgan, Chief of the Easterlings
+916 Lost soul
+917 Lugdush, the Uruk
+918 Lungorthin, the Balrog of White Fire
+919 Lurker
+920 Maeglin, the Traitor of Gondolin
+921 Magic mushroom patch
+922 Magma elemental
+923 Maia
+924 Manes
+925 Mangy-looking leper
+926 Manticore
+927 Marilith
+928 Master lich
+929 Master quylthulg
+930 Master rogue
+931 Master thief
+932 Master vampire
+933 Master yeek
+934 Mature black dragon
+935 Mature blue dragon
+936 Mature bronze dragon
+937 Mature gold dragon
+938 Mature green dragon
+939 Mature multi-hued dragon
+940 Mature red dragon
+941 Mature white dragon
+942 Mean-looking mercenary
+943 Medusa, the Gorgon
+944 Memory moss
+945 Metallic blue centipede
+946 Metallic green centipede
+947 Metallic red centipede
+948 Mind flayer
+949 Minotaur
+950 Mirkwood spider
+951 Mithril golem
+952 Moaning spirit
+953 Mughash the Kobold Lord
+954 Multi-hued hound
+955 Mummified human
+956 Mummified orc
+957 Mummified troll
+958 Mîm, Betrayer of Turin
+959 Mûmak
+960 Nalfeshnee
+961 Neekerbreeker
+962 Nether hound
+963 Nether worm mass
+964 Nether wraith
+965 Nexus hound
+966 Nexus quylthulg
+967 Nexus vortex
+968 Night lizard
+969 Night mare
+970 Nightcrawler
+971 Nighthawk
+972 Nightwalker
+973 Nightwing
+974 Ninja
+975 Nár, the Dwarf
+976 Ochre jelly
+977 Ogre
+978 Ogre chieftain
+979 Ogre mage
+980 Ogre shaman
+981 Olog
+982 Omarax, the Eye Tyrant
+983 Ooze elemental
+984 Orc captain
+985 Orfax, Son of Boldor
+986 Ossë, Herald of Ulmo
+987 Osyluth
+988 Panther
+989 Pazuzu, Lord of Air
+990 Phantom
+991 Phase spider
+992 Pit Fiend
+993 Pitiful-looking beggar
+994 Plasma hound
+995 Plasma vortex
+996 Poltergeist
+997 Polyphemus, the Blind Cyclops
+998 Pseudo-dragon
+999 Pukelman
+1000 Purple mushroom patch
+1001 Purple worm
+1002 Qlzqqlzuup, the Emperor Quylthulg
+1003 Quaker, Master of Earth
+1004 Quasit
+1005 Quylthulg
+1006 Radagast the Brown
+1007 Radiation eye
+1008 Rattlesnake
+1009 Raven
+1010 Red dragon bat
+1011 Red jelly
+1012 Red mold
+1013 Red naga
+1014 Red worm mass
+1015 Red-Hatted Elf
+1016 Ren the Unclean
+1017 Rock lizard
+1018 Rogrog the Black Troll
+1019 Rot jelly
+1020 Rotting quylthulg
+1021 Sabre-tooth tiger
+1022 Salamander
+1023 Sangahyando of Umbar
+1024 Saruman of Many Colours
+1025 Sasquatch
+1026 Sauron, the Sorcerer
+1027 Scatha the Worm
+1028 Scrawny cat
+1029 Scruffy little dog
+1030 Scruffy looking hobbit
+1031 Shade
+1032 Shadow
+1033 Shadow drake
+1034 Shagrat, the Orc Captain
+1035 Shambling mound
+1036 Shardstorm
+1037 Shelob, Spider of Darkness
+1038 Shimmering mold
+1039 Shimmering vortex
+1040 Shrieker mushroom patch
+1041 Silent watcher
+1042 Silver jelly
+1043 Silver mouse
+1044 Singing, happy drunk
+1045 Skeleton ettin
+1046 Skeleton human
+1047 Skeleton kobold
+1048 Skeleton orc
+1049 Skeleton troll
+1050 Skull druj
+1051 Small kobold
+1052 Smaug the Golden
+1053 Smoke elemental
+1054 Sméagol
+1055 Snaga
+1056 Soldier
+1057 Soldier ant
+1058 Spectator
+1059 Spectre
+1060 Spirit naga
+1061 Spirit troll
+1062 Spotted jelly
+1063 Spotted mushroom patch
+1064 Squint-eyed rogue
+1065 Stegocentipede
+1066 Stone giant
+1067 Stone golem
+1068 Stone troll
+1069 Storm giant
+1070 Storm of Unmagic
+1071 Tengu
+1072 The Balrog of Moria
+1073 The Cat Lord
+1074 The Lernaean Hydra
+1075 The Mouth of Sauron
+1076 The Phoenix
+1077 The Queen Ant
+1078 The Tarrasque
+1079 The Witch-King of Angmar
+1080 Thuringwethil, the Vampire Messenger
+1081 Tiger
+1082 Time hound
+1083 Time vortex
+1084 Tom the Stone Troll
+1085 Trapper
+1086 Troll chieftain
+1087 Troll priest
+1088 Tselakus, the Dreadlord
+1089 Ufthak of Cirith Ungol
+1090 Uglúk, the Uruk
+1091 Uldor the Accursed
+1092 Ulfang the Black
+1093 Ulfast, Son of Ulfang
+1094 Ulwarth, Son of Ulfang
+1095 Umber hulk
+1096 Undead beholder
+1097 Ungoliant, the Unlight
+1098 Uruk
+1099 Uvatha the Horseman
+1100 Vampire
+1101 Vampire bat
+1102 Vampire lord
+1103 Vargo, Tyrant of Fire
+1104 Vecna, the Emperor Lich
+1105 Vibration hound
+1106 Village idiot
+1107 Vrock
+1108 Waldern, King of Water
+1109 Warg
+1110 Water elemental
+1111 Water hound
+1112 Water spirit
+1113 Water troll
+1114 Water vortex
+1115 Werebear
+1116 Wererat
+1117 Werewolf
+1118 Wereworm
+1119 White harpy
+1120 White icky thing
+1121 White jelly
+1122 White wolf
+1123 White worm mass
+1124 White wraith
+1125 Wild cat
+1126 Will o' the wisp
+1127 Winged Horror
+1128 Wolf
+1129 Wolf chieftain
+1130 Wood spider
+1131 Wormtongue, Agent of Saruman
+1132 Wyvern
+1133 Xaren
+1134 Xorn
+1135 Yellow jelly
+1136 Yellow mold
+1137 Yellow mushroom patch
+1138 Yellow worm mass
+1139 Yeti
+1140 Young black dragon
+1141 Young blue dragon
+1142 Young bronze dragon
+1143 Young gold dragon
+1144 Young green dragon
+1145 Young multi-hued dragon
+1146 Young red dragon
+1147 Young white dragon
+1148 Zombified human
+1149 Zombified kobold
+1150 Zombified orc
 
 
 ANIMAL,

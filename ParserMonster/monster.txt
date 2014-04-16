@@ -9052,7 +9052,7 @@ S:BR_ELEC | BR_FIRE | BR_GRAV | BR_INER | BR_LIGHT | BR_NETH
 S:BR_NEXU | BR_PLAS | BR_POIS | BR_SHAR | BR_SOUN | BR_TIME
 S:BR_WALL
 friends:100:2d7:Same
-D:A shifting, swirling form. It seems to be all colours and sizes and shapes,
+D:A shifting, swirling form. It seems to be all colours and sizes and shapes
 D: though the dominant form is that of a huge dog. You feel very uncertain all
 D: of a sudden.
 
