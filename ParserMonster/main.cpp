@@ -3,9 +3,12 @@
 #include <vector>
 #include <map>
 #include <cctype>
-#include "Monstr.h"
+#include "Monster.hpp"
 
 using namespace std;
+
+map <string, int> Flag;
+map <string, int> Spell;
 
 string read_string (FILE* m) {
     string str;
@@ -15,7 +18,7 @@ string read_string (FILE* m) {
         current = fgetc(m);
     }
     return str;
-};
+}
 
 vector<string> read (FILE* m, char sym, Monstr * mon) {
     char current = sym;
@@ -34,10 +37,10 @@ vector<string> read (FILE* m, char sym, Monstr * mon) {
             }
             if (sym == 'F') {
                 Flag[f] = ++Flag[f];
-                mon->F.push_back(f);
+                mon->F << f.c_str();
             } else if (sym == 'S') {
                 Spell[f] = ++Spell[f];
-                mon->S.push_back(f);
+                mon->S << f.c_str();
             }
             str.push_back(f);
             if (current == '|') {
@@ -59,9 +62,11 @@ int main () {
     FILE* monstr_type = fopen("monster_type.txt", "r");
     FILE* monstr = fopen("monster.txt", "r");
     freopen("output.txt", "w", stdout);
+
     char current;
     map  <string, TypeMonstr*> type;
     current = fgetc(monstr_type);
+
     while (current != EOF) {
         string name;
         if (current == 'N') {
@@ -160,7 +165,7 @@ int main () {
             typ = read_string(monstr);
             current = fgetc(monstr);
         }
-        Monstr *monster = new Monstr(name, type[typ]);
+        Monstr* monster = new Monstr(name, type[typ]);
         if (current == 'G') {
             current = fgetc(monstr);
             read_string(monstr);
@@ -173,16 +178,19 @@ int main () {
         }
         if (current == 'I') {
             current = fgetc(monstr);
-            monster->I = read_string(monstr);
+            monster->I = read_string(monstr).c_str();
             current = fgetc(monstr);
         }
         if (current == 'W') {
             current = fgetc(monstr);
-            monster->W = read_string(monstr);
+            monster->W = read_string(monstr).c_str();
             current = fgetc(monstr);
         }
         if (current == 'B' && fgetc(monstr) == ':') {
-            monster->B = read(monstr,current,monster);
+            vector<string> v = read(monstr,current,monster);
+            for (int i; i < v.size(); ++i) {
+               monster->B << v[i].c_str() ;
+            }
             current = fgetc(monstr);
         }
         if (current == 'F' && fgetc(monstr) == ':' ) {
@@ -199,7 +207,7 @@ int main () {
                     }
         if (current == 'S') {
             current = fgetc(monstr);
-            monster->spell_frequency = read_string(monstr);
+            monster->spell_frequency = read_string(monstr).c_str();
             current = fgetc(monstr);
         }
         if (current == 'S' &&  fgetc(monstr) == ':' ) {
@@ -213,12 +221,15 @@ int main () {
                     f +=current;
                     current = fgetc(monstr);
             }
-                monster->friends.push_back(read_string(monstr));
+                monster->friends << (read_string(monstr).c_str());
                 current = fgetc(monstr);
             }
         }
         if (current == 'D' && fgetc(monstr) == ':') {
-            monster->D = read(monstr,current,monster);
+            vector<string> v = read(monstr,current,monster);
+            for (int i; i < v.size(); ++i) {
+               monster->D << v[i].c_str();
+            }
             current = fgetc(monstr);
         }
         if (current == 'd') {
@@ -229,9 +240,9 @@ int main () {
                     current = fgetc(monstr);
                 }
                 if (f == "drop") {
-                    monster->drop.push_back(read_string(monstr));
+                    monster->drop << (read_string(monstr).c_str());
                 } else if (f == "drop-artifact") {
-                    monster->drop_artifact.push_back(read_string(monstr));
+                    monster->drop_artifact << (read_string(monstr).c_str());
                 }
                 current = fgetc(monstr);
             }
@@ -240,6 +251,7 @@ int main () {
             read_string(monstr);
             current = fgetc(monstr);
         }
+        monster->AddToDataBase();
         Monsstr[name] = monster;
         current = fgetc(monstr);
     }
