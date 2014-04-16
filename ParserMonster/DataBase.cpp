@@ -51,13 +51,13 @@ void DataBase::CreateTable()
             name varchar(32) NOT NULL,
             I varchar(32),
             W varchar(32),
-            B varchar(32)[],
+            B varchar(1024)[],
             spell_frequency varchar(32),
             F varchar(32)[],
             S varchar(32)[],
-            D varchar(32)[],
+            D varchar(1024)[],
             drop varchar(32)[],
-            friends varchar(32)[],
+            friends varchar(1024)[],
             drop_artifact varchar(32)[],
             mimic varchar(32)[]
         )

@@ -32,7 +32,8 @@ vector<string> read (FILE* m, char sym, Monstr * mon) {
                     current = fgetc(m);
                     break;
                 }
-                f += current;
+                if (current != '\'')
+                    f += current;
                 current = fgetc(m);
             }
             if (sym == 'F') {
@@ -41,6 +42,10 @@ vector<string> read (FILE* m, char sym, Monstr * mon) {
             } else if (sym == 'S') {
                 Spell[f] = ++Spell[f];
                 mon->S << f.c_str();
+            } else if (sym == 'D') {
+                mon->D << f.c_str();
+            } else if (sym == 'B') {
+                mon->B << f.c_str();
             }
             str.push_back(f);
             if (current == '|') {
@@ -147,6 +152,7 @@ int main () {
     current = fgetc(monstr);
     while (current != EOF) {
         string name, typ;
+        Monstr* monster;
         if (current == 'N') {
             current = fgetc(monstr);
             current = fgetc(monstr);
@@ -164,8 +170,9 @@ int main () {
             current = fgetc(monstr);
             typ = read_string(monstr);
             current = fgetc(monstr);
+            monster = new Monstr(name, type[typ]);
         }
-        Monstr* monster = new Monstr(name, type[typ]);
+
         if (current == 'G') {
             current = fgetc(monstr);
             read_string(monstr);
@@ -187,10 +194,7 @@ int main () {
             current = fgetc(monstr);
         }
         if (current == 'B' && fgetc(monstr) == ':') {
-            vector<string> v = read(monstr,current,monster);
-            for (int i; i < v.size(); ++i) {
-               monster->B << v[i].c_str() ;
-            }
+            read(monstr,current,monster);
             current = fgetc(monstr);
         }
         if (current == 'F' && fgetc(monstr) == ':' ) {
@@ -226,10 +230,7 @@ int main () {
             }
         }
         if (current == 'D' && fgetc(monstr) == ':') {
-            vector<string> v = read(monstr,current,monster);
-            for (int i; i < v.size(); ++i) {
-               monster->D << v[i].c_str();
-            }
+            read(monstr,current,monster);
             current = fgetc(monstr);
         }
         if (current == 'd') {
@@ -247,15 +248,24 @@ int main () {
                 current = fgetc(monstr);
             }
         }
+        if (current == 'D' && fgetc(monstr) == ':') {
+            read(monstr,current,monster);
+            current = fgetc(monstr);
+        }
         if (current == 'm') {
             read_string(monstr);
             current = fgetc(monstr);
         }
-        monster->AddToDataBase();
-        Monsstr[name] = monster;
+        if(current == '\n') {
+            //monster->AddToDataBase();
+            Monsstr[name] = monster;
+        }
         current = fgetc(monstr);
     }
     int j = 1;
+    for (map<string, Monstr*>::iterator i = Monsstr.begin(); i != Monsstr.end(); i++, j++) {
+         i->second->AddToDataBase();
+    }
     for (map<string, Monstr*>::iterator i = Monsstr.begin(); i != Monsstr.end(); i++, j++) {
         cout << j << ' ' << i->first << '\n';
     }

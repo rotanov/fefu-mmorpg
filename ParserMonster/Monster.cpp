@@ -39,7 +39,7 @@ void Monstr::AddToDataBase()
           + QString("'") + "{" + mimic.join(", ") + QString("}' ")
           + ")";
 
-    qDebug() << query;
+    //qDebug() << query;
     storage_.ExecQuery_(query);
     storage_.Disconnect();
 }
