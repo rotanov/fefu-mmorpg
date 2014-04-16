@@ -10,7 +10,7 @@ function ($) {
     var lookData
     var moveData
     var examineData
-    var getConstData
+    var constData
 
     function startGame(id, sid, wsUri) {
         id_ = id
@@ -54,9 +54,10 @@ function ($) {
             //Move
             } else if (data.action == "move") {
                 moveData = data
-            //getConst
+
+            //GetConst
             } else if (data.action == "getConst") {
-                getConstData = data
+                constData = data
             }
         }
 
@@ -139,11 +140,11 @@ function ($) {
     function getTick() {
         return tick
     }
-    
+
     function getConstData() {
-        return getConstData
+        return constData
     }
-    
+
     function timeout(x, callback) {
         var dfd = $.Deferred()
         setTimeout(function () {
