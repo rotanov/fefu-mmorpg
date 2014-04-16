@@ -9,6 +9,7 @@
 #include "LevelMap.hpp"
 #include "PermaStorage.hpp"
 #include "Player.hpp"
+#include "Monster.hpp"
 
 enum class EFEMPResult
 {
@@ -79,6 +80,7 @@ private:
     int lastId = 1;
 
     std::vector<Player> players_;
+    std::vector<Monster> monsters_;
 
     LevelMap levelMap_;
     QMap<QByteArray, QString> sids_;

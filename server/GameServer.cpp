@@ -60,6 +60,27 @@ GameServer::GameServer()
 
     map.save("level-map.png");
 
+    int monsterCounter = 0;
+    for (int i = 0; i < levelMap_.GetRowCount(); i++)
+    {
+        for (int j = 0; j < levelMap_.GetColumnCount(); j++)
+        {
+            if (levelMap_.GetCell(j, i) != '#')
+            {
+                monsterCounter++;
+                if (monsterCounter % 5 == 0)
+                {
+                    Monster monster;
+                    monster.SetPosition(Vector2(j, i));
+                    monster.SetId(lastId_);
+                    monster.SetDirection(static_cast<EActorDirection>(rand() % 4 + 1));
+                    lastId_++;
+                    monsters_.push_back(monster);
+                }
+            }
+        }
+    }
+
     players_.reserve(1000);
 }
 
@@ -220,6 +241,18 @@ void GameServer::tick()
             gameObject->OnCollideWorld();
         }
     };
+
+    for (auto& m : monsters_)
+    {
+        auto v = directionToVector[static_cast<unsigned>(m.GetDirection())]
+                * playerVelocity_;
+
+        collideWithGrid(&m);
+
+        m.SetVelocity(v);
+        m.Update(dt);
+    }
+
     for (auto& p : players_)
     {
         auto v = directionToVector[static_cast<unsigned>(p.GetDirection())]
@@ -435,6 +468,22 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
                 actors << actor;
             }
 
+            for (auto& m : monsters_)
+            {
+                QVariantMap actor;
+                if (m.GetPosition().y >= minY
+                    && m.GetPosition().y <= maxY
+                    && m.GetPosition().x >= minX
+                    && m.GetPosition().x <= maxX)
+                {
+                    actor["type"] = "monster";
+                    actor["x"] = m.GetPosition().x;
+                    actor["y"] = m.GetPosition().y;
+                    actor["id"] = m.GetId();
+                }
+                actors << actor;
+            }
+
             response["map"] = rows;
             response["actors"] = actors;
             return;
@@ -451,6 +500,18 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
         {
             response["type"] = "player";
             response["login"] = p.GetLogin();
+            response["x"] = p.GetPosition().x;
+            response["y"] = p.GetPosition().y;
+            response["id"] = p.GetId();
+            return;
+        }
+    }
+
+    for (auto& p : monsters_)
+    {
+        if (p.GetId() == id)
+        {
+            response["type"] = "monster";
             response["x"] = p.GetPosition().x;
             response["y"] = p.GetPosition().y;
             response["id"] = p.GetId();
