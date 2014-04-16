@@ -125,11 +125,16 @@ function coordinate(x, coord, g) {
 }
 
 function createActors(actor) {
+    var frameIndex = 31
+    if (actor.type == "monster") {
+        frameIndex = 29
+    }
+
     var sprite = game.add.sprite(
         coordinate(gPlayerX, actor.x, width),
         coordinate(gPlayerY, actor.y, height),
         "tileset",
-        31)
+        frameIndex)
 
     sprite.name = actor.id
     sprite.inputEnabled = true
