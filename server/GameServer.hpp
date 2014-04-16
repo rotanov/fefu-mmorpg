@@ -77,7 +77,7 @@ private:
 
     void WriteResult_(QVariantMap& response, const EFEMPResult result);
 
-    int lastId = 1;
+    int lastId_ = 1;
 
     std::vector<Player> players_;
     std::vector<Monster> monsters_;
@@ -94,9 +94,10 @@ private:
     float lastTime_ = 0.0f;
     unsigned tick_ = 0;
 
-    float playerVelocity_ = 10.0;
+    float playerVelocity_ = 1.0;
     float slideThreshold_ = 0.1;
     int ticksPerSecond_ = 60;
     int screenRowCount_ = 7;
     int screenColumnCount_ = 9;
+    float epsilon_ = 0.00001;
 };

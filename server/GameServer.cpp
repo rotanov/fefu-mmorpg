@@ -14,7 +14,7 @@
 #include "utils.hpp"
 
 GameServer::GameServer()
-    : levelMap_(48, 48)
+    : levelMap_(64, 64)
 {
     QTime midnight(0, 0, 0);
     qsrand(midnight.secsTo(QTime::currentTime()));
@@ -349,8 +349,8 @@ void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
         // TODO: extract to CreatePlayer
         {
             Player player;
-            player.SetId(lastId);
-            lastId++;
+            player.SetId(lastId_);
+            lastId_++;
             player.SetLogin(login);
 
             int x;
@@ -463,6 +463,7 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
             }
 
             QVariantList actors;
+            // TODO: spatial query. otherwise this will become a bottleneck
             for (auto& p : players_)
             {
                 QVariantMap actor;
