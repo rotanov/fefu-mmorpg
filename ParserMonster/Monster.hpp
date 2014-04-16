@@ -1,15 +1,12 @@
-#ifndef MONSTR_H
-#define MONSTR_H
-#include <string>
-#include <vector>
-#include <map>
+#pragma once
+
+#include <QString>
+#include <QStringList>
+
 #include <iostream>
 #include <fstream>
 
 using namespace std;
-
-map <string, int> Flag;
-map <string, int> Spell;
 
 enum SpellT {
     ARROW_1,
@@ -176,28 +173,44 @@ enum FlagT {
 
 class TypeMonstr {
     public:
-        string name;
+        QString name;
         string M;
         vector<string> F;
         vector<string> S;
-        TypeMonstr(string n):name(n){};
+        TypeMonstr(string);
 };
 
 class Monstr {
 public:
-    string name;
+    QString name;
     TypeMonstr* T;
-    string I;
-    string W;
-    vector<string> B;
-    string spell_frequency;
-    vector<string> F;
-    vector<string> S;
-    vector<string> D;
-    vector<string> drop;
-    vector<string> friends;
-    vector<string> drop_artifact;
-    vector<string> mimic;
-    Monstr(string n, TypeMonstr* type):name(n),T(type){};
+    QString I;
+    QString W;
+    QStringList B;
+    QString spell_frequency;
+    QStringList F;
+    QStringList S;
+    QStringList D;
+    QStringList drop;
+    QStringList friends;
+    QStringList drop_artifact;
+    QStringList mimic;
+
+    QStringList fields_ = (QStringList() << "name"
+                             << "I"
+                             << "W"
+                             << "B"
+                             << "spell_frequency"
+                             << "F"
+                             << "S"
+                             << "D"
+                             << "drop"
+                             << "friends"
+                             << "drop_artifact"
+                             << "mimic");
+
+    Monstr();
+    Monstr(string, TypeMonstr*);
+
+    void AddToDataBase();
 };
-#endif // MONSTR_H
