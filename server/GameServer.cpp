@@ -182,19 +182,54 @@ void GameServer::tick()
     float dt = (time_.elapsed() - lastTime_) * 0.001f;
     lastTime_ = time_.elapsed();
 
+    auto collideWithGrid = [=](GameObject* gameObject)
+    {
+        auto& p = *gameObject;
+
+        float x = p.GetPosition().x;
+        float y = p.GetPosition().y;
+
+        bool collided = false;
+
+        if (levelMap_.GetCell(x + 0.5f, y) == '#')
+        {
+            p.SetPosition(Vector2(truncf(x + 0.5f) - 0.5f, p.GetPosition().y));
+            collided = true;
+        }
+
+        if (levelMap_.GetCell(x - 0.5f, y) == '#')
+        {
+            p.SetPosition(Vector2(round(x - 0.5f) + 0.5f, p.GetPosition().y));
+            collided = true;
+        }
+
+        if (levelMap_.GetCell(x, y + 0.5f) == '#')
+        {
+            p.SetPosition(Vector2(p.GetPosition().x, round(y + 0.5f) - 0.5f));
+            collided = true;
+        }
+
+        if (levelMap_.GetCell(x, y - 0.5f) == '#')
+        {
+            p.SetPosition(Vector2(p.GetPosition().x, round(y - 0.5f) + 0.5f));
+            collided = true;
+        }
+
+        if (collided)
+        {
+            gameObject->OnCollideWorld();
+        }
+    };
     for (auto& p : players_)
     {
-        auto v = directionToVector[static_cast<unsigned>(p.GetDirection())] * playerVelocity_ * (tick_ - p.GetClientTick());
+        auto v = directionToVector[static_cast<unsigned>(p.GetDirection())]
+                * playerVelocity_
+                * (tick_ - p.GetClientTick());
+
         p.SetVelocity(v);
         p.Update(dt);
-        int x = p.GetPosition().x;
-        int y = p.GetPosition().y;
 
-        if (levelMap_.GetCell(x, y) == '#')
-        {
-            p.SetVelocity(-v);
-            p.Update(dt);
-        }
+        collideWithGrid(&p);
 
         p.SetDirection(EActorDirection::NONE);
     }

@@ -19,3 +19,8 @@ void GameObject::SetId(int id)
 {
     id_ = id;
 }
+
+void GameObject::OnCollideWorld()
+{
+
+}
