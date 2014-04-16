@@ -430,11 +430,22 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
     {
         if (p.GetLogin() == login)
         {
+            QVariantList rows;
+
             auto pos = p.GetPosition();
+
             response["x"] = pos.x;
             response["y"] = pos.y;
 
-            QVariantList rows;
+            if (pos.x < 0.0f)
+            {
+                pos.x -= 1.0f - epsilon_;
+            }
+
+            if (pos.y < 0.0f)
+            {
+                pos.y -= 1.0f - epsilon_;
+            }
 
             int minX = static_cast<int>(pos.x) - 4;
             int maxX = static_cast<int>(pos.x) + 4;
