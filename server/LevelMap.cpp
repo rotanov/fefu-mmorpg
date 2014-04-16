@@ -1,9 +1,15 @@
 #include "LevelMap.hpp"
 
+#include <cassert>
+#include <cmath>
+
 LevelMap::LevelMap(int columnCount, int rowCount)
     : columnCount_(columnCount)
     , rowCount_(rowCount)
 {
+    assert(columnCount > 2);
+    assert(rowCount > 2);
+
     data_ = new int [columnCount_ * rowCount_];
 
     for (int i = 0; i < columnCount_ * rowCount_; i++)
@@ -39,14 +45,32 @@ int LevelMap::GetColumnCount() const
     return columnCount_;
 }
 
-int& LevelMap::GetCell(int column, int row)
+int LevelMap::GetCell(int column, int row) const
 {
-    return data_[row * columnCount_ + column];
+    if (column < 0
+        || row < 0
+        || column >= columnCount_
+        || row >= rowCount_)
+    {
+        return '#';
+    }
+    else
+    {
+        return data_[row * columnCount_ + column];
+    }
 }
 
-const int&LevelMap::GetCell(int column, int row) const
+int LevelMap::GetCell(float column, float row) const
 {
-    return data_[row * columnCount_ + column];
+    if (column < 0.0f)
+    {
+        column -= 1.0f - 0.00001f;
+    }
+    if (row < 0.0f)
+    {
+        row -= 1.0f - 0.00001f;
+    }
+    return GetCell(static_cast<int>(column), static_cast<int>(row));
 }
 
 void LevelMap::SetCell(int column, int row, int value)

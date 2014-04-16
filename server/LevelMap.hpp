@@ -9,8 +9,8 @@ public:
     int GetRowCount() const;
     int GetColumnCount() const;
 
-    int& GetCell(int column, int row);
-    const int& GetCell(int column, int row) const;
+    int GetCell(int column, int row) const;
+    int GetCell(float column, float row) const;
     void SetCell(int column, int row, int value);
 
 private:

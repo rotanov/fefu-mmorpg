@@ -378,17 +378,7 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
                 QVariantList row;
                 for (int i = minX; i <= maxX; i++)
                 {
-                    if (j < 0
-                        || j > levelMap_.GetRowCount() - 1
-                        || i < 0
-                        || i > levelMap_.GetColumnCount() - 1)
-                    {
-                        row.push_back("#");
-                    }
-                    else
-                    {
-                        row.push_back(QString(levelMap_.GetCell(i, j)));
-                    }
+                    row.push_back(QString(levelMap_.GetCell(i, j)));
                 }
                 rows.push_back(row);
             }
