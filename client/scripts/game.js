@@ -171,13 +171,15 @@ function renderWalls(map) {
 function renderActors(actor) {
     var vis = []
     for (var i = 0; i < actor.length; i++) {
-        if (actors[id_actors[actor[i].id]]) {
-            actors[id_actors[actor[i].id]].x = coordinate(gPlayerX, actor[i].x, width)
-            actors[id_actors[actor[i].id]].y = coordinate(gPlayerY, actor[i].y, height)
-        } else {
-            createActors(actor[i])
+        if (actor[i].id) {
+            if (actors[id_actors[actor[i].id]]) {
+                actors[id_actors[actor[i].id]].x = coordinate(gPlayerX, actor[i].x, width)
+                actors[id_actors[actor[i].id]].y = coordinate(gPlayerY, actor[i].y, height)
+            } else {
+                createActors(actor[i])
+            }
+                vis[id_actors[actor[i].id]] = true
         }
-        vis[id_actors[actor[i].id]] = true
     }
     var k = actors.length
     var j = 0
@@ -185,6 +187,7 @@ function renderActors(actor) {
         if (!vis[i]) {
             id_actors[actors[i-j].name] = -1
             actors[i-j].destroy()
+            actors[i-j] = null
             actors.splice(i-j, 1)
             j++
         }
