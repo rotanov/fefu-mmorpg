@@ -302,27 +302,42 @@ void GameServer::HandleSetUpConstants_(const QVariantMap& request, QVariantMap& 
 //==============================================================================
 void GameServer::HandleSetUpMap_(const QVariantMap& request, QVariantMap& response)
 {
+#define BAD_MAP(COND)\
+    if (COND)\
+    {\
+        WriteResult_(response, EFEMPResult::BAD_MAP);\
+        return;\
+    }\
+
     if (!testingStageActive_)
     {
         WriteResult_(response, EFEMPResult::BAD_ACTION);
         return;
     }
 
-    QVariant data = request["map"];
-    for (int i = 0; i < screenRowCount_; i++)
+    auto rows = request["map"].toList();
+    int rowCount = rows.size();
+    BAD_MAP(rowCount == 0);
+
+    int columnCount = rows[0].toList().size();
+    BAD_MAP(columnCount == 0);
+
+    levelMap_.Resize(columnCount, rowCount);
+
+    for (int i = 0; i < rowCount; i++)
     {
-        auto row = data.toStringList();
-        qDebug() << "row: " << row;
-        for (int j = 0; j < screenColumnCount_; j++)
+        auto row = rows[i].toList();
+        BAD_MAP(row.size() != columnCount);
+
+        for (int j = 0; j < columnCount; j++)
         {
-            auto cell = row[j];
-            if (cell != "#" || cell != ".")
-            {
-                WriteResult_(response, EFEMPResult::BAD_MAP);
-                return;
-            }
+            int value = row[j].toByteArray()[0];
+            BAD_MAP(value != '#' && value != '.');
+            levelMap_.SetCell(j, i, value);
         }
     }
+
+#undef BAD_MAP
 }
 
 //==============================================================================
