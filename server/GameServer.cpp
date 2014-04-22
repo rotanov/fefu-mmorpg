@@ -28,9 +28,11 @@ GameServer::GameServer()
     timer_->setInterval(1000.0f / static_cast<float>(ticksPerSecond_));
 
     requestHandlers_["startTesting"] = &GameServer::HandleStartTesting_;
+    requestHandlers_["stopTesting"] = &GameServer::HandleStopTesting_;
     requestHandlers_["setUpConst"] = &GameServer::HandleSetUpConstants_;
     requestHandlers_["setUpMap"] = &GameServer::HandleSetUpMap_;
     requestHandlers_["getConst"] = &GameServer::HandleGetConst_;
+
     requestHandlers_["login"] = &GameServer::HandleLogin_;
     requestHandlers_["logout"] = &GameServer::HandleLogout_;
     requestHandlers_["register"] = &GameServer::HandleRegister_;
@@ -284,6 +286,12 @@ void GameServer::tick()
 //==============================================================================
 void GameServer::HandleSetUpConstants_(const QVariantMap& request, QVariantMap& response)
 {
+    if (!testingStageActive_)
+    {
+        WriteResult_(response, EFEMPResult::BAD_ACTION);
+        return;
+    }
+
     playerVelocity_ = request["playerVelocity"].toFloat();
     slideThreshold_ = request["slideThreshold"].toFloat();
     ticksPerSecond_ = request["ticksPerSecond"].toInt();
@@ -294,6 +302,12 @@ void GameServer::HandleSetUpConstants_(const QVariantMap& request, QVariantMap& 
 //==============================================================================
 void GameServer::HandleSetUpMap_(const QVariantMap& request, QVariantMap& response)
 {
+    if (!testingStageActive_)
+    {
+        WriteResult_(response, EFEMPResult::BAD_ACTION);
+        return;
+    }
+
     QVariant data = request["map"];
     for (int i = 0; i < screenRowCount_; i++)
     {
@@ -401,10 +415,28 @@ void GameServer::HandleLogout_(const QVariantMap& request, QVariantMap& response
 //==============================================================================
 void GameServer::HandleStartTesting_(const QVariantMap& request, QVariantMap& response)
 {
+    if (testingStageActive_)
+    {
+        WriteResult_(response, EFEMPResult::BAD_ACTION);
+        return;
+    }
+
+    testingStageActive_ = true;
     storage_.Reset();
 }
 
 //==============================================================================
+void GameServer::HandleStopTesting_(const QVariantMap& request, QVariantMap& response)
+{
+    if (!testingStageActive_)
+    {
+        WriteResult_(response, EFEMPResult::BAD_ACTION);
+        return;
+    }
+
+    testingStageActive_ = false;
+}
+
 //==============================================================================
 void GameServer::HandleGetDictionary_(const QVariantMap& request, QVariantMap& response)
 {

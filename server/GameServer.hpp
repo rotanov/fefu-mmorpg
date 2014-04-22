@@ -63,9 +63,11 @@ private:
     QMap<QString, HandlerType> requestHandlers_;
 
     void HandleStartTesting_(const QVariantMap& request, QVariantMap& response);
+    void HandleStopTesting_(const QVariantMap& request, QVariantMap& response);
     void HandleSetUpConstants_(const QVariantMap& request, QVariantMap& response);
     void HandleSetUpMap_(const QVariantMap& request, QVariantMap& response);
     void HandleGetConst_(const QVariantMap& request, QVariantMap& response);
+
     void HandleLogin_(const QVariantMap& request, QVariantMap& response);
     void HandleLogout_(const QVariantMap& request, QVariantMap& response);
     void HandleRegister_(const QVariantMap& request, QVariantMap& response);
@@ -100,4 +102,6 @@ private:
     int screenRowCount_ = 7;
     int screenColumnCount_ = 9;
     float epsilon_ = 0.00001;
+
+    bool testingStageActive_ = false;
 };
