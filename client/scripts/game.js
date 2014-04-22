@@ -14,8 +14,6 @@ var gPlayerX
 var gPlayerY
 
 var actors = []
-var id_actors = []
-
 
 var id_
 var sid_
@@ -55,8 +53,6 @@ function onPreload() {
 
 function onCreate() {
     game.stage.backgroundColor = "#ffeebb"
-    
-
     mapGlobal = game.add.tilemap("map")
     mapGlobal.addTilesetImage("tileset")
 
@@ -70,7 +66,7 @@ function onCreate() {
     
     $.when(ws.look(sid_), ws.timeout(200, ws.getLookData))
     .done(function (look, lookData) {
-        createActors() 
+        createActors(0) 
         renderWalls(lookData.map)
         gPlayerX = lookData.x
         gPlayerY = lookData.y
@@ -125,9 +121,10 @@ function coordinate(x, coord, g) {
     return (-(x - coord) + g * 0.5 ) * step
 }
 
-function createActors() {
+function createActors(start) {
     var frameIndex = 31
-    for (var i = 0; i < 36; i++) {
+    var length = width*height * (start+1)
+    for (var i = start; i < length; i++) {
         var sprite = game.add.sprite(
             coordinate(gPlayerX, 0, width),
             coordinate(gPlayerY, 0, height),
@@ -171,8 +168,10 @@ function renderActors(actor) {
     var j = 0
     for (var i = 0; i < actor.length; i++) {
         if (actor[i].id) {
+            if (j == actors[j].length) {
+                createActors(actors[j].length / width*height);
+            }
             var frameIndex = 31
-            id_actors[actor[i].id] = actors[i-j]
             actors[j].name = actor[i].id
             actors[j].visible = true
             if (actor[i].type == "monster") {
