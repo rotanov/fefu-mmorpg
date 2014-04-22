@@ -6,12 +6,14 @@
 
 void HandleQDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
+    Q_UNUSED(context);
+
     QByteArray localMsg = msg.toLocal8Bit();
 //    FILE* logfile = fopen("logFilename.log", "a");
 //    fprintf(logfile, "%s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
 //    fclose(logfile);
 
-    static char* messageDescriptions [] =
+    static std::string messageDescriptions [] =
     {
         "Debug",
         "Warning",
@@ -19,7 +21,7 @@ void HandleQDebugMessageOutput(QtMsgType type, const QMessageLogContext &context
         "Fatal",
     };
 
-    QString completeMessage = QString(messageDescriptions[type])
+    QString completeMessage = QString().fromStdString(messageDescriptions[type])
                               + QString(": %1\n");// (%2:%3, %4)\n");
 
     completeMessage = completeMessage

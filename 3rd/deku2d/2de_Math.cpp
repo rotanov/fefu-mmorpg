@@ -132,7 +132,9 @@ namespace Deku2D
 		public:
 			static __INLINE bool cmp (Vector2 a, Vector2 b)
 			{
-				return a.x < b.x || a.x == b.x && a.y < b.y;
+                return a.x < b.x
+                        || (a.x == b.x
+                            && a.y < b.y);
 			}
 
 			/**

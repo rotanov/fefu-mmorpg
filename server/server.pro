@@ -8,6 +8,15 @@ TEMPLATE = app
 
 QMAKE_CXXFLAGS += -std=c++11
 
+QMAKE_CXXFLAGS += -Wextra
+QMAKE_CXXFLAGS += -Werror
+
+# GCC handles C++11 class members inline
+# initialization wrong in context of warnings
+QMAKE_CXXFLAGS += -Wno-reorder
+QMAKE_CXXFLAGS += -Wno-unused-local-typedefs
+QMAKE_CXXFLAGS += -Wno-unused-variable
+
 INCLUDEPATH += \
     ../3rd/qhttpserver \
     ../3rd/QtWebsocket \

@@ -343,6 +343,8 @@ void GameServer::HandleSetUpMap_(const QVariantMap& request, QVariantMap& respon
 //==============================================================================
 void GameServer::HandleGetConst_(const QVariantMap& request, QVariantMap& response)
 {
+    Q_UNUSED(request);
+
     response["playerVelocity"] = playerVelocity_;
     response["slideThreshold"] = slideThreshold_;
     response["ticksPerSecond"] = ticksPerSecond_;
@@ -414,9 +416,11 @@ void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
 //==============================================================================
 void GameServer::HandleLogout_(const QVariantMap& request, QVariantMap& response)
 {
+    Q_UNUSED(response);
+
     auto sid = request["sid"].toByteArray();
     auto iter = sids_.find(sid);
-    for (int i = 0; i < players_.size(); i++)
+    for (unsigned i = 0; i < players_.size(); i++)
     {
         if (players_[i].GetLogin() == iter.value())
         {
@@ -430,6 +434,8 @@ void GameServer::HandleLogout_(const QVariantMap& request, QVariantMap& response
 //==============================================================================
 void GameServer::HandleStartTesting_(const QVariantMap& request, QVariantMap& response)
 {
+    Q_UNUSED(request);
+
     if (testingStageActive_)
     {
         WriteResult_(response, EFEMPResult::BAD_ACTION);
@@ -443,6 +449,8 @@ void GameServer::HandleStartTesting_(const QVariantMap& request, QVariantMap& re
 //==============================================================================
 void GameServer::HandleStopTesting_(const QVariantMap& request, QVariantMap& response)
 {
+    Q_UNUSED(request);
+
     if (!testingStageActive_)
     {
         WriteResult_(response, EFEMPResult::BAD_ACTION);
@@ -455,6 +463,8 @@ void GameServer::HandleStopTesting_(const QVariantMap& request, QVariantMap& res
 //==============================================================================
 void GameServer::HandleGetDictionary_(const QVariantMap& request, QVariantMap& response)
 {
+    Q_UNUSED(request);
+
     QVariantMap dictionary;
     dictionary["#"] = "wall";
     dictionary["."] = "grass";

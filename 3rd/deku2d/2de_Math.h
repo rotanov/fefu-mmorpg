@@ -160,13 +160,13 @@ namespace Deku2D
 	}
 
     template <typename T>
-    __INLINE int Sign(T x, std::false_type is_signed)
+    __INLINE int Sign(T x, std::false_type /*is_signed*/)
     {
         return T(0) < x;
     }
 
     template <typename T>
-    __INLINE int Sign(T x, std::true_type is_signed)
+    __INLINE int Sign(T x, std::true_type /*is_signed*/)
     {
         return (T(0) < x) - (x < T(0));
     }
