@@ -70,6 +70,7 @@ function onCreate() {
     
     $.when(ws.look(sid_), ws.timeout(200, ws.getLookData))
     .done(function (look, lookData) {
+        createActors() 
         renderWalls(lookData.map)
         gPlayerX = lookData.x
         gPlayerY = lookData.y
@@ -124,23 +125,21 @@ function coordinate(x, coord, g) {
     return (-(x - coord) + g * 0.5 ) * step
 }
 
-function createActors(actor) {
+function createActors() {
     var frameIndex = 31
-    if (actor.type == "monster") {
-        frameIndex = 29
+    for (var i = 0; i < 36; i++) {
+        var sprite = game.add.sprite(
+            coordinate(gPlayerX, 0, width),
+            coordinate(gPlayerY, 0, height),
+            "tileset",
+            frameIndex)
+
+        sprite.name = -1
+        sprite.inputEnabled = true
+        sprite.visible = false
+        sprite.anchor.setTo(0.5, 0.5)
+        actors.push(sprite)
     }
-
-    var sprite = game.add.sprite(
-        coordinate(gPlayerX, actor.x, width),
-        coordinate(gPlayerY, actor.y, height),
-        "tileset",
-        frameIndex)
-
-    sprite.name = actor.id
-    sprite.inputEnabled = true
-    sprite.anchor.setTo(0.5, 0.5)
-    actors.push(sprite)
-    id_actors[actor.id] = actors.length - 1
 }
 
 var tempTiles
@@ -169,28 +168,25 @@ function renderWalls(map) {
 }
 
 function renderActors(actor) {
-    var vis = []
+    var j = 0
     for (var i = 0; i < actor.length; i++) {
         if (actor[i].id) {
-            if (actors[id_actors[actor[i].id]]) {
-                actors[id_actors[actor[i].id]].x = coordinate(gPlayerX, actor[i].x, width)
-                actors[id_actors[actor[i].id]].y = coordinate(gPlayerY, actor[i].y, height)
-            } else {
-                createActors(actor[i])
+            var frameIndex = 31
+            id_actors[actor[i].id] = actors[i-j]
+            actors[j].name = actor[i].id
+            actors[j].visible = true
+            if (actor[i].type == "monster") {
+                frameIndex = 29
             }
-                vis[id_actors[actor[i].id]] = true
-        }
+            actors[j].loadTexture("tileset", frameIndex)
+            actors[j].x = coordinate(gPlayerX, actor[i].x, width)
+            actors[j].y = coordinate(gPlayerY, actor[i].y, height) 
+            j++
+        }           
     }
     var k = actors.length
-    var j = 0
-    for (var i = 0; i < k; i++) {
-        if (!vis[i]) {
-            id_actors[actors[i-j].name] = -1
-            actors[i-j].destroy()
-            actors[i-j] = null
-            actors.splice(i-j, 1)
-            j++
-        }
+    for (var i = j; i < k; i++) {
+        actors[i].visible = false
     }
 }
 
