@@ -30,3 +30,9 @@
 /bin/server-debug.exe
 /bin/server-release.exe
 /bin/level-map.png
+/fefu-mmorpg.pro.user.1.3
+/monster-parser/ParserMonster.pro.user
+/monster-parser/debug
+/monster-parser/Makefile
+/monster-parser/Makefile.Debug
+/monster-parser/Makefile.Release
