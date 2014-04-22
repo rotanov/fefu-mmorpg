@@ -168,7 +168,7 @@ enum FlagT {
     UNAWARE,
     UNDEAD,
     UNIQUE,
-    WEIRD_MIND
+    WEIRD_MIND,
 };
 
 class TypeMonstr {
