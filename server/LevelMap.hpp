@@ -13,7 +13,11 @@ public:
     int GetCell(float column, float row) const;
     void SetCell(int column, int row, int value);
 
+    void Resize(int columnCount, int rowCount);
+
 private:
+    void InitData_();
+
     int rowCount_;
     int columnCount_;
     int* data_;

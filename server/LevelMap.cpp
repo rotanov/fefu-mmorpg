@@ -6,33 +6,18 @@
 LevelMap::LevelMap(int columnCount, int rowCount)
     : columnCount_(columnCount)
     , rowCount_(rowCount)
+    , data_(NULL)
 {
     assert(columnCount > 2);
     assert(rowCount > 2);
 
-    data_ = new int [columnCount_ * rowCount_];
-
-    for (int i = 0; i < columnCount_ * rowCount_; i++)
-    {
-        data_[i] = '.';
-    }
-
-    for (int i = 0; i < columnCount_; i++)
-    {
-        SetCell(i, 0, '#');
-        SetCell(i, rowCount_ - 1, '#');
-    }
-
-    for (int i = 0; i < rowCount_; i++)
-    {
-        SetCell(0, i, '#');
-        SetCell(columnCount_ - 1, i, '#');
-    }
+    InitData_();
 }
 
 LevelMap::~LevelMap()
 {
     delete [] data_;
+    data_ = NULL;
 }
 
 int LevelMap::GetRowCount() const
@@ -76,4 +61,43 @@ int LevelMap::GetCell(float column, float row) const
 void LevelMap::SetCell(int column, int row, int value)
 {
     data_[row * columnCount_ + column] = value;
+}
+
+void LevelMap::Resize(int columnCount, int rowCount)
+{
+    assert(columnCount >= 2);
+    assert(rowCount >= 2);
+
+    columnCount_ = columnCount;
+    rowCount_ = rowCount;
+
+    InitData_();
+}
+
+void LevelMap::InitData_()
+{
+    if (data_ != NULL)
+    {
+        delete [] data_;
+        data_ = NULL;
+    }
+
+    data_ = new int [columnCount_ * rowCount_];
+
+    for (int i = 0; i < columnCount_ * rowCount_; i++)
+    {
+        data_[i] = '.';
+    }
+
+    for (int i = 0; i < columnCount_; i++)
+    {
+        SetCell(i, 0, '#');
+        SetCell(i, rowCount_ - 1, '#');
+    }
+
+    for (int i = 0; i < rowCount_; i++)
+    {
+        SetCell(0, i, '#');
+        SetCell(columnCount_ - 1, i, '#');
+    }
 }
