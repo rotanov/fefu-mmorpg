@@ -13,6 +13,7 @@
 #include "PermaStorage.hpp"
 #include "utils.hpp"
 
+//==============================================================================
 GameServer::GameServer()
     : levelMap_(64, 64)
 {
@@ -84,11 +85,13 @@ GameServer::GameServer()
     players_.reserve(1000);
 }
 
+//==============================================================================
 GameServer::~GameServer()
 {
 
 }
 
+//==============================================================================
 bool GameServer::Start()
 {
     if (storage_.Connect())
@@ -102,6 +105,7 @@ bool GameServer::Start()
     return false;
 }
 
+//==============================================================================
 void GameServer::Stop()
 {
     storage_.Reset();
@@ -109,6 +113,7 @@ void GameServer::Stop()
     timer_->stop();
 }
 
+//==============================================================================
 void GameServer::handleFEMPRequest(const QVariantMap& request, QVariantMap& response)
 {
     response["action"] = request["action"];
@@ -154,6 +159,7 @@ void GameServer::handleFEMPRequest(const QVariantMap& request, QVariantMap& resp
     }
 }
 
+//==============================================================================
 void GameServer::HandleRegister_(const QVariantMap& request, QVariantMap& response)
 {
     QString login = request["login"].toString();
@@ -193,11 +199,13 @@ void GameServer::HandleRegister_(const QVariantMap& request, QVariantMap& respon
     }
 }
 
+//==============================================================================
 void GameServer::setWSAddress(QString address)
 {
     wsAddress_ = address;
 }
 
+//==============================================================================
 void GameServer::tick()
 {
     float dt = (time_.elapsed() - lastTime_) * 0.001f;
@@ -273,6 +281,7 @@ void GameServer::tick()
     tick_++;
 }
 
+//==============================================================================
 void GameServer::HandleSetUpConstants_(const QVariantMap& request, QVariantMap& response)
 {
     playerVelocity_ = request["playerVelocity"].toFloat();
@@ -282,6 +291,7 @@ void GameServer::HandleSetUpConstants_(const QVariantMap& request, QVariantMap& 
     screenColumnCount_ = request["screenColumnCount"].toInt();
 }
 
+//==============================================================================
 void GameServer::HandleSetUpMap_(const QVariantMap& request, QVariantMap& response)
 {
     QVariant data = request["map"];
@@ -301,6 +311,7 @@ void GameServer::HandleSetUpMap_(const QVariantMap& request, QVariantMap& respon
     }
 }
 
+//==============================================================================
 void GameServer::HandleGetConst_(const QVariantMap& request, QVariantMap& response)
 {
     response["playerVelocity"] = playerVelocity_;
@@ -310,6 +321,7 @@ void GameServer::HandleGetConst_(const QVariantMap& request, QVariantMap& respon
     response["screenColumnCount"] = screenColumnCount_;
 }
 
+//==============================================================================
 void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
 {
     auto login = request["login"].toString();
@@ -370,6 +382,7 @@ void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
     }
 }
 
+//==============================================================================
 void GameServer::HandleLogout_(const QVariantMap& request, QVariantMap& response)
 {
     auto sid = request["sid"].toByteArray();
@@ -385,11 +398,14 @@ void GameServer::HandleLogout_(const QVariantMap& request, QVariantMap& response
     sids_.erase(iter);
 }
 
+//==============================================================================
 void GameServer::HandleStartTesting_(const QVariantMap& request, QVariantMap& response)
 {
     storage_.Reset();
 }
 
+//==============================================================================
+//==============================================================================
 void GameServer::HandleGetDictionary_(const QVariantMap& request, QVariantMap& response)
 {
     QVariantMap dictionary;
@@ -398,6 +414,7 @@ void GameServer::HandleGetDictionary_(const QVariantMap& request, QVariantMap& r
     response["dictionary"] = dictionary;
 }
 
+//==============================================================================
 void GameServer::HandleMove_(const QVariantMap& request, QVariantMap& response)
 {
     auto sid = request["sid"].toByteArray();
@@ -421,6 +438,7 @@ void GameServer::HandleMove_(const QVariantMap& request, QVariantMap& response)
     WriteResult_(response, EFEMPResult::BAD_ID);
 }
 
+//==============================================================================
 void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
 {
     auto sid = request["sid"].toByteArray();
@@ -503,6 +521,7 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
     }
 }
 
+//==============================================================================
 void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& response)
 {
     auto id = request["id"].toInt();
@@ -534,6 +553,7 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
     WriteResult_(response, EFEMPResult::BAD_ID);
 }
 
+//==============================================================================
 void GameServer::WriteResult_(QVariantMap& response, const EFEMPResult result)
 {
     response["result"] = fempResultToString[static_cast<unsigned>(result)];
