@@ -131,7 +131,7 @@ function(packages, utils, ws) {
                 })
 
                 it("should return ok", function() {
-                    var time = (newTick - lastTick) / ticksPerSecond
+                    var time = Math.round((newTick - lastTick) / ticksPerSecond)
                     var xClient = Math.round(examineData.x - time * playerVelocity)
                     var xServer = Math.round(ws.getExamineData().x)
                     assert.equal(xClient, xServer)
@@ -158,7 +158,7 @@ function(packages, utils, ws) {
                 })
 
                 it("should return ok", function() {
-                    var time = (newTick - lastTick) / ticksPerSecond
+                    var time = Math.round((newTick - lastTick) / ticksPerSecond)
                     var xClient = Math.round(examineData.x - time * playerVelocity)
                     var xServer = Math.round(ws.getExamineData().x)
                     assert.equal(xClient, xServer)
@@ -185,7 +185,7 @@ function(packages, utils, ws) {
                 })
 
                 it("should return ok", function() {
-                    var time = (newTick - lastTick) / ticksPerSecond
+                    var time = Math.round((newTick - lastTick) / ticksPerSecond)
                     var xClient = Math.round(examineData.x + time * playerVelocity)
                     var xServer = Math.round(ws.getExamineData().x)
                     assert.equal(xClient/10, xServer)
@@ -212,7 +212,7 @@ function(packages, utils, ws) {
                 })
 
                 it("should return ok", function() {
-                    var time = (newTick - lastTick) / ticksPerSecond
+                    var time = Math.round((newTick - lastTick) / ticksPerSecond)
                     var xClient = Math.round(examineData.x + time * playerVelocity)
                     var xServer = Math.round(ws.getExamineData().x)
                     assert.equal(xClient/10, xServer)
@@ -239,7 +239,7 @@ function(packages, utils, ws) {
                 })
 
                 it("should return ok", function() {
-                    var time = (newTick - lastTick) / ticksPerSecond
+                    var time = Math.round((newTick - lastTick) / ticksPerSecond)
                     var yClient = Math.round(examineData.y + time * playerVelocity)
                     var yServer = Math.round(ws.getExamineData().y)
                     assert.equal(yClient/10, yServer)
@@ -266,7 +266,7 @@ function(packages, utils, ws) {
                 })
 
                 it("should return ok", function() {
-                    var time = (newTick - lastTick) / ticksPerSecond
+                    var time = Math.round((newTick - lastTick) / ticksPerSecond)
                     var yClient = Math.round(examineData.y + time * playerVelocity)
                     var yServer = Math.round(ws.getExamineData().y)
                     assert.equal(yClient/10, yServer)
@@ -293,7 +293,7 @@ function(packages, utils, ws) {
                 })
 
                 it("should return ok", function() {
-                    var time = (newTick - lastTick) / ticksPerSecond
+                    var time = Math.round((newTick - lastTick) / ticksPerSecond)
                     var yClient = Math.round(examineData.y - time * playerVelocity)
                     var yServer = Math.round(ws.getExamineData().y)
                     assert.equal(yClient, yServer)
@@ -320,13 +320,13 @@ function(packages, utils, ws) {
                 })
 
                 it("should return ok", function() {
-                    var time = (newTick - lastTick) / ticksPerSecond
+                    var time = Math.round((newTick - lastTick) / ticksPerSecond)
                     var yClient = Math.round(examineData.y - time * playerVelocity)
                     var yServer = Math.round(ws.getExamineData().y)
                     assert.equal(yClient, yServer)
                     assert.equal(examineData.x, ws.getExamineData().x)
                 })
-            })*/
+            })
         })
 
         after(function() {
