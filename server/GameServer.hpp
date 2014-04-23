@@ -81,11 +81,10 @@ private:
 
     int lastId_ = 1;
 
-    std::vector<Player> players_;
-    std::vector<Monster> monsters_;
+    std::vector<GameObject*> gameObjects_;
 
     LevelMap levelMap_;
-    QMap<QByteArray, QString> sids_;
+    QMap<QByteArray, Player*> sidToPlayer_;
 
     QString wsAddress_;
 

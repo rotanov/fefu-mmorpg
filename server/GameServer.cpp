@@ -93,24 +93,27 @@ GameServer::GameServer()
                 monsterCounter++;
                 if (monsterCounter % 5 == 0)
                 {
-                    Monster monster;
-                    monster.SetPosition(Vector2(j, i));
-                    monster.SetId(lastId_);
-                    monster.SetDirection(static_cast<EActorDirection>(rand() % 4 + 1));
+                    Monster* monster = new Monster();
+                    Monster& m = *monster;
+                    m.SetPosition(Vector2(j, i));
+                    m.SetId(lastId_);
+                    m.SetDirection(static_cast<EActorDirection>(rand() % 4 + 1));
                     lastId_++;
-                    monsters_.push_back(monster);
+                    gameObjects_.push_back(monster);
                 }
             }
         }
     }
-
-    players_.reserve(1000);
 }
 
 //==============================================================================
 GameServer::~GameServer()
 {
-
+    while (!gameObjects_.empty())
+    {
+        delete gameObjects_.back();
+        gameObjects_.pop_back();
+    }
 }
 
 //==============================================================================
@@ -157,6 +160,7 @@ void GameServer::handleFEMPRequest(const QVariantMap& request, QVariantMap& resp
         return;
     }
 
+    // TODO: extract into unordered_map
     if (action != "register"
         && action != "login"
         && action != "startTesting"
@@ -166,7 +170,7 @@ void GameServer::handleFEMPRequest(const QVariantMap& request, QVariantMap& resp
         && action != "getConst")
     {
         if (request.find("sid") == request.end()
-            || sids_.find(request["sid"].toByteArray()) == sids_.end())
+            || sidToPlayer_.find(request["sid"].toByteArray()) == sidToPlayer_.end())
         {
             WriteResult_(response, EFEMPResult::BAD_SID);
             return;
@@ -273,29 +277,28 @@ void GameServer::tick()
         }
     };
 
-    for (auto& m : monsters_)
+    for (auto g : gameObjects_)
     {
-        auto v = directionToVector[static_cast<unsigned>(m.GetDirection())]
-                * playerVelocity_;
+        Player* p = dynamic_cast<Player*>(g);
+        Monster* m = dynamic_cast<Monster*>(g);
 
-        collideWithGrid(&m);
+        auto v = directionToVector[static_cast<unsigned>(g->GetDirection())]
+                 * playerVelocity_;
 
-        m.SetVelocity(v);
-        m.Update(dt);
-    }
+        if (p != NULL)
+        {
+            v *= tick_ - p->GetClientTick();
+        }
 
-    for (auto& p : players_)
-    {
-        auto v = directionToVector[static_cast<unsigned>(p.GetDirection())]
-                * playerVelocity_
-                * (tick_ - p.GetClientTick());
+        g->SetVelocity(v);
+        g->Update(dt);
 
-        p.SetVelocity(v);
-        p.Update(dt);
+        collideWithGrid(g);
 
-        collideWithGrid(&p);
-
-        p.SetDirection(EActorDirection::NONE);
+        if (p != NULL)
+        {
+            p->SetDirection(EActorDirection::NONE);
+        }
     }
 
     QVariantMap tickMessage;
@@ -404,18 +407,21 @@ void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
         {
             QByteArray id = QString::number(qrand()).toLatin1();
             sid = QCryptographicHash::hash(id, QCryptographicHash::Sha1);
-        } while (sids_.find(sid) != sids_.end());
+        } while (sidToPlayer_.find(sid) != sidToPlayer_.end());
 
-        sids_.insert(sid.toHex(), login);
+        Player* player = new Player();
+
+        sidToPlayer_.insert(sid.toHex(), player);
         response["sid"] = sid.toHex();
         response["webSocket"] = wsAddress_;
 
         // TODO: extract to CreatePlayer
         {
-            Player player;
-            player.SetId(lastId_);
+
+            Player& p = *player;
+            p.SetId(lastId_);
             lastId_++;
-            player.SetLogin(login);
+            p.SetLogin(login);
 
             int x;
             int y;
@@ -426,10 +432,10 @@ void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
                 y = rand() % (levelMap_.GetRowCount() - 2) + 1.5;
             } while (levelMap_.GetCell(x, y) == '#');
 
-            player.SetPosition(Vector2(x, y));
-            players_.push_back(player);
+            p.SetPosition(Vector2(x, y));
+            gameObjects_.push_back(player);
 
-            response["id"] = player.GetId();
+            response["id"] = p.GetId();
         }
     }
 }
@@ -440,16 +446,11 @@ void GameServer::HandleLogout_(const QVariantMap& request, QVariantMap& response
     Q_UNUSED(response);
 
     auto sid = request["sid"].toByteArray();
-    auto iter = sids_.find(sid);
-    for (unsigned i = 0; i < players_.size(); i++)
-    {
-        if (players_[i].GetLogin() == iter.value())
-        {
-            players_.erase(players_.begin() + i);
-            break;
-        }
-    }
-    sids_.erase(iter);
+    auto it = sidToPlayer_.find(sid);
+    Player* p = it.value();
+    sidToPlayer_.erase(it);
+    gameObjects_.erase(std::find(gameObjects_.begin(), gameObjects_.end(), p));
+    delete p;
 }
 
 //==============================================================================
@@ -495,137 +496,128 @@ void GameServer::HandleGetDictionary_(const QVariantMap& request, QVariantMap& r
 //==============================================================================
 void GameServer::HandleMove_(const QVariantMap& request, QVariantMap& response)
 {
+    Q_UNUSED(response);
+
     auto sid = request["sid"].toByteArray();
-    auto login = sids_[sid];
     unsigned tick = request["tick"].toUInt();
-
 //    qDebug() << "tick diff: " << tick_ - tick;
-
     auto direction = request["direction"].toString();
 
-    for (auto& p : players_)
-    {
-        if (p.GetLogin() == login)
-        {
-            p.SetDirection(direction);
-            p.SetClientTick(tick);
-            return;
-        }
-    }
-
-    WriteResult_(response, EFEMPResult::BAD_ID);
+    Player* p = sidToPlayer_[sid];
+    p->SetDirection(direction);
+    p->SetClientTick(tick);
 }
 
 //==============================================================================
 void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
 {
     auto sid = request["sid"].toByteArray();
-    auto login = sids_[sid];
+    Player* p = sidToPlayer_[sid];
 
-    for (auto& p : players_)
+    QVariantList rows;
+
+    auto pos = p->GetPosition();
+
+    response["x"] = pos.x;
+    response["y"] = pos.y;
+
+    if (pos.x < 0.0f)
     {
-        if (p.GetLogin() == login)
-        {
-            QVariantList rows;
-
-            auto pos = p.GetPosition();
-
-            response["x"] = pos.x;
-            response["y"] = pos.y;
-
-            if (pos.x < 0.0f)
-            {
-                pos.x -= 1.0f - epsilon_;
-            }
-
-            if (pos.y < 0.0f)
-            {
-                pos.y -= 1.0f - epsilon_;
-            }
-
-            int minX = static_cast<int>(pos.x) - 4;
-            int maxX = static_cast<int>(pos.x) + 4;
-            int minY = static_cast<int>(pos.y) - 3;
-            int maxY = static_cast<int>(pos.y) + 3;
-
-            for (int j = minY; j <= maxY; j++)
-            {
-                QVariantList row;
-                for (int i = minX; i <= maxX; i++)
-                {
-                    row.push_back(QString(levelMap_.GetCell(i, j)));
-                }
-                rows.push_back(row);
-            }
-
-            QVariantList actors;
-            // TODO: spatial query. otherwise this will become a bottleneck
-            for (auto& p : players_)
-            {
-                QVariantMap actor;
-                if (p.GetPosition().y >= minY
-                    && p.GetPosition().y <= maxY
-                    && p.GetPosition().x >= minX
-                    && p.GetPosition().x <= maxX)
-                {
-                    actor["type"] = "player";
-                    actor["x"] = p.GetPosition().x;
-                    actor["y"] = p.GetPosition().y;
-                    actor["id"] = p.GetId();
-                }
-                actors << actor;
-            }
-
-            for (auto& m : monsters_)
-            {
-                QVariantMap actor;
-                if (m.GetPosition().y >= minY
-                    && m.GetPosition().y <= maxY
-                    && m.GetPosition().x >= minX
-                    && m.GetPosition().x <= maxX)
-                {
-                    actor["type"] = "monster";
-                    actor["x"] = m.GetPosition().x;
-                    actor["y"] = m.GetPosition().y;
-                    actor["id"] = m.GetId();
-                }
-                actors << actor;
-            }
-
-            response["map"] = rows;
-            response["actors"] = actors;
-            return;
-        }
+        pos.x -= 1.0f - epsilon_;
     }
+
+    if (pos.y < 0.0f)
+    {
+        pos.y -= 1.0f - epsilon_;
+    }
+
+    int minX = static_cast<int>(pos.x) - 4;
+    int maxX = static_cast<int>(pos.x) + 4;
+    int minY = static_cast<int>(pos.y) - 3;
+    int maxY = static_cast<int>(pos.y) + 3;
+
+    for (int j = minY; j <= maxY; j++)
+    {
+        QVariantList row;
+        for (int i = minX; i <= maxX; i++)
+        {
+            row.push_back(QString(levelMap_.GetCell(i, j)));
+        }
+        rows.push_back(row);
+    }
+
+    QVariantList actors;
+    // TODO: spatial query. otherwise this will become a bottleneck
+    for (auto& g : gameObjects_)
+    {
+        Player* player = dynamic_cast<Player*>(g);
+        Monster* monster = dynamic_cast<Monster*>(g);
+
+        QVariantMap actor;
+        if (g->GetPosition().y >= minY
+            && g->GetPosition().y <= maxY
+            && g->GetPosition().x >= minX
+            && g->GetPosition().x <= maxX)
+        {
+            if (player != NULL)
+            {
+                actor["type"] = "player";
+            }
+            else if (monster != NULL)
+            {
+                actor["type"] = "monster";
+            }
+            else
+            {
+                assert(false);
+            }
+
+            actor["x"] = g->GetPosition().x;
+            actor["y"] = g->GetPosition().y;
+            actor["id"] = g->GetId();
+        }
+        actors << actor;
+    }
+
+    response["map"] = rows;
+    response["actors"] = actors;
 }
 
 //==============================================================================
 void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& response)
 {
     auto id = request["id"].toInt();
-    for (auto& p : players_)
+
+    // TODO: O(1) id lookup
+    for (auto g : gameObjects_)
     {
-        if (p.GetId() == id)
+        Player* p = dynamic_cast<Player*>(g);
+        Monster* m = dynamic_cast<Monster*>(g);
+
+        if (g->GetId() != id)
+        {
+            continue;
+        }
+
+        if (p != NULL)
         {
             response["type"] = "player";
-            response["login"] = p.GetLogin();
-            response["x"] = p.GetPosition().x;
-            response["y"] = p.GetPosition().y;
-            response["id"] = p.GetId();
-            return;
+            response["login"] = p->GetLogin();
         }
-    }
-
-    for (auto& p : monsters_)
-    {
-        if (p.GetId() == id)
+        else if (m != NULL)
         {
             response["type"] = "monster";
-            response["x"] = p.GetPosition().x;
-            response["y"] = p.GetPosition().y;
-            response["id"] = p.GetId();
-            return;
         }
+        else
+        {
+            assert(false);
+        }
+
+        response["x"] = g->GetPosition().x;
+        response["y"] = g->GetPosition().y;
+        response["id"] = g->GetId();
+
+        return;
     }
 
     WriteResult_(response, EFEMPResult::BAD_ID);
