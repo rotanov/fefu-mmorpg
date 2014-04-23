@@ -26,7 +26,7 @@ function ($, phaser, auth, test, utils, packages) {
                 test.testHandler(list)
 
             } else if (response.result == "badAction") {
-                $("#server-answer").text("Invalid action.")
+                $("#msg").text("Invalid action.")
                 .css("color", "red")
             }
 
