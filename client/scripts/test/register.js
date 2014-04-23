@@ -132,6 +132,17 @@ function (m, chai, utils, ws) {
                 })
             })
         })
+
+        after(function() {
+            var stop = utils.serverHandler({"action": "stopTesting"})
+            if (stop == "badAction") {
+                $("#msg").text("Invalid action.")
+                .css("color", "red")
+            } else if (stop == "ok") {
+                $("#msg").text("Test is successful.")
+                .css("color", "green")
+            }
+        });
     }
 
     return {

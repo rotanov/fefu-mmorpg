@@ -326,8 +326,20 @@ function(packages, utils, ws) {
                     assert.equal(yClient, yServer)
                     assert.equal(examineData.x, ws.getExamineData().x)
                 })
-            })
+            })*/
         })
+
+        after(function() {
+            var stop = utils.serverHandler({"action": "stopTesting"}).result
+            if (stop == "badAction") {
+                $("#msg").text("Invalid action.")
+                .css("color", "red")
+            } else if (stop == "ok") {
+                $("#msg").text("Test is successful.")
+                .css("color", "green")
+            }
+        });
+
     }
 
     return {
