@@ -25,25 +25,6 @@ function(packages, utils, ws) {
             })
 
             describe("Upload map to server", function() {
-                it("should return ok", function() {
-                    var map = [
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."]
-                    ]
-
-                    assert.equal("ok", utils.serverHandler({
-                        "action": "setUpMap",
-                        "map": map
-                    }).result)
-                })
-
                 it("should return badMap", function() {
                     var map = [
                         [".", ".", ".", ".", ".", ".", "."],
@@ -78,6 +59,25 @@ function(packages, utils, ws) {
 
                     assert.equal("badAction", utils.serverHandler({
                         "action": "uploadMap",
+                        "map": map
+                    }).result)
+                })
+
+                it("should return ok", function() {
+                    var map = [
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", "."]
+                    ]
+
+                    assert.equal("ok", utils.serverHandler({
+                        "action": "setUpMap",
                         "map": map
                     }).result)
                 })
