@@ -15,7 +15,7 @@ function ($, phaser, auth, test, utils, packages) {
 
     $("#test").click(function() {
         $("#content").hide()
-        $("#mocha").empty()
+        $("#mocha, #msg").empty()
 
         var action = utils.serverHandler({"action": "startTesting"})
         if (action.result == "ok") {
