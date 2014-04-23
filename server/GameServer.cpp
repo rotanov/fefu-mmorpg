@@ -6,9 +6,9 @@
 #include <QTime>
 #include <QVariant>
 #include <QDebug>
-
 #include <QImage>
 #include <QPixmap>
+#include <QFile>
 
 #include "PermaStorage.hpp"
 #include "utils.hpp"
@@ -44,24 +44,44 @@ GameServer::GameServer()
 
     GenRandSmoothMap(levelMap_);
 
-    QImage map(levelMap_.GetColumnCount(), levelMap_.GetRowCount(), QImage::Format_ARGB32);
-
-    for (int i = 0; i < levelMap_.GetRowCount(); i++)
     {
-        for (int j = 0; j < levelMap_.GetColumnCount(); j++)
+        QImage map(levelMap_.GetColumnCount(), levelMap_.GetRowCount(), QImage::Format_ARGB32);
+
+        for (int i = 0; i < levelMap_.GetRowCount(); i++)
         {
-            if (levelMap_.GetCell(j, i) == '#')
+            for (int j = 0; j < levelMap_.GetColumnCount(); j++)
             {
-                map.setPixel(j, i, qRgba(0, 0, 0, 255));
+                if (levelMap_.GetCell(j, i) == '#')
+                {
+                    map.setPixel(j, i, qRgba(0, 0, 0, 255));
+                }
+                else
+                {
+                    map.setPixel(j, i, qRgba(255, 255, 255, 0));
+                }
             }
-            else
+        }
+
+        map.save("generated-level-map.png");
+    }
+
+    QFile levelImage("level-map.png");
+    if (levelImage.exists())
+    {
+        QImage map;
+        map.load("level-map.png", "png");
+        levelMap_.Resize(map.width(), map.height());
+        for (int i = 0; i < map.height(); i++)
+        {
+            for (int j = 0; j < map.width(); j++)
             {
-                map.setPixel(j, i, qRgba(255, 255, 255, 0));
+                auto color = map.pixel(j, i);
+                int summ = qRed(color) + qGreen(color) + qBlue(color);
+                int value = summ > (255 * 3 / 2) ? '.' : '#';
+                levelMap_.SetCell(j, i, value);
             }
         }
     }
-
-    map.save("level-map.png");
 
     int monsterCounter = 0;
     for (int i = 0; i < levelMap_.GetRowCount(); i++)

@@ -36,3 +36,4 @@
 /monster-parser/Makefile
 /monster-parser/Makefile.Debug
 /monster-parser/Makefile.Release
+bin/generated-level-map.png
