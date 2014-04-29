@@ -32,8 +32,7 @@ vector<string> read (FILE* m, char sym, Monstr * mon) {
                     current = fgetc(m);
                     break;
                 }
-                if (current != '\'')
-                    f += current;
+                f += current;
                 current = fgetc(m);
             }
             if (sym == 'F') {
@@ -82,7 +81,7 @@ int main () {
         TypeMonstr * t = new TypeMonstr(name);
         if (current == 'G') {
             current = fgetc(monstr_type);
-            read_string(monstr_type);
+            t->G = read_string(monstr_type).c_str();
             current = fgetc(monstr_type);
         }
         if (current == 'M') {
@@ -175,7 +174,7 @@ int main () {
 
         if (current == 'G') {
             current = fgetc(monstr);
-            read_string(monstr);
+            monster->G = read_string(monstr).c_str();
             current = fgetc(monstr);
         }
         if (current == 'C') {
@@ -258,6 +257,7 @@ int main () {
         }
         if(current == '\n') {
             //monster->AddToDataBase();
+            monster->G = monster->T->G;
             Monsstr[name] = monster;
         }
         current = fgetc(monstr);
