@@ -93,13 +93,13 @@ GameServer::GameServer()
                 monsterCounter++;
                 if (monsterCounter % 5 == 0)
                 {
-                    Monster* monster = new Monster();
+                    Monster* monster = CreateActor_<Monster>();
                     Monster& m = *monster;
                     m.SetPosition(Vector2(j, i));
                     m.SetId(lastId_);
                     m.SetDirection(static_cast<EActorDirection>(rand() % 4 + 1));
                     lastId_++;
-                    gameObjects_.push_back(monster);
+                    actors_.push_back(monster);
                 }
             }
         }
@@ -109,10 +109,10 @@ GameServer::GameServer()
 //==============================================================================
 GameServer::~GameServer()
 {
-    while (!gameObjects_.empty())
+    while (!actors_.empty())
     {
-        delete gameObjects_.back();
-        gameObjects_.pop_back();
+        delete actors_.back();
+        actors_.pop_back();
     }
 }
 
@@ -232,9 +232,9 @@ void GameServer::tick()
     float dt = (time_.elapsed() - lastTime_) * 0.001f;
     lastTime_ = time_.elapsed();
 
-    auto collideWithGrid = [=](GameObject* gameObject)
+    auto collideWithGrid = [=](Actor* actor)
     {
-        auto& p = *gameObject;
+        auto& p = *actor;
 
         float x = p.GetPosition().x;
         float y = p.GetPosition().y;
@@ -267,11 +267,11 @@ void GameServer::tick()
 
         if (collided)
         {
-            gameObject->OnCollideWorld();
+            actor->OnCollideWorld();
         }
     };
 
-    for (auto g : gameObjects_)
+    for (auto g : actors_)
     {
         auto v = directionToVector[static_cast<unsigned>(g->GetDirection())]
                  * playerVelocity_;
@@ -390,7 +390,7 @@ void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
             sid = QCryptographicHash::hash(id, QCryptographicHash::Sha1);
         } while (sidToPlayer_.find(sid) != sidToPlayer_.end());
 
-        Player* player = new Player();
+        Player* player = CreateActor_<Player>();
 
         sidToPlayer_.insert(sid.toHex(), player);
         response["sid"] = sid.toHex();
@@ -414,7 +414,7 @@ void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
             } while (levelMap_.GetCell(x, y) == '#');
 
             p.SetPosition(Vector2(x, y));
-            gameObjects_.push_back(player);
+            actors_.push_back(player);
 
             response["id"] = p.GetId();
         }
@@ -430,7 +430,7 @@ void GameServer::HandleLogout_(const QVariantMap& request, QVariantMap& response
     auto it = sidToPlayer_.find(sid);
     Player* p = it.value();
     sidToPlayer_.erase(it);
-    gameObjects_.erase(std::find(gameObjects_.begin(), gameObjects_.end(), p));
+    actors_.erase(std::find(actors_.begin(), actors_.end(), p));
     delete p;
 }
 
@@ -529,7 +529,7 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
 
     QVariantList actors;
     // TODO: spatial query. otherwise this will become a bottleneck
-    for (auto& g : gameObjects_)
+    for (auto& g : actors_)
     {
         QVariantMap actor;
         if (g->GetPosition().y >= minY
@@ -555,7 +555,7 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
     auto id = request["id"].toInt();
 
     // TODO: O(1) id lookup
-    for (auto g : gameObjects_)
+    for (auto g : actors_)
     {
         if (g->GetId() != id)
         {

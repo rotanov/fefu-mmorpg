@@ -1,11 +1,12 @@
 #pragma once
 
-#include "GameObject.hpp"
+#include "Actor.hpp"
 
-class Item : public GameObject
+class Item : public Actor
 {
 public:
     Item();
     virtual ~Item();
+
 private:
 };

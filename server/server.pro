@@ -52,7 +52,6 @@ SOURCES += Server.cpp \
     PermaStorage.cpp \
     Actor.cpp \
     Player.cpp \
-    GameObject.cpp \
     Monster.cpp \
     ../3rd/deku2d/2de_Math.cpp \
     utils.cpp \
@@ -68,7 +67,6 @@ HEADERS += Server.hpp \
     PermaStorage.hpp \
     Actor.hpp \
     Player.hpp \
-    GameObject.hpp \
     Monster.hpp \
     utils.hpp \
     LevelMap.hpp \

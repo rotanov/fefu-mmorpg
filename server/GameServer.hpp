@@ -81,9 +81,15 @@ private:
 
     void WriteResult_(QVariantMap& response, const EFEMPResult result);
 
+    template <typename T>
+    T* CreateActor_();
+
+    template <typename T>
+    void KillActor(T*& actor);
+
     int lastId_ = 1;
 
-    std::vector<GameObject*> gameObjects_;
+    std::vector<Actor*> actors_;
 
     LevelMap levelMap_;
     QMap<QByteArray, Player*> sidToPlayer_;
@@ -117,3 +123,19 @@ private:
         "getConst",
     };
 };
+
+template <typename T>
+T* GameServer::CreateActor_()
+{
+    T* actor = new T();
+
+    return actor;
+}
+
+template <typename T>
+void GameServer::KillActor(T*& actor)
+{
+
+    delete actor;
+    actor = NULL;
+}

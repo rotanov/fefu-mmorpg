@@ -79,3 +79,23 @@ void Actor::Update(float dt)
     position_ += velocity_ * dt;
     SetDirection(EActorDirection::NONE);
 }
+
+int Actor::GetId() const
+{
+    return id_;
+}
+
+void Actor::SetId(int id)
+{
+    id_ = id;
+}
+
+void Actor::OnCollideWorld()
+{
+
+}
+
+QString Actor::GetType() const
+{
+    return type_;
+}

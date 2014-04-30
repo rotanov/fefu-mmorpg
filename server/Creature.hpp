@@ -2,11 +2,11 @@
 
 #include <vector>
 
-#include "GameObject.hpp"
+#include "Actor.hpp"
 
 class Item;
 
-class Creature : public GameObject
+class Creature : public Actor
 {
 public:
     Creature();
