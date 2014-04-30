@@ -64,6 +64,16 @@ void Actor::SetDirection(const EActorDirection direction)
     direction_ = direction;
 }
 
+float Actor::GetSize() const
+{
+    return size_;
+}
+
+void Actor::SetSize(const float size)
+{
+    size_ = size;
+}
+
 void Actor::Update(float dt)
 {
     position_ += velocity_ * dt;

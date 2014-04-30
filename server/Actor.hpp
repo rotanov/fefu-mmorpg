@@ -34,11 +34,16 @@ public:
 
     Vector2 GetPosition() const;
     void SetPosition(const Vector2& position);
+
     Vector2 GetVelocity() const;
     void SetVelocity(const Vector2& velocity);
+
     EActorDirection GetDirection() const;
     void SetDirection(const QString direction);
     void SetDirection(const EActorDirection direction);
+
+    float GetSize() const;
+    void SetSize(const float size);
 
     virtual void Update(float dt);
 
@@ -46,5 +51,6 @@ private:
     Vector2 position_ = Const::Math::V2_ZERO;
     Vector2 velocity_ = Const::Math::V2_ZERO;
     EActorDirection direction_ = EActorDirection::NONE;
+    float size_ = 1.0f;
 };
 
