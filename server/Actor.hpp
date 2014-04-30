@@ -47,7 +47,7 @@ public:
 
     virtual void Update(float dt);
 
-private:
+protected:
     Vector2 position_ = Const::Math::V2_ZERO;
     Vector2 velocity_ = Const::Math::V2_ZERO;
     EActorDirection direction_ = EActorDirection::NONE;

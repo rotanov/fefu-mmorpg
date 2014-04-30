@@ -24,3 +24,8 @@ void GameObject::OnCollideWorld()
 {
 
 }
+
+QString GameObject::GetType() const
+{
+    return type_;
+}

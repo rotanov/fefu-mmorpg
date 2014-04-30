@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QString>
+
 #include "Actor.hpp"
 
 class GameObject : public Actor
@@ -13,6 +15,9 @@ public:
 
     virtual void OnCollideWorld();
 
-private:
+    QString GetType() const;
+
+protected:
     int id_ = -1;
+    QString type_ = "undefined";
 };

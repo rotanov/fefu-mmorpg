@@ -2,7 +2,7 @@
 
 Player::Player()
 {
-
+    type_ = "player";
 }
 
 Player::~Player()

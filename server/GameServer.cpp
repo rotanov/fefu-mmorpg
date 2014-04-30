@@ -279,26 +279,13 @@ void GameServer::tick()
 
     for (auto g : gameObjects_)
     {
-        Player* p = dynamic_cast<Player*>(g);
-        Monster* m = dynamic_cast<Monster*>(g);
-
         auto v = directionToVector[static_cast<unsigned>(g->GetDirection())]
                  * playerVelocity_;
-
-        if (p != NULL)
-        {
-            v *= tick_ - p->GetClientTick();
-        }
 
         g->SetVelocity(v);
         g->Update(dt);
 
         collideWithGrid(g);
-
-        if (p != NULL)
-        {
-            p->SetDirection(EActorDirection::NONE);
-        }
     }
 
     QVariantMap tickMessage;
@@ -550,28 +537,13 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
     // TODO: spatial query. otherwise this will become a bottleneck
     for (auto& g : gameObjects_)
     {
-        Player* player = dynamic_cast<Player*>(g);
-        Monster* monster = dynamic_cast<Monster*>(g);
-
         QVariantMap actor;
         if (g->GetPosition().y >= minY
             && g->GetPosition().y <= maxY
             && g->GetPosition().x >= minX
             && g->GetPosition().x <= maxX)
         {
-            if (player != NULL)
-            {
-                actor["type"] = "player";
-            }
-            else if (monster != NULL)
-            {
-                actor["type"] = "monster";
-            }
-            else
-            {
-                assert(false);
-            }
-
+            actor["type"] = g->GetType();
             actor["x"] = g->GetPosition().x;
             actor["y"] = g->GetPosition().y;
             actor["id"] = g->GetId();
@@ -591,31 +563,21 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
     // TODO: O(1) id lookup
     for (auto g : gameObjects_)
     {
-        Player* p = dynamic_cast<Player*>(g);
-        Monster* m = dynamic_cast<Monster*>(g);
-
         if (g->GetId() != id)
         {
             continue;
         }
 
-        if (p != NULL)
-        {
-            response["type"] = "player";
-            response["login"] = p->GetLogin();
-        }
-        else if (m != NULL)
-        {
-            response["type"] = "monster";
-        }
-        else
-        {
-            assert(false);
-        }
-
+        Player* p = dynamic_cast<Player*>(g);
+        response["type"] = g->GetType();
         response["x"] = g->GetPosition().x;
         response["y"] = g->GetPosition().y;
         response["id"] = g->GetId();
+
+        if (p != NULL)
+        {
+            response["login"] = p->GetLogin();
+        }
 
         return;
     }

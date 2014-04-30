@@ -1,5 +1,15 @@
 #include "Monster.hpp"
 
+Monster::Monster()
+{
+    type_ = "monster";
+}
+
+Monster::~Monster()
+{
+
+}
+
 void Monster::OnCollideWorld()
 {
     auto dir = GetDirection();
@@ -29,4 +39,9 @@ void Monster::OnCollideWorld()
         SetDirection(EActorDirection::NORTH);
         break;
     }
+}
+
+void Monster::Update(float dt)
+{
+    position_ += velocity_ * dt;
 }
