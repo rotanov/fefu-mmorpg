@@ -1,6 +1,10 @@
 #pragma once
 
+#include <vector>
+
 #include "GameObject.hpp"
+
+class Item;
 
 class Creature : public GameObject
 {
@@ -17,4 +21,7 @@ public:
 private:
     float health_ = 100.0f;
     float maxHealth_ = 100.0f;
+
+    // represents creature's inventory
+    std::vector<Item*> items_;
 };
