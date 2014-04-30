@@ -2,9 +2,9 @@
 
 #include <QString>
 
-#include "GameObject.hpp"
+#include "Creature.hpp"
 
-class Player : public GameObject
+class Player : public Creature
 {
 public:
     Player();

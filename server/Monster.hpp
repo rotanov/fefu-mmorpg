@@ -1,8 +1,8 @@
 #pragma once
 
-#include "GameObject.hpp"
+#include "Creature.hpp"
 
-class Monster : public GameObject
+class Monster : public Creature
 {
 public:
     virtual void OnCollideWorld();
