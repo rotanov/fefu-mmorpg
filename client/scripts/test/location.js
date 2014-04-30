@@ -242,7 +242,7 @@ function(packages, utils, ws) {
                     var time = Math.round((newTick - lastTick) / ticksPerSecond)
                     var yClient = Math.round(examineData.y + time * playerVelocity)
                     var yServer = Math.round(ws.getExamineData().y)
-                    assert.equal(yClient/10, yServer)
+                    assert.equal(yClient, yServer)
                     assert.equal(examineData.x, ws.getExamineData().x)
                 })
             })
