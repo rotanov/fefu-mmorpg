@@ -556,7 +556,7 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
         return;
     }
 
-    Actor actor = idToActor_[id];
+    Actor* actor = idToActor_[id];
     response["type"] = actor->GetType();
     response["x"] = actor->GetPosition().x;
     response["y"] = actor->GetPosition().y;
