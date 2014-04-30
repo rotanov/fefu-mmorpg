@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_set>
+
 #include <QObject>
 #include <QMap>
 #include <QVariantMap>
@@ -103,4 +105,15 @@ private:
     float epsilon_ = 0.00001;
 
     bool testingStageActive_ = false;
+
+    const std::unordered_set<std::string> sidCheckExcpetions_ =
+    {
+        "register",
+        "login",
+        "startTesting",
+        "stopTesting",
+        "setUpConst",
+        "setUpMap",
+        "getConst",
+    };
 };
