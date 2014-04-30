@@ -96,9 +96,7 @@ GameServer::GameServer()
                     Monster* monster = CreateActor_<Monster>();
                     Monster& m = *monster;
                     m.SetPosition(Vector2(j, i));
-                    m.SetId(lastId_);
                     m.SetDirection(static_cast<EActorDirection>(rand() % 4 + 1));
-                    lastId_++;
                     actors_.push_back(monster);
                 }
             }
@@ -111,7 +109,7 @@ GameServer::~GameServer()
 {
     while (!actors_.empty())
     {
-        delete actors_.back();
+        KillActor_(actors_.back());
         actors_.pop_back();
     }
 }
@@ -400,8 +398,6 @@ void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
         {
 
             Player& p = *player;
-            p.SetId(lastId_);
-            lastId_++;
             p.SetLogin(login);
 
             int x;
@@ -431,7 +427,7 @@ void GameServer::HandleLogout_(const QVariantMap& request, QVariantMap& response
     Player* p = it.value();
     sidToPlayer_.erase(it);
     actors_.erase(std::find(actors_.begin(), actors_.end(), p));
-    delete p;
+    KillActor_(p);
 }
 
 //==============================================================================
@@ -554,29 +550,23 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
 {
     auto id = request["id"].toInt();
 
-    // TODO: O(1) id lookup
-    for (auto g : actors_)
+    if (idToActor_.count(id) == 0)
     {
-        if (g->GetId() != id)
-        {
-            continue;
-        }
-
-        Player* p = dynamic_cast<Player*>(g);
-        response["type"] = g->GetType();
-        response["x"] = g->GetPosition().x;
-        response["y"] = g->GetPosition().y;
-        response["id"] = g->GetId();
-
-        if (p != NULL)
-        {
-            response["login"] = p->GetLogin();
-        }
-
+        WriteResult_(response, EFEMPResult::BAD_ID);
         return;
     }
 
-    WriteResult_(response, EFEMPResult::BAD_ID);
+    Actor actor = idToActor_[id];
+    response["type"] = actor->GetType();
+    response["x"] = actor->GetPosition().x;
+    response["y"] = actor->GetPosition().y;
+    response["id"] = actor->GetId();
+
+    Player* p = dynamic_cast<Player*>(actor);
+    if (p != NULL)
+    {
+        response["login"] = p->GetLogin();
+    }
 }
 
 //==============================================================================

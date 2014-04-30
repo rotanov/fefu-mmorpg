@@ -85,11 +85,12 @@ private:
     T* CreateActor_();
 
     template <typename T>
-    void KillActor(T*& actor);
+    void KillActor_(T*& actor);
 
     int lastId_ = 1;
 
     std::vector<Actor*> actors_;
+    std::unordered_map<int, Actor*> idToActor_;
 
     LevelMap levelMap_;
     QMap<QByteArray, Player*> sidToPlayer_;
@@ -128,14 +129,16 @@ template <typename T>
 T* GameServer::CreateActor_()
 {
     T* actor = new T();
-
+    actor->SetId(lastId_);
+    lastId_++;
+    idToActor_[actor->GetId()] = actor;
     return actor;
 }
 
 template <typename T>
-void GameServer::KillActor(T*& actor)
+void GameServer::KillActor_(T*& actor)
 {
-
+    idToActor_.erase(actor->GetId());
     delete actor;
     actor = NULL;
 }
