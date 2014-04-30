@@ -27,8 +27,37 @@ void Monstr::AddToDataBase()
     storage_.Connect();
     storage_.CreateTable();
     QSqlQuery q;
-    q.prepare(R"=(INSERT INTO monsters (name, I, W, G, B, spell_frequency, F, S, D, drop, friends, drop_artifact)
-              VALUES (:name, :i, :w, :g, :b, :spell_frequency, :f, :s, :d, :drop, :friends, :drop_artifact)
+    q.prepare(R"=(
+        INSERT INTO monsters
+        (
+            name,
+            I,
+            W,
+            G,
+            B,
+            spell_frequency,
+            F,
+            S,
+            D,
+            drop,
+            friends,
+            drop_artifact
+        )
+        VALUES
+        (
+            :name,
+            :i,
+            :w,
+            :g,
+            :b,
+            :spell_frequency,
+            :f,
+            :s,
+            :d,
+            :drop,
+            :friends,
+            :drop_artifact
+        )
     )=");
     q.bindValue(":name", name);
     q.bindValue(":i", I);
