@@ -57,7 +57,8 @@ SOURCES += Server.cpp \
     utils.cpp \
     LevelMap.cpp \
     Creature.cpp \
-    Item.cpp
+    Item.cpp \
+    ../3rd/deku2d/2de_Box.cpp
 
 HEADERS += Server.hpp \
     MainWindow.hpp \
@@ -71,7 +72,8 @@ HEADERS += Server.hpp \
     utils.hpp \
     LevelMap.hpp \
     Creature.hpp \
-    Item.hpp
+    Item.hpp \
+    ../3rd/deku2d/2de_Box.h
 
 FORMS += \
     mainwindow.ui
