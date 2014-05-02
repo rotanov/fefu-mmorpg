@@ -83,3 +83,13 @@ void GenRandSmoothMap(LevelMap& levelMap)
 
     delete [] tempMap;
 }
+
+
+int GridRound(float value)
+{
+    if (value < 0.0f)
+    {
+        value -= 1.0f - 0.00001f;
+    }
+    return static_cast<int>(value);
+}

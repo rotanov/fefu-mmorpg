@@ -269,15 +269,17 @@ void GameServer::tick()
         }
     };
 
-    for (auto g : actors_)
+    for (auto actor : actors_)
     {
-        auto v = directionToVector[static_cast<unsigned>(g->GetDirection())]
+        auto v = directionToVector[static_cast<unsigned>(actor->GetDirection())]
                  * playerVelocity_;
 
-        g->SetVelocity(v);
-        g->Update(dt);
+        actor->SetVelocity(v);
+        levelMap_.RemoveActor(actor);
+        actor->Update(dt);
 
-        collideWithGrid(g);
+        collideWithGrid(actor);
+        levelMap_.IndexActor(actor);
     }
 
     QVariantMap tickMessage;
@@ -498,20 +500,16 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
     response["x"] = pos.x;
     response["y"] = pos.y;
 
-    if (pos.x < 0.0f)
-    {
-        pos.x -= 1.0f - epsilon_;
-    }
+    int x = GridRound(pos.x);
+    int y = GridRound(pos.y);
 
-    if (pos.y < 0.0f)
-    {
-        pos.y -= 1.0f - epsilon_;
-    }
+    int minX = x - 4;
+    int maxX = x + 4;
+    int minY = y - 3;
+    int maxY = y + 3;
 
-    int minX = static_cast<int>(pos.x) - 4;
-    int maxX = static_cast<int>(pos.x) + 4;
-    int minY = static_cast<int>(pos.y) - 3;
-    int maxY = static_cast<int>(pos.y) + 3;
+    QVariantList actors;
+    std::unordered_set<Actor*> actorsInArea;
 
     for (int j = minY; j <= maxY; j++)
     {
@@ -519,25 +517,24 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
         for (int i = minX; i <= maxX; i++)
         {
             row.push_back(QString(levelMap_.GetCell(i, j)));
+
+            auto& actorsInCell = levelMap_.GetActors(i, j);
+            for (auto& a : actorsInCell)
+            {
+                actorsInArea.insert(a);
+            }
         }
         rows.push_back(row);
     }
 
-    QVariantList actors;
-    // TODO: spatial query. otherwise this will become a bottleneck
-    for (auto& g : actors_)
+
+    for (auto& a : actorsInArea)
     {
         QVariantMap actor;
-        if (g->GetPosition().y >= minY
-            && g->GetPosition().y <= maxY
-            && g->GetPosition().x >= minX
-            && g->GetPosition().x <= maxX)
-        {
-            actor["type"] = g->GetType();
-            actor["x"] = g->GetPosition().x;
-            actor["y"] = g->GetPosition().y;
-            actor["id"] = g->GetId();
-        }
+        actor["type"] = a->GetType();
+        actor["x"] = a->GetPosition().x;
+        actor["y"] = a->GetPosition().y;
+        actor["id"] = a->GetId();
         actors << actor;
     }
 

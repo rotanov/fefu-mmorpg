@@ -132,6 +132,7 @@ T* GameServer::CreateActor_()
     actor->SetId(lastId_);
     lastId_++;
     idToActor_[actor->GetId()] = actor;
+    levelMap_.IndexActor(actor);
     return actor;
 }
 
@@ -139,6 +140,7 @@ template <typename T>
 void GameServer::KillActor_(T*& actor)
 {
     idToActor_.erase(actor->GetId());
+    levelMap_.RemoveActor(actor);
     delete actor;
     actor = NULL;
 }

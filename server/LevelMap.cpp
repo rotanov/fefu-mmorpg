@@ -3,6 +3,9 @@
 #include <cassert>
 #include <cmath>
 
+#include "Actor.hpp"
+#include "utils.hpp"
+
 LevelMap::LevelMap(int columnCount, int rowCount)
     : columnCount_(columnCount)
     , rowCount_(rowCount)
@@ -18,6 +21,8 @@ LevelMap::~LevelMap()
 {
     delete [] data_;
     data_ = NULL;
+    delete [] actors_;
+    actors_ = NULL;
 }
 
 int LevelMap::GetRowCount() const
@@ -47,20 +52,27 @@ int LevelMap::GetCell(int column, int row) const
 
 int LevelMap::GetCell(float column, float row) const
 {
-    if (column < 0.0f)
-    {
-        column -= 1.0f - 0.00001f;
-    }
-    if (row < 0.0f)
-    {
-        row -= 1.0f - 0.00001f;
-    }
-    return GetCell(static_cast<int>(column), static_cast<int>(row));
+    return GetCell(GridRound(column), GridRound(row));
 }
 
 void LevelMap::SetCell(int column, int row, int value)
 {
     data_[row * columnCount_ + column] = value;
+}
+
+const std::vector<Actor*>& LevelMap::GetActors(int column, int row) const
+{
+    if (column < 0
+        || row < 0
+        || column >= columnCount_
+        || row >= rowCount_)
+    {
+        return emptyActors_;
+    }
+    else
+    {
+        return actors_[row * columnCount_ + column];
+    }
 }
 
 void LevelMap::Resize(int columnCount, int rowCount)
@@ -74,6 +86,53 @@ void LevelMap::Resize(int columnCount, int rowCount)
     InitData_();
 }
 
+void LevelMap::IndexActor(Actor* actor)
+{
+    Vector2 dp[4];
+    for (int i = 0; i < 4; i++)
+    {
+        Vector2 p = actor->GetPosition()
+                    + actor->GetSize()
+                      * 0.5
+                      * Deku2D::Const::Math::V2_DIRECTIONS_DIAG[i];
+
+        int column = GridRound(p.x);
+        int row = GridRound(p.y);
+
+        if (column >= 0
+            && row >= 0
+            && column < columnCount_
+            && row < rowCount_)
+        {
+            actors_[row * columnCount_ + column].push_back(actor);
+        }
+    }
+}
+
+void LevelMap::RemoveActor(const Actor* actor)
+{
+    Vector2 dp[4];
+    for (int i = 0; i < 4; i++)
+    {
+        Vector2 p = actor->GetPosition()
+                    + actor->GetSize()
+                      * 0.5
+                      * Deku2D::Const::Math::V2_DIRECTIONS_DIAG[i];
+
+        int column = GridRound(p.x);
+        int row = GridRound(p.y);
+
+        if (column >= 0
+            && row >= 0
+            && column < columnCount_
+            && row < rowCount_)
+        {
+            auto& a = actors_[row * columnCount_ + column];
+            a.erase(std::remove(a.begin(), a.end(), actor), a.end());
+        }
+    }
+}
+
 void LevelMap::InitData_()
 {
     if (data_ != NULL)
@@ -83,6 +142,7 @@ void LevelMap::InitData_()
     }
 
     data_ = new int [columnCount_ * rowCount_];
+    actors_ = new std::vector<Actor*> [columnCount_ * rowCount_];
 
     for (int i = 0; i < columnCount_ * rowCount_; i++)
     {
