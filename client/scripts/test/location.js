@@ -284,9 +284,9 @@ function(packages, utils, ws) {
                         examineData = ws.getExamineData()
                         lastTick = ws.getTick()
                         ws.move("south", lastTick, userData.sid)
-                        newTick = ws.getTick()
                         setTimeout(function() {
                             ws.examine(userData.id, userData.sid)
+                            newTick = ws.getTick()
                             setTimeout(done, 200)
                         }, 200)
                     }, 200)
@@ -311,9 +311,9 @@ function(packages, utils, ws) {
                         examineData = ws.getExamineData()
                         lastTick = ws.getTick()
                         ws.move("south", lastTick, userData.sid)
-                        newTick = ws.getTick()
                         setTimeout(function() {
                             ws.examine(userData.id, userData.sid)
+                            newTick = ws.getTick()
                             setTimeout(done, 200)
                         }, 200)
                     }, 200)
