@@ -175,7 +175,7 @@ function (m, chai, utils, ws) {
         })
 
         after(function() {
-            var stop = utils.serverHandler({"action": "stopTesting"})
+            var stop = utils.serverHandler({"action": "stopTesting"}).result
             if (stop == "badAction") {
                 $("#msg").text("Invalid action.")
                 .css("color", "red")
