@@ -90,7 +90,7 @@ function(packages, utils, ws) {
                     ).result)
                 })
 
-                it("should return badAction [mast setUpConst]", function() {
+                it("should return badAction [must setUpConst]", function() {
                     assert.equal("badAction", utils.serverHandler({
                         "action": "setUploadConst",
                         "playerVelocity": 1.0,
