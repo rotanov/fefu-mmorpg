@@ -1,5 +1,5 @@
-define(["test/mocha", "test/chai", "utils", "ws"],
-function (m, chai, utils, ws) {
+define(["test/mocha", "utils", "ws"],
+function (m, utils, ws) {
 
     function testWebSocket(assert) {
         describe.only("WebSocket", function(done) {

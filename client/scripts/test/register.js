@@ -1,5 +1,5 @@
-define(["test/mocha", "test/chai", "utils", "ws"],
-function (m, chai, utils, ws) {
+define(["test/mocha", "utils", "ws"],
+function (m, utils, ws) {
 
     function testRegister(assert) {
         describe.only("Register", function() {
