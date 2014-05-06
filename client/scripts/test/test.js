@@ -8,8 +8,7 @@ function ($, m, chai, tr, tw, tl) {
 
         for (var i = 0; i < list.options.length; i++) {
             if (list.options[i].selected) {
-                switch (list.options[i].value) {
-                    case "register":
+        switch ($("#tests").find(":selected").text()) {
                         tr.testRegister(assert)
                         break
                     case "websocket":
