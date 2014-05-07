@@ -115,6 +115,23 @@ function ($) {
             "sid": sid
         }))
     }
+    
+    function attack(arr, sid) {
+        socket.send(JSON.stringify({
+            "action": "attack",
+            "target": arr,
+            "sid": sid
+        }))
+    }
+    
+    function destroyItem(id, sid) {
+        socket.send(JSON.stringify({
+            "action": "destroyItem",
+            "id": id,
+            "sid": sid
+        }))
+    }
+    
     function getConst() {
         socket.send(JSON.stringify({
             "action": "getConst"
