@@ -4,6 +4,7 @@
 #include <map>
 #include <cctype>
 #include "Monster.hpp"
+#include "Object.hpp"
 
 using namespace std;
 
@@ -60,6 +61,142 @@ vector<string> read (FILE* m, char sym, Monstr * mon) {
         }
     }
     return str;
+}
+
+void read_ (FILE* m, char sym, Object* mon) {
+    char current = sym;
+    vector<string> str;
+    while (current == sym ) {
+        while (current != '\n')  {
+            string f ;
+            current = fgetc(m);
+            while (current != '|' && current != '\n' ) {
+                if (current == ' ' && (sym =='L' || sym == 'F')){
+                    current = fgetc(m);
+                    break;
+                }
+                f += current;
+                current = fgetc(m);
+            }
+            if (sym == 'F') {
+                mon->F << f.c_str();
+            } else if (sym == 'L') {
+                mon->L << f.c_str();
+            } else if (sym == 'D') {
+                mon->D << f.c_str();
+            }
+            str.push_back(f);
+            if (current == '|') {
+                current = fgetc(m);
+            }
+        }
+        current = fgetc(m);
+        if (current == sym && fgetc(m) != ':'){
+            break;
+        }
+        if (current != sym) {
+            ungetc(current,m);
+        }
+    }
+}
+map  <string, Object*> Objects;
+void Obj_read(){
+    FILE* obj = fopen("object.txt", "r");
+
+    char current = fgetc(obj);
+    Object* object;
+    string name;
+    while (current != EOF) {
+        bool vis = false;
+         if (current == 'N') {
+            current = fgetc(obj);
+            current = fgetc(obj);
+            while (current != ':') {
+                current = fgetc(obj);
+            }
+            name = read_string(obj);
+            current = fgetc(obj);
+            object = new Object(name);
+            vis = true;
+        }
+
+        if (current == 'G') {
+            current = fgetc(obj);
+            object->G = read_string(obj).c_str();
+            current = fgetc(obj);
+            vis = true;
+        }
+        if (current == 'I') {
+            current = fgetc(obj);
+            object->I = read_string(obj).c_str();
+            current = fgetc(obj);
+            vis = true;
+        }
+        if (current == 'W') {
+            current = fgetc(obj);
+            object->W = read_string(obj).c_str();
+            current = fgetc(obj);
+            vis = true;
+        }
+        if (current == 'A') {
+            current = fgetc(obj);
+            object->A = read_string(obj).c_str();
+            current = fgetc(obj);
+            vis = true;
+        }
+        if (current == 'M') {
+            current = fgetc(obj);
+            object->M = read_string(obj).c_str();
+            current = fgetc(obj);
+            vis = true;
+        }
+        if (current == 'P') {
+            current = fgetc(obj);
+            object->P = read_string(obj).c_str();
+            current = fgetc(obj);
+            vis = true;
+        }
+
+        if (current == 'C') {
+            current = fgetc(obj);
+            object->C = read_string(obj).c_str();
+            current = fgetc(obj);
+            vis = true;
+        }
+
+        if (current == 'E') {
+            current = fgetc(obj);
+            object->E = read_string(obj).c_str();
+            current = fgetc(obj);
+            vis = true;
+        }
+        if (current == 'F' && fgetc(obj) == ':' ) {
+            read_(obj,current,object);
+            current = fgetc(obj);
+            vis = true;
+        }
+        if (current == 'L' &&  fgetc(obj) == ':' ) {
+            read_(obj,current,object);
+            current = fgetc(obj);
+            vis = true;
+        }
+        if (current == 'D' &&  fgetc(obj) == ':' ) {
+            read_(obj,current,object);
+            current = fgetc(obj);
+            vis = true;
+        }
+
+        if(current == '\n') {
+            Objects[name] = object;
+            vis = true;
+        }
+        while(current == '\n' || current == '#'|| !vis){
+            read_(obj,current,object);
+            current = fgetc(obj);
+            vis = true;
+        }
+
+    }
 }
 
 int main () {
@@ -262,22 +399,13 @@ int main () {
         }
         current = fgetc(monstr);
     }
+    Obj_read();
+    for (map<string, Object*>::iterator i = Objects.begin(); i != Objects.end(); i++) {
+             i->second->AddToDataBase();
+        }
     int j = 1;
     for (map<string, Monstr*>::iterator i = Monsstr.begin(); i != Monsstr.end(); i++, j++) {
          i->second->AddToDataBase();
-    }
-    for (map<string, Monstr*>::iterator i = Monsstr.begin(); i != Monsstr.end(); i++, j++) {
-        cout << j << ' ' << i->first << '\n';
-    }
-    cout << '\n'<< '\n';
-    j = 1;
-    for (map<string, int>::iterator i = Flag.begin(); i != Flag.end(); i++, j++) {
-        cout << i->first <<",\n";
-    }
-    cout << '\n'<< '\n';
-    j = 1;
-    for (map<string, int>::iterator i = Spell.begin(); i != Spell.end(); i++, j++) {
-        cout  << i->first <<",\n";
     }
     return 0;
 }
