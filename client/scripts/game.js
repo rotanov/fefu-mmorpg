@@ -15,12 +15,16 @@ var gPlayerY
 
 var actors = []
 
+var name_monster = []
+name_monster["monster"] = 124
+
 var id_
 var sid_
 var mapGlobal
 var layer
 
 var fpsText
+
 
 function Start(id, sid) {
     $.when(ws.getConst(), ws.timeout(200, ws.getConstData))
@@ -49,13 +53,15 @@ function onPreload() {
     game.load.tilemap("map", "assets/tilemap.json", null, phaser.Tilemap.TILED_JSON);
     game.load.image("tileset", "assets/tileset.png")
     game.load.spritesheet("tileset", "assets/tileset.png", 64, 64, 38)
+    game.load.image("tileset_monster", "assets/tileset_monster.png")
+    game.load.spritesheet("tileset_monster", "assets/tileset_monster.png", 64, 64, 1107)
 }
 
 function onCreate() {
     game.stage.backgroundColor = "#ffeebb"
     mapGlobal = game.add.tilemap("map")
     mapGlobal.addTilesetImage("tileset")
-
+    mapGlobal.addTilesetImage("tileset_monster")
     layer = mapGlobal.createLayer("back")
     layer.resizeWorld()
 
@@ -97,7 +103,7 @@ function onUpdate() {
         }
     }
     if (upKey.isDown) {
-         ws.move("north", ws.getTick(), sid_)
+        ws.move("north", ws.getTick(), sid_)
     } else if (downKey.isDown) {
         ws.move("south", ws.getTick(), sid_)
     }
@@ -175,7 +181,7 @@ function renderActors(actor) {
             actors[j].name = actor[i].id
             actors[j].visible = true
             if (actor[i].type == "monster") {
-                frameIndex = 29
+                frameIndex = 29//name_monster[actor[i].type]
             }
             actors[j].loadTexture("tileset", frameIndex)
             actors[j].x = coordinate(gPlayerX, actor[i].x, width)
