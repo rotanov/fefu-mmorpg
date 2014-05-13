@@ -39,3 +39,7 @@
 bin/generated-level-map.png
 /monster-parser/release
 *.pro.user*
+angband-parser/release
+angband-parser/Makefile
+angband-parser/Makefile.Debug
+angband-parser/Makefile.Release
