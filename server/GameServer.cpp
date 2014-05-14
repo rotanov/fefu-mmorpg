@@ -459,10 +459,13 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
     int x = GridRound(pos.x);
     int y = GridRound(pos.y);
 
-    int minX = x - 4;
-    int maxX = x + 4;
-    int minY = y - 3;
-    int maxY = y + 3;
+    int xDelta = (screenColumnCount_ - 1) / 2;
+    int yDelta = (screenRowCount_ - 1) / 2;
+
+    int minX = x - xDelta;
+    int maxX = x + xDelta;
+    int minY = y - yDelta;
+    int maxY = y + yDelta;
 
     QVariantList actors;
     std::unordered_set<Actor*> actorsInArea;
