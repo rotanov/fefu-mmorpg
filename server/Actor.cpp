@@ -97,6 +97,11 @@ void Actor::OnCollideWorld()
 
 }
 
+void Actor::OnCollideActor(Actor* /*actor*/)
+{
+
+}
+
 QString Actor::GetType() const
 {
     return type_;

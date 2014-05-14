@@ -41,6 +41,11 @@ void Monster::OnCollideWorld()
     }
 }
 
+void Monster::OnCollideActor(Actor* /*actor*/)
+{
+    OnCollideWorld();
+}
+
 void Monster::Update(float dt)
 {
     position_ += velocity_ * dt;

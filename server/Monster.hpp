@@ -9,6 +9,7 @@ public:
     virtual ~Monster();
 
     virtual void OnCollideWorld();
+    virtual void OnCollideActor(Actor* actor);
     virtual void Update(float dt);
 
 private:

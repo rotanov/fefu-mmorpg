@@ -269,7 +269,7 @@ void GameServer::tick()
         }
     };
 
-    for (auto actor : actors_)
+    for (Actor* actor : actors_)
     {
         auto v = directionToVector[static_cast<unsigned>(actor->GetDirection())]
                  * playerVelocity_;
@@ -279,6 +279,29 @@ void GameServer::tick()
         actor->Update(dt);
 
         collideWithGrid(actor);
+
+        auto cells = actor->GetOccupiedCells();
+        for (auto p : cells)
+        {
+            auto neighbours = levelMap_.GetActors(p.first, p.second);
+            // TODO: repetition of neighbours
+            for (auto neighbour : neighbours)
+            {
+                if (neighbour == actor)
+                {
+                    continue;
+                }
+                Box box0(actor->GetPosition(), actor->GetSize(), actor->GetSize());
+                Box box1(neighbour->GetPosition(), neighbour->GetSize(), neighbour->GetSize());
+                if (box0.Intersect(box1))
+                {
+                    actor->OnCollideActor(neighbour);
+                    neighbour->OnCollideActor(actor);
+                }
+            }
+        }
+
+
         levelMap_.IndexActor(actor);
     }
 
