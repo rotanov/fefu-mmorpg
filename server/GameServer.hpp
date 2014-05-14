@@ -105,6 +105,7 @@ private:
 
     void LoadLevelFromImage_(const QString filename);
     void GenMonsters_();
+    Player* CreatePlayer_(const QString login);
     void SetActorPosition_(Actor* actor, const Vector2& position);
 
     template <typename T>
@@ -160,6 +161,7 @@ T* GameServer::CreateActor_()
     lastId_++;
     idToActor_[actor->GetId()] = actor;
     levelMap_.IndexActor(actor);
+    actors_.push_back(actor);
     return actor;
 }
 
@@ -168,6 +170,7 @@ void GameServer::KillActor_(T*& actor)
 {
     idToActor_.erase(actor->GetId());
     levelMap_.RemoveActor(actor);
+    actors_.erase(std::remove(actors_.begin(), actors_.end(), actor), actors_.end());
     delete actor;
     actor = NULL;
 }

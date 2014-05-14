@@ -36,10 +36,9 @@ GameServer::GameServer()
 //==============================================================================
 GameServer::~GameServer()
 {
-    while (!actors_.empty())
+    for (auto actor : actors_)
     {
-        KillActor_(actors_.back());
-        actors_.pop_back();
+        delete actor;
     }
 }
 
@@ -356,44 +355,24 @@ void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
     if (passHash != refPassHash)
     {
         WriteResult_(response, EFEMPResult::INVALID_CREDENTIALS);
+        return;
     }
-    else
+
+    QByteArray sid;
+
+    do
     {
-        QByteArray sid;
+        QByteArray id = QString::number(qrand()).toLatin1();
+        sid = QCryptographicHash::hash(id, QCryptographicHash::Sha1);
+    } while (sidToPlayer_.find(sid) != sidToPlayer_.end());
 
-        do
-        {
-            QByteArray id = QString::number(qrand()).toLatin1();
-            sid = QCryptographicHash::hash(id, QCryptographicHash::Sha1);
-        } while (sidToPlayer_.find(sid) != sidToPlayer_.end());
+    sid = sid.toHex();
 
-        Player* player = CreateActor_<Player>();
-
-        sidToPlayer_.insert(sid.toHex(), player);
-        response["sid"] = sid.toHex();
-        response["webSocket"] = wsAddress_;
-
-        // TODO: extract to CreatePlayer
-        {
-
-            Player& p = *player;
-            p.SetLogin(login);
-
-            int x;
-            int y;
-
-            do
-            {
-                x = rand() % (levelMap_.GetColumnCount() - 2) + 1.5;
-                y = rand() % (levelMap_.GetRowCount() - 2) + 1.5;
-            } while (levelMap_.GetCell(x, y) == '#');
-
-            p.SetPosition(Vector2(x, y));
-            actors_.push_back(player);
-
-            response["id"] = p.GetId();
-        }
-    }
+    Player* player = CreatePlayer_(login);
+    sidToPlayer_.insert(sid, player);
+    response["sid"] = sid;
+    response["webSocket"] = wsAddress_;
+    response["id"] = player->GetId();
 }
 
 //==============================================================================
@@ -404,8 +383,8 @@ void GameServer::HandleLogout_(const QVariantMap& request, QVariantMap& response
     auto sid = request["sid"].toByteArray();
     auto it = sidToPlayer_.find(sid);
     Player* p = it.value();
+    qDebug() << "Logging out, login: " << p->GetLogin();
     sidToPlayer_.erase(it);
-    actors_.erase(std::find(actors_.begin(), actors_.end(), p));
     KillActor_(p);
 }
 
@@ -592,6 +571,43 @@ void GameServer::GenMonsters_()
             }
         }
     }
+}
+
+//==============================================================================
+Player* GameServer::CreatePlayer_(const QString login)
+{
+    Player* player = CreateActor_<Player>();
+    Player& p = *player;
+    p.SetLogin(login);
+
+    int x = 0;
+    int y = 0;
+    int c = 0;
+    int r = 0;
+
+    while (true)
+    {
+        if (levelMap_.GetCell(c, r) == '.')
+        {
+            x = c;
+            y = r;
+            break;
+        }
+        c++;
+        if (c >= levelMap_.GetColumnCount())
+        {
+            c = 0;
+            r++;
+            if (r >= levelMap_.GetRowCount())
+            {
+                break;
+            }
+        }
+    }
+
+    SetActorPosition_(player, Vector2(x + 0.5f, y + 0.5f));
+
+    return player;
 }
 
 //==============================================================================
