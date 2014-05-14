@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <QString>
 
 #include "2de_Box.h"
 
@@ -25,6 +26,8 @@ public:
 
     void IndexActor(Actor* actor);
     void RemoveActor(const Actor* actor);
+
+    void ExportToImage(const QString filename);
 
 private:
     void InitData_();

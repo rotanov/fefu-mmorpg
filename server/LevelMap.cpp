@@ -3,6 +3,8 @@
 #include <cassert>
 #include <cmath>
 
+#include <QImage>
+
 #include "Actor.hpp"
 #include "utils.hpp"
 
@@ -113,6 +115,28 @@ void LevelMap::RemoveActor(const Actor* actor)
             a.erase(std::remove(a.begin(), a.end(), actor), a.end());
         }
     }
+}
+
+void LevelMap::ExportToImage(const QString filename)
+{
+    QImage map(GetColumnCount(), GetRowCount(), QImage::Format_ARGB32);
+
+    for (int i = 0; i < GetRowCount(); i++)
+    {
+        for (int j = 0; j < GetColumnCount(); j++)
+        {
+            if (GetCell(j, i) == '#')
+            {
+                map.setPixel(j, i, qRgba(0, 0, 0, 255));
+            }
+            else
+            {
+                map.setPixel(j, i, qRgba(255, 255, 255, 0));
+            }
+        }
+    }
+
+    map.save(filename);
 }
 
 void LevelMap::InitData_()

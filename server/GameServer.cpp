@@ -44,27 +44,6 @@ GameServer::GameServer()
 
     GenRandSmoothMap(levelMap_);
 
-    {
-        QImage map(levelMap_.GetColumnCount(), levelMap_.GetRowCount(), QImage::Format_ARGB32);
-
-        for (int i = 0; i < levelMap_.GetRowCount(); i++)
-        {
-            for (int j = 0; j < levelMap_.GetColumnCount(); j++)
-            {
-                if (levelMap_.GetCell(j, i) == '#')
-                {
-                    map.setPixel(j, i, qRgba(0, 0, 0, 255));
-                }
-                else
-                {
-                    map.setPixel(j, i, qRgba(255, 255, 255, 0));
-                }
-            }
-        }
-
-        map.save("generated-level-map.png");
-    }
-
     QFile levelImage("level-map.png");
     if (levelImage.exists())
     {
@@ -102,6 +81,7 @@ GameServer::GameServer()
             }
         }
     }
+    levelMap_.ExportToImage("generated-level-map.png");
 }
 
 //==============================================================================
