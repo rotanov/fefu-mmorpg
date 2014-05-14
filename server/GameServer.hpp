@@ -81,6 +81,7 @@ private:
 
     void WriteResult_(QVariantMap& response, const EFEMPResult result);
 
+    void LoadLevelFromImage_(const QString filename);
     template <typename T>
     T* CreateActor_();
 

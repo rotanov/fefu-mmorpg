@@ -44,24 +44,6 @@ GameServer::GameServer()
 
     GenRandSmoothMap(levelMap_);
 
-    QFile levelImage("level-map.png");
-    if (levelImage.exists())
-    {
-        QImage map;
-        map.load("level-map.png", "png");
-        levelMap_.Resize(map.width(), map.height());
-        for (int i = 0; i < map.height(); i++)
-        {
-            for (int j = 0; j < map.width(); j++)
-            {
-                auto color = map.pixel(j, i);
-                int summ = qRed(color) + qGreen(color) + qBlue(color);
-                int value = summ > (255 * 3 / 2) ? '.' : '#';
-                levelMap_.SetCell(j, i, value);
-            }
-        }
-    }
-
     int monsterCounter = 0;
     for (int i = 0; i < levelMap_.GetRowCount(); i++)
     {
@@ -82,6 +64,7 @@ GameServer::GameServer()
         }
     }
     levelMap_.ExportToImage("generated-level-map.png");
+    LoadLevelFromImage_("level-map.png");
 }
 
 //==============================================================================
@@ -574,3 +557,26 @@ void GameServer::WriteResult_(QVariantMap& response, const EFEMPResult result)
 {
     response["result"] = fempResultToString[static_cast<unsigned>(result)];
 }
+
+//==============================================================================
+void GameServer::LoadLevelFromImage_(const QString filename)
+{
+    QFile levelImage(filename);
+    if (levelImage.exists())
+    {
+        QImage map;
+        map.load(filename, "png");
+        levelMap_.Resize(map.width(), map.height());
+        for (int i = 0; i < map.height(); i++)
+        {
+            for (int j = 0; j < map.width(); j++)
+            {
+                auto color = map.pixel(j, i);
+                int summ = qRed(color) + qGreen(color) + qBlue(color);
+                int value = summ > (255 * 3 / 2) ? '.' : '#';
+                levelMap_.SetCell(j, i, value);
+            }
+        }
+    }
+}
+
