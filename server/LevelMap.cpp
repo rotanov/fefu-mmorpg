@@ -11,9 +11,6 @@ LevelMap::LevelMap(int columnCount, int rowCount)
     , rowCount_(rowCount)
     , data_(NULL)
 {
-    assert(columnCount > 2);
-    assert(rowCount > 2);
-
     InitData_();
 }
 
@@ -77,9 +74,6 @@ const std::vector<Actor*>& LevelMap::GetActors(int column, int row) const
 
 void LevelMap::Resize(int columnCount, int rowCount)
 {
-    assert(columnCount >= 2);
-    assert(rowCount >= 2);
-
     columnCount_ = columnCount;
     rowCount_ = rowCount;
 
@@ -135,17 +129,5 @@ void LevelMap::InitData_()
     for (int i = 0; i < columnCount_ * rowCount_; i++)
     {
         data_[i] = '.';
-    }
-
-    for (int i = 0; i < columnCount_; i++)
-    {
-        SetCell(i, 0, '#');
-        SetCell(i, rowCount_ - 1, '#');
-    }
-
-    for (int i = 0; i < rowCount_; i++)
-    {
-        SetCell(0, i, '#');
-        SetCell(columnCount_ - 1, i, '#');
     }
 }

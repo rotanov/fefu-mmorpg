@@ -9,21 +9,6 @@ void GenRandSmoothMap(LevelMap& levelMap)
     int rows = m.GetRowCount();
     int cols = m.GetColumnCount();
 
-    for (int i = 0; i < cols; i++)
-    {
-        m.SetCell(i, 0, '#');
-        m.SetCell(i, rows - 1, '#');
-    }
-
-    for (int i = 0; i < rows; i++)
-    {
-        m.SetCell(0, i, '#');
-        m.SetCell(cols - 1, i, '#');
-    }
-
-    assert(cols > 2);
-    assert(rows > 2);
-
     for (int i = 1; i < rows - 1; i++)
     {
         for (int j = 1; j < cols - 1; j++)
