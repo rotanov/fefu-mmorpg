@@ -54,6 +54,8 @@ public:
 
     QString GetType() const;
 
+    virtual std::vector<std::pair<int, int>> GetOccupiedCells() const;
+
 protected:
     Vector2 position_ = Const::Math::V2_ZERO;
     Vector2 velocity_ = Const::Math::V2_ZERO;

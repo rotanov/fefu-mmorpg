@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include <string>
 
+#include "utils.hpp"
+
 Actor::Actor()
 {
 
@@ -98,4 +100,23 @@ void Actor::OnCollideWorld()
 QString Actor::GetType() const
 {
     return type_;
+}
+
+std::vector<std::pair<int, int>> Actor::GetOccupiedCells() const
+{
+    std::vector<std::pair<int, int>> result;
+    Vector2 dp[4];
+    for (int i = 0; i < 4; i++)
+    {
+        Vector2 p = GetPosition()
+                    + GetSize()
+                    * 0.5
+                    * Deku2D::Const::Math::V2_DIRECTIONS_DIAG[i];
+
+        int column = GridRound(p.x);
+        int row = GridRound(p.y);
+
+        result.push_back(std::make_pair(column, row));
+    }
+    return result;
 }

@@ -88,17 +88,11 @@ void LevelMap::Resize(int columnCount, int rowCount)
 
 void LevelMap::IndexActor(Actor* actor)
 {
-    Vector2 dp[4];
-    for (int i = 0; i < 4; i++)
+    auto cells = actor->GetOccupiedCells();
+    for (auto p : cells)
     {
-        Vector2 p = actor->GetPosition()
-                    + actor->GetSize()
-                      * 0.5
-                      * Deku2D::Const::Math::V2_DIRECTIONS_DIAG[i];
-
-        int column = GridRound(p.x);
-        int row = GridRound(p.y);
-
+        int column = p.first;
+        int row = p.second;
         if (column >= 0
             && row >= 0
             && column < columnCount_
@@ -111,17 +105,11 @@ void LevelMap::IndexActor(Actor* actor)
 
 void LevelMap::RemoveActor(const Actor* actor)
 {
-    Vector2 dp[4];
-    for (int i = 0; i < 4; i++)
+    auto cells = actor->GetOccupiedCells();
+    for (auto p : cells)
     {
-        Vector2 p = actor->GetPosition()
-                    + actor->GetSize()
-                      * 0.5
-                      * Deku2D::Const::Math::V2_DIRECTIONS_DIAG[i];
-
-        int column = GridRound(p.x);
-        int row = GridRound(p.y);
-
+        int column = p.first;
+        int row = p.second;
         if (column >= 0
             && row >= 0
             && column < columnCount_
