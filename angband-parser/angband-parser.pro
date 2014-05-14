@@ -32,9 +32,11 @@ CONFIG(debug, debug|release) {
 
 SOURCES += main.cpp \
     DataBase.cpp \
-    Monster.cpp
+    Monster.cpp \
+    Object.cpp \
 
 HEADERS += \
     DataBase.hpp \
-    Monster.hpp
+    Monster.hpp \
+    Object.hpp \
 

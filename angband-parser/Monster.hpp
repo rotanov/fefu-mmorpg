@@ -171,20 +171,22 @@ enum FlagT {
     WEIRD_MIND,
 };
 
-class TypeMonstr {
-    public:
-        QString name;
-        string M;
-        QString G;
-        vector<string> F;
-        vector<string> S;
-        TypeMonstr(string);
-};
-
-class Monstr {
+class TypeMonster
+{
 public:
     QString name;
-    TypeMonstr* T;
+    string M;
+    QString G;
+    vector<string> F;
+    vector<string> S;
+    TypeMonster(string);
+};
+
+class Monster
+{
+public:
+    QString name;
+    TypeMonster* T;
     QString I;
     QString W;
     QString G;
@@ -211,8 +213,8 @@ public:
                              << "drop_artifact"
                              << "mimic");
 
-    Monstr();
-    Monstr(string, TypeMonstr*);
+    Monster();
+    Monster(string, TypeMonster*);
 
     void AddToDataBase();
 };

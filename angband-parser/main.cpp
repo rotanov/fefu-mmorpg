@@ -3,13 +3,14 @@
 #include <vector>
 #include <map>
 #include <cctype>
+
 #include "Monster.hpp"
 #include "Object.hpp"
 
 using namespace std;
 
-map <string, int> Flag;
-map <string, int> Spell;
+map<string, int> Flag;
+map<string, int> Spell;
 
 string read_string (FILE* m)
 {
@@ -23,7 +24,7 @@ string read_string (FILE* m)
     return str;
 }
 
-vector<string> read (FILE* m, char sym, Monstr * mon)
+vector<string> read (FILE* m, char sym, Monster * mon)
 {
     char current = sym;
     vector<string> str;
@@ -264,7 +265,7 @@ int main ()
     freopen("output.txt", "w", stdout);
 
     char current;
-    map  <string, TypeMonstr*> type;
+    map  <string, TypeMonster*> type;
     current = fgetc(monstr_type);
 
     while (current != EOF)
@@ -276,7 +277,7 @@ int main ()
             name = read_string(monstr_type);
             current = fgetc(monstr_type);
         }
-        TypeMonstr * t = new TypeMonstr(name);
+        TypeMonster * t = new TypeMonster(name);
         if (current == 'G')
         {
             current = fgetc(monstr_type);
@@ -362,13 +363,13 @@ int main ()
         current = fgetc(monstr_type);
         current = fgetc(monstr_type);
     }
-    map  <string, Monstr*> Monsstr;
+    map  <string, Monster*> Monsstr;
     current = fgetc(monstr);
     while (current != EOF)
     {
         string name;
         string typ;
-        Monstr* monster;
+        Monster* monster = NULL;
         if (current == 'N')
         {
             current = fgetc(monstr);
@@ -390,7 +391,7 @@ int main ()
             current = fgetc(monstr);
             typ = read_string(monstr);
             current = fgetc(monstr);
-            monster = new Monstr(name, type[typ]);
+            monster = new Monster(name, type[typ]);
         }
 
         if (current == 'G')
@@ -405,7 +406,7 @@ int main ()
             read_string(monstr);
             current = fgetc(monstr);
         }
-        f (current == 'I')
+        if (current == 'I')
         {
             current = fgetc(monstr);
             monster->I = read_string(monstr).c_str();
@@ -490,7 +491,7 @@ int main ()
         }
         if (current == 'D' && fgetc(monstr) == ':')
         {
-            read(monstr,current,monster);
+            read(monstr, current, monster);
             current = fgetc(monstr);
         }
         if (current == 'm')
@@ -512,7 +513,7 @@ int main ()
              i->second->AddToDataBase();
     }
     int j = 1;
-    for (map<string, Monstr*>::iterator i = Monsstr.begin(); i != Monsstr.end(); i++, j++)
+    for (map<string, Monster*>::iterator i = Monsstr.begin(); i != Monsstr.end(); i++, j++)
     {
          i->second->AddToDataBase();
     }

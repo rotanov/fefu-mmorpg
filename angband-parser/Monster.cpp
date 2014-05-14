@@ -10,18 +10,18 @@
 #include <QSqlRecord>
 #include <QDebug>
 
-Monstr::Monstr()
+Monster::Monster()
 {
 
 }
 
-Monstr::Monstr(string name_, TypeMonstr* type_)
+Monster::Monster(string name_, TypeMonster* type_)
 {
     name = name_.c_str();
     T = type_;
 }
 
-void Monstr::AddToDataBase()
+void Monster::AddToDataBase()
 {
     DataBase storage_;
     storage_.Connect();
@@ -82,7 +82,7 @@ void Monstr::AddToDataBase()
     storage_.Disconnect();
 }
 
-TypeMonstr::TypeMonstr(string name_)
+TypeMonster::TypeMonster(string name_)
 {
     name = name_.c_str();
 }

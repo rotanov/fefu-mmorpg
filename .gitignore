@@ -43,3 +43,9 @@ angband-parser/release
 angband-parser/Makefile
 angband-parser/Makefile.Debug
 angband-parser/Makefile.Release
+angband-parser/debug/DataBase.o
+angband-parser/debug/Monster.o
+angband-parser/debug/Object.o
+angband-parser/debug/main.o
+bin/level-map-00.png
+bin/output.txt
