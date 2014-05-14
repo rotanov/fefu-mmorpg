@@ -82,6 +82,9 @@ private:
     void WriteResult_(QVariantMap& response, const EFEMPResult result);
 
     void LoadLevelFromImage_(const QString filename);
+    void GenMonsters_();
+    void SetActorPosition_(Actor* actor, const Vector2& position);
+
     template <typename T>
     T* CreateActor_();
 

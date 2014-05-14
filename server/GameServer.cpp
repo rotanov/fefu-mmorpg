@@ -44,27 +44,9 @@ GameServer::GameServer()
 
     GenRandSmoothMap(levelMap_);
 
-    int monsterCounter = 0;
-    for (int i = 0; i < levelMap_.GetRowCount(); i++)
-    {
-        for (int j = 0; j < levelMap_.GetColumnCount(); j++)
-        {
-            if (levelMap_.GetCell(j, i) != '#')
-            {
-                monsterCounter++;
-                if (monsterCounter % 5 == 0)
-                {
-                    Monster* monster = CreateActor_<Monster>();
-                    Monster& m = *monster;
-                    m.SetPosition(Vector2(j, i));
-                    m.SetDirection(static_cast<EActorDirection>(rand() % 4 + 1));
-                    actors_.push_back(monster);
-                }
-            }
-        }
-    }
     levelMap_.ExportToImage("generated-level-map.png");
     LoadLevelFromImage_("level-map.png");
+    GenMonsters_();
 }
 
 //==============================================================================
@@ -580,3 +562,33 @@ void GameServer::LoadLevelFromImage_(const QString filename)
     }
 }
 
+//==============================================================================
+void GameServer::GenMonsters_()
+{
+    int monsterCounter = 0;
+    for (int i = 0; i < levelMap_.GetRowCount(); i++)
+    {
+        for (int j = 0; j < levelMap_.GetColumnCount(); j++)
+        {
+            if (levelMap_.GetCell(j, i) != '#')
+            {
+                monsterCounter++;
+                if (monsterCounter % 5 == 0)
+                {
+                    Monster* monster = CreateActor_<Monster>();
+                    Monster& m = *monster;
+                    SetActorPosition_(monster, Vector2(j + 0.5f, i + 0.5f));
+                    m.SetDirection(static_cast<EActorDirection>(rand() % 4 + 1));
+                }
+            }
+        }
+    }
+}
+
+//==============================================================================
+void GameServer::SetActorPosition_(Actor* actor, const Vector2& position)
+{
+    levelMap_.RemoveActor(actor);
+    actor->SetPosition(position);
+    levelMap_.IndexActor(actor);
+}
