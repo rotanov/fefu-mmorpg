@@ -61,8 +61,28 @@ public slots:
     void tick();
 
 private:
+// Request Handlers
+//==============================================================================
     typedef void (GameServer::*HandlerType)(const QVariantMap& request, QVariantMap& response);
-    QMap<QString, HandlerType> requestHandlers_;
+    QMap<QString, HandlerType> requestHandlers_ =
+    {
+        // Testing
+        {"startTesting", &GameServer::HandleStartTesting_},
+        {"stopTesting", &GameServer::HandleStopTesting_},
+        {"setUpConst", &GameServer::HandleSetUpConstants_},
+        {"setUpMap", &GameServer::HandleSetUpMap_},
+        {"getConst", &GameServer::HandleGetConst_},
+        // Authorization
+        {"login", &GameServer::HandleLogin_},
+        {"logout", &GameServer::HandleLogout_},
+        {"register", &GameServer::HandleRegister_},
+        // Game Interaction
+        {"destroyItem", &GameServer::HandleDestroyItem_},
+        {"examine", &GameServer::HandleExamine_},
+        {"getDictionary", &GameServer::HandleGetDictionary_},
+        {"look", &GameServer::HandleLook_},
+        {"move", &GameServer::HandleMove_},
+    };
 
     void HandleStartTesting_(const QVariantMap& request, QVariantMap& response);
     void HandleStopTesting_(const QVariantMap& request, QVariantMap& response);
@@ -74,10 +94,12 @@ private:
     void HandleLogout_(const QVariantMap& request, QVariantMap& response);
     void HandleRegister_(const QVariantMap& request, QVariantMap& response);
 
+    void HandleDestroyItem_(const QVariantMap& request, QVariantMap& response);
     void HandleExamine_(const QVariantMap& request, QVariantMap& response);
     void HandleGetDictionary_(const QVariantMap& request, QVariantMap& response);
     void HandleLook_(const QVariantMap& request, QVariantMap& response);
     void HandleMove_(const QVariantMap& request, QVariantMap& response);
+//==============================================================================
 
     void WriteResult_(QVariantMap& response, const EFEMPResult result);
 
@@ -95,9 +117,9 @@ private:
 
     std::vector<Actor*> actors_;
     std::unordered_map<int, Actor*> idToActor_;
+    QMap<QByteArray, Player*> sidToPlayer_;
 
     LevelMap levelMap_;
-    QMap<QByteArray, Player*> sidToPlayer_;
 
     QString wsAddress_;
 
@@ -108,12 +130,13 @@ private:
     float lastTime_ = 0.0f;
     unsigned tick_ = 0;
 
-    float playerVelocity_ = 1.0;
+    float playerVelocity_ = 4.0;
     float slideThreshold_ = 0.1;
     int ticksPerSecond_ = 60;
     int screenRowCount_ = 7;
     int screenColumnCount_ = 9;
     float epsilon_ = 0.00001;
+    float pickUpRadius_ = 1.5f;
 
     bool testingStageActive_ = false;
 

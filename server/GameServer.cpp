@@ -27,23 +27,7 @@ GameServer::GameServer()
             , &GameServer::tick);
     timer_->setInterval(1000.0f / static_cast<float>(ticksPerSecond_));
 
-    requestHandlers_["startTesting"] = &GameServer::HandleStartTesting_;
-    requestHandlers_["stopTesting"] = &GameServer::HandleStopTesting_;
-    requestHandlers_["setUpConst"] = &GameServer::HandleSetUpConstants_;
-    requestHandlers_["setUpMap"] = &GameServer::HandleSetUpMap_;
-    requestHandlers_["getConst"] = &GameServer::HandleGetConst_;
-
-    requestHandlers_["login"] = &GameServer::HandleLogin_;
-    requestHandlers_["logout"] = &GameServer::HandleLogout_;
-    requestHandlers_["register"] = &GameServer::HandleRegister_;
-
-    requestHandlers_["examine"] = &GameServer::HandleExamine_;
-    requestHandlers_["getDictionary"] = &GameServer::HandleGetDictionary_;
-    requestHandlers_["look"] = &GameServer::HandleLook_;
-    requestHandlers_["move"] = &GameServer::HandleMove_;
-
     GenRandSmoothMap(levelMap_);
-
     levelMap_.ExportToImage("generated-level-map.png");
     LoadLevelFromImage_("level-map.png");
     GenMonsters_();
@@ -115,7 +99,7 @@ void GameServer::handleFEMPRequest(const QVariantMap& request, QVariantMap& resp
     }
 
     auto handler = handlerIt.value();
-    (this->*handler)(request, response);    
+    (this->*handler)(request, response);
 
     if (response.find("result") == response.end())
     {
@@ -147,7 +131,7 @@ void GameServer::HandleRegister_(const QVariantMap& request, QVariantMap& respon
     else if (!QRegExp("[0-9a-zA-Z]{2,36}").exactMatch(login))
     {
         WriteResult_(response, EFEMPResult::BAD_LOGIN);
-    }    
+    }
     else if (!QRegExp(".{6,36}").exactMatch(password)
              || passHasInvalidChars)
     {
@@ -161,6 +145,31 @@ void GameServer::HandleRegister_(const QVariantMap& request, QVariantMap& respon
         QByteArray hash = QCryptographicHash::hash(passwordWithSalt, QCryptographicHash::Sha3_256);
         storage_.AddUser(login, QString(hash.toBase64()), QString(salt.toBase64()));
     }
+}
+
+//==============================================================================
+void GameServer::HandleDestroyItem_(const QVariantMap& request, QVariantMap& response)
+{
+#define BAD_ID(COND)\
+    if (COND)\
+    {\
+        WriteResult_(response, EFEMPResult::BAD_ID);\
+        return;\
+    }\
+
+    BAD_ID(request.find("id") == request.end());
+
+    int id = request["id"].toInt();
+
+    BAD_ID(idToActor_.find(id) == idToActor_.end());
+
+    auto actor = idToActor_[id];
+    Player* player = sidToPlayer_[request["sid"].toByteArray()];
+
+    //    pickUpRadius_
+    // TODO: implement
+
+#undef BAD_ID
 }
 
 //==============================================================================
