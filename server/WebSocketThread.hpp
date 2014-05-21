@@ -3,7 +3,8 @@
 #include <QtNetwork>
 #include <QThread>
 
-#include "QWsSocket.h"
+//#include "QWsSocket.h"
+#include <QtWebSockets/QtWebSockets>
 
 class SocketThread : public QThread
 {
@@ -13,14 +14,14 @@ signals:
     void newFEMPRequest(const QVariantMap& request, QVariantMap& response);
 
 public:
-    SocketThread(QtWebsocket::QWsSocket* wsSocket);
+    SocketThread(QWebSocket* wsSocket);
     ~SocketThread();
 
-    QtWebsocket::QWsSocket* socket;
+    QWebSocket* socket;
     void run();
 
 private slots:
-    void processMessage(QString message);
+    void processMessage(QString message, bool lastFrame);
     void sendMessage(QString message);
     void processPong(quint64 elapsedTime);
     void socketDisconnected();

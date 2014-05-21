@@ -23,7 +23,7 @@ Server::Server()
             , this
             , &Server::handleRequest);
 
-    wsServer_ = new QtWebsocket::QWsServer(this);
+    wsServer_ = new QWebSocketServer("", QWebSocketServer::NonSecureMode, this);
 
     QObject::connect(wsServer_
                      , SIGNAL(newConnection())
@@ -57,7 +57,7 @@ void Server::handleRequest(QHttpRequest *request, QHttpResponse *response)
             {
                 path = "/index.html";
             }
-            qDebug() << path;
+            //qDebug() << path;
 
             response->setHeader("Access-Control-Allow-Origin", "*");
             response->setHeader("Cache-control", "no-cache, no-store");
@@ -155,7 +155,7 @@ void Server::processNewWSConnection()
     std::cout << QObject::tr("Client connected").toStdString() << std::endl;
 
     // Get the connecting socket
-    QtWebsocket::QWsSocket* socket = wsServer_->nextPendingConnection();
+    QWebSocket* socket = wsServer_->nextPendingConnection();
 
     // Create a new thread and giving to him the socket
     SocketThread* thread = new SocketThread(socket);

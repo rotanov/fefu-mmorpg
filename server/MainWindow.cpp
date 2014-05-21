@@ -5,6 +5,8 @@
 #include "Server.hpp"
 #include "GameServer.hpp"
 
+#include <iostream>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)

@@ -9,7 +9,9 @@
 #include <QtCore>
 
 #include "qhttpserverfwd.h"
-#include "QWsServer.h"
+//#include "QWsServer.h"
+
+#include <QtWebSockets/QtWebSockets>
 
 class Server : public QObject
 {
@@ -40,7 +42,9 @@ private slots:
 
 private:
     QHttpServer* httpServer_;
-    QtWebsocket::QWsServer* wsServer_;
+    QWebSocketServer* wsServer_;
+//    QtWebsocket::QWsServer* wsServer_;
+
     QHttpResponse* response_ = NULL;
     QByteArray data_;
     bool running_ = false;    
