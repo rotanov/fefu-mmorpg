@@ -10,14 +10,14 @@ SocketThread::SocketThread(QWebSocket *wsSocket) :
 {
     // Set this thread as parent of the socket
     // This will push the socket in the good thread when using moveToThread on the parent
-    if (socket)
-    {
-        socket->setParent(this);
-    }
+//    if (socket)
+//    {
+//        socket->setParent(this);
+//    }
 
     // Move this thread object in the thread himsleft
     // Thats necessary to exec the event loop in this thread
-    moveToThread(this);
+//    moveToThread(this);
 }
 
 SocketThread::~SocketThread()
@@ -63,23 +63,33 @@ void SocketThread::processMessage(QString message, bool lastFrame)
    auto responseJSON = QJsonDocument::fromVariant(response).toJson();
 //   qDebug() << "response JSON: " << responseJSON;
 
-   static int pes = 1;
-   pes++;
-   while (true)
-   {
-       std::cerr << pes << std::endl;
-       Sleep(1000);
-       WaitForSingleObject(NULL, 1000);
-   }
+//    static int pes = 1;
+//    pes++;
+//    while (true)
+//    {
+//        std::cerr << pes << std::endl;
+//        Sleep(1000);
+//        WaitForSingleObject(NULL, 0);
+//    }
+//    pes++;
+//    std::cerr << "pes interruprt" << pes << std::endl;
 //   socket->write(QString::fromLatin1(responseJSON));
-    socket->sendTextMessage(QString::fromLatin1(responseJSON));
+    QString textMessage = QString::fromLatin1(responseJSON);
+    qint64 bytesSent = socket->sendTextMessage(textMessage);
+    if (bytesSent != textMessage.size())
+    {
+        qDebug() << "Data was not sent. Data size: "
+                 << textMessage.size()
+                 << " Sent size: "
+                 << bytesSent;
+    }
 //   socket->sendBinaryMessage(responseJSON);
 }
 
-void SocketThread::sendMessage(QString /*message*/)
+void SocketThread::sendMessage(QString message)
 {
 //    socket->write(message);
-//    socket->sendTextMessage(message);
+    socket->sendTextMessage(message);
 }
 
 void SocketThread::processPong(quint64 elapsedTime)

@@ -29,7 +29,7 @@ function ($) {
 
         socket.onmessage = function(event) {
             var data = JSON.parse(event.data)
-            console.log("Data received: " + event.data)
+            // console.log("Data received: " + event.data)
 
             //Tick
             if (data.tick) {
