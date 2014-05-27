@@ -10,6 +10,7 @@ var rightKey
 var width = 9
 var height = 7
 var step = 64
+var route = 1
 var gPlayerX
 var gPlayerY
 
@@ -28,10 +29,10 @@ var fpsText
 
 function Start(id, sid) {
     $.when(ws.getConst(), ws.timeout(200, ws.getConstData))
-        .done(function (getConst, getConstData) {
-            if (getConstData.result == "ok") {
-                height = getConstData.screenRowCount
-                width  = getConstData.screenColumnCount
+        .done(function (constData) {
+            if (constData.result == "ok") {
+                height = constData.screenRowCount
+                width  = constData.screenColumnCount
             }
         }) 
     game = new phaser.Game(
@@ -55,6 +56,8 @@ function onPreload() {
     game.load.spritesheet("tileset", "assets/tileset.png", 64, 64, 38)
     game.load.image("tileset_monster", "assets/tileset_monster.png")
     game.load.spritesheet("tileset_monster", "assets/tileset_monster.png", 64, 64, 1107)
+    game.load.image("player", "assets/player.png")
+    game.load.spritesheet("player", "assets/player.png", 64, 64, 16)
 }
 
 function onCreate() {
@@ -62,6 +65,7 @@ function onCreate() {
     mapGlobal = game.add.tilemap("map")
     mapGlobal.addTilesetImage("tileset")
     mapGlobal.addTilesetImage("tileset_monster")
+    mapGlobal.addTilesetImage("player")
     layer = mapGlobal.createLayer("back")
     layer.resizeWorld()
 
@@ -103,14 +107,18 @@ function onUpdate() {
         }
     }
     if (upKey.isDown) {
+        route = 3
         ws.move("north", ws.getTick(), sid_)
     } else if (downKey.isDown) {
-        ws.move("south", ws.getTick(), sid_)
+        route = 1
+       ws.move("south", ws.getTick(), sid_)
     }
 
     if (leftKey.isDown) {
+        route = 9
         ws.move("west", ws.getTick(), sid_)
     } else if (rightKey.isDown) {
+        route = 11
         ws.move("east", ws.getTick(), sid_)
     }
 
@@ -170,6 +178,19 @@ function renderWalls(map) {
 
 }
 
+function monster(actor, j) {
+    var frameIndex = 94;
+    actors[j].loadTexture("tileset_monster", frameIndex)
+}
+
+function player(actor, j) {
+    var frameIndex = 1
+    if (actor.id == id_) {
+        frameIndex = route
+    }
+    actors[j].loadTexture("player", frameIndex)
+}
+
 function renderActors(actor) {
     var j = 0
     for (var i = 0; i < actor.length; i++) {
@@ -181,9 +202,10 @@ function renderActors(actor) {
             actors[j].name = actor[i].id
             actors[j].visible = true
             if (actor[i].type == "monster") {
-                frameIndex = 29//name_monster[actor[i].type]
+                monster(actor, j)//frameIndex = 29 name_monster[actor[i].type]
+            } else {
+                player(actor[i], j)
             }
-            actors[j].loadTexture("tileset", frameIndex)
             actors[j].x = coordinate(gPlayerX, actor[i].x, width)
             actors[j].y = coordinate(gPlayerY, actor[i].y, height) 
             j++
