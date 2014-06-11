@@ -218,7 +218,6 @@ function onRender() {
 }
 
 $("#logout").click(function() {
-    alert("Bay-bay")
     game.destroy()
 })
 
