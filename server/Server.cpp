@@ -133,39 +133,18 @@ void Server::handleRequest(QHttpRequest *request, QHttpResponse *response)
 
 void Server::dataEnd()
 {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   //    qDebug() << "request JSON: " << data_;
   QVariantMap request = QJsonDocument::fromJson(data_).toVariant().toMap();
   QVariantMap response;
-=======
-=======
->>>>>>> Stashed changes
-    qDebug() << "request JSON: " << data_;
-    QVariantMap request = QJsonDocument::fromJson(data_).toVariant().toMap();
-    QVariantMap response;
->>>>>>> Stashed changes
 
   emit newFEMPRequest(request, response);
 
-<<<<<<< Updated upstream
   response_->setHeader("Access-Control-Allow-Origin", "*");
   response_->setHeader("Content-Type", "application/json; charset=utf-8");
   response_->writeHead(QHttpResponse::STATUS_OK);
   auto responseJSON = QJsonDocument::fromVariant(response).toJson();
   //    qDebug() << "response JSON: " << responseJSON;
   response_->end(responseJSON);
-=======
-    response_->setHeader("Access-Control-Allow-Origin", "*");
-    response_->setHeader("Content-Type", "application/json; charset=utf-8");
-    response_->setHeader("Sec-WebSocket-Extensions", "");
-    response_->setHeader("Sec-WebSocket-Protocol", "");
-    response_->writeHead(QHttpResponse::STATUS_OK);
-    auto responseJSON = QJsonDocument::fromVariant(response).toJson();
-    qDebug() << "response JSON: " << responseJSON;
-    response_->end(responseJSON);
->>>>>>> Stashed changes
-
   response_ = NULL;
   data_.clear();
 }
