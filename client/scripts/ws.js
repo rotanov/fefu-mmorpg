@@ -29,7 +29,7 @@ function ($) {
 
         socket.onmessage = function(event) {
             var data = JSON.parse(event.data)
-            // console.log("Data received: " + event.data)
+            //console.log("Data received: " + event.data)
 
             if (data.tick) {
                 tick = data.tick
@@ -41,14 +41,19 @@ function ($) {
                 break;
             case "getDictionary":
                 dictionData = data
+                console.log("Data received: " + event.data)
                 break;
             case "look":
                 lookData = data
+                console.log("Data received: " + event.data)
+                break;
             case "move":
                 moveData = data
+                console.log("Data received: " + event.data)
                 break;
             case "getConst":
                 constData = data
+                console.log("Data received: " + event.data)
                 break;
             case "destroyItem":
                 break;
@@ -187,7 +192,7 @@ function ($) {
         return examineData
     }
 
-    function getDictionary() {
+    function getDictionData() {
         return dictionData
     }
 
@@ -202,7 +207,9 @@ function ($) {
     function timeout(x, callback) {
         var dfd = $.Deferred()
         setTimeout(function () {
-            dfd.resolve(callback())
+            if (typeof callback !== 'undefined') {
+                dfd.resolve(callback())
+            }
         }, x)
         return dfd.promise()
     }
@@ -230,7 +237,7 @@ function ($) {
         getLookData: getLookData,
         getMoveData: getMoveData,
         getExamineData: getExamineData,
-        getDictionary: getDictionary,
+        getDictionData: getDictionData,
         getConstData: getConstData,
     }
 
