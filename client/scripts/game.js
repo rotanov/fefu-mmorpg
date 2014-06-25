@@ -27,7 +27,8 @@ var fpsText
 
 
 function Start(id, sid) {
-    $.when(ws.getConst(), ws.timeout(200, ws.getConstData))
+    if (ws.readyState === 1)
+    $.when(ws.getConst(), ws.timeout(600, ws.getConstData))
         .done(function (getConst, getConstData) {
             if (getConstData.result == "ok") {
                 height = getConstData.screenRowCount
@@ -72,7 +73,7 @@ function onCreate() {
     leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT)
     rightKey = game.input.keyboard.addKey(phaser.Keyboard.RIGHT)
     
-    $.when(ws.look(sid_), ws.timeout(200, ws.getLookData))
+    $.when(ws.look(sid_), ws.timeout(400, ws.getLookData))
     .done(function (look, lookData) {
         if (lookData.result == "ok") {
             createActors(0) 
@@ -98,7 +99,7 @@ function onUpdate() {
     if (game.input.mousePointer.isDown) {
         var id = getActorID()
         if (id) {
-            $.when(ws.examine(id, sid_), ws.timeout(200, ws.getExamineData))
+            $.when(ws.examine(id, sid_), ws.timeout(400, ws.getExamineData))
             .done(function (examine, examineData) {
                 if (examineData.result == "ok") {
                     var gamer = actor.newActor(id)
