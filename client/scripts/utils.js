@@ -56,6 +56,46 @@ function ($) {
         return responseResult
     }
 
+    function cryBabyCry(result) {
+        switch(result) {
+        case "badSid":
+            alert("Error: badSid")
+            break
+        case "badId":
+            alert("Error: badId")
+            break
+        case "badMap":
+            alert("Error: badMap")
+            break
+        case "badAction":
+            alert("Error: badAction")
+            break
+        case "badPassword":
+            alert("Error: badPassword")
+            break
+        case "badLogin":
+            alert("Error: badLogin")
+            break
+        case "loginExists":
+            alert("Error: loginExists")
+            break
+        case "invalidCredentials":
+            alert("Error: invalidCredentials")
+            break
+        case "badSlot":
+            alert("Error: badSlot")
+            break
+        case "badAmmoId":
+            alert("Error: badAmmoId")
+            break
+        case "badPos":
+            alert("Error: badPos")
+            break
+        default:
+            alert("Error: WTF")
+        }
+    }
+
     return {
         getServerAddress: getServerAddress,
         setServerAddress: setServerAddress,
