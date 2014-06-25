@@ -105,7 +105,7 @@ function(packages, utils, ws) {
                     var response = utils.serverHandler({"action": "getConst"})
                     assert.equal("ok", response.result)
                     assert.equal(packages.consts().playerVelocity, response.playerVelocity)
-                    assert.equal(packages.consts().slideThreshold, response.slideThreshold)
+                    assert.equal(packages.consts().slideThreshold, (response.slideThreshold).toFixed(1))
                     assert.equal(packages.consts().ticksPerSecond, response.ticksPerSecond)
                     assert.equal(packages.consts().screenRowCount, response.screenRowCount)
                     assert.equal(packages.consts().screenColumnCount, response.screenColumnCount)
@@ -116,26 +116,24 @@ function(packages, utils, ws) {
                 var examineData
                 var lastTick
                 var newTick
-                before(function(done) {
-                    ws.examine(userData.id, userData.sid)
-                    setTimeout(function() {
-                        examineData = ws.getExamineData()
-                        lastTick = ws.getTick()
-                        ws.move("west", lastTick, userData.sid)
-                        newTick = ws.getTick()
-                        setTimeout(function() {
-                            ws.examine(userData.id, userData.sid)
-                            setTimeout(done, 200)
-                        }, 200)
-                    }, 200)
-                })
-
                 it("should return ok", function() {
-                    var time = Math.round((newTick - lastTick) / ticksPerSecond)
-                    var xClient = Math.round(examineData.x - time * playerVelocity)
-                    var xServer = Math.round(ws.getExamineData().x)
-                    assert.equal(xClient, xServer)
-                    assert.equal(examineData.y, ws.getExamineData().y)
+                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
+                    .done(function (examine, data_1) {
+                        lastTick = ws.getTick()
+                        $.when(ws.move("west", lastTick, userData.sid), ws.timeout(200, ws.getMoveData))
+                        .done(function (move, data) {
+                            newTick = ws.getTick()
+                            $.when(ws.examine(userData.id, userData.sid), ws.getExamineData())
+                            .done(function (examine, data_2) {
+                                newTick = ws.getTick()
+                                var time = Math.round((newTick - lastTick) / ticksPerSecond)
+                                var xClient = Math.round(data_1.x - time * playerVelocity)
+                                var xServer = Math.round(data_2.x)
+                                assert.equal(xClient, xServer)
+                                assert.equal(data_1.y, data_2.y)
+                            })
+                        })
+                    })
                 })
             })
 
@@ -143,26 +141,24 @@ function(packages, utils, ws) {
                 var examineData
                 var lastTick
                 var newTick
-                before(function(done) {
-                    ws.examine(userData.id, userData.sid)
-                    setTimeout(function() {
-                        examineData = ws.getExamineData()
-                        lastTick = ws.getTick()
-                        ws.move("west", lastTick, userData.sid)
-                        newTick = ws.getTick()
-                        setTimeout(function() {
-                            ws.examine(userData.id, userData.sid)
-                            setTimeout(done, 200)
-                        }, 200)
-                    }, 200)
-                })
-
                 it("should return ok", function() {
-                    var time = Math.round((newTick - lastTick) / ticksPerSecond)
-                    var xClient = Math.round(examineData.x - time * playerVelocity)
-                    var xServer = Math.round(ws.getExamineData().x)
-                    assert.equal(xClient, xServer)
-                    assert.equal(examineData.y, ws.getExamineData().y)
+                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
+                    .done(function (examine, data_1) {
+                        lastTick = ws.getTick()
+                        $.when(ws.move("west", lastTick, userData.sid), ws.timeout(200, ws.getMoveData))
+                        .done(function (move, data) {
+                            newTick = ws.getTick()
+                            $.when(ws.examine(userData.id, userData.sid), ws.getExamineData())
+                            .done(function (examine, data_2) {
+                                newTick = ws.getTick()
+                                var time = Math.round((newTick - lastTick) / ticksPerSecond)
+                                var xClient = Math.round(data_1.x - time * playerVelocity)
+                                var xServer = Math.round(data_2.x)
+                                assert.equal(xClient, xServer)
+                                assert.equal(data_1.y, data_2.y)
+                            })
+                        })
+                    })
                 })
             })
 
@@ -170,26 +166,24 @@ function(packages, utils, ws) {
                 var examineData
                 var lastTick
                 var newTick
-                before(function(done) {
-                    ws.examine(userData.id, userData.sid)
-                    setTimeout(function() {
-                        examineData = ws.getExamineData()
-                        lastTick = ws.getTick()
-                        ws.move("east", lastTick, userData.sid)
-                        newTick = ws.getTick()
-                        setTimeout(function() {
-                            ws.examine(userData.id, userData.sid)
-                            setTimeout(done, 200)
-                        }, 200)
-                    }, 200)
-                })
-
                 it("should return ok", function() {
-                    var time = Math.round((newTick - lastTick) / ticksPerSecond)
-                    var xClient = Math.round(examineData.x + time * playerVelocity)
-                    var xServer = Math.round(ws.getExamineData().x)
-                    assert.equal(xClient, xServer)
-                    assert.equal(examineData.y, ws.getExamineData().y)
+                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
+                    .done(function (examine, data_1) {
+                        lastTick = ws.getTick()
+                        $.when(ws.move("east", lastTick, userData.sid), ws.timeout(200, ws.getMoveData))
+                        .done(function (move, data) {
+                            newTick = ws.getTick()
+                            $.when(ws.examine(userData.id, userData.sid), ws.getExamineData())
+                            .done(function (examine, data_2) {
+                                newTick = ws.getTick()
+                                var time = Math.round((newTick - lastTick) / ticksPerSecond)
+                                var xClient = Math.round(data_1.x + time * playerVelocity)
+                                var xServer = Math.round(data_2.x)
+                                assert.equal(xClient, xServer)
+                                assert.equal(data_1.y, data_2.y)
+                            })
+                        })
+                    })
                 })
             })
 
@@ -197,26 +191,24 @@ function(packages, utils, ws) {
                 var examineData
                 var lastTick
                 var newTick
-                before(function(done) {
-                    ws.examine(userData.id, userData.sid)
-                    setTimeout(function() {
-                        examineData = ws.getExamineData()
-                        lastTick = ws.getTick()
-                        ws.move("east", lastTick, userData.sid)
-                        newTick = ws.getTick()
-                        setTimeout(function() {
-                            ws.examine(userData.id, userData.sid)
-                            setTimeout(done, 200)
-                        }, 200)
-                    }, 200)
-                })
-
                 it("should return ok", function() {
-                    var time = Math.round((newTick - lastTick) / ticksPerSecond)
-                    var xClient = Math.round(examineData.x + time * playerVelocity)
-                    var xServer = Math.round(ws.getExamineData().x)
-                    assert.equal(xClient, xServer)
-                    assert.equal(examineData.y, ws.getExamineData().y)
+                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
+                    .done(function (examine, data_1) {
+                        lastTick = ws.getTick()
+                        $.when(ws.move("east", lastTick, userData.sid), ws.timeout(200, ws.getMoveData))
+                        .done(function (move, data) {
+                            newTick = ws.getTick()
+                            $.when(ws.examine(userData.id, userData.sid), ws.getExamineData())
+                            .done(function (examine, data_2) {
+                                newTick = ws.getTick()
+                                var time = Math.round((newTick - lastTick) / ticksPerSecond)
+                                var xClient = Math.round(data_1.x + time * playerVelocity)
+                                var xServer = Math.round(data_2.x)
+                                assert.equal(xClient, xServer)
+                                assert.equal(data_1.y, data_2.y)
+                            })
+                        })
+                    })
                 })
             })
 
@@ -224,26 +216,24 @@ function(packages, utils, ws) {
                 var examineData
                 var lastTick
                 var newTick
-                before(function(done) {
-                    ws.examine(userData.id, userData.sid)
-                    setTimeout(function() {
-                        examineData = ws.getExamineData()
-                        lastTick = ws.getTick()
-                        ws.move("north", lastTick, userData.sid)
-                        newTick = ws.getTick()
-                        setTimeout(function() {
-                            ws.examine(userData.id, userData.sid)
-                            setTimeout(done, 200)
-                        }, 200)
-                    }, 200)
-                })
-
                 it("should return ok", function() {
-                    var time = Math.round((newTick - lastTick) / ticksPerSecond)
-                    var yClient = Math.round(examineData.y + time * playerVelocity)
-                    var yServer = Math.round(ws.getExamineData().y)
-                    assert.equal(yClient, yServer)
-                    assert.equal(examineData.x, ws.getExamineData().x)
+                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
+                    .done(function (examine, data_1) {
+                        lastTick = ws.getTick()
+                        $.when(ws.move("north", lastTick, userData.sid), ws.timeout(200, ws.getMoveData))
+                        .done(function (move, data) {
+                            newTick = ws.getTick()
+                            $.when(ws.examine(userData.id, userData.sid), ws.getExamineData())
+                            .done(function (examine, data_2) {
+                                newTick = ws.getTick()
+                                var time = Math.round((newTick - lastTick) / ticksPerSecond)
+                                var yClient = Math.round(data_1.y + time * playerVelocity)
+                                var yServer = Math.round(data_2.y)
+                                assert.equal(yClient, yServer)
+                                assert.equal(data_1.x, data_2.x)
+                            })
+                        })
+                    })
                 })
             })
 
@@ -251,26 +241,24 @@ function(packages, utils, ws) {
                 var examineData
                 var lastTick
                 var newTick
-                before(function(done) {
-                    ws.examine(userData.id, userData.sid)
-                    setTimeout(function() {
-                        examineData = ws.getExamineData()
-                        lastTick = ws.getTick()
-                        ws.move("north", lastTick, userData.sid)
-                        newTick = ws.getTick()
-                        setTimeout(function() {
-                            ws.examine(userData.id, userData.sid)
-                            setTimeout(done, 200)
-                        }, 200)
-                    }, 200)
-                })
-
                 it("should return ok", function() {
-                    var time = Math.round((newTick - lastTick) / ticksPerSecond)
-                    var yClient = Math.round(examineData.y + time * playerVelocity)
-                    var yServer = Math.round(ws.getExamineData().y)
-                    assert.equal(yClient, yServer)
-                    assert.equal(examineData.x, ws.getExamineData().x)
+                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
+                    .done(function (examine, data_1) {
+                        lastTick = ws.getTick()
+                        $.when(ws.move("north", lastTick, userData.sid), ws.timeout(200, ws.getMoveData))
+                        .done(function (move, data) {
+                            newTick = ws.getTick()
+                            $.when(ws.examine(userData.id, userData.sid), ws.getExamineData())
+                            .done(function (examine, data_2) {
+                                newTick = ws.getTick()
+                                var time = Math.round((newTick - lastTick) / ticksPerSecond)
+                                var yClient = Math.round(data_1.y + time * playerVelocity)
+                                var yServer = Math.round(data_2.y)
+                                assert.equal(yClient, yServer)
+                                assert.equal(data_1.x, data_2.x)
+                            })
+                        })
+                    })
                 })
             })
 
@@ -278,26 +266,24 @@ function(packages, utils, ws) {
                 var examineData
                 var lastTick
                 var newTick
-                before(function(done) {
-                    ws.examine(userData.id, userData.sid)
-                    setTimeout(function() {
-                        examineData = ws.getExamineData()
-                        lastTick = ws.getTick()
-                        ws.move("south", lastTick, userData.sid)
-                        setTimeout(function() {
-                            ws.examine(userData.id, userData.sid)
-                            newTick = ws.getTick()
-                            setTimeout(done, 200)
-                        }, 200)
-                    }, 200)
-                })
-
                 it("should return ok", function() {
-                    var time = Math.round((newTick - lastTick) / ticksPerSecond)
-                    var yClient = Math.round(examineData.y - time * playerVelocity)
-                    var yServer = Math.round(ws.getExamineData().y)
-                    assert.equal(yClient, yServer)
-                    assert.equal(examineData.x, ws.getExamineData().x)
+                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
+                    .done(function (examine, data_1) {
+                        lastTick = ws.getTick()
+                        $.when(ws.move("south", lastTick, userData.sid), ws.timeout(200, ws.getMoveData))
+                        .done(function (move, data) {
+                            newTick = ws.getTick()
+                            $.when(ws.examine(userData.id, userData.sid), ws.getExamineData())
+                            .done(function (examine, data_2) {
+                                newTick = ws.getTick()
+                                var time = Math.round((newTick - lastTick) / ticksPerSecond)
+                                var yClient = Math.round(data_1.y - time * playerVelocity)
+                                var yServer = Math.round(data_2.y)
+                                assert.equal(yClient, yServer)
+                                assert.equal(data_1.x, data_2.x)
+                            })
+                        })
+                    })
                 })
             })
 
@@ -305,26 +291,24 @@ function(packages, utils, ws) {
                 var examineData
                 var lastTick
                 var newTick
-                before(function(done) {
-                    ws.examine(userData.id, userData.sid)
-                    setTimeout(function() {
-                        examineData = ws.getExamineData()
-                        lastTick = ws.getTick()
-                        ws.move("south", lastTick, userData.sid)
-                        setTimeout(function() {
-                            ws.examine(userData.id, userData.sid)
-                            newTick = ws.getTick()
-                            setTimeout(done, 200)
-                        }, 200)
-                    }, 200)
-                })
-
                 it("should return ok", function() {
-                    var time = Math.round((newTick - lastTick) / ticksPerSecond)
-                    var yClient = Math.round(examineData.y - time * playerVelocity)
-                    var yServer = Math.round(ws.getExamineData().y)
-                    assert.equal(yClient, yServer)
-                    assert.equal(examineData.x, ws.getExamineData().x)
+                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
+                    .done(function (examine, data_1) {
+                        lastTick = ws.getTick()
+                        $.when(ws.move("south", lastTick, userData.sid), ws.timeout(200, ws.getMoveData))
+                        .done(function (move, data) {
+                            newTick = ws.getTick()
+                            $.when(ws.examine(userData.id, userData.sid), ws.getExamineData())
+                            .done(function (examine, data_2) {
+                                newTick = ws.getTick()
+                                var time = Math.round((newTick - lastTick) / ticksPerSecond)
+                                var yClient = Math.round(data_1.y - time * playerVelocity)
+                                var yServer = Math.round(data_2.y)
+                                assert.equal(yClient, yServer)
+                                assert.equal(data_1.x, data_2.x)
+                            })
+                        })
+                    })
                 })
             })
         })
