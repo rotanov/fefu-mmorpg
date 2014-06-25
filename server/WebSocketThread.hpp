@@ -8,27 +8,27 @@
 
 class SocketThread : public QThread
 {
-    Q_OBJECT
+  Q_OBJECT
 
 signals:
-    void newFEMPRequest(const QVariantMap& request, QVariantMap& response);
+  void newFEMPRequest(const QVariantMap& request, QVariantMap& response);
 
 public:
-    SocketThread(QWebSocket* wsSocket);
-    ~SocketThread();
+  SocketThread(QWebSocket* wsSocket);
+  ~SocketThread();
 
-    QWebSocket* socket;
-    void run();
+  QWebSocket* socket;
+  void run();
 
 private slots:
-    void processMessage(QString message, bool lastFrame);
-    void sendMessage(QString message);
-    void processPong(quint64 elapsedTime);
-    void socketDisconnected();
-    void finished();
+  void processMessage(QString message, bool lastFrame);
+  void sendMessage(QString message);
+  void processPong(quint64 elapsedTime);
+  void socketDisconnected();
+  void finished();
 
 signals:
-    void messageReceived(QString frame);
+  void messageReceived(QString frame);
 
 private:
 
