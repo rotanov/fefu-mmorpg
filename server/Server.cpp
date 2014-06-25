@@ -134,10 +134,13 @@ void Server::handleRequest(QHttpRequest *request, QHttpResponse *response)
 void Server::dataEnd()
 {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   //    qDebug() << "request JSON: " << data_;
   QVariantMap request = QJsonDocument::fromJson(data_).toVariant().toMap();
   QVariantMap response;
 =======
+=======
+>>>>>>> Stashed changes
     qDebug() << "request JSON: " << data_;
     QVariantMap request = QJsonDocument::fromJson(data_).toVariant().toMap();
     QVariantMap response;
