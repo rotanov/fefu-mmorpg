@@ -1,4 +1,4 @@
-define(["jquery", "utils", "ws", "game"],
+define(["jquery", "utils", "ws", "new_game/new_game"],
 function ($, utils, ws, game) {
 
     var sid_
@@ -37,14 +37,14 @@ function ($, utils, ws, game) {
             $("#server-answer").text("Authentication is successful.").css("color", "green")
             $("#logout").css("visibility", "visible")
             sid_ = data.sid
-            ws.startGame(data.id, data.sid, data.webSocket)
-            $.when(ws.timeout(
-                    400,
+            $.when(
+                game.initSocket(data.webSocket),
+                ws.timeout(
+                    500,
                     function() {
                         $("#content").hide()
                         $("#test-form").hide()
-                    }
-                )
+                    })
             ).done(
                 function() {
                     game.start(data.id, data.sid)
