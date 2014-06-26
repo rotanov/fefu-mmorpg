@@ -1,5 +1,5 @@
-define(["phaser", "utils", "actor", "new_game/socket"],
-function (phaser, utils, actor, sock) {
+define(["phaser", "utils", "actor", "new_game/socket", "new_game/monsters"],
+function (phaser, utils, actor, sock, monsters) {
 
 var game
 var socket
@@ -8,6 +8,7 @@ var layer
 var actors = []
 var fpsText
 var mapGlobal = []
+var name_monster = []
 
 var upKey
 var downKey
@@ -17,6 +18,7 @@ var rightKey
 var width  = 9
 var height = 7
 var step   = 64
+var route  = 1
 
 var gPlayerX
 var gPlayerY
@@ -100,6 +102,7 @@ function OnMessage(e) {
 function Start(id, sid) {
     id_ = id
     sid_ = sid
+    name_monster = monsters.getNames()
 
     socket.send(JSON.stringify({
         "action": "getConst"
@@ -124,6 +127,8 @@ function onPreload() {
     game.load.spritesheet("tileset", "assets/tileset.png", 64, 64, 38)
     game.load.image("tileset_monster", "assets/tileset_monster.png")
     game.load.spritesheet("tileset_monster", "assets/tileset_monster.png", 64, 64, 1107)
+    game.load.image("player", "assets/player.png")
+    game.load.spritesheet("player", "assets/player.png", 64, 64, 16)
 }
 
 function onCreate() {
@@ -131,6 +136,7 @@ function onCreate() {
     mapGlobal = game.add.tilemap("map")
     mapGlobal.addTilesetImage("tileset")
     mapGlobal.addTilesetImage("tileset_monster")
+    mapGlobal.addTilesetImage("player")
     layer = mapGlobal.createLayer("back")
     layer.resizeWorld()
 
@@ -139,12 +145,12 @@ function onCreate() {
     leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT)
     rightKey = game.input.keyboard.addKey(phaser.Keyboard.RIGHT)
 
+    createActors(0)
+
     socket.send(JSON.stringify({
         "action": "look",
         "sid": sid_
     }))
-
-    createActors(0)
 
     fpsText = game.add.text(37, 37, "test", {
         font: "65px Arial",
@@ -167,6 +173,7 @@ function onUpdate() {
         }
     }
     if (upKey.isDown) {
+        route = 3
         socket.send(JSON.stringify({
             "action": "move",
             "direction": "north",
@@ -174,6 +181,7 @@ function onUpdate() {
             "sid": sid_
         }))
     } else if (downKey.isDown) {
+        route = 1
         socket.send(JSON.stringify({
             "action": "move",
             "direction": "south",
@@ -183,6 +191,7 @@ function onUpdate() {
     }
 
     if (leftKey.isDown) {
+        route = 9
         socket.send(JSON.stringify({
             "action": "move",
             "direction": "west",
@@ -190,6 +199,7 @@ function onUpdate() {
             "sid": sid_
         }))
     } else if (rightKey.isDown) {
+        route = 11
         socket.send(JSON.stringify({
             "action": "move",
             "direction": "east",
@@ -250,6 +260,19 @@ function renderWalls(map) {
     mapGlobal.paste(0, 0, tempTiles)
 }
 
+function monster(actor, j) {
+    var frameIndex = name_monster[actor.mobType]
+    actors[j].loadTexture("tileset_monster", frameIndex)
+}
+
+function player(actor, j) {
+    var frameIndex = 1
+    if (actor.id == id_) {
+        frameIndex = route
+    }
+    actors[j].loadTexture("player", frameIndex)
+}
+
 function renderActors(actor) {
     var j = 0
     for (var i = 0; i < actor.length; i++) {
@@ -261,9 +284,12 @@ function renderActors(actor) {
             actors[j].name = actor[i].id
             actors[j].visible = true
             if (actor[i].type == "monster") {
+                //monster(actor[i], j)
                 frameIndex = 29
+                actors[j].loadTexture("tileset", frameIndex)
+            } else {
+                player(actor[i], j)
             }
-            actors[j].loadTexture("tileset", frameIndex)
             actors[j].x = coordinate(gPlayerX, actor[i].x, width)
             actors[j].y = coordinate(gPlayerY, actor[i].y, height) 
             j++
