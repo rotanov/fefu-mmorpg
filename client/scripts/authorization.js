@@ -40,7 +40,7 @@ function ($, utils, ws, game) {
             $.when(
                 game.initSocket(data.webSocket),
                 ws.timeout(
-                    500,
+                    1000,
                     function() {
                         $("#content").hide()
                         $("#test-form").hide()
