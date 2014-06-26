@@ -16,12 +16,46 @@ var gPlayerY
 var actors = []
 
 var name_monster = []
-name_monster["monster"] = 124
+
+name_monster["Scrawny cat"] = 83
+name_monster["Scruffy little dog"] = 84
+name_monster["Grey mold"] = 95
+name_monster["Grey mushroom patch"] = 105 
+name_monster["Giant yellow centipede"] = 111
+name_monster["Giant white centipede"] = 112
+name_monster["White icky thing"] = 113
+name_monster["Large brown snake"] = 65
+name_monster["Large white snake"] = 98
+name_monster["Small kobold"] = 99
+name_monster["Floating eye"] = 108
+name_monster["Rock lizard"] = 200
+name_monster["Soldier ant"] = 145
+name_monster["Fruit bat"] = 128
+name_monster["Kobold"] = 129
+name_monster["Metallic green centipede"] = 189
+name_monster["Yellow mushroom patch"] = 160
+name_monster["White jelly"] = 161
+name_monster["Giant green frog"] = 170
+name_monster["Giant black ant"] = 155
+name_monster["Salamander"] = 145
+name_monster["Yellow mold"] = 133
+name_monster["Metallic red centipede"] = 123
+name_monster["Cave lizard"] = 124
+name_monster["Blue jelly"] = 67
+name_monster["Large grey snake"] = 190
+name_monster["Raven"] = 127
+name_monster["Blue ooze"] = 128
+name_monster["Green glutton ghost"] = 229
+name_monster["Green jelly"] = 130
+name_monster["Large kobold"] = 211
+name_monster["Skeleton kobold"] = 112
+name_monster["Grey icky thing"] = 173
 
 var id_
 var sid_
 var mapGlobal
 var layer
+var route = 1
 
 var fpsText
 
@@ -29,12 +63,10 @@ var fpsText
 function Start(id, sid) {
     if (ws.readyState === 1)
     $.when(ws.getConst(), ws.timeout(600, ws.getConstData))
-        .done(function (getConst, getConstData) {
-            if (getConstData.result == "ok") {
-                height = getConstData.screenRowCount
-                width  = getConstData.screenColumnCount
-            } else {
-                utils.CryBabyCry(getConstData.result);
+         .done(function (constData) {
+            if (constData.result == "ok") {
+                height = constData.screenRowCount
+                width  = constData.screenColumnCountelse
             }
         }) 
     game = new phaser.Game(
@@ -58,6 +90,8 @@ function onPreload() {
     game.load.spritesheet("tileset", "assets/tileset.png", 64, 64, 38)
     game.load.image("tileset_monster", "assets/tileset_monster.png")
     game.load.spritesheet("tileset_monster", "assets/tileset_monster.png", 64, 64, 1107)
+    game.load.image("player", "assets/player.png")
+    game.load.spritesheet("player", "assets/player.png", 64, 64, 16)
 }
 
 function onCreate() {
@@ -65,6 +99,7 @@ function onCreate() {
     mapGlobal = game.add.tilemap("map")
     mapGlobal.addTilesetImage("tileset")
     mapGlobal.addTilesetImage("tileset_monster")
+    mapGlobal.addTilesetImage("player")
     layer = mapGlobal.createLayer("back")
     layer.resizeWorld()
 
@@ -112,14 +147,18 @@ function onUpdate() {
         }
     }
     if (upKey.isDown) {
+        route = 3
         ws.move("north", ws.getTick(), sid_)
     } else if (downKey.isDown) {
+        route = 1
         ws.move("south", ws.getTick(), sid_)
     }
 
     if (leftKey.isDown) {
+        route = 9
         ws.move("west", ws.getTick(), sid_)
     } else if (rightKey.isDown) {
+        route = 11
         ws.move("east", ws.getTick(), sid_)
     }
 
@@ -182,6 +221,20 @@ function renderWalls(map) {
     mapGlobal.paste(0, 0, tempTiles)
 }
 
+function monster(actor, j) {
+    var frameIndex = name_monster[actor.mobType]
+    actors[j].loadTexture("tileset_monster", frameIndex)
+}
+
+
+function player(actor, j) {
+    var frameIndex = 1
+    if (actor.id == id_) {
+        frameIndex = route
+    }
+    actors[j].loadTexture("player", frameIndex)
+}
+
 function renderActors(actor) {
     var j = 0
     for (var i = 0; i < actor.length; i++) {
@@ -193,9 +246,10 @@ function renderActors(actor) {
             actors[j].name = actor[i].id
             actors[j].visible = true
             if (actor[i].type == "monster") {
-                frameIndex = 29//name_monster[actor[i].type]
+                monster(actor[i], j)//frameIndex = 29 name_monster[actor[i].type]
+            } else {
+                player(actor[i], j)
             }
-            actors[j].loadTexture("tileset", frameIndex)
             actors[j].x = coordinate(gPlayerX, actor[i].x, width)
             actors[j].y = coordinate(gPlayerY, actor[i].y, height) 
             j++
