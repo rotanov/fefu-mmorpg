@@ -177,7 +177,7 @@ public:
     QString name;
     string M;
     QString G;
-    vector<string> F;
+    QStringList F;
     vector<string> S;
     TypeMonster(string);
 };

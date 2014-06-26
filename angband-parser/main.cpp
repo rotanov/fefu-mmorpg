@@ -3,7 +3,8 @@
 #include <vector>
 #include <map>
 #include <cctype>
-
+#include <QFile>
+#include "DataBase.hpp"
 #include "Monster.hpp"
 #include "Object.hpp"
 
@@ -258,9 +259,13 @@ void Obj_read()
     }
 }
 
+
 int main ()
 {
-    FILE* monstr_type = fopen("monster_type.txt", "r");
+   // QFile monstr_type ("monster_type.txt");
+   // monstr_type.open(QIODevice::ReadOnly);
+   // monstr_type.readAll();
+    FILE*  monstr_type = fopen("monster_type.txt", "r");
     FILE* monstr = fopen("monster.txt", "r");
     freopen("output.txt", "w", stdout);
 
@@ -309,7 +314,7 @@ int main ()
                         current = fgetc(monstr_type);
                     }
                     Flag[f] = ++Flag[f];
-                    t->F.push_back(f);
+                    t->F << f.c_str();
                     if (current == '|')
                     {
                         current = fgetc(monstr_type);
@@ -426,6 +431,7 @@ int main ()
         if (current == 'F' && fgetc(monstr) == ':' )
         {
             read(monstr,current,monster);
+            monster->F << monster->T->F;
             current = fgetc(monstr);
         }
         if (current == '-')
@@ -510,12 +516,13 @@ int main ()
     Obj_read();
     for (map<string, Object*>::iterator i = Objects.begin(); i != Objects.end(); i++)
     {
-             i->second->AddToDataBase();
+           //  i->second->AddToDataBase();
     }
     int j = 1;
     for (map<string, Monster*>::iterator i = Monsstr.begin(); i != Monsstr.end(); i++, j++)
     {
-         i->second->AddToDataBase();
+        // i->second->AddToDataBase();
     }
+    AddToDataBase();
     return 0;
 }
