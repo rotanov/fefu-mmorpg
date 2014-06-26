@@ -1,5 +1,6 @@
 #include "PermaStorage.hpp"
 
+
 #include <QSqlQuery>
 #include <QSql>
 #include <QSqlDriver>
@@ -112,6 +113,30 @@ QString PermaStorage::GetPassHash(const QString login)
         return "";
     }
 }
+void PermaStorage::GetMonster (Monster * m, const int id)
+{
+    QSqlQuery q;
+    q.prepare("SELECT * FROM monsters WHERE id = :id");
+    q.bindValue(":id", id);
+    if (ExecQuery_(q))
+    {
+        q.next();
+
+        m->name = q.value("name").toString();
+        m->symbol = q.value("symbol").toString();
+        m->description = q.value("description").toString();
+        QString str = q.value("flag").toString();
+        m->Flags << str.split("|");
+        str = q.value("slot").toString();
+        m->Slot << str.split("|");
+        return;
+    }
+    else
+    {
+        return;
+    }
+
+}
 
 bool PermaStorage::IfLoginPresent(const QString login)
 {
@@ -125,6 +150,7 @@ bool PermaStorage::IfLoginPresent(const QString login)
     }
     return false;
 }
+
 
 bool PermaStorage::ExecQuery_(QSqlQuery& query)
 {
