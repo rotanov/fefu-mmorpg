@@ -14,6 +14,7 @@ var upKey
 var downKey
 var leftKey
 var rightKey
+var zKey
 
 var width  = 9
 var height = 7
@@ -104,9 +105,7 @@ function Start(id, sid) {
     sid_ = sid
     name_monster = monsters.getNames()
 
-    socket.send(JSON.stringify({
-        "action": "getConst"
-    }))
+    socket.getConst()
 
     game = new phaser.Game(
         64 * width, 64 * height,
@@ -144,13 +143,10 @@ function onCreate() {
     downKey = game.input.keyboard.addKey(phaser.Keyboard.DOWN)
     leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT)
     rightKey = game.input.keyboard.addKey(phaser.Keyboard.RIGHT)
+    zKey = game.input.keyboard.addKey(phaser.Keyboard.Z);
 
     createActors(0)
-
-    socket.send(JSON.stringify({
-        "action": "look",
-        "sid": sid_
-    }))
+    socket.look(sid_)
 
     fpsText = game.add.text(37, 37, "test", {
         font: "65px Arial",
@@ -165,53 +161,49 @@ function onUpdate() {
     if (game.input.mousePointer.isDown) {
         var id = getActorID()
         if (id) {
-            socket.send(JSON.stringify({
-                "action": "examine",
-                "id": id,
-                "sid": sid_
-            }))
+            socket.examine(id, sid_)
         }
     }
     if (upKey.isDown) {
         route = 3
-        socket.send(JSON.stringify({
-            "action": "move",
-            "direction": "north",
-            "tick": tick_,
-            "sid": sid_
-        }))
+        socket.move("north", tick_, sid_)
     } else if (downKey.isDown) {
         route = 1
-        socket.send(JSON.stringify({
-            "action": "move",
-            "direction": "south",
-            "tick": tick_,
-            "sid": sid_
-        }))
+        socket.move("south", tick_, sid_)
     }
 
     if (leftKey.isDown) {
         route = 9
-        socket.send(JSON.stringify({
-            "action": "move",
-            "direction": "west",
-            "tick": tick_,
-            "sid": sid_
-        }))
+        socket.move("west", tick_, sid_)
     } else if (rightKey.isDown) {
         route = 11
-        socket.send(JSON.stringify({
-            "action": "move",
-            "direction": "east",
-            "tick": tick_,
-            "sid": sid_
-        }))
+        socket.move("east", tick_, sid_)
     }
 
-    socket.send(JSON.stringify({
-        "action": "look",
-        "sid": sid_
-    }))
+    socket.look(sid_)
+
+    if (zKey.isDown) {
+        var x, y
+        switch(route) {
+        case 3:
+            x = gPlayerX
+            y = gPlayerY + step
+            break
+        case 1:
+            x = gPlayerX
+            y = gPlayerY - step
+            break
+        case 9:
+            x = gPlayerX + step
+            y = gPlayerY
+            break
+        case 11:
+            x = gPlayerX - step
+            y = gPlayerY
+            break
+        }
+        socket.attack([x, y], sid_)
+    }
 }
 
 function coordinate(x, coord, g) {
