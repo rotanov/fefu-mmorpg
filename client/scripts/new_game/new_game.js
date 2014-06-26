@@ -284,9 +284,7 @@ function renderActors(actor) {
             actors[j].name = actor[i].id
             actors[j].visible = true
             if (actor[i].type == "monster") {
-                //monster(actor[i], j)
-                frameIndex = 29
-                actors[j].loadTexture("tileset", frameIndex)
+                monster(actor[i], j)
             } else {
                 player(actor[i], j)
             }
