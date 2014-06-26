@@ -16,4 +16,4 @@ public:
 private:
     QSqlDatabase db_;
 };
-
+void AddToDataBase();
