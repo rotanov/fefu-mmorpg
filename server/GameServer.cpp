@@ -30,7 +30,6 @@ GameServer::GameServer()
     GenRandSmoothMap(levelMap_);
     levelMap_.ExportToImage("generated-level-map.png");
     LoadLevelFromImage_("level-map.png");
-    GenMonsters_();
 }
 
 //==============================================================================
@@ -51,6 +50,7 @@ bool GameServer::Start()
         timer_->start();
         time_.start();
         lastTime_ = time_.elapsed();
+        GenMonsters_();
         return true;
     }
     return false;
@@ -491,6 +491,17 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
     {
         QVariantMap actor;
         actor["type"] = a->GetType();
+        if (a->GetType() == "monster")
+        {
+            auto m = static_cast<Monster*> (a);
+            actor["mobType"] = m->GetName();
+        }
+        if (a->GetType() != "item")
+        {
+            auto m = static_cast<Creature*> (a);
+            actor["health"] = m->GetHealth();
+            actor["maxHealth"] = m->GetMaxHealth();
+        }
         actor["x"] = a->GetPosition().x;
         actor["y"] = a->GetPosition().y;
         actor["id"] = a->GetId();
@@ -570,6 +581,7 @@ void GameServer::GenMonsters_()
                     Monster& m = *monster;
                     SetActorPosition_(monster, Vector2(j + 0.5f, i + 0.5f));
                     m.SetDirection(static_cast<EActorDirection>(rand() % 4 + 1));
+                    storage_.GetMonster(monster, monster->GetId() % 33 + 1);
                 }
             }
         }
