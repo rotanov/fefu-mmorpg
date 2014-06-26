@@ -56,6 +56,10 @@ function ($) {
         return responseResult
     }
 
+    function cryBabyCry(result) {
+        alert("Error: " + result)
+    }
+
     return {
         getServerAddress: getServerAddress,
         setServerAddress: setServerAddress,

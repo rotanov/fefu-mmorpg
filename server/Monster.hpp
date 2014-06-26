@@ -38,18 +38,17 @@ enum class Race {
 class Monster : public Creature
 {
 public:
-    Monster();
-    virtual ~Monster();
-
-    virtual void OnCollideWorld();
-    virtual void OnCollideActor(Actor* actor);
-    virtual void Update(float dt);
-    QString GetName();
-    QString name;
-    QString description;
-    QString symbol;
-    QStringList Flags;
-    QStringList Slot;
+  Monster();
+  virtual ~Monster();
+  virtual void OnCollideWorld();
+  virtual void OnCollideActor(Actor* actor);
+  virtual void Update(float dt);
+  QString GetName();
+  QString name;
+  QString description;
+  QString symbol;
+  QStringList Flags;
+  QStringList Slot;
 private:
     QString race_;
 };

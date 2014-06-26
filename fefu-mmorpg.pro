@@ -8,4 +8,3 @@ SUBDIRS += 3rd/qhttpserver \
 
 server.depends += qhttpserver \
 #                  QtWebsocket
-                  

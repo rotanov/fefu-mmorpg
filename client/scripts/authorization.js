@@ -39,7 +39,7 @@ function ($, utils, ws, game) {
             sid_ = data.sid
             ws.startGame(data.id, data.sid, data.webSocket)
             $.when(ws.timeout(
-                    200,
+                    400,
                     function() {
                         $("#content").hide()
                         $("#test-form").hide()

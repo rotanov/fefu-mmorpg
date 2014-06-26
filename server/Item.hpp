@@ -5,8 +5,8 @@
 class Item : public Actor
 {
 public:
-    Item();
-    virtual ~Item();
+  Item();
+  virtual ~Item();
 
 private:
 };

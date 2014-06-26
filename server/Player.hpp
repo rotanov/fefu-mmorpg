@@ -7,15 +7,15 @@
 class Player : public Creature
 {
 public:
-    Player();
-    virtual ~Player();
+  Player();
+  virtual ~Player();
 
-    QString GetLogin() const;
-    void SetLogin(const QString login);
-    unsigned GetClientTick() const;
-    void SetClientTick(const unsigned clientTick);
+  QString GetLogin() const;
+  void SetLogin(const QString login);
+  unsigned GetClientTick() const;
+  void SetClientTick(const unsigned clientTick);
 
 private:
-    QString login_;
-    unsigned clientTick_ = 0;
+  QString login_;
+  unsigned clientTick_ = 0;
 };

@@ -2,7 +2,7 @@
 
 Player::Player()
 {
-    type_ = "player";
+  type_ = "player";
 }
 
 Player::~Player()
@@ -12,20 +12,20 @@ Player::~Player()
 
 QString Player::GetLogin() const
 {
-    return login_;
+  return login_;
 }
 
 void Player::SetLogin(const QString login)
 {
-    login_ = login;
+  login_ = login;
 }
 
 unsigned Player::GetClientTick() const
 {
-    return clientTick_;
+  return clientTick_;
 }
 
 void Player::SetClientTick(const unsigned clientTick)
 {
-    clientTick_ = clientTick;
+  clientTick_ = clientTick;
 }

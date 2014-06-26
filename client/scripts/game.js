@@ -27,11 +27,14 @@ var fpsText
 
 
 function Start(id, sid) {
-    $.when(ws.getConst(), ws.timeout(200, ws.getConstData))
+    if (ws.readyState === 1)
+    $.when(ws.getConst(), ws.timeout(600, ws.getConstData))
         .done(function (getConst, getConstData) {
             if (getConstData.result == "ok") {
                 height = getConstData.screenRowCount
                 width  = getConstData.screenColumnCount
+            } else {
+                utils.CryBabyCry(getConstData.result);
             }
         }) 
     game = new phaser.Game(
@@ -70,13 +73,17 @@ function onCreate() {
     leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT)
     rightKey = game.input.keyboard.addKey(phaser.Keyboard.RIGHT)
     
-    $.when(ws.look(sid_), ws.timeout(200, ws.getLookData))
+    $.when(ws.look(sid_), ws.timeout(400, ws.getLookData))
     .done(function (look, lookData) {
-        createActors(0) 
-        renderWalls(lookData.map)
-        gPlayerX = lookData.x
-        gPlayerY = lookData.y
-        renderActors(lookData.actors)
+        if (lookData.result == "ok") {
+            createActors(0) 
+            renderWalls(lookData.map)
+            gPlayerX = lookData.x
+            gPlayerY = lookData.y
+            renderActors(lookData.actors)
+        } else {
+            utils.cryBabyCry(lookData.result)
+        }
     })
 
     fpsText = game.add.text(37, 37, "test", {
@@ -92,12 +99,14 @@ function onUpdate() {
     if (game.input.mousePointer.isDown) {
         var id = getActorID()
         if (id) {
-            $.when(ws.examine(id, sid_), ws.timeout(200, ws.getExamineData))
+            $.when(ws.examine(id, sid_), ws.timeout(400, ws.getExamineData))
             .done(function (examine, examineData) {
                 if (examineData.result == "ok") {
                     var gamer = actor.newActor(id)
                     gamer.init(examineData)
                     gamer.drawInf()
+                } else {
+                    utils.cryBabyCry(examineData.result)
                 }
             })
         }
@@ -116,10 +125,14 @@ function onUpdate() {
 
     $.when(ws.look(sid_), ws.timeout(200, ws.getLookData))
     .done(function (look, lookData) {
-        gPlayerX = lookData.x
-        gPlayerY = lookData.y
-        renderWalls(lookData.map)
-        renderActors(lookData.actors)
+        if (lookData.result == "ok") {
+            gPlayerX = lookData.x
+            gPlayerY = lookData.y
+            renderWalls(lookData.map)
+            renderActors(lookData.actors)
+        } else {
+            utils.cryBabyCry(lookData.result)
+        }
     })
 }
 
@@ -129,7 +142,7 @@ function coordinate(x, coord, g) {
 
 function createActors(start) {
     var frameIndex = 31
-    var length = width*height * (start+1)
+    var length = width * height * (start+1)
     for (var i = start; i < length; i++) {
         var sprite = game.add.sprite(
             coordinate(gPlayerX, 0, width),
@@ -167,7 +180,6 @@ function renderWalls(map) {
     }
 
     mapGlobal.paste(0, 0, tempTiles)
-
 }
 
 function renderActors(actor) {
@@ -175,7 +187,7 @@ function renderActors(actor) {
     for (var i = 0; i < actor.length; i++) {
         if (actor[i].id) {
             if (j == actors[j].length) {
-                createActors(actors[j].length / width*height);
+                createActors(actors[j].length / width * height);
             }
             var frameIndex = 31
             actors[j].name = actor[i].id
@@ -187,7 +199,7 @@ function renderActors(actor) {
             actors[j].x = coordinate(gPlayerX, actor[i].x, width)
             actors[j].y = coordinate(gPlayerY, actor[i].y, height) 
             j++
-        }           
+        }
     }
     var k = actors.length
     for (var i = j; i < k; i++) {

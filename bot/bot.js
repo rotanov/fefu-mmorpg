@@ -36,8 +36,6 @@ function postRequest(object, onResponse) {
   req.end()
 }
 
-
-
 function makeClient() {
   var login = crypto.randomBytes(9).toString('hex')
   var password = crypto.randomBytes(18).toString('hex')
