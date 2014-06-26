@@ -121,21 +121,18 @@ void PermaStorage::GetMonster (Monster * m, const int id)
     if (ExecQuery_(q))
     {
         q.next();
-
         m->name = q.value("name").toString();
         m->symbol = q.value("symbol").toString();
         m->description = q.value("description").toString();
-        QString str = q.value("flag").toString();
+        QString str = q.value("flags").toString();
         m->Flags << str.split("|");
-        str = q.value("slot").toString();
+        str = q.value("blow_method").toString();
         m->Slot << str.split("|");
-        return;
+        QStringList s ;
+        s << q.value("info").toString().split("|");
+        m->SetMaxHealth(s[1].toFloat());
+        m->SetHealth(s[1].toFloat());
     }
-    else
-    {
-        return;
-    }
-
 }
 
 bool PermaStorage::IfLoginPresent(const QString login)

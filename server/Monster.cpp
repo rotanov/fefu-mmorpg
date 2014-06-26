@@ -1,5 +1,6 @@
 #include "Monster.hpp"
 
+
 Monster::Monster()
 {
     type_ = "monster";
@@ -13,10 +14,11 @@ Monster::~Monster()
 void Monster::OnCollideWorld()
 {
     auto dir = GetDirection();
-
-    SetDirection(static_cast<EActorDirection>(rand() % 4 + 1));
-    return;
-
+    if (Flags.lastIndexOf("PASS_WALL") == -1)
+    {
+        SetDirection(static_cast<EActorDirection>(rand() % 4 + 1));
+        return;
+    } /*
     switch (dir)
     {
     case EActorDirection::EAST:
@@ -38,7 +40,7 @@ void Monster::OnCollideWorld()
     case EActorDirection::NONE:
         SetDirection(EActorDirection::NORTH);
         break;
-    }
+    }*/
 }
 
 void Monster::OnCollideActor(Actor* /*actor*/)
@@ -48,5 +50,13 @@ void Monster::OnCollideActor(Actor* /*actor*/)
 
 void Monster::Update(float dt)
 {
-    position_ += velocity_ * dt;
+    if (Flags.lastIndexOf("NEVER_MOVE") == -1)
+    {
+        position_ += velocity_ * dt;
+    }
+}
+
+QString Monster::GetName()
+{
+    return name;
 }
