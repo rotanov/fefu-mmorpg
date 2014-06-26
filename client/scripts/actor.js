@@ -6,22 +6,28 @@ function ($) {
             "id": id,
             "type": null,
             "x": null,
-            "y": null
+            "y": null,
+            "login": null,
+            "health" : null,
+            "maxHealth": null,
+            "mobType" : null
         }
     }
 
     Actor.prototype.init = function(examineData) {
         for (var key in this.data) {
-            this.data[key] = examineData[key]
+            if (examineData[key])
+                this.data[key] = examineData[key]
         }
     }
 
     Actor.prototype.drawInf = function() {
         $("#actors").empty()
         for (var key in this.data) {
-            $("<div/>", {})
-            .text(key + ": " + this.data[key])
-            .appendTo("#actors")
+            if (this.data[key])
+                $("<div/>", {})
+                .text(key + ": " + this.data[key])
+                .appendTo("#actors")
         }
         $("#actors").css("background", "rgb(247, 247, 247)")
         $("#actors").css("border", "1px solid rgba(147, 184, 189, 0.8)")

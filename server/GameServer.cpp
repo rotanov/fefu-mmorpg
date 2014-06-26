@@ -15,7 +15,7 @@
 
 //==============================================================================
 GameServer::GameServer()
-  : levelMap_(64, 64)
+  : levelMap_(192,192)
 {
     QTime midnight(0, 0, 0);
     qsrand(midnight.secsTo(QTime::currentTime()));
@@ -29,7 +29,7 @@ GameServer::GameServer()
 
     GenRandSmoothMap(levelMap_);
     levelMap_.ExportToImage("generated-level-map.png");
-    LoadLevelFromImage_("level-map.png");
+    LoadLevelFromImage_("generated-level-map.png");
 }
 
 //==============================================================================
@@ -522,6 +522,17 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
 
   Actor* actor = idToActor_[id];
   response["type"] = actor->GetType();
+  if (actor->GetType() != "item")
+  {
+      auto m = static_cast<Creature*> (actor);
+      response["health"] = m->GetHealth();
+      response["maxHealth"] = m->GetMaxHealth();
+  }
+  if (actor->GetType() == "monster")
+  {
+      auto m = static_cast<Monster*> (actor);
+      response["mobType"] = m->GetName();
+  }
   response["x"] = actor->GetPosition().x;
   response["y"] = actor->GetPosition().y;
   response["id"] = actor->GetId();
@@ -569,7 +580,7 @@ void GameServer::GenMonsters_()
   {
     for (int j = 0; j < levelMap_.GetColumnCount(); j++)
     {
-         if (levelMap_.GetCell(j, i) != '#')
+         if (levelMap_.GetCell(j, i) == '.')
             {
                 monsterCounter++;
                 if (monsterCounter % 5 == 0)
@@ -594,8 +605,8 @@ Player* GameServer::CreatePlayer_(const QString login)
 
   int x = 0;
   int y = 0;
-  int c = 0;
-  int r = 0;
+  int c = 96;
+  int r = 96;
 
   while (true)
   {
