@@ -4,9 +4,11 @@ function (phaser, utils, actor, sock, monsters) {
 var game
 var socket
 
+var msg
 var layer
 var actors = []
 var fpsText
+var tempTiles
 var mapGlobal = []
 var name_monster = []
 
@@ -29,6 +31,7 @@ var sid_
 var tick_
 
 var health
+var lifespan = 1
 
 function initSocket(wsUri) {
     socket = sock.WSConnect(wsUri, OnMessage)
@@ -168,17 +171,32 @@ function onCreate() {
         align: "left"
     })
 
-    health = game.add.text(game.world.centerX+120, 55, "HEALTH: 100/100", {
+    health = game.add.text(game.world.centerX + 120, 55, "HEALTH: 100/100", {
         font: "30px Arial",
         fill: "#ff0044",
         align: "right"
-    });
+    })
 
-    health.anchor.setTo(0.5, 0.5);
+    health.anchor.setTo(0.5, 0.5)
+
+    msg = game.add.text(32, 380, "", {
+        font: "30pt Courier",
+        fill: "#19cb65",
+        stroke: "#119f4e",
+        strokeThickness: 2
+    })
 }
 
 function updateHealth(data) {
     health.setText("HEALTH: " + data.health + "/" + data.maxHealth);
+    if (data.health <= 0) {
+        var k = actors.length
+        for (var i = 0; i < k; i++) {
+            actors[i].visible = false
+        }
+        msg.setText("GAME OVER")
+        lifespan = 0
+    }
 }
 
 function onUpdate() {
@@ -206,7 +224,9 @@ function onUpdate() {
         socket.move("east", tick_, sid_)
     }
 
-    socket.look(sid_)
+    if (lifespan) {
+        socket.look(sid_)
+    }
 
     if (zKey.isDown) {
         var x, y
@@ -217,7 +237,7 @@ function onUpdate() {
             break
         case 1:
             x = gPlayerX
-            y = gPlayerY// - step
+            y = gPlayerY // - step
             break
         case 9:
             x = gPlayerX //+ step
@@ -248,8 +268,6 @@ function createActors(start) {
     }
 }
 
-var tempTiles
-
 function renderWalls(map) {
     layer._x = (gPlayerX * step) % 64 - 32
     layer._y = (gPlayerY * step) % 64 - 32
@@ -269,11 +287,10 @@ function renderWalls(map) {
 }
 
 function renderActors(actor) {
-    var j = 0
-    for (var i = 0; i < actor.length; i++) {
+    for (var i = 0, j = 0; i < actor.length; i++, j++) {
         if (!actor[i].id) return
         if (j == actors[j].length) {
-            createActors(actors[j].length / width * height);
+            createActors(actors[j].length / width * height)
         }
         actors[j].id = actor[i].id
         actors[j].x = coordinate(gPlayerX, actor[i].x, width)
@@ -284,16 +301,7 @@ function renderActors(actor) {
             var frameIndex = (actor[i].id == id_) ? route : 1
             actors[j].loadTexture("player", frameIndex)
         }
-        if (actor[i].health <= 0) {
-            actors[j].visible = false
-            if (actor[i].id == id_) {
-                //game over
-                alert("game over")
-            }
-        } else {
-            actors[j].visible = true
-        }
-        j++
+        actors[j].visible = true
     }
 
     var k = actors.length
