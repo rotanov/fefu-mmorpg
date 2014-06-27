@@ -82,6 +82,7 @@ private:
     {"getDictionary", &GameServer::HandleGetDictionary_},
     {"look", &GameServer::HandleLook_},
     {"move", &GameServer::HandleMove_},
+    {"attack", &GameServer::HandleAttack_}
   };
 
   void HandleStartTesting_(const QVariantMap& request, QVariantMap& response);
@@ -99,6 +100,7 @@ private:
   void HandleGetDictionary_(const QVariantMap& request, QVariantMap& response);
   void HandleLook_(const QVariantMap& request, QVariantMap& response);
   void HandleMove_(const QVariantMap& request, QVariantMap& response);
+  void HandleAttack_(const QVariantMap& request, QVariantMap& response);
 //==============================================================================
 
   void WriteResult_(QVariantMap& response, const EFEMPResult result);
@@ -130,10 +132,10 @@ private:
   QTime time_;
   float lastTime_ = 0.0f;
   unsigned tick_ = 0;
-
-  float playerVelocity_ = 4.0;
+  QVariantList events_;
+  float playerVelocity_ = 3.0;
   float slideThreshold_ = 0.1;
-  int ticksPerSecond_ = 60;
+  int ticksPerSecond_ = 30;
   int screenRowCount_ = 7;
   int screenColumnCount_ = 9;
   float epsilon_ = 0.00001;
