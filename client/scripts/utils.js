@@ -64,7 +64,8 @@ function ($) {
         getServerAddress: getServerAddress,
         setServerAddress: setServerAddress,
         postRequest: postRequest,
-        serverHandler: serverHandler
+        serverHandler: serverHandler,
+        cryBabyCry: cryBabyCry
     }
 
 })
