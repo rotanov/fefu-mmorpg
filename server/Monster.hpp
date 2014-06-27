@@ -36,16 +36,7 @@ enum class Race {
     ANIMALS,
 };
 
-typedef struct Demage {
-  int from;
-  int to;
-} Demage;
 
-typedef struct Blow {
-  QString attack;
-  QString effect;
-  Demage damage;
-} Blow;
 
 const std::vector<QString> Races =
 {
@@ -61,6 +52,8 @@ const std::vector<QString> Races =
   [Race::ANIMALS] = "ANIMAL",
 };
 
+
+
 class Monster : public Creature
 {
 public:
@@ -69,27 +62,27 @@ public:
   virtual void OnCollideWorld();
   virtual bool OnCollideActor(Actor* actor);
   virtual void Update(float dt);
-  virtual void atack(Creature* actor);
   virtual void SetRace();
+  virtual QVariantMap atack(Creature* actor);
   QString GetName();
   QString name;
   QString description;
   QString symbol;
   QStringList Flags;
-  QVector <Blow*> Blows;
+  QVector<Blow*> Blows;
 private:
     QString race_;
     QMap<QString,QString> Hates =
-    {
-      {"HATE_ORC","ORC"},
-      {"HATE_EVIL","EVIL"},
-      {"HATE_TROLL","TROLL"},
-      {"HATE_GIGANT", "GIGANT"},
-      {"HATE_DEMON", "DEMON"},
-      {"HATE_METAL", "METAL"},
-      {"HATE_PLAYER", "PLAYER"},
-      {"HATE_DRAGON", "DRAGON"},
-      {"HATE_UNDEAD", "UNDEAD"},
-      {"HATE_ANIMAL", "ANIMAL"}
-    };
+  {
+    {"HATE_ORC","ORC"},
+    {"HATE_EVIL","EVIL"},
+    {"HATE_TROLL","TROLL"},
+    {"HATE_GIGANT", "GIGANT"},
+    {"HATE_DEMON", "DEMON"},
+    {"HATE_METAL", "METAL"},
+    {"HATE_PLAYER", "PLAYER"},
+    {"HATE_DRAGON", "DRAGON"},
+    {"HATE_UNDEAD", "UNDEAD"},
+    {"HATE_ANIMAL", "ANIMAL"}
+  };
 };

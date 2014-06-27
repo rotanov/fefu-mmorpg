@@ -213,18 +213,18 @@ function onUpdate() {
         switch(route) {
         case 3:
             x = gPlayerX
-            y = gPlayerY + step
+            y = gPlayerY //+ step
             break
         case 1:
             x = gPlayerX
-            y = gPlayerY - step
+            y = gPlayerY// - step
             break
         case 9:
-            x = gPlayerX + step
+            x = gPlayerX //+ step
             y = gPlayerY
             break
         case 11:
-            x = gPlayerX - step
+            x = gPlayerX //- step
             y = gPlayerY
             break
         }

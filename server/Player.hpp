@@ -14,9 +14,10 @@ public:
   void SetLogin(const QString login);
   unsigned GetClientTick() const;
   void SetClientTick(const unsigned clientTick);
-  virtual void atack(Creature* actor);
+  virtual QVariantMap atack(Creature* actor);
+  void SetBlows();
   virtual void SetRace();
-
+  Blow Blows;
 private:
   QString login_;
   unsigned clientTick_ = 0;

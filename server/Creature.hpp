@@ -1,10 +1,22 @@
 #pragma once
 
 #include <vector>
+#include <QVariantMap>
 
 #include "Actor.hpp"
 
 class Item;
+
+typedef struct Demage {
+  int from;
+  int to;
+} Demage;
+
+typedef struct Blow {
+  QString attack;
+  QString effect;
+  Demage damage;
+} Blow;
 
 class Creature : public Actor
 {
@@ -16,7 +28,7 @@ public:
   void SetHealth(const float health);
   float GetMaxHealth() const;
   void SetMaxHealth(const float maxHealth);
-  virtual void atack(Creature* actor);
+  virtual QVariantMap atack(Creature* actor);
   virtual void SetRace();
   QString race_ = "NONE";
 private:

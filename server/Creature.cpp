@@ -33,7 +33,9 @@ void Creature::SetRace()
 {
 
 }
-void Creature::atack(Creature */* actor*/)
+QVariantMap Creature::atack(Creature* /*actor*/)
 {
-
+  QVariantMap ans;
+  ans["ok"]= "ok";
+  return ans;
 }
