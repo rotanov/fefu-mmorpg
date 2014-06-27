@@ -14,6 +14,8 @@ public:
   void SetLogin(const QString login);
   unsigned GetClientTick() const;
   void SetClientTick(const unsigned clientTick);
+  virtual void atack(Creature* actor);
+  virtual void SetRace();
 
 private:
   QString login_;

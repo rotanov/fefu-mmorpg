@@ -97,9 +97,9 @@ void Actor::OnCollideWorld()
 
 }
 
-void Actor::OnCollideActor(Actor* /*actor*/)
+bool Actor::OnCollideActor(Actor* /*actor*/)
 {
-
+  return false;
 }
 
 QString Actor::GetType() const

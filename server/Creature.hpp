@@ -14,10 +14,11 @@ public:
 
   float GetHealth() const;
   void SetHealth(const float health);
-
   float GetMaxHealth() const;
   void SetMaxHealth(const float maxHealth);
-
+  virtual void atack(Creature* actor);
+  virtual void SetRace();
+  QString race_ = "NONE";
 private:
   float health_ = 100.0f;
   float maxHealth_ = 100.0f;

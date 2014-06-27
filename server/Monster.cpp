@@ -21,9 +21,19 @@ void Monster::OnCollideWorld()
     }
 }
 
-void Monster::OnCollideActor(Actor* /*actor*/)
+bool Monster::OnCollideActor(Actor* actor)
 {
+  if (actor->GetType () == "monster" || actor->GetType () == "player")
+  {
+    QStringList str = Flags.filter ("HATE");
+    for (auto& a: str)
+    {
+      if (Hates[a] == race_ )
+        return true;
+    }
+  }
   OnCollideWorld();
+  return false;
 }
 
 void Monster::Update(float dt)
@@ -38,3 +48,21 @@ QString Monster::GetName()
 {
     return name;
 }
+void Monster::SetRace()
+{
+  for (auto& r: Races)
+  {
+    if (Flags.lastIndexOf (r) != -1)
+    {
+      race_ = r;
+      return;
+    }
+  }
+}
+void Monster::atack(Creature* actor)
+{
+  int val = rand();
+  val = val % Blows[0]->damage.to + Blows[0]->damage.from;
+  actor->SetHealth(actor->GetHealth () - val);
+}
+

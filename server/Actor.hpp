@@ -51,7 +51,7 @@ public:
   void SetId(int id);
 
   virtual void OnCollideWorld();
-  virtual void OnCollideActor(Actor* actor);
+  virtual bool OnCollideActor(Actor* actor);
 
 
   QString GetType() const;
