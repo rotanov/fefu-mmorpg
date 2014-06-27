@@ -240,9 +240,10 @@ function createActors(start) {
     var frameIndex = 31
     var length = width * height * (start+1)
     for (var i = start; i < length; i++) {
-        var x = coordinate(gPlayerX, 0, width)
-        var y = coordinate(gPlayerY, 0, height)
+        var x = coordinate(gPlayerX, 0.5, width)
+        var y = coordinate(gPlayerY, 0.5, height)
         var sprite = game.add.sprite(x, y, "tileset", frameIndex)
+        sprite.anchor.setTo(0.5, 0.5)
         actors.push(sprite)
     }
 }
