@@ -100,6 +100,7 @@ function OnMessage(e) {
         if (data.result != "ok") {
             utils.cryBabyCry(data.result)
         }
+        socket.examine(id_, sid_)
         break
 
     case "equip":
@@ -167,7 +168,7 @@ function onCreate() {
         align: "left"
     })
 
-    health = game.add.text(game.world.centerX+140, 55, "HEATH: 100%", {
+    health = game.add.text(game.world.centerX+120, 55, "HEALTH: 100/100", {
         font: "30px Arial",
         fill: "#ff0044",
         align: "right"
@@ -177,8 +178,7 @@ function onCreate() {
 }
 
 function updateHealth(data) {
-    var amount = (data.heath / data.maxHealth) * 100
-    health.setText("HEALTH: " + amount + " %");
+    health.setText("HEALTH: " + data.health + "/" + data.maxHealth);
 }
 
 function onUpdate() {
@@ -272,20 +272,28 @@ function renderActors(actor) {
     var j = 0
     for (var i = 0; i < actor.length; i++) {
         if (!actor[i].id) return
-            if (j == actors[j].length) {
-                  createActors(actors[j].length / width * height);
+        if (j == actors[j].length) {
+            createActors(actors[j].length / width * height);
+        }
+        actors[j].id = actor[i].id
+        actors[j].x = coordinate(gPlayerX, actor[i].x, width)
+        actors[j].y = coordinate(gPlayerY, actor[i].y, height)
+        if (actor[i].type == "monster") {
+            actors[j].loadTexture("tileset_monster", name_monster[actor[i].mobType])
+        } else {
+            var frameIndex = (actor[i].id == id_) ? route : 1
+            actors[j].loadTexture("player", frameIndex)
+        }
+        if (actor[i].health <= 0) {
+            actors[j].visible = false
+            if (actor[i].id == id_) {
+                //game over
+                alert("game over")
             }
-            actors[j].id = actor[i].id
-            actors[j].x = coordinate(gPlayerX, actor[i].x, width)
-            actors[j].y = coordinate(gPlayerY, actor[i].y, height)
+        } else {
             actors[j].visible = true
-            if (actor[i].type == "monster") {
-                  actors[j].loadTexture("tileset_monster", name_monster[actor[i].mobType])
-            } else {
-                  var frameIndex = (actor.id == id_) ? route : 1
-                  actors[j].loadTexture("player", frameIndex)
-            }
-            j++
+        }
+        j++
     }
 
     var k = actors.length
