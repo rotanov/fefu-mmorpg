@@ -148,9 +148,10 @@ void PermaStorage::GetMonster (Monster * m, const int id)
            }
            m->Blows.push_back (&b);
         }
-        str1 << q.value("info").toString().split("|");
-        m->SetMaxHealth(str1[1].toFloat());
-        m->SetHealth(str1[1].toFloat());
+        QStringList s ;
+        s << q.value("info").toString().split("|");
+        m->SetMaxHealth(s[1].toFloat());
+        m->SetHealth(s[1].toFloat());
         m->SetRace ();
     }
 }
