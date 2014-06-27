@@ -15,7 +15,7 @@
 
 //==============================================================================
 GameServer::GameServer()
-  : levelMap_(192,192)
+  : levelMap_(64,64)
 {
     QTime midnight(0, 0, 0);
     qsrand(midnight.secsTo(QTime::currentTime()));
@@ -617,7 +617,7 @@ void GameServer::GenMonsters_()
          if (levelMap_.GetCell(j, i) == '.')
             {
                 monsterCounter++;
-                if (monsterCounter % 5 == 0)
+                if (monsterCounter % 10 == 0)
                 {
                     Monster* monster = CreateActor_<Monster>();
                     Monster& m = *monster;
