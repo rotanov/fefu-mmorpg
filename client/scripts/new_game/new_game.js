@@ -28,6 +28,8 @@ var id_
 var sid_
 var tick_
 
+var health
+
 function initSocket(wsUri) {
     socket = sock.WSConnect(wsUri, OnMessage)
 }
@@ -35,34 +37,42 @@ function initSocket(wsUri) {
 function OnMessage(e) {
     var data = JSON.parse(e.data);
 
-    if (data.tick_ ) {
+    if (data.tick) {
         tick_ = data.tick
+        if (data.events) {
+            
+        }
     }
 
     switch(data.action) {
     case "examine":
-        if (data.result == "ok") {
-            var gamer = actor.newActor(getActorID())
-            gamer.init(data)
-            gamer.drawInf()
-        } else {
+        if (data.result != "ok") {
             utils.cryBabyCry(data.result)
+            break
+        }
+        var gamer = actor.newActor(getActorID())
+        gamer.init(data)
+        gamer.drawInf()
+        if (data.id == id_) {
+            updateHealth(data)
         }
         break
 
     case "getDictionary":
-        console.log("Data received: " + data)
+        if (data.result != "ok") {
+            utils.cryBabyCry(data.result)
+        }
         break
 
     case "look":
-        if (data.result == "ok") {
-            gPlayerX = data.x
-            gPlayerY = data.y
-            renderWalls(data.map)
-            renderActors(data.actors)
-        } else {
+        if (data.result != "ok") {
             utils.cryBabyCry(data.result)
+            break
         }
+        gPlayerX = data.x
+        gPlayerY = data.y
+        renderWalls(data.map)
+        renderActors(data.actors)
         break
 
     case "move":
@@ -87,6 +97,9 @@ function OnMessage(e) {
         break
 
     case "attack":
+        if (data.result != "ok") {
+            utils.cryBabyCry(data.result)
+        }
         break
 
     case "equip":
@@ -149,10 +162,23 @@ function onCreate() {
     socket.look(sid_)
 
     fpsText = game.add.text(37, 37, "test", {
-        font: "65px Arial",
+        font: "30px Arial",
         fill: "#ff0044",
         align: "left"
     })
+
+    health = game.add.text(game.world.centerX+140, 55, "HEATH: 100%", {
+        font: "30px Arial",
+        fill: "#ff0044",
+        align: "right"
+    });
+
+    health.anchor.setTo(0.5, 0.5);
+}
+
+function updateHealth(data) {
+    var amount = (data.heath / data.maxHealth) * 100
+    health.setText("HEALTH: " + amount + " %");
 }
 
 function onUpdate() {
@@ -214,16 +240,9 @@ function createActors(start) {
     var frameIndex = 31
     var length = width * height * (start+1)
     for (var i = start; i < length; i++) {
-        var sprite = game.add.sprite(
-            coordinate(gPlayerX, 0, width),
-            coordinate(gPlayerY, 0, height),
-            "tileset",
-            frameIndex)
-
-        sprite.name = -1
-        sprite.inputEnabled = true
-        sprite.visible = false
-        sprite.anchor.setTo(0.5, 0.5)
+        var x = coordinate(gPlayerX, 0, width)
+        var y = coordinate(gPlayerY, 0, height)
+        var sprite = game.add.sprite(x, y, "tileset", frameIndex)
         actors.push(sprite)
     }
 }
@@ -241,49 +260,31 @@ function renderWalls(map) {
 
     for (var i = 0; i < map.length; i++) {
         for (var j = 0; j < map[i].length; j++ ) {
-                if (map[i][j] == "#") {
-                    setTile(i, j, 15)
-                } else {
-                    setTile(i, j, 21)
-                }
+            (map[i][j] == "#") ? setTile(i, j, 15) : setTile(i, j, 21)
         }
     }
 
     mapGlobal.paste(0, 0, tempTiles)
 }
 
-function monster(actor, j) {
-    var frameIndex = name_monster[actor.mobType]
-    actors[j].loadTexture("tileset_monster", frameIndex)
-}
-
-function player(actor, j) {
-    var frameIndex = 1
-    if (actor.id == id_) {
-        frameIndex = route
-    }
-    actors[j].loadTexture("player", frameIndex)
-}
-
 function renderActors(actor) {
     var j = 0
     for (var i = 0; i < actor.length; i++) {
-        if (actor[i].id) {
+        if (!actor[i].id) return
             if (j == actors[j].length) {
-                createActors(actors[j].length / width * height);
+                  createActors(actors[j].length / width * height);
             }
-            var frameIndex = 31
-            actors[j].name = actor[i].id
+            actors[j].id = actor[i].id
+            actors[j].x = coordinate(gPlayerX, actor[i].x, width)
+            actors[j].y = coordinate(gPlayerY, actor[i].y, height)
             actors[j].visible = true
             if (actor[i].type == "monster") {
-                monster(actor[i], j)
+                  actors[j].loadTexture("tileset_monster", name_monster[actor[i].mobType])
             } else {
-                player(actor[i], j)
+                  var frameIndex = (actor.id == id_) ? route : 1
+                  actors[j].loadTexture("player", frameIndex)
             }
-            actors[j].x = coordinate(gPlayerX, actor[i].x, width)
-            actors[j].y = coordinate(gPlayerY, actor[i].y, height) 
             j++
-        }
     }
 
     var k = actors.length
@@ -295,7 +296,7 @@ function renderActors(actor) {
 function getActorID() {
     for (var i = 0; i < actors.length; i++) {
         if (phaser.Rectangle.contains(actors[i].body, game.input.x, game.input.y)) {
-            return actors[i].name
+            return actors[i].id
         }
     }
     return 0
