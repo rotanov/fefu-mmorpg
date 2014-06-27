@@ -247,18 +247,18 @@ void GameServer::tick()
         Box box1(neighbour->GetPosition(), neighbour->GetSize(), neighbour->GetSize());
         if (box0.Intersect(box1))
         {
-         if (actor->OnCollideActor(neighbour) && events_.size () < 5)
+        /* if (actor->OnCollideActor(neighbour) && events_.size () < 5)
           {
             QVariantMap a = static_cast<Creature*>(actor)->atack(static_cast<Creature*>(neighbour));
-            if (a["health"] > 0)
+            if (a["health"] > -2000)
               events_ << a;
           }
           if (neighbour->OnCollideActor(actor) && events_.size () < 5)
           {
             QVariantMap a = static_cast<Creature*>(neighbour)->atack(static_cast<Creature*>(actor));
-            if (a["health"] > 0)
+            if (a["health"] > -2000)
               events_ << a;
-          }
+          }*/
         }
       }
     }
@@ -267,7 +267,7 @@ void GameServer::tick()
   QVariantMap tickMessage;
   tickMessage["tick"] = tick_;
   tickMessage["events"] = events_;
-  events_.clear ();
+  events_.clear();
   emit broadcastMessage(QString(QJsonDocument::fromVariant(tickMessage).toJson()));
   tick_++;
 }
@@ -287,6 +287,9 @@ void GameServer::HandleAttack_(const QVariantMap& request, QVariantMap& response
         if (box1.Intersect(box0) && p->GetId () != actor->GetId ())
         {
           QVariantMap a = p->atack (static_cast<Creature*>(actor));
+          if (a["health"] > 0)
+            events_ << a;
+          a = static_cast<Creature*>(actor)->atack (p);
           if (a["health"] > 0)
             events_ << a;
           WriteResult_(response, EFEMPResult::OK);
@@ -481,9 +484,8 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
 
   QVariantList rows;
 
+
   auto pos = p->GetPosition();
-  if (p->GetHealth () < 0)
-    p->SetHealth (200);
   response["x"] = pos.x;
   response["y"] = pos.y;
 
@@ -615,7 +617,7 @@ void GameServer::GenMonsters_()
          if (levelMap_.GetCell(j, i) == '.')
             {
                 monsterCounter++;
-                if (monsterCounter % 35 == 0)
+                if (monsterCounter % 5 == 0)
                 {
                     Monster* monster = CreateActor_<Monster>();
                     Monster& m = *monster;

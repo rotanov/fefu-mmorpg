@@ -32,8 +32,8 @@ public:
   virtual void SetRace();
   QString race_ = "NONE";
 private:
-  float health_ = 100.0f;
-  float maxHealth_ = 100.0f;
+  float health_ = 500.0f;
+  float maxHealth_ = 500.0f;
 
   // represents creature's inventory
   std::vector<Item*> items_;
