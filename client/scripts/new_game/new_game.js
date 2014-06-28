@@ -1,5 +1,5 @@
-define(["phaser", "utils", "object", "new_game/socket", "new_game/monsters"],
-function (phaser, utils, object, sock, monsters) {
+define(["phaser", "utils", "object", "new_game/socket", "new_game/monsters", "new_game/items"],
+function (phaser, utils, object, sock, monsters, items) {
 
 var game
 var socket
@@ -10,7 +10,6 @@ var actors = []
 var fpsText
 var tempTiles
 var mapGlobal = []
-var name_monster = []
 
 var upKey
 var downKey
@@ -32,6 +31,7 @@ var sid_
 var tick_
 
 var health
+var items_ = []
 var lifespan = 1
 
 function initSocket(wsUri) {
@@ -105,6 +105,7 @@ function OnMessage(e) {
     case "pickUp":
         if (data.result != "ok") {
             utils.cryBabyCry(data.result)
+            items_.pop()
         }
         break
     }
@@ -116,8 +117,6 @@ function Start(id, sid, h, w) {
 
     height = h
     width = w
-
-    name_monster = monsters.getNames()
 
     game = new phaser.Game(
         64 * w, 64 * h,
@@ -300,11 +299,11 @@ function setProperties(actor, idx) {
         actors[idx].loadTexture("player", frameIndex)
         break
     case "monster":
-        actors[idx].loadTexture("tileset_monster", name_monster[actor.mobType])
-        actors[idx].events.onInputDown.add(getItem, this)
+        actors[idx].loadTexture("tileset_monster", monsters.getFrame([actor.mobType]))
         break
     case "item":
-        actors[idx].events.onInputDown.add(getItem, {id: actor.id})
+        actors[idx].loadTexture("tileset_monster", items.getFrame([actor.name]))
+        actors[idx].events.onInputDown.add(getItem, {id: actor.id, name: actor.name})
         break
     case "projectile":
         break
@@ -314,6 +313,7 @@ function setProperties(actor, idx) {
 function getItem() {
     if (aKey.isDown) {
         socket.pickUp(this.id, sid_)
+        items_.push({"id": this.id, "name": this.name})
     }
 }
 
