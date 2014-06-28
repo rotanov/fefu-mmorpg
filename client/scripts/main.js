@@ -1,5 +1,7 @@
 ﻿require(["jquery", "phaser", "authorization", "test/test", "utils", "packages"],
 function ($, phaser, auth, test, utils, packages) {
+    $("#inf-about-obj").hide()
+    $("#items").hide()
 
     $("#register").click(function() {
         auth.jsonHandle("register", auth.registerCallback)

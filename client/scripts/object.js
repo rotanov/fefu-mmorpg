@@ -5,6 +5,7 @@ function($) {
         this.data = {
             "id": id,
             "type": null,
+            "name": null,
             "x": null,
             "y": null,
             "login": null,
@@ -24,6 +25,7 @@ function($) {
     }
 
     Object.prototype.drawInf = function() {
+        $("#inf-about-obj").show()
         $("#inf-about-obj").empty()
         for (var key in this.data) {
             if (this.data[key])
@@ -31,8 +33,6 @@ function($) {
                 .text(key + ": " + this.data[key])
                 .appendTo("#inf-about-obj")
         }
-        $("#inf-about-obj").css("background", "rgb(247, 247, 247)")
-        $("#inf-about-obj").css("border", "1px solid rgba(147, 184, 189, 0.8)")
     }
 
     function showInf(data) {
