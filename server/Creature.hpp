@@ -7,17 +7,6 @@
 
 class Item;
 
-typedef struct Demage {
-  int from;
-  int to;
-} Demage;
-
-typedef struct Blow {
-  QString attack;
-  QString effect;
-  Demage damage;
-} Blow;
-
 class Creature : public Actor
 {
 public:

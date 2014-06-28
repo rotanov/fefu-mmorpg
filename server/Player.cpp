@@ -39,21 +39,24 @@ void Player::SetRace()
 
 void Player::SetBlows()
 {
-  Blows.attack = "BITE";
-  Blows.damage.from = 1;
-  Blows.damage.to = 3;
-  Blows.effect = "HURT";
+  Blows["attack"] = "BITE";
+  Blows["damage"] = "1d5";
+  Blows["effect"] = "HURT";
 }
 
 QVariantMap Player::atack(Creature* actor)
 {
   int val = rand();
-  val = actor->GetHealth() - (val % Blows.damage.to + Blows.damage.from);
+  QStringList s;
+  QString str = Blows["damage"].toString();
+  s << str.split ("d");
+  val = actor->GetHealth() - (val % s[0].toInt()+ s[1].toInt ());
   actor->SetHealth(val);
   QVariantMap ans;
   ans["dealtDamage"] = val;
   ans["target"] = actor->GetId();
-  ans["blowType"] = Blows.attack;
+  ans["blowType"] = Blows["attack"];
   ans["attacker"] = GetId();
   return ans;
 }
+

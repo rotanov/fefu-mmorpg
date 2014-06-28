@@ -128,26 +128,8 @@ void PermaStorage::GetMonster (Monster * m, const int id)
         m->description = q.value("description").toString();
         QString str = q.value("flags").toString();
         m->Flags << str.split("|");
-        str = q.value("blow_method").toString();
-        QStringList str1, blow;
-        Blow b;
-        str1 << str.split("@");
-        for (auto& a : str1)
-        {
-           blow << a.split("|");
-           b.attack = blow[0];
-           b.effect = blow[1];
-           b.damage.from = 1;
-           b.damage.to  = 2;
-           if (blow.length () == 3)
-           {
-             QStringList k;
-             k << blow[2].split("d");
-             b.damage.from = k[0].toInt();
-             b.damage.to = k[1].toInt();
-           }
-           m->Blows.push_back (&b);
-        }
+        QString st = q.value("blow_method").toString();
+        m->Blows << st.split("@");
         QStringList s ;
         s << q.value("info").toString().split("|");
         m->SetMaxHealth(s[1].toFloat());

@@ -69,7 +69,7 @@ public:
   QString description;
   QString symbol;
   QStringList Flags;
-  QVector<Blow*> Blows;
+  QStringList Blows;
 private:
     QString race_;
     QMap<QString,QString> Hates =

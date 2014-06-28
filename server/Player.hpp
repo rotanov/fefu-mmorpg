@@ -17,7 +17,7 @@ public:
   virtual QVariantMap atack(Creature* actor);
   void SetBlows();
   virtual void SetRace();
-  Blow Blows;
+  QVariantMap Blows;
 private:
   QString login_;
   unsigned clientTick_ = 0;

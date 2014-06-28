@@ -84,13 +84,22 @@ void Monster::SetRace()
 
 QVariantMap Monster::atack(Creature* actor)
 {
-  //int val = rand();
-  float val = actor->GetHealth() - 1.0f;
+  int val = rand();
+  QStringList s;
+  s << Blows[0].split ("|");
+  if (s.length () == 3)
+  {
+    QStringList d;
+    d << s[2].split ("d");
+    val = actor->GetHealth() - (val % d[0].toInt()+ d[1].toInt ());
+  } else {
+    val = actor->GetHealth() - 2.0f;
+  }
   actor->SetHealth(val);
   QVariantMap ans;
   ans["dealtDamage"] = val;
   ans["target"] = actor->GetId();
-  ans["blowType"] = Blows[0]->attack;
+  ans["blowType"] = s[0];
   ans["attacker"] = GetId();
   return ans;
 }
