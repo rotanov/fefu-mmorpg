@@ -552,17 +552,18 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
             auto m = static_cast<Creature*> (a);
             actor["health"] = m->GetHealth();
             actor["maxHealth"] = m->GetMaxHealth();
-        } else {
+        }
+        if (actor["type"] == "item"){
           auto m = static_cast<Item*> (a);
-          response["name"] = m->Getname ();
-          response["type_item"] = m->GetTypeItem();
-          response["class_item"] = m->GetClass ();
-          response["subtype"] = m->GetSubtype ();
+          actor["name"] = m->Getname ();
+          actor["type_item"] = m->GetTypeItem();
+          actor["class_item"] = m->GetClass ();
+          actor["subtype"] = m->GetSubtype ();
         }
         actor["x"] = a->GetPosition().x;
         actor["y"] = a->GetPosition().y;
         actor["id"] = a->GetId();
-        if (actor["health"] > 0 || actor["type"] == "item")
+        if (actor["type"] == "item" || actor["health"] > 0 )
           actors << actor;
    }
 
@@ -594,9 +595,9 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
       auto m = static_cast<Monster*> (actor);
       response["mobType"] = m->GetName();
   }
-  if (actor->GetType () == "item")
+  if (response["type"] == "item")
   {
-    auto m = static_cast<Item*> (actor);
+    auto m = static_cast<Item*>(actor);
     response["name"] = m->Getname ();
     response["type_item"] = m->GetTypeItem();
     response["class_item"] = m->GetClass ();
