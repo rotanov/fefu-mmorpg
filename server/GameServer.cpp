@@ -258,16 +258,22 @@ void GameServer::tick()
           {
            if (static_cast<Creature*>(neighbour)->GetHealth () > 10)
            {
-             QVariantMap a = static_cast<Creature*>(actor)->atack(static_cast<Creature*>(neighbour));
-             events_ << a;
+             if (static_cast<Creature*>(actor)->GetHealth () > 0)
+             {
+               QVariantMap a = static_cast<Creature*>(actor)->atack(static_cast<Creature*>(neighbour));
+               events_ << a;
+             }
            }
           }
           if (neighbour->OnCollideActor(actor))
           {
             if (static_cast<Creature*>(actor)->GetHealth () > 10)
             {
-              QVariantMap a = static_cast<Creature*>(neighbour)->atack(static_cast<Creature*>(actor));
-              events_ << a;
+              if (static_cast<Creature*>(neighbour)->GetHealth () > 0)
+              {
+                QVariantMap a = static_cast<Creature*>(neighbour)->atack(static_cast<Creature*>(actor));
+                events_ << a;
+              }
             }
           }
         }
@@ -287,20 +293,24 @@ void GameServer::HandleAttack_(const QVariantMap& request, QVariantMap& response
 {
     for (Actor* actor : actors_)
     {
+      if (actor->GetType () == "monster" || actor->GetType () == "player")
+      {
+        Creature* target = static_cast<Creature*>(actor);
         Box box0(actor->GetPosition(), 1.0f, 1.0f);
         auto pos = request["target"].toList();
         Box box1(Vector2(pos[0].toFloat(),pos[1].toFloat()) , 1.0f, 1.0f);
         auto sid = request["sid"].toByteArray();
         auto it = sidToPlayer_.find(sid);
         Player* p = it.value();
-        if (box1.Intersect(box0) && p->GetId () != actor->GetId ())
+        if (box1.Intersect(box0) && p->GetId () != target->GetId () && target->GetHealth () > 0)
         {
-          QVariantMap a = p->atack (static_cast<Creature*>(actor));
+          QVariantMap a = p->atack (target);
           events_ << a;
-          a = static_cast<Creature*>(actor)->atack (p);
+          a = target->atack (p);
           events_ << a;
           WriteResult_(response, EFEMPResult::OK);
         }
+      }
     }
 }
 
