@@ -37,7 +37,7 @@ h1, form
   overflow: hidden;
 }
 
-#form-register, #actors
+#form-register, #inf-about-obj
 {
   top: 0px;
   border-radius: 5px;
@@ -57,7 +57,7 @@ h1, form
   position: absolute;
 }
 
-#actors
+#inf-about-obj
 {
   padding: 5px 15px 5px 5px;
 }

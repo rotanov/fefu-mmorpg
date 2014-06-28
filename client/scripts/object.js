@@ -1,7 +1,7 @@
 define(["jquery"],
-function ($) {
+function($) {
 
-    function Actor(id) {
+    function Object(id) {
         this.data = {
             "id": id,
             "type": null,
@@ -10,35 +10,39 @@ function ($) {
             "login": null,
             "health" : null,
             "maxHealth": null,
+            "mana": null,
+            "maxMana": null,
             "mobType" : null
         }
     }
 
-    Actor.prototype.init = function(examineData) {
+    Object.prototype.init = function(examineData) {
         for (var key in this.data) {
             if (examineData[key])
                 this.data[key] = examineData[key]
         }
     }
 
-    Actor.prototype.drawInf = function() {
-        $("#actors").empty()
+    Object.prototype.drawInf = function() {
+        $("#inf-about-obj").empty()
         for (var key in this.data) {
             if (this.data[key])
                 $("<div/>", {})
                 .text(key + ": " + this.data[key])
-                .appendTo("#actors")
+                .appendTo("#inf-about-obj")
         }
-        $("#actors").css("background", "rgb(247, 247, 247)")
-        $("#actors").css("border", "1px solid rgba(147, 184, 189, 0.8)")
+        $("#inf-about-obj").css("background", "rgb(247, 247, 247)")
+        $("#inf-about-obj").css("border", "1px solid rgba(147, 184, 189, 0.8)")
     }
 
-    function newActor(id) {
-        return new Actor(id)
+    function newObject(data) {
+        var obj = new Object(data.id)
+        obj.init(data)
+        return obj
     }
 
     return {
-        newActor: newActor
+        newObject: newObject
     }
 
 })

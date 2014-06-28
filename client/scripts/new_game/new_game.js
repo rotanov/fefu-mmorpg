@@ -1,5 +1,5 @@
-define(["phaser", "utils", "actor", "new_game/socket", "new_game/monsters"],
-function (phaser, utils, actor, sock, monsters) {
+define(["phaser", "utils", "object", "new_game/socket", "new_game/monsters"],
+function (phaser, utils, object, sock, monsters) {
 
 var game
 var socket
@@ -53,9 +53,8 @@ function OnMessage(e) {
             utils.cryBabyCry(data.result)
             break
         }
-        var gamer = actor.newActor(getActorID())
-        gamer.init(data)
-        gamer.drawInf()
+        var obj = object.newObject(data)
+        obj.drawInf()
         if (data.id == id_) {
             updateHealth(data)
         }
