@@ -138,6 +138,28 @@ void PermaStorage::GetMonster (Monster * m, const int id)
     }
 }
 
+void PermaStorage::GetItem(Item* i, const int id )
+{
+  QSqlQuery q;
+  q.prepare("SELECT * FROM items WHERE id = :id");
+  q.bindValue(":id", id);
+  if (ExecQuery_(q))
+  {
+    q.next();
+    i->SetName(q.value("name").toString());
+    i->SetWeight(q.value("weight").toInt());
+    QString str = q.value("flags").toString();
+    i->Flags << str.split("|");
+    QString st = q.value("bonus").toString();
+    i->bonus << st.split("@");
+    QStringList s ;
+    s << q.value("atype").toString().split("|");
+    i->SetClass (s[0]);
+    i->SetTypeItem (s[1]);
+    i->SetSubtype (s[2]);
+  }
+}
+
 bool PermaStorage::IfLoginPresent(const QString login)
 {
   QSqlQuery q;
