@@ -229,7 +229,14 @@ void GameServer::tick()
     actor->SetVelocity(v);
     levelMap_.RemoveActor(actor);
     actor->Update(dt);
-
+    if (actor->GetType () == "player" )
+    {
+      Creature* a  = static_cast<Creature*> (actor);
+      if (a->GetHealth() < a->GetMaxHealth())
+      {
+        a->SetHealth(a->GetHealth() + 1);
+      }
+    }
     collideWithGrid(actor);
 
     auto cells = actor->GetOccupiedCells();
@@ -247,18 +254,22 @@ void GameServer::tick()
         Box box1(neighbour->GetPosition(), neighbour->GetSize(), neighbour->GetSize());
         if (box0.Intersect(box1))
         {
-        /* if (actor->OnCollideActor(neighbour) && events_.size () < 5)
+         if (actor->OnCollideActor(neighbour))
           {
-            QVariantMap a = static_cast<Creature*>(actor)->atack(static_cast<Creature*>(neighbour));
-            if (a["health"] > -2000)
-              events_ << a;
+           if (static_cast<Creature*>(neighbour)->GetHealth () > 10)
+           {
+             QVariantMap a = static_cast<Creature*>(actor)->atack(static_cast<Creature*>(neighbour));
+             events_ << a;
+           }
           }
-          if (neighbour->OnCollideActor(actor) && events_.size () < 5)
+          if (neighbour->OnCollideActor(actor))
           {
-            QVariantMap a = static_cast<Creature*>(neighbour)->atack(static_cast<Creature*>(actor));
-            if (a["health"] > -2000)
+            if (static_cast<Creature*>(actor)->GetHealth () > 10)
+            {
+              QVariantMap a = static_cast<Creature*>(neighbour)->atack(static_cast<Creature*>(actor));
               events_ << a;
-          }*/
+            }
+          }
         }
       }
     }
@@ -276,22 +287,18 @@ void GameServer::HandleAttack_(const QVariantMap& request, QVariantMap& response
 {
     for (Actor* actor : actors_)
     {
-        Box box0(actor->GetPosition(), 0.5f, 0.5f);
+        Box box0(actor->GetPosition(), 1.0f, 1.0f);
         auto pos = request["target"].toList();
         Box box1(Vector2(pos[0].toFloat(),pos[1].toFloat()) , 1.0f, 1.0f);
-       // qDebug() << pos;
-       // qDebug() << actor->GetPosition().GetX () << actor->GetPosition().GetY ();
         auto sid = request["sid"].toByteArray();
         auto it = sidToPlayer_.find(sid);
         Player* p = it.value();
         if (box1.Intersect(box0) && p->GetId () != actor->GetId ())
         {
           QVariantMap a = p->atack (static_cast<Creature*>(actor));
-          if (a["health"] > 0)
-            events_ << a;
+          events_ << a;
           a = static_cast<Creature*>(actor)->atack (p);
-          if (a["health"] > 0)
-            events_ << a;
+          events_ << a;
           WriteResult_(response, EFEMPResult::OK);
         }
     }
@@ -639,8 +646,8 @@ Player* GameServer::CreatePlayer_(const QString login)
 
   int x = 0;
   int y = 0;
-  int c = 96;
-  int r = 96;
+  int c = 10;
+  int r = 10;
 
   while (true)
   {
