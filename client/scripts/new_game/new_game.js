@@ -295,13 +295,8 @@ function renderActors(actor) {
         actors[j].id = actor[i].id
         actors[j].x = coordinate(gPlayerX, actor[i].x, width)
         actors[j].y = coordinate(gPlayerY, actor[i].y, height)
-        if (actor[i].type == "monster") {
-            actors[j].loadTexture("tileset_monster", name_monster[actor[i].mobType])
-        } else {
-            var frameIndex = (actor[i].id == id_) ? route : 1
-            actors[j].loadTexture("player", frameIndex)
-        }
         actors[j].visible = true
+        setTexture(actor[i], j)
     }
 
     var k = actors.length
@@ -317,6 +312,22 @@ function getActorID() {
         }
     }
     return 0
+}
+
+function setTexture(actor, idx) {
+    switch (actor.type) {
+    case "player":
+        var frameIndex = (actor.id == id_) ? route : 1
+        actors[idx].loadTexture("player", frameIndex)
+        break
+    case "monster":
+        actors[idx].loadTexture("tileset_monster", name_monster[actor.mobType])
+        break
+    case "item":
+        break
+    case "projectile":
+        break
+    }
 }
 
 var rectTop = new phaser.Rectangle(0, 0, 64 * width, 32)
