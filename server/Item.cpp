@@ -15,7 +15,7 @@ QString Item::Getname()
   return name_;
 }
 
-QString Item::GetWeight()
+int Item::GetWeight()
 {
   return weight_;
 }
@@ -28,6 +28,10 @@ QString Item::GetTypeItem()
 QString Item::GetSubtype()
 {
   return subtype_;
+}
+QString Item::GetClass()
+{
+  return class_item;
 }
 
 void Item::SetName(QString str)
@@ -47,7 +51,8 @@ void Item::SetTypeItem(QString str)
 
 void Item::SetSubtype(QString str)
 {
-  subtype_ = subtype[str.toInt()];
+  int i = str.toInt () > 0?str.toInt ():0;
+  subtype_ = subtype[i];
 }
 
 void Item::SetClass(QString str)

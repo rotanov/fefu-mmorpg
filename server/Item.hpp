@@ -9,7 +9,7 @@ public:
   Item();
   virtual ~Item();
   QString Getname();
-  QString GetWeight();
+  int GetWeight();
   QString GetTypeItem();
   QString GetSubtype();
   QString GetClass();
@@ -22,7 +22,7 @@ public:
   QStringList bonus;
 private:
   QString name_;
-  QString weight_;
+  int weight_;
   QString type_item;
   QString class_item;
   QString subtype_;
