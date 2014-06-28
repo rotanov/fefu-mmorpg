@@ -60,3 +60,12 @@ QVariantMap Player::atack(Creature* actor)
   return ans;
 }
 
+Item* Player::GetSlot(Slot st)
+{
+  return slot_[st];
+}
+
+void Player::SetSlot(Slot st, Item* item)
+{
+  slot_[st] = item;
+}
