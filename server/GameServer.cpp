@@ -626,6 +626,7 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
     levelMap_.RemoveActor(item);
     actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());
     p->items_.push_back (static_cast<Item*>(item));
+    WriteResult_(response, EFEMPResult::OK);
   } else {
     WriteResult_(response, EFEMPResult::BAD_ID);
   }
