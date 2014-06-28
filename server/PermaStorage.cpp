@@ -153,7 +153,7 @@ void PermaStorage::GetItem(Item* i, const int id )
     QString st = q.value("bonus").toString();
     i->bonus << st.split("@");
     QStringList s ;
-    s << q.value("atype").toString().split("|");
+    s << q.value("atype").toString().split(":");
     i->SetClass (s[0]);
     i->SetTypeItem (s[1]);
     i->SetSubtype (s[2]);
