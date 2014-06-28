@@ -37,6 +37,7 @@ function ($, utils, ws, game) {
             $("#server-answer").text("Authentication is successful.").css("color", "green")
             $("#logout").css("visibility", "visible")
             sid_ = data.sid
+            var consts = utils.serverHandler({"action": "getConst"})
             $.when(
                 game.initSocket(data.webSocket),
                 ws.timeout(
@@ -47,7 +48,7 @@ function ($, utils, ws, game) {
                     })
             ).done(
                 function() {
-                    game.start(data.id, data.sid)
+                    game.start(data.id, data.sid, consts.screenRowCount, consts.screenColumnCount)
                 }
             )
 

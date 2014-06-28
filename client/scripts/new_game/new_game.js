@@ -44,7 +44,7 @@ function OnMessage(e) {
     if (data.tick) {
         tick_ = data.tick
         if (data.events) {
-            
+            console.log(data)
         }
     }
 
@@ -84,15 +84,6 @@ function OnMessage(e) {
         }
         break
 
-    case "getConst":
-        if (data.result == "ok") {
-            height = data.screenRowCount
-            width  = data.screenColumnCount
-        } else {
-            utils.CryBabyCry(getConstData.result);
-        }
-        break
-
     case "destroyItem":
         break
 
@@ -120,15 +111,17 @@ function OnMessage(e) {
     }
 }
 
-function Start(id, sid) {
+function Start(id, sid, h, w) {
     id_ = id
     sid_ = sid
+
+    height = h
+    width = w
+
     name_monster = monsters.getNames()
 
-    socket.getConst()
-
     game = new phaser.Game(
-        64 * width, 64 * height,
+        64 * w, 64 * h,
         phaser.CANVAS, 
         "",
         {
