@@ -16,7 +16,8 @@ var upKey
 var downKey
 var leftKey
 var rightKey
-var zKey
+var zKey //attack
+var aKey //+ click = pickUp
 
 var width  = 9
 var height = 7
@@ -112,6 +113,9 @@ function OnMessage(e) {
         break
 
     case "pickUp":
+        if (data.result != "ok") {
+            utils.cryBabyCry(data.result)
+        }
         break
     }
 }
@@ -159,7 +163,8 @@ function onCreate() {
     downKey = game.input.keyboard.addKey(phaser.Keyboard.DOWN)
     leftKey = game.input.keyboard.addKey(phaser.Keyboard.LEFT)
     rightKey = game.input.keyboard.addKey(phaser.Keyboard.RIGHT)
-    zKey = game.input.keyboard.addKey(phaser.Keyboard.Z);
+    zKey = game.input.keyboard.addKey(phaser.Keyboard.Z)
+    aKey = game.input.keyboard.addKey(phaser.Keyboard.A)
 
     createActors(0)
     socket.look(sid_)
@@ -207,6 +212,7 @@ function onUpdate() {
             socket.examine(id, sid_)
         }
     }
+
     if (upKey.isDown) {
         route = 3
         socket.move("north", tick_, sid_)
@@ -223,34 +229,12 @@ function onUpdate() {
         socket.move("east", tick_, sid_)
     }
 
-    if (lifespan) {
-        socket.look(sid_)
+    if (zKey.isDown && lifespan) {
+        socket.attack([gPlayerX, gPlayerY], sid_)
     }
 
-    if (zKey.isDown) {
-        var x, y
-        switch(route) {
-        case 3:
-            x = gPlayerX
-            y = gPlayerY //+ step
-            break
-        case 1:
-            x = gPlayerX
-            y = gPlayerY // - step
-            break
-        case 9:
-            x = gPlayerX //+ step
-            y = gPlayerY
-            break
-        case 11:
-            x = gPlayerX //- step
-            y = gPlayerY
-            break
-        }
-
-        if (lifespan) {
-            socket.attack([x, y], sid_)
-        }
+    if (lifespan) {
+        socket.look(sid_)
     }
 }
 
@@ -266,6 +250,7 @@ function createActors(start) {
         var y = coordinate(gPlayerY, 0, height)
         var sprite = game.add.sprite(x, y, "tileset", frameIndex)
         sprite.anchor.setTo(0.5, 0.5)
+        sprite.inputEnabled = true
         actors.push(sprite)
     }
 }
@@ -298,7 +283,7 @@ function renderActors(actor) {
         actors[j].x = coordinate(gPlayerX, actor[i].x, width)
         actors[j].y = coordinate(gPlayerY, actor[i].y, height)
         actors[j].visible = true
-        setTexture(actor[i], j)
+        setProperties(actor[i], j)
     }
 
     var k = actors.length
@@ -316,7 +301,7 @@ function getActorID() {
     return 0
 }
 
-function setTexture(actor, idx) {
+function setProperties(actor, idx) {
     switch (actor.type) {
     case "player":
         var frameIndex = (actor.id == id_) ? route : 1
@@ -324,11 +309,19 @@ function setTexture(actor, idx) {
         break
     case "monster":
         actors[idx].loadTexture("tileset_monster", name_monster[actor.mobType])
+        actors[idx].events.onInputDown.add(getItem, this)
         break
     case "item":
+        actors[idx].events.onInputDown.add(getItem, {id: actor.id})
         break
     case "projectile":
         break
+    }
+}
+
+function getItem() {
+    if (aKey.isDown) {
+        socket.pickUp(this.id, sid_)
     }
 }
 
