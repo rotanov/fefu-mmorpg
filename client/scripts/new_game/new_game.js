@@ -44,7 +44,7 @@ function OnMessage(e) {
     if (data.tick) {
         tick_ = data.tick
         if (data.events) {
-            console.log(data)
+            //console.log(data)
         }
     }
 
@@ -54,8 +54,7 @@ function OnMessage(e) {
             utils.cryBabyCry(data.result)
             break
         }
-        var obj = object.newObject(data)
-        obj.drawInf()
+        object.showInf(data)
         if (data.id == id_) {
             updateHealth(data)
         }

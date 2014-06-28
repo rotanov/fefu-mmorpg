@@ -35,14 +35,15 @@ function($) {
         $("#inf-about-obj").css("border", "1px solid rgba(147, 184, 189, 0.8)")
     }
 
-    function newObject(data) {
+    function showInf(data) {
         var obj = new Object(data.id)
         obj.init(data)
+        obj.drawInf()
         return obj
     }
 
     return {
-        newObject: newObject
+        showInf: showInf
     }
 
 })
