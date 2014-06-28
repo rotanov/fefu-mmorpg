@@ -57,7 +57,7 @@ function ($) {
     }
 
     function cryBabyCry(result) {
-        alert("Error: " + result)
+        console.log("Error: " + result)
     }
 
     return {
