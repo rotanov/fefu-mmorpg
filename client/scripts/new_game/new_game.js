@@ -204,7 +204,7 @@ function onUpdate() {
 
     if (game.input.mousePointer.isDown) {
         var id = getActorID()
-        if (id) {
+        if (id && lifespan) {
             socket.examine(id, sid_)
         }
     }
@@ -248,7 +248,10 @@ function onUpdate() {
             y = gPlayerY
             break
         }
-        socket.attack([x, y], sid_)
+
+        if (lifespan) {
+            socket.attack([x, y], sid_)
+        }
     }
 }
 
