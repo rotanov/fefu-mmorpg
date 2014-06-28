@@ -82,7 +82,12 @@ private:
     {"getDictionary", &GameServer::HandleGetDictionary_},
     {"look", &GameServer::HandleLook_},
     {"move", &GameServer::HandleMove_},
-    {"attack", &GameServer::HandleAttack_}
+    {"attack", &GameServer::HandleAttack_},
+    {"pickUp", &GameServer::HandlePickUp_}, //взять
+    {"unequip", &GameServer::HandleUnequip_}, // снять
+    {"use", &GameServer::HandleUse_},// использовать
+    {"drop", &GameServer::HandleDrop_},// положить
+    {"equip", &GameServer::HandleEquip_},// одеть
   };
 
   void HandleStartTesting_(const QVariantMap& request, QVariantMap& response);
@@ -101,12 +106,18 @@ private:
   void HandleLook_(const QVariantMap& request, QVariantMap& response);
   void HandleMove_(const QVariantMap& request, QVariantMap& response);
   void HandleAttack_(const QVariantMap& request, QVariantMap& response);
+  void HandlePickUp_(const QVariantMap& request, QVariantMap& response);
+  void HandleUnequip_(const QVariantMap& request, QVariantMap& response);
+  void HandleUse_(const QVariantMap& request, QVariantMap& response);
+  void HandleDrop_(const QVariantMap& request, QVariantMap& response);
+  void HandleEquip_(const QVariantMap& request, QVariantMap& response);
 //==============================================================================
 
   void WriteResult_(QVariantMap& response, const EFEMPResult result);
 
   void LoadLevelFromImage_(const QString filename);
   void GenMonsters_();
+  void GetItems(Creature* actor);
   Player* CreatePlayer_(const QString login);
   void SetActorPosition_(Actor* actor, const Vector2& position);
 

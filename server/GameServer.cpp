@@ -307,6 +307,10 @@ void GameServer::HandleAttack_(const QVariantMap& request, QVariantMap& response
           QVariantMap a = p->atack (target);
           events_ << a;
           a = target->atack (p);
+          if (target->GetHealth () < 0)
+          {
+            GetItems(target);
+          }
           events_ << a;
           WriteResult_(response, EFEMPResult::OK);
         }
@@ -548,11 +552,17 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
             auto m = static_cast<Creature*> (a);
             actor["health"] = m->GetHealth();
             actor["maxHealth"] = m->GetMaxHealth();
+        } else {
+          auto m = static_cast<Item*> (a);
+          response["name"] = m->Getname ();
+          response["type_item"] = m->GetTypeItem();
+          response["class_item"] = m->GetClass ();
+          response["subtype"] = m->GetSubtype ();
         }
         actor["x"] = a->GetPosition().x;
         actor["y"] = a->GetPosition().y;
         actor["id"] = a->GetId();
-        if (actor["health"] > 0)
+        if (actor["health"] > 0 || actor["type"] == "item")
           actors << actor;
    }
 
@@ -584,6 +594,13 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
       auto m = static_cast<Monster*> (actor);
       response["mobType"] = m->GetName();
   }
+  if (actor->GetType () == "item")
+  {
+    auto m = static_cast<Item*> (actor);
+    response["name"] = m->Getname ();
+    response["type_item"] = m->GetTypeItem();
+    response["class_item"] = m->GetClass ();
+  }
   response["x"] = actor->GetPosition().x;
   response["y"] = actor->GetPosition().y;
   response["id"] = actor->GetId();
@@ -593,6 +610,50 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
   {
     response["login"] = p->GetLogin();
   }
+}
+
+//==============================================================================
+void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response)
+{
+  auto sid = request["sid"].toByteArray();
+  Player* p = sidToPlayer_[sid];
+  Actor* item = idToActor_[request["id"].toInt()];
+  Box box0(p->GetPosition(), 1.0f, 1.0f);
+  Box box1(item->GetPosition (), 1.0f, 1.0f);
+  if (box1.Intersect(box0))
+  {
+    idToActor_.erase(item->GetId());
+    levelMap_.RemoveActor(item);
+    actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());
+    p->items_.push_back (static_cast<Item*>(item));
+  } else {
+    WriteResult_(response, EFEMPResult::BAD_ID);
+  }
+
+}
+
+//==============================================================================
+void GameServer::HandleUnequip_(const QVariantMap& , QVariantMap& )
+{
+
+}
+
+//==============================================================================
+void GameServer::HandleUse_(const QVariantMap& , QVariantMap& )
+{
+
+}
+
+//==============================================================================
+void GameServer::HandleDrop_(const QVariantMap& , QVariantMap& )
+{
+
+}
+
+//==============================================================================
+void GameServer::HandleEquip_(const QVariantMap& , QVariantMap& )
+{
+
 }
 
 //==============================================================================
@@ -640,7 +701,7 @@ void GameServer::GenMonsters_()
                     Monster& m = *monster;
                     SetActorPosition_(monster, Vector2(j + 0.5f, i + 0.5f));
                     m.SetDirection(static_cast<EActorDirection>(rand() % 4 + 1));
-                    storage_.GetMonster(monster, monster->GetId() % 33 + 1);
+                    storage_.GetMonster(monster, monster->GetId() % 32 + 1);
                 }
             }
         }
@@ -682,6 +743,25 @@ Player* GameServer::CreatePlayer_(const QString login)
   SetActorPosition_(player, Vector2(x + 0.5f, y + 0.5f));
 
   return player;
+}
+
+//==============================================================================
+
+void GameServer::GetItems (Creature* actor)
+{
+  if (actor->GetType () == "player")
+  {
+    for(Item* item: static_cast<Player*>(actor)->items_)
+    {
+      item->SetPosition (actor->GetPosition ());
+      actors_.push_back (item);
+    }
+  } else {
+    Item* item = CreateActor_<Item>();
+    SetActorPosition_(item, actor->GetPosition ());
+    storage_.GetItem (item, item->GetId() % 33 + 1 );
+  }
+
 }
 
 //==============================================================================

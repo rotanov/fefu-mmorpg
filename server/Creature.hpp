@@ -23,7 +23,4 @@ public:
 private:
   float health_ = 500.0f;
   float maxHealth_ = 500.0f;
-
-  // represents creature's inventory
-  std::vector<Item*> items_;
 };

@@ -18,7 +18,10 @@ public:
   void SetBlows();
   virtual void SetRace();
   QVariantMap Blows;
+  // represents creature's inventory
+  std::vector<Item*> items_;
 private:
   QString login_;
   unsigned clientTick_ = 0;
+
 };
