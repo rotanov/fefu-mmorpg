@@ -31,7 +31,6 @@ var sid_
 var tick_
 
 var health
-var items_ = []
 var lifespan = 1
 
 function initSocket(wsUri) {
@@ -105,7 +104,7 @@ function OnMessage(e) {
     case "pickUp":
         if (data.result != "ok") {
             utils.cryBabyCry(data.result)
-            items_.pop()
+            deleteItem()
         }
         break
     }
@@ -313,8 +312,17 @@ function setProperties(actor, idx) {
 function getItem() {
     if (aKey.isDown) {
         socket.pickUp(this.id, sid_)
-        items_.push({"id": this.id, "name": this.name})
+        addItem({"id": this.id, "name": this.name})
     }
+}
+
+function addItem(data) {
+    $("#items select#items")
+    .append("<option value='" + data.id + "'>" + data.name + "</option>")
+}
+
+function deleteItem() {
+    $("#items select#items option:last").remove()
 }
 
 var rectTop = new phaser.Rectangle(0, 0, 64 * width, 32)
