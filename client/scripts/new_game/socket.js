@@ -103,6 +103,14 @@ define(function() {
         }))
     }
 
+    Socket.prototype.use = function(id, sid) {
+        this.sock.send(JSON.stringify({
+            "action": "use",
+            "id": id,
+            "sid": sid
+        }))
+    }
+
     Socket.prototype.getConst = function() {
         this.sock.send(JSON.stringify({
             "action": "getConst"
