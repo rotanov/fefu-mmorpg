@@ -552,6 +552,8 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
             auto m = static_cast<Creature*> (a);
             actor["health"] = m->GetHealth();
             actor["maxHealth"] = m->GetMaxHealth();
+        } else {
+          actor["name"] = static_cast<Item*> (a)->Getname ();
         }
         actor["x"] = a->GetPosition().x;
         actor["y"] = a->GetPosition().y;
