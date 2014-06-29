@@ -708,9 +708,8 @@ void GameServer::HandleDrop_(const QVariantMap& request, QVariantMap& response)
     if (item->GetId() == id)
     {
       idToActor_[item->GetId()] = item;
-      levelMap_.IndexActor(item);
       actors_.push_back(item);
-      SetActorPosition_(item, p->GetPosition ());
+      item->SetPosition (p->GetPosition ());
       p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
       WriteResult_(response, EFEMPResult::OK);
       return;
