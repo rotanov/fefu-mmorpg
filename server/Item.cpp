@@ -30,7 +30,7 @@ QString Item::GetSubtype()
   return subtype_;
 }
 
-QString Item::GetMessage ()()
+QString Item::GetMessage()
 {
   return massege_;
 }
