@@ -148,6 +148,7 @@ void PermaStorage::GetItem(Item* i, const int id )
     q.next();
     i->SetName(q.value("name").toString());
     i->SetWeight(q.value("weight").toInt());
+    i->SetMessage (q.value("message").toString () );
     QString str = q.value("flags").toString();
     i->Flags << str.split("|");
     QString st = q.value("bonus").toString();

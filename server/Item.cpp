@@ -29,6 +29,12 @@ QString Item::GetSubtype()
 {
   return subtype_;
 }
+
+QString Item::GetMessage ()()
+{
+  return massege_;
+}
+
 QString Item::GetClass()
 {
   return class_item;
@@ -42,6 +48,11 @@ void Item::SetName(QString str)
 void Item::SetWeight(int str)
 {
   weight_ = str;
+}
+
+void Item::SetMessage (QString str)
+{
+  massege_ = str;
 }
 
 void Item::SetTypeItem(QString str)
