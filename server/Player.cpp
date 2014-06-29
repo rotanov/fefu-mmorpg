@@ -43,6 +43,25 @@ void Player::SetBlows()
   Blows["damage"] = "1d5";
   Blows["effect"] = "HURT";
 }
+void Player::SetDemage(QString str, bool b)
+{
+  QStringList s1;
+  s1 << Blows["damage"].toString().split("d");
+  QStringList s2;
+  s2 << str.split("d");
+  QString result;
+  if (b)
+  {
+    int d1 = s1[0].toInt() + s2[0].toInt();
+    int d2 = s1[1].toInt() + s2[1].toInt();
+    result = QString(d1) + "d" + QString(d2);
+  } else {
+    int d1 = s1[0].toInt() - s2[0].toInt();
+    int d2 = s1[1].toInt() - s2[1].toInt();
+    result = QString(d1) + "d" + QString(d2);
+  }
+  Blows["damage"] = result;
+}
 
 QVariantMap Player::atack(Creature* actor)
 {
@@ -69,3 +88,4 @@ void Player::SetSlot(Slot st, Item* item)
 {
   slot_[st] = item;
 }
+

@@ -3,6 +3,7 @@
 #include <QString>
 
 #include "Creature.hpp"
+
 enum Slot
 {
   left_hand,
@@ -14,7 +15,7 @@ enum Slot
   body_armor,
   head_helmet,
   forearm_gloves,
-  feet
+  feet,
 };
 
 class Player : public Creature
@@ -32,6 +33,7 @@ public:
   Item* GetSlot(Slot st);
   void SetSlot(Slot st, Item* item);
   virtual void SetRace();
+  void SetDemage(QString str, bool b);
   QVariantMap Blows;
   // represents creature's inventory
   std::vector<Item*> items_;
