@@ -703,9 +703,27 @@ void GameServer::HandleDrop_(const QVariantMap& request, QVariantMap& response)
 }
 
 //==============================================================================
-void GameServer::HandleEquip_(const QVariantMap& , QVariantMap& )
+void GameServer::HandleEquip_(const QVariantMap& request, QVariantMap& response)
 {
-
+  auto sid = request["sid"].toByteArray();
+  Player* p = sidToPlayer_[sid];
+  Item* item = p->items_[request["id"].toInt()];
+  if (!item)
+  {
+    WriteResult_(response, EFEMPResult::BAD_ID);
+    return;
+  }
+  QString slot = request["slot"].toString();
+  Item* i = p->GetSlot(SlotToString[slot]);
+  if (i->GetId () != -1)
+  {
+    p->items_.push_back (i);
+  }
+  p->SetSlot(SlotToString[slot], item);
+  p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
+  p->SetDemage (item->GetDemage (), true);
+  p->SetHealth (p->GetHealth() + item->Getammor ());
+  WriteResult_(response, EFEMPResult::OK);
 }
 
 //==============================================================================
