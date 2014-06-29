@@ -316,6 +316,7 @@ void GameServer::HandleAttack_(const QVariantMap& request, QVariantMap& response
         }
       }
     }
+
 }
 
 //==============================================================================
@@ -601,11 +602,18 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
   if (actor->GetType () == "player")
   {
     QVariantList id;
-    for (auto& a: static_cast<Player*>(actor)->items_)
+    auto p = static_cast<Player*>(actor);
+    for (auto& a: p->items_)
     {
       id << a->GetId();
     }
     response["id_items"] = id;
+  /*  QVariantList id_slot;
+    for(auto& a: SlotToString)
+    {
+      id_slot << p->GetSlot(a)->GetId ();
+    }
+    response["id_slot"] = id_slot;*/
   }
   response["x"] = actor->GetPosition().x;
   response["y"] = actor->GetPosition().y;
@@ -673,12 +681,18 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
 {
   auto sid = request["sid"].toByteArray();
   Player* p = sidToPlayer_[sid];
-  Item* item = p->items_[request["id"].toInt()];
-  if (item->GetMessage().length () > 1)
+  int id = request["id"].toInt();
+  for (auto& item: p->items_)
   {
-    response["message"] = item->GetMessage();
-    WriteResult_(response, EFEMPResult::OK);
-    return;
+    if (item->GetId() == id)
+    {
+      if (item->GetMessage().length () > 1)
+      {
+        response["message"] = item->GetMessage();
+        WriteResult_(response, EFEMPResult::OK);
+        return;
+      }
+    }
   }
   WriteResult_(response, EFEMPResult::BAD_ID);
 }
@@ -688,16 +702,19 @@ void GameServer::HandleDrop_(const QVariantMap& request, QVariantMap& response)
 {
   auto sid = request["sid"].toByteArray();
   Player* p = sidToPlayer_[sid];
-  Item* item = p->items_[request["id"].toInt()];
-  if (item)
+  int id = request["id"].toInt();
+  for (auto& item: p->items_)
   {
-    p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
-    idToActor_[item->GetId()] = item;
-    levelMap_.IndexActor(item);
-    actors_.push_back(item);
-    SetActorPosition_(item, p->GetPosition ());
-    WriteResult_(response, EFEMPResult::OK);
-    return;
+    if (item->GetId() == id)
+    {
+      idToActor_[item->GetId()] = item;
+      levelMap_.IndexActor(item);
+      actors_.push_back(item);
+      SetActorPosition_(item, p->GetPosition ());
+      p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
+      WriteResult_(response, EFEMPResult::OK);
+      return;
+    }
   }
   WriteResult_(response, EFEMPResult::BAD_ID);
 }
@@ -707,23 +724,26 @@ void GameServer::HandleEquip_(const QVariantMap& request, QVariantMap& response)
 {
   auto sid = request["sid"].toByteArray();
   Player* p = sidToPlayer_[sid];
-  Item* item = p->items_[request["id"].toInt()];
-  if (!item)
+  int id = request["id"].toInt();
+  for (auto& item: p->items_)
   {
-    WriteResult_(response, EFEMPResult::BAD_ID);
-    return;
+    if (item->GetId() == id)
+    {
+      QString slot = request["slot"].toString();
+      Item* i = p->GetSlot(SlotToString[slot]);
+      if (i->GetId () != -1)
+      {
+        p->items_.push_back (i);
+      }
+      p->SetSlot(SlotToString[slot], item);
+      p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
+      p->SetDemage (item->GetDemage (), true);
+      p->SetHealth (p->GetHealth() + item->Getammor ());
+      WriteResult_(response, EFEMPResult::OK);
+      return;
+    }
   }
-  QString slot = request["slot"].toString();
-  Item* i = p->GetSlot(SlotToString[slot]);
-  if (i->GetId () != -1)
-  {
-    p->items_.push_back (i);
-  }
-  p->SetSlot(SlotToString[slot], item);
-  p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
-  p->SetDemage (item->GetDemage (), true);
-  p->SetHealth (p->GetHealth() + item->Getammor ());
-  WriteResult_(response, EFEMPResult::OK);
+   WriteResult_(response, EFEMPResult::BAD_ID);
 }
 
 //==============================================================================
