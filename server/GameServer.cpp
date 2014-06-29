@@ -645,9 +645,27 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
 }
 
 //==============================================================================
-void GameServer::HandleUnequip_(const QVariantMap& , QVariantMap& )
+void GameServer::HandleUnequip_(const QVariantMap& request, QVariantMap& response)
 {
-
+  auto sid = request["sid"].toByteArray();
+  Player* p = sidToPlayer_[sid];
+  int id = request["id"].toInt();
+  for (auto& slot : SlotToString)
+  {
+    Item* item = p->GetSlot(slot);
+    if (item->GetId () != -1 && item->GetId() == id)
+    {
+      p->items_.push_back (item);
+      p->SetDemage (item->GetDemage (), false);
+      p->SetHealth (p->GetHealth() - item->Getammor ());
+      Item* i = new Item();
+      i->SetId(-1);
+      p->SetSlot (slot, i);
+      WriteResult_(response, EFEMPResult::OK);
+      return;
+    }
+  }
+  WriteResult_(response, EFEMPResult::BAD_ID);
 }
 
 //==============================================================================
