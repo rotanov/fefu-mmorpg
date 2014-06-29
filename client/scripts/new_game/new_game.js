@@ -106,9 +106,7 @@ function OnMessage(e) {
         console.log(data)
         if (data.result != "ok") {
             utils.cryBabyCry(data.result)
-           deleteItem()
-        } else {
-            addItem(item)
+            popItem()
         }
         break
     }
@@ -123,7 +121,7 @@ function Start(id, sid, h, w) {
 
     game = new phaser.Game(
         64 * w, 64 * h,
-        phaser.CANVAS, 
+        phaser.CANVAS,
         "",
         {
             preload: onPreload,
@@ -188,8 +186,7 @@ function onCreate() {
 function updateHealth(data) {
     health.setText("HEALTH: " + data.health + "/" + data.maxHealth);
     if (data.health <= 0) {
-        var k = actors.length
-        for (var i = 0; i < k; i++) {
+        for (var i = 0, l = actor.length; i < l; ++i) {
             actors[i].visible = false
         }
         msg.setText("GAME OVER")
@@ -262,8 +259,8 @@ function renderWalls(map) {
         tempTiles[i * width + j + 1].index = value
     }
 
-    for (var i = 0; i < map.length; i++) {
-        for (var j = 0; j < map[i].length; j++ ) {
+    for (var i = 0, l = map.length; i < l; i++) {
+        for (var j = 0, ll = map[i].length; j < ll; j++ ) {
             (map[i][j] == "#") ? setTile(i, j, 15) : setTile(i, j, 21)
         }
     }
@@ -272,8 +269,7 @@ function renderWalls(map) {
 }
 
 function renderActors(actor) {
-    for (var i = 0, j = 0; i < actor.length; i++, j++) {
-        if (!actor[i].id) return
+    for (var i = 0, j = 0, l = actor.length; i < l; i++, j++) {
         if (j == actors[j].length) {
             createActors(actors[j].length / width * height)
         }
@@ -284,15 +280,13 @@ function renderActors(actor) {
         actors[j].visible = true
         setProperties(actor[i], j)
     }
-
-    var k = actors.length
-    for (var i = j; i < k; i++) {
+    for (var i = j, l = actor.length; i < l; i++) {
         actors[i].visible = false
     }
 }
 
 function getObgect() {
-    for (var i = 0; i < actors.length; i++) {
+    for (var i = 0, l = actors.length; i < l; i++) {
         if (phaser.Rectangle.contains(actors[i].body, game.input.x, game.input.y)) {
             return actors[i]
         }
@@ -307,11 +301,10 @@ function setProperties(actor, idx) {
         actors[idx].loadTexture("player", frameIndex)
         break
     case "monster":
-        actors[idx].loadTexture("tileset_monster", monsters.getFrame([actor.mobType]))
+        actors[idx].loadTexture("tileset_monster", monsters.getFrame(actor.mobType))
         break
     case "item":
-        actors[idx].loadTexture("tileset_monster", items.getFrame([actor.name]))
-        //actors[idx].events.onInputDown.add(getItem, {id: actor.id, name: actor.name})
+        actors[idx].loadTexture("tileset_monster", items.getFrame(actor.name))
         break
     case "projectile":
         break
@@ -320,15 +313,15 @@ function setProperties(actor, idx) {
 
 function getItem(data) {
     socket.pickUp(data.id, sid_)
-    item = {"id": data.id, "name": data.name}
+    pushItem({"id": data.id, "name": data.name})
 }
 
-function addItem(data) {
+function pushItem(data) {
     $("#items select#items")
     .append("<option value='" + data.id + "'>" + data.name + "</option>")
 }
 
-function deleteItem() {
+function popItem() {
     $("#items select#items option:last").remove()
 }
 
@@ -347,6 +340,24 @@ function onRender() {
 
 $("#logout").click(function() {
     game.destroy()
+})
+
+$("#use").click(function() {
+    var id = $("#items select#items").find(":selected").val()
+    socket.use(id, sid_)
+    
+})
+
+$("#destroyItem").click(function() {
+    var id = $("#items select#items").find(":selected").val()
+    $("#items select#items").find(":selected").remove()
+    socket.destroyItem(id, sid_)
+})
+
+$("#drop").click(function(id, sid_) {
+    var id = $("#items select#items").find(":selected").val()
+    $("#items select#items").find(":selected").remove()
+    socket.drop(id, sid_)
 })
 
 return {
