@@ -24,7 +24,9 @@ enum class EFEMPResult
   BAD_ID,
   BAD_ACTION,
   BAD_MAP,
+  BAD_SLOT,
 };
+
 
 const std::vector<QString> fempResultToString =
 {
@@ -37,7 +39,9 @@ const std::vector<QString> fempResultToString =
   [EFEMPResult::BAD_ID] = "badId",
   [EFEMPResult::BAD_ACTION] = "badAction",
   [EFEMPResult::BAD_MAP] = "badMap",
+  [EFEMPResult::BAD_SLOT] = "badSlot",
 };
+
 
 // TODO: separate module
 // TODO: proper class name
@@ -163,6 +167,19 @@ private:
     "setUpConst",
     "setUpMap",
     "getConst",
+  };
+  QMap <QString, Slot> SlotToString =
+  {
+    {"ammo", ammo},
+    {"body_armor", body_armor},
+    {"feet", feet},
+    {"forearm_gloves", forearm_gloves},
+    {"head_helmet" ,head_helmet},
+    {"left_finger", left_finger},
+    {"left_hand", left_hand},
+    {"neck_amulet", neck_amulet},
+    {"right_finger", right_finger},
+    {"right_hand", right_hand}
   };
 };
 

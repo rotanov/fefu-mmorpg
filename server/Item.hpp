@@ -14,12 +14,16 @@ public:
   QString GetSubtype();
   QString GetClass();
   QString GetMessage();
+  int Getammor();
+  QString GetDemage();
   void SetName(QString str);
   void SetWeight(int str);
   void SetTypeItem(QString str);
   void SetSubtype(QString str);
   void SetClass(QString str);
   void SetMessage(QString str);
+  void Setammor(int str);
+  void SetDemage(QString str);
   QStringList Flags;
   QStringList bonus;
 private:
@@ -29,6 +33,8 @@ private:
   QString class_item;
   QString subtype_;
   QString massege_;
+  int ammor_;
+  QString demage_;
   std::vector<QString> class_ =
   {
     "garment",
