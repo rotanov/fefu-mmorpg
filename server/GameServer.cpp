@@ -596,6 +596,15 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
     response["class_item"] = m->GetClass ();
     response["subtype"] = m->GetSubtype ();
   }
+  if (actor->GetType () == "player")
+  {
+    QVariantList id;
+    for (auto& a: static_cast<Player*>(actor)->items_)
+    {
+      id << a->GetId();
+    }
+    response["id_items"] = id;
+  }
   response["x"] = actor->GetPosition().x;
   response["y"] = actor->GetPosition().y;
   response["id"] = actor->GetId();
