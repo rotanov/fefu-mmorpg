@@ -91,11 +91,11 @@ QVariantMap Monster::atack(Creature* actor)
   {
     QStringList d;
     d << s[2].split ("d");
-    val = actor->GetHealth() - (val % (d[1].toInt()+1) + d[0].toInt ());
+    val = (val % (d[1].toInt()+1) + d[0].toInt ());
   } else {
     val = actor->GetHealth() - 2.0f;
   }
-  actor->SetHealth(val);
+  actor->SetHealth(actor->GetHealth() - val);
   QVariantMap ans;
   ans["dealtDamage"] = val;
   ans["target"] = actor->GetId();
