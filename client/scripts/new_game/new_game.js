@@ -49,6 +49,7 @@ function OnMessage(e) {
                 curr_h -= data.events[i].dealtDamage
                 updateHealth(curr_h, max_h)
             }
+        if (curr_h < max_h) ++curr_h
     }
 
     switch(data.action) {
