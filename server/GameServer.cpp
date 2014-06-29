@@ -619,19 +619,21 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
   auto sid = request["sid"].toByteArray();
   Player* p = sidToPlayer_[sid];
   Actor* item = idToActor_[request["id"].toInt()];
-  Box box0(p->GetPosition(), 1.0f, 1.0f);
-  Box box1(item->GetPosition (), 1.0f, 1.0f);
-  if (box1.Intersect(box0))
+  if (item)
   {
-    idToActor_.erase(item->GetId());
-    levelMap_.RemoveActor(item);
-    actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());
-    p->items_.push_back (static_cast<Item*>(item));
-    WriteResult_(response, EFEMPResult::OK);
-  } else {
-    WriteResult_(response, EFEMPResult::BAD_ID);
+    Box box0(p->GetPosition(), 1.0f, 1.0f);
+    Box box1(item->GetPosition (), 1.0f, 1.0f);
+    if (box0.Intersect(box1))
+    {
+      idToActor_.erase(item->GetId());
+      levelMap_.RemoveActor(item);
+      actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());
+      p->items_.push_back (static_cast<Item*>(item));
+      WriteResult_(response, EFEMPResult::OK);
+      return;
+    }
   }
-
+  WriteResult_(response, EFEMPResult::BAD_ID);
 }
 
 //==============================================================================
