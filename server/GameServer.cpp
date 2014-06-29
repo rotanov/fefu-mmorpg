@@ -619,7 +619,7 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
   auto sid = request["sid"].toByteArray();
   Player* p = sidToPlayer_[sid];
   Actor* item = idToActor_[request["id"].toInt()];
-  if (item)
+  if (item && item->GetType () == "item")
   {
     Box box0(p->GetPosition(), 1.0f, 1.0f);
     Box box1(item->GetPosition (), 1.0f, 1.0f);
