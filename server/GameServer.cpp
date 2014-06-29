@@ -628,8 +628,8 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
     Actor* item = idToActor_[request["id"].toInt()];
     if (item->GetType () == "item")
     {
-      Box box0(p->GetPosition(), 1.0f, 1.0f);
-      Box box1(item->GetPosition (), 1.0f, 1.0f);
+      Box box0(p->GetPosition(), pickUpRadius_, pickUpRadius_);
+      Box box1(item->GetPosition (), pickUpRadius_, pickUpRadius_);
       if (box0.Intersect(box1))
       {
         idToActor_.erase(item->GetId());
