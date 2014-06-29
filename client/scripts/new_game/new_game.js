@@ -32,6 +32,7 @@ var tick_
 
 var health
 var lifespan = 1
+var item
 
 function initSocket(wsUri) {
     socket = sock.WSConnect(wsUri, OnMessage)
@@ -102,9 +103,12 @@ function OnMessage(e) {
         break
 
     case "pickUp":
+        console.log(data)
         if (data.result != "ok") {
             utils.cryBabyCry(data.result)
-            deleteItem()
+           deleteItem()
+        } else {
+            addItem(item)
         }
         break
     }
@@ -197,9 +201,13 @@ function onUpdate() {
     fpsText.setText("FPS: " + game.time.fps)
 
     if (game.input.mousePointer.isDown) {
-        var id = getActorID()
-        if (id && lifespan) {
-            socket.examine(id, sid_)
+        var data = getObgect()
+        if (data.id && lifespan) {
+            if (aKey.isDown) {
+                getItem(data)
+            } else {
+                socket.examine(data.id, sid_)
+            }
         }
     }
 
@@ -270,6 +278,7 @@ function renderActors(actor) {
             createActors(actors[j].length / width * height)
         }
         actors[j].id = actor[i].id
+        actors[j].name = actor[i].name
         actors[j].x = coordinate(gPlayerX, actor[i].x, width)
         actors[j].y = coordinate(gPlayerY, actor[i].y, height)
         actors[j].visible = true
@@ -282,10 +291,10 @@ function renderActors(actor) {
     }
 }
 
-function getActorID() {
+function getObgect() {
     for (var i = 0; i < actors.length; i++) {
         if (phaser.Rectangle.contains(actors[i].body, game.input.x, game.input.y)) {
-            return actors[i].id
+            return actors[i]
         }
     }
     return 0
@@ -302,18 +311,16 @@ function setProperties(actor, idx) {
         break
     case "item":
         actors[idx].loadTexture("tileset_monster", items.getFrame([actor.name]))
-        actors[idx].events.onInputDown.add(getItem, {id: actor.id, name: actor.name})
+        //actors[idx].events.onInputDown.add(getItem, {id: actor.id, name: actor.name})
         break
     case "projectile":
         break
     }
 }
 
-function getItem() {
-    if (aKey.isDown) {
-        socket.pickUp(this.id, sid_)
-        addItem({"id": this.id, "name": this.name})
-    }
+function getItem(data) {
+    socket.pickUp(data.id, sid_)
+    item = {"id": data.id, "name": data.name}
 }
 
 function addItem(data) {
