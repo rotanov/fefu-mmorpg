@@ -57,12 +57,34 @@ h1, form
   position: absolute;
 }
 
-#inf-about-obj, #items
+#inf-about-obj, #items, #slots
 {
-  padding: 5px 15px 5px 5px;
+  padding: 5px 5px 5px 5px;
   background: rgb(247, 247, 247);
   border: 1px solid rgba(147, 184, 189, 0.8);
   border-radius: 5px;
+}
+
+#slots
+{
+  float: right;
+  margin: 0px 25px 0px 0px;
+  margin-top: 144px;
+  font-size: 12px;
+}
+
+#slots input
+{
+  display:inline;
+}
+
+#logout, #inf-about-obj, #items, #slots
+{
+  display: none;
+}
+
+#items select {
+  width: 310px;
 }
 
 #container
@@ -74,14 +96,12 @@ h1, form
 
 #content
 {
-  width: 75%;
   display: block;
 }
 
 #content-right
 {
   float: right;
-  /*width: 25%;*/
   margin-top: -80px;
 }
 
@@ -92,14 +112,4 @@ h1, form
   display: block;
   position: relative;
   margin: 220px 0px 0px 0px;
-}
-
-.show
-{
-  visibility: visible;
-}
-
-.hide
-{
-  visibility: hidden;
 }
