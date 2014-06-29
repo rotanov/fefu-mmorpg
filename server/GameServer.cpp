@@ -553,13 +553,6 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
             actor["health"] = m->GetHealth();
             actor["maxHealth"] = m->GetMaxHealth();
         }
-        if (actor["type"] == "item"){
-          auto m = static_cast<Item*> (a);
-          actor["name"] = m->Getname ();
-          actor["type_item"] = m->GetTypeItem();
-          actor["class_item"] = m->GetClass ();
-          actor["subtype"] = m->GetSubtype ();
-        }
         actor["x"] = a->GetPosition().x;
         actor["y"] = a->GetPosition().y;
         actor["id"] = a->GetId();
@@ -601,6 +594,7 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
     response["name"] = m->Getname ();
     response["type_item"] = m->GetTypeItem();
     response["class_item"] = m->GetClass ();
+    response["subtype"] = m->GetSubtype ();
   }
   response["x"] = actor->GetPosition().x;
   response["y"] = actor->GetPosition().y;
