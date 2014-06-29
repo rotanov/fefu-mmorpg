@@ -20,6 +20,7 @@
 
 <script data-main="scripts/main"
         src="scripts/require.js"></script>
+
 </head>
 
 <body>
@@ -71,23 +72,35 @@
         </div>
 
         <div>
-            <input type="button" id="logout" value="exit" class="hide"/>
+            <input type="button" id="logout" value="exit"/>
         </div>
 
         <h3>Information</h3>
         <div id="items">
-            <form id="items-form">
-                <select id="items" name="items">
-                </select><br/>
-                <input type="button" value="use" id="use"/>
-                <input type="button" value="destroyItem" id="destroyItem"/>
-                <input type="button" value="drop" id="drop"/>
-            </form>
+            <select id="items" name="items"></select></br>
+            <input type="button" value="use" id="use"/>
+            <input type="button" value="destroyItem" id="destroyItem"/>
+            <input type="button" value="destroyItem" id="destroyItem"/>
+            <input type="button" value="equip" id="equip"/>
         </div>
         <div id="inf-about-obj"></div>
         <div id="msg"></div>
     </div>
 
+    <div id="slots">
+        <input type="radio" name="slot" value="WEAPON">WEAPON - <i>WIELD+BOW</i></input></br>
+        <input type="radio" name="slot" value="LEFT">LEFT - <i>ring</i></input></br>
+        <input type="radio" name="slot" value="RIGHT">RIGHT - <i>ring</i></input></br>
+        <input type="radio" name="slot" value="NECK">NECK - <i>amulet</i></input></br>
+        <input type="radio" name="slot" value="BODY">BODY - <i>armor</i></input></br>
+        <input type="radio" name="slot" value="ARM">ARM - <i>shield</i></input></br>
+        <input type="radio" name="slot" value="HEAD">HEAD - <i>helmet</i></input></br>
+        <input type="radio" name="slot" value="HANDS">HANDS - <i>gloves</i></input></br>
+        <input type="radio" name="slot" value="FEET">FEET - <i>boots</i></input></br>
+        <input type="button" value="ok" id="ok">
+        <input type="button" value="reset" id="reset">
+        <input type="button" value="close" id="close">
+    </div>
     <div id="mocha"></div>
 </div>
 

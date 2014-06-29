@@ -350,7 +350,6 @@ $("#logout").click(function() {
 $("#use").click(function() {
     var id = $("#items select#items").find(":selected").val()
     socket.use(id, sid_)
-    
 })
 
 $("#destroyItem").click(function() {
@@ -363,6 +362,27 @@ $("#drop").click(function(id, sid_) {
     var id = $("#items select#items").find(":selected").val()
     $("#items select#items").find(":selected").remove()
     socket.drop(id, sid_)
+})
+
+$("#ok").click(function() {
+    $("#slots").hide()
+    var id = $("#items select#items").find(":selected").val()
+    var slot = $("input:radio[name=slot]:checked").val()
+    if (slot != undefined) {
+        socket.equip(id, sid_, slot)
+    }
+})
+
+$("#close").click(function() {
+    $("#slots").hide()
+})
+
+$("#reset").click(function() {
+    $("input:radio[name=slot]").attr("checked", false); 
+})
+
+$("#equip").click(function() {
+    $("#slots").show()
 })
 
 return {
