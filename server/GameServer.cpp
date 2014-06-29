@@ -684,9 +684,22 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
 }
 
 //==============================================================================
-void GameServer::HandleDrop_(const QVariantMap& , QVariantMap& )
+void GameServer::HandleDrop_(const QVariantMap& request, QVariantMap& response)
 {
-
+  auto sid = request["sid"].toByteArray();
+  Player* p = sidToPlayer_[sid];
+  Item* item = p->items_[request["id"].toInt()];
+  if (item)
+  {
+    p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
+    idToActor_[item->GetId()] = item;
+    levelMap_.IndexActor(item);
+    actors_.push_back(item);
+    SetActorPosition_(item, p->GetPosition ());
+    WriteResult_(response, EFEMPResult::OK);
+    return;
+  }
+  WriteResult_(response, EFEMPResult::BAD_ID);
 }
 
 //==============================================================================
