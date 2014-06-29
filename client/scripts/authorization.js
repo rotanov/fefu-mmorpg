@@ -35,7 +35,6 @@ function ($, utils, ws, game) {
     function loginCallback(data) {
         if (data.result === "ok") {
             $("#server-answer").text("Authentication is successful.").css("color", "green")
-            $("#logout").css("visibility", "visible")
             sid_ = data.sid
             var consts = utils.serverHandler({"action": "getConst"})
             $.when(
@@ -43,9 +42,8 @@ function ($, utils, ws, game) {
                 ws.timeout(
                     1000,
                     function() {
-                        $("#content").hide()
-                        $("#test-form").hide()
-                        $("#items").show()
+                        $("#content, #test-form").hide()
+                        $("#logout, #items, #items select").show()
                     })
             ).done(
                 function() {
