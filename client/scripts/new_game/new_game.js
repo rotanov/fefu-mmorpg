@@ -30,9 +30,10 @@ var id_
 var sid_
 var tick_
 
+var max_h = 0
+var curr_h = 0
 var health
 var lifespan = 1
-var item
 
 function initSocket(wsUri) {
     socket = sock.WSConnect(wsUri, OnMessage)
@@ -43,9 +44,11 @@ function OnMessage(e) {
 
     if (data.tick) {
         tick_ = data.tick
-        if (data.events) {
-            //console.log(data)
-        }
+        for (var i = 0, l = data.events.length; i < l; ++i)
+            if (data.events[i].attaker != id_) {
+                curr_h -= data.events[i].dealtDamage
+                updateHealth(curr_h, max_h)
+            }
     }
 
     switch(data.action) {
@@ -56,7 +59,9 @@ function OnMessage(e) {
         }
         object.showInf(data)
         if (data.id == id_) {
-            updateHealth(data)
+            curr_h = data.health
+            max_h = data.maxHealth
+            updateHealth(curr_h, max_h)
         }
         break
 
@@ -93,7 +98,6 @@ function OnMessage(e) {
         if (data.result != "ok") {
             utils.cryBabyCry(data.result)
         }
-        socket.examine(id_, sid_)
         break
 
     case "equip":
@@ -103,7 +107,6 @@ function OnMessage(e) {
         break
 
     case "pickUp":
-        console.log(data)
         if (data.result != "ok") {
             utils.cryBabyCry(data.result)
             popItem()
@@ -160,6 +163,7 @@ function onCreate() {
 
     createActors(0)
     socket.look(sid_)
+    socket.examine(id_, sid_)
 
     fpsText = game.add.text(37, 37, "test", {
         font: "30px Arial",
@@ -167,7 +171,7 @@ function onCreate() {
         align: "left"
     })
 
-    health = game.add.text(game.world.centerX + 120, 55, "HEALTH: 100/100", {
+    health = game.add.text(game.world.centerX + 120, 55, "HEALTH: " + curr_h + "/" + max_h, {
         font: "30px Arial",
         fill: "#ff0044",
         align: "right"
@@ -183,10 +187,10 @@ function onCreate() {
     })
 }
 
-function updateHealth(data) {
-    health.setText("HEALTH: " + data.health + "/" + data.maxHealth);
-    if (data.health <= 0) {
-        for (var i = 0, l = actor.length; i < l; ++i) {
+function updateHealth(h, m) {
+    health.setText("HEALTH: " + h + "/" + m);
+    if (h <= 0) {
+        for (var i = 0, l = actors.length; i < l; ++i) {
             actors[i].visible = false
         }
         msg.setText("GAME OVER")
@@ -280,7 +284,7 @@ function renderActors(actor) {
         actors[j].visible = true
         setProperties(actor[i], j)
     }
-    for (var i = j, l = actor.length; i < l; i++) {
+    for (var i = j, l = actors.length; i < l; i++) {
         actors[i].visible = false
     }
 }
