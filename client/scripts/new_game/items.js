@@ -16,9 +16,9 @@ define(function() {
     items["Shield of Thorin"] = 879
     items["Shield of Anarion"] = 882
     items["Helm of Celebrimbor"] = 941
-    items["Helm of Thranduil"] = 940
+    items["Helm of Thranduil"] = 942
     items["Crown of Gondor"] = 1036
-    items["Crown of Numenor"] = 1040
+    items["Crown of Numenor"] = 1031
     items["Gloves of Eol"] = 874
     items["Gloves of Cambeleg"] = 875
     items["Gloves of Paurnimmen"] = 876
@@ -36,9 +36,8 @@ define(function() {
     items["Bow of Bard"] = 921
 
     function getFrame(name) {
-        return items[name]
+        return (items[name] == undefined) ? 3 : items[name]
     }
-
     return {
         getFrame: getFrame
     }

@@ -36,7 +36,7 @@ define(function() {
     name_monster["Grey icky thing"] = 173
 
     function getFrame(name) {
-        return name_monster[name]
+        return (name_monster[name] == undefined) ? 3 : name_monster[name]
    }
 
     return {
