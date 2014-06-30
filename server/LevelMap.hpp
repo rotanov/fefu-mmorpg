@@ -10,31 +10,31 @@ class Actor;
 class LevelMap
 {
 public:
-    LevelMap(int columnCount, int rowCount);
-    virtual ~LevelMap();
+  LevelMap(int columnCount, int rowCount);
+  virtual ~LevelMap();
 
-    int GetRowCount() const;
-    int GetColumnCount() const;
+  int GetRowCount() const;
+  int GetColumnCount() const;
 
-    int GetCell(int column, int row) const;
-    int GetCell(float column, float row) const;
-    void SetCell(int column, int row, int value);
+  int GetCell(int column, int row) const;
+  int GetCell(float column, float row) const;
+  void SetCell(int column, int row, int value);
 
-    const std::vector<Actor*>& GetActors(int column, int row) const;
+  const std::vector<Actor*>& GetActors(int column, int row) const;
 
-    void Resize(int columnCount, int rowCount);
+  void Resize(int columnCount, int rowCount);
 
-    void IndexActor(Actor* actor);
-    void RemoveActor(const Actor* actor);
+  void IndexActor(Actor* actor);
+  void RemoveActor(const Actor* actor);
 
-    void ExportToImage(const QString filename);
+  void ExportToImage(const QString filename);
 
 private:
-    void InitData_();
+  void InitData_();
 
-    int rowCount_;
-    int columnCount_;
-    int* data_;
-    std::vector<Actor*>* actors_;
-    std::vector<Actor*> emptyActors_;
+  int rowCount_;
+  int columnCount_;
+  int* data_;
+  std::vector<Actor*>* actors_;
+  std::vector<Actor*> emptyActors_;
 };

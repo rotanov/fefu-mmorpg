@@ -24,40 +24,49 @@ function ($) {
 
         socket.onopen = function() {
             console.log("Connection open.")
-            dictionary(sid_)
+            getDictionary(sid_)
         }
 
         socket.onmessage = function(event) {
             var data = JSON.parse(event.data)
-            console.log("Data received: " + event.data)
+            //console.log("Data received: " + event.data)
 
-            //Tick
             if (data.tick) {
                 tick = data.tick
+            }
 
-            //Examine
-            } else if (data.action === "examine") {
-
+            switch(data.action) {
+            case "examine":
                 examineData = data
-                if (data.result == "ok") {
-                    //actor.init(data);
-                }
-
-            //Get Dictionary
-            } else if (data.action == "getDictionary") {
+                break;
+            case "getDictionary":
                 dictionData = data
-
-            //Look
-            } else if (data.action == "look") {
+                console.log("Data received: " + event.data)
+                break;
+            case "look":
                 lookData = data
-
-            //Move
-            } else if (data.action == "move") {
+                console.log("Data received: " + event.data)
+                break;
+            case "move":
                 moveData = data
-
-            //GetConst
-            } else if (data.action == "getConst") {
+                console.log("Data received: " + event.data)
+                break;
+            case "getConst":
                 constData = data
+                console.log("Data received: " + event.data)
+                break;
+            case "destroyItem":
+                break;
+            case "drop":
+                break;
+            case "attack":
+                break;
+            case "equip":
+                break;
+            case "unequip":
+                break;
+            case "pickUp":
+                break;
             }
         }
 
@@ -102,7 +111,7 @@ function ($) {
         }))
     }
 
-    function dictionary(sid) {
+    function getDictionary(sid) {
         socket.send(JSON.stringify({
             action: "getDictionary",
             "sid": sid
@@ -115,7 +124,7 @@ function ($) {
             "sid": sid
         }))
     }
-    
+
     function attack(arr, sid) {
         socket.send(JSON.stringify({
             "action": "attack",
@@ -123,7 +132,7 @@ function ($) {
             "sid": sid
         }))
     }
-    
+
     function destroyItem(id, sid) {
         socket.send(JSON.stringify({
             "action": "destroyItem",
@@ -131,7 +140,40 @@ function ($) {
             "sid": sid
         }))
     }
-    
+
+    function drop(id, sid) {
+        socket.send(JSON.stringify({
+            "action": "drop",
+            "id": id,
+            "sid": sid
+        }))
+    }
+
+    function equip(id, sid, slot) {
+        socket.send(JSON.stringify({
+            "action": "equip",
+            "id": id,
+            "sid": sid,
+            "slot": slot
+        }))
+    }
+
+    function unequip(id, sid) {
+        socket.send(JSON.stringify({
+            "action": "unequip",
+            "id": id,
+            "sid": sid
+        }))
+    }
+
+    function pickUp(id, sid) {
+        socket.send(JSON.stringify({
+            "action": "pickUp",
+            "id": id,
+            "sid": sid
+        }))
+    }
+
     function getConst() {
         socket.send(JSON.stringify({
             "action": "getConst"
@@ -150,7 +192,7 @@ function ($) {
         return examineData
     }
 
-    function getDictionary() {
+    function getDictionData() {
         return dictionData
     }
 
@@ -165,7 +207,9 @@ function ($) {
     function timeout(x, callback) {
         var dfd = $.Deferred()
         setTimeout(function () {
-            dfd.resolve(callback())
+            if (typeof callback !== 'undefined') {
+                dfd.resolve(callback())
+            }
         }, x)
         return dfd.promise()
     }
@@ -174,17 +218,26 @@ function ($) {
         look: look,
         move: move,
         examine: examine,
-        dictionary: dictionary,
+        getDictionary: getDictionary,
         logout: logout,
+        destroyItem: destroyItem,
+        drop: drop,
+        attack: attack,
+        equip: equip,
+        unequip: unequip,
+        pickUp: pickUp,
         getConst: getConst,
+
         timeout: timeout,
+
         startGame: startGame,
         quitGame: quitGame,
+
         getTick: getTick,
         getLookData: getLookData,
         getMoveData: getMoveData,
         getExamineData: getExamineData,
-        getDictionary: getDictionary,
+        getDictionData: getDictionData,
         getConstData: getConstData,
     }
 

@@ -2,6 +2,7 @@ QT += core
 QT += gui
 QT += network
 QT += sql
+QT += websockets
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TEMPLATE = app
@@ -19,7 +20,7 @@ QMAKE_CXXFLAGS += -Wno-unused-variable
 
 INCLUDEPATH += \
     ../3rd/qhttpserver \
-    ../3rd/QtWebsocket \
+#    ../3rd/QtWebsocket \
     ../3rd/deku2d \
 
 LIBS += -L../3rd/lib
@@ -31,13 +32,13 @@ CONFIG(debug, debug|release) {
         _DEBUG \
         QT_DEBUG_PLUGINS \
 
-    LIBS += -lQtWebsocketd
+#    LIBS += -lQtWebsocketd
     LIBS += -lqhttpserverd
     TARGET = server-debug
 
 } else {
 
-    LIBS += -lQtWebsocket
+#    LIBS += -lQtWebsocket
     LIBS += -lqhttpserver
     TARGET = server-release
 

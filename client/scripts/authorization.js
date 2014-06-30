@@ -1,4 +1,4 @@
-define(["jquery", "utils", "ws", "game"],
+define(["jquery", "utils", "ws", "new_game/new_game"],
 function ($, utils, ws, game) {
 
     var sid_
@@ -35,19 +35,19 @@ function ($, utils, ws, game) {
     function loginCallback(data) {
         if (data.result === "ok") {
             $("#server-answer").text("Authentication is successful.").css("color", "green")
-            $("#logout").css("visibility", "visible")
             sid_ = data.sid
-            ws.startGame(data.id, data.sid, data.webSocket)
-            $.when(ws.timeout(
-                    200,
+            var consts = utils.serverHandler({"action": "getConst"})
+            $.when(
+                game.initSocket(data.webSocket),
+                ws.timeout(
+                    1000,
                     function() {
-                        $("#content").hide()
-                        $("#test-form").hide()
-                    }
-                )
+                        $("#content, #test-form").hide()
+                        $("#logout, #items, #items select").show()
+                    })
             ).done(
                 function() {
-                    game.start(data.id, data.sid)
+                    game.start(data.id, data.sid, consts.screenRowCount, consts.screenColumnCount)
                 }
             )
 

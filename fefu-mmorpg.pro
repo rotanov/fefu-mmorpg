@@ -3,9 +3,8 @@ CONFIG += ordered
 TEMPLATE = subdirs
 
 SUBDIRS += 3rd/qhttpserver \
-           3rd/QtWebsocket \
            server
+#           3rd/QtWebsocket \
 
 server.depends += qhttpserver \
-                  QtWebsocket
-                  
+#                  QtWebsocket

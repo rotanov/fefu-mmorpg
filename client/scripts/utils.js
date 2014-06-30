@@ -56,11 +56,16 @@ function ($) {
         return responseResult
     }
 
+    function cryBabyCry(result) {
+        console.log("Error: " + result)
+    }
+
     return {
         getServerAddress: getServerAddress,
         setServerAddress: setServerAddress,
         postRequest: postRequest,
-        serverHandler: serverHandler
+        serverHandler: serverHandler,
+        cryBabyCry: cryBabyCry
     }
 
 })

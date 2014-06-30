@@ -49,3 +49,6 @@ angband-parser/debug/Object.o
 angband-parser/debug/main.o
 bin/level-map-00.png
 bin/output.txt
+bin/_level-map.png
+server/ui_mainwindow.h
+*.exe

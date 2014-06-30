@@ -17,159 +17,135 @@ function (m, utils, ws) {
 
             before(function(done) {
                 ws.startGame(userData.id, userData.sid, userData.webSocket)
-                setTimeout(done, 200)
+                if (ws.readyState === 1) {
+                    done
+                } else {
+                    setTimeout(done, 200)
+                }
             })
 
-            describe("Dictionary", function() {
-                describe("", function() {
-                    before(function(done) {
-                      ws.dictionary(userData.sid)
-                        setTimeout(done, 200)
-                    })
-
-                    it("should return ok", function(done) {
-                        var data = ws.getDictionary()
+            describe("getDictionary", function() {
+                it("should return ok", function() {
+                    $.when(ws.getDictionary(userData.sid), ws.timeout(200, ws.getDictionData()))
+                    .done(function (getDictionary, data) {
                         assert.equal("ok", data.result)
-                        done()
                     })
+                })
 
-                    it("should have properties ['.', '#']", function(done) {
-                        var data = ws.getDictionary()
+                it("should have properties ['.', '#']", function() {
+                    $.when(ws.getDictionary(userData.sid), ws.timeout(200, ws.getDictionData()))
+                    .done(function (getDictionary, data) {
+                    console.log(data);
                         assert.property(data.dictionary, ".")
                         assert.property(data.dictionary, "#")
-                        done()
                     })
                 })
 
-                before(function(done) {
-                    ws.dictionary("123")
-                    setTimeout(done, 200)
+                it("should return badSid", function() {
+                    $.when(ws.getDictionary("123"), ws.timeout(200, ws.getDictionData()))
+                    .done(function (getDictionary, data) {
+                        assert.equal("badSid", data.result)
+                    })
                 })
-
-                it("should return badSid", function(done) {
-                    var data = ws.getDictionary()
-                    assert.equal("badSid", data.result)
-                    done()
-                })
-
             })
 
             describe("Look", function() {
-                before(function(done) {
-                    ws.look(userData.sid)
-                    setTimeout(done, 200)
-                })
-
                 it("should return ok", function() {
-                    var response = ws.getLookData()
-                    assert.equal("ok", response.result)
+                    $.when(ws.look(userData.sid), ws.timeout(200, ws.getLookData()))
+                    .done(function (look, data) {
+                        assert.equal("ok", data.result)
+                    })
                 })
 
-                it("should have properties [map, actors]", function(done) {
-                    var data = ws.getLookData()
-                    assert.property(data, "map")
-                    assert.property(data, "actors")
-                    done()
+                it("should have properties [map, actors]", function() {
+                    $.when(ws.look(userData.sid), ws.timeout(200, ws.getLookData()))
+                    .done(function (look, data) {
+                        assert.property(data, "map")
+                        assert.property(data, "actors")
+                    })
                 })
 
                 it("coordinates must be defined", function() {
-                    var data = ws.getLookData()
-                    assert.isDefined(data.x)
-                    assert.isDefined(data.y)
+                    $.when(ws.look(userData.sid), ws.timeout(200, ws.getLookData()))
+                    .done(function (look, data) {
+                        assert.isDefined(data.x)
+                        assert.isDefined(data.y)
+                    })
                 })
 
-                describe("", function() {
-                    before(function(done) {
-                        ws.look(".")
-                        setTimeout(done, 200)
-                    })
-
-                    it("should return badSid", function() {
-                        var data = ws.getLookData()
+                it("should return badSid", function() {
+                    $.when(ws.look("."), ws.timeout(200, ws.getLookData()))
+                    .done(function (look, data) {
                         assert.equal("badSid", data.result)
                     })
                 })
             })
 
             describe("Examine", function() {
-                before(function(done) {
-                    ws.examine(userData.id, userData.sid)
-                    setTimeout(done, 200)
-                })
-
                 it("should return ok", function() {
-                    var data = ws.getExamineData()
-                    assert.equal("ok", data.result)
+                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
+                    .done(function (examine, data) {
+                        assert.equal("ok", data.result)
+                    })
                 })
 
                 it("id must be defined", function() {
-                    var data = ws.getExamineData()
-                    assert.isDefined(data.id)
+                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
+                    .done(function (examine, data) {
+                        ssert.isDefined(data.id)
+                    })
                 })
 
                 it("type must be player", function() {
-                    var data = ws.getExamineData()
-                    assert.equal("player", data.type)
+                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
+                    .done(function (examine, data) {
+                        assert.equal("player", data.type)
+                    })
                 })
 
                 it("login must be defined", function() {
-                    var data = ws.getExamineData()
-                    assert.isDefined(data.login)
+                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
+                    .done(function (examine, data) {
+                        assert.isDefined(data.login)
+                    })
                 })
 
                 it("coordinates must be defined", function() {
-                    var data = ws.getExamineData()
-                    assert.isDefined(data.x)
-                    assert.isDefined(data.y)
+                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
+                    .done(function (examine, data) {
+                        assert.isDefined(data.x)
+                        assert.isDefined(data.y)
+                    })
                 })
 
-                describe("", function() {
-                    before(function(done) {
-                       ws.examine(".", userData.sid)
-                        setTimeout(done, 200)
-                    })
-
-                    it("should return badId", function() {
-                        var data = ws.getExamineData()
+                it("should return badId", function() {
+                    $.when(ws.examine(".", userData.sid), ws.timeout(200, ws.getExamineData()))
+                    .done(function (examine, data) {
                         assert.equal("badId", data.result)
                     })
                 })
 
-                describe("", function() {
-                    before(function(done) {
-                        ws.examine(userData.id, ".")
-                        setTimeout(done, 200)
-                    })
-
-                    it("should return badSid", function() {
-                        var data = ws.getExamineData()
+                it("should return badSid", function() {
+                    $.when(ws.examine(userData.id, "."), ws.timeout(200, ws.getExamineData()))
+                    .done(function (examine, data) {
                         assert.equal("badSid", data.result)
-                    })
+                    }) 
                 })
-
             })
 
             describe("Move", function() {
-                before(function(done) {
-                    ws.move("west", ws.getTick, userData.sid)
-                    setTimeout(done, 200)
-                })
-
                 it("should return ok", function() {
-                    var data = ws.getMoveData()
-                    assert.equal("ok", data.result)
+                    $.when(ws.move("west", ws.getTick, userData.sid), ws.timeout(200, ws.getMoveData()))
+                    .done(function (move, data) {
+                        assert.equal("ok", data.result)
+                    }) 
                 })
 
-                describe("", function() {
-                    before(function(done) {
-                        ws.move("west", ws.getTick, ".")
-                        setTimeout(done, 200)
-                    })
-
-                    it("should return badSid", function() {
-                        var data = ws.getMoveData()
+                it("should return badSid", function() {
+                    $.when(ws.move("west", ws.getTick, "."), ws.timeout(200, ws.getMoveData()))
+                    .done(function (move, data) {
                         assert.equal("badSid", data.result)
-                    })
+                    }) 
                 })
             })
         })

@@ -9,39 +9,43 @@
 #include <QtCore>
 
 #include "qhttpserverfwd.h"
-#include "QWsServer.h"
+//#include "QWsServer.h"
+
+#include <QtWebSockets/QtWebSockets>
 
 class Server : public QObject
 {
-    Q_OBJECT
+  Q_OBJECT
 
 signals:
-    void broadcastMessage(QString message);
-    void newFEMPRequest(const QVariantMap& request, QVariantMap& response);
-    void wsAddressChanged(QString address);
+  void broadcastMessage(QString message);
+  void newFEMPRequest(const QVariantMap& request, QVariantMap& response);
+  void wsAddressChanged(QString address);
 
 public slots:
-    void processNewWSConnection();
+  void processNewWSConnection();
 
 public:
-    static const quint16 HTTP_PORT = 6543;
-    static const quint16 WS_PORT = 6544;
+  static const quint16 HTTP_PORT = 6543;
+  static const quint16 WS_PORT = 6544;
 
-    Server();
-    virtual ~Server();
+  Server();
+  virtual ~Server();
 
-    void Start();
-    void Stop();
+  void Start();
+  void Stop();
 
 private slots:
-    void handleRequest(QHttpRequest *request, QHttpResponse *response);
-    void dataEnd();
-    void data(const QByteArray& data);
+  void handleRequest(QHttpRequest *request, QHttpResponse *response);
+  void dataEnd();
+  void data(const QByteArray& data);
 
 private:
-    QHttpServer* httpServer_;
-    QtWebsocket::QWsServer* wsServer_;
-    QHttpResponse* response_ = NULL;
-    QByteArray data_;
-    bool running_ = false;    
+  QHttpServer* httpServer_;
+  QWebSocketServer* wsServer_;
+  //    QtWebsocket::QWsServer* wsServer_;
+
+  QHttpResponse* response_ = NULL;
+  QByteArray data_;
+  bool running_ = false;
 };
