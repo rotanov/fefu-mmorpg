@@ -164,7 +164,7 @@ function onCreate() {
 
     createActors(0)
     socket.look(sid_)
-    socket.examine(id_, sid_)
+    socket.singleExamine(id_, sid_)
 
     fpsText = game.add.text(37, 37, "test", {
         font: "30px Arial",
@@ -208,7 +208,7 @@ function onUpdate() {
             if (aKey.isDown) {
                 getItem(data)
             } else {
-                socket.examine(data.id, sid_)
+                socket.singleExamine(data.id, sid_)
             }
         }
     }

@@ -16,10 +16,27 @@ define(function() {
         this.sock.onmessage = onmessage
     }
 
-    Socket.prototype.examine = function(id, sid) {
+    Socket.prototype.singleExamine = function(id, sid) {
         this.sock.send(JSON.stringify({
             "action": "examine",
             "id": id,
+            "sid": sid
+        }))
+    }
+
+    Socket.prototype.mapCellExamine = function(sid, x, y) {
+        this.sock.send(JSON.stringify({
+            "action": "examine",
+            "sid": sid,
+            "x": x,
+            "y": y
+        }))
+    }
+
+    Socket.prototype.multipleIdExamine = function(ids, sid) {
+        this.sock.send(JSON.stringify({
+            "action": "examine",
+            "ids": ids,
             "sid": sid
         }))
     }
