@@ -642,7 +642,6 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
       Box box1(item->GetPosition (), pickUpRadius_, pickUpRadius_);
       if (box0.Intersect(box1))
       {
-        idToActor_.erase(item->GetId());
         levelMap_.RemoveActor(item);
         actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());
         p->items_.push_back (static_cast<Item*>(item));
