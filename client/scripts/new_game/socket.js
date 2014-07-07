@@ -16,6 +16,8 @@ define(function() {
         this.sock.onmessage = onmessage
     }
 
+    /*Game Interaction*/
+
     Socket.prototype.singleExamine = function(id, sid) {
         this.sock.send(JSON.stringify({
             "action": "examine",

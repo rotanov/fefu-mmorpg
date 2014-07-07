@@ -1,19 +1,34 @@
 define(["jquery"],
 function($) {
-
+    /*Game object*/
     function Object(id) {
         this.data = {
             "id": id,
-            "type": null,
-            "name": null,
             "x": null,
             "y": null,
+            "type": null,
+
+            /*player*/
             "login": null,
+            //"slots":null,
+
+            /*monster*/
+            "name": null,
+            "mobType" : null,
+
+            /*player or monster*/
             "health" : null,
             "maxHealth": null,
             "mana": null,
             "maxMana": null,
-            "mobType" : null
+            "inventory": null,
+
+            /*item*/
+            "weigth": null,
+            "class": null,
+            "subtype": null,
+            //"bonuses": null,
+            //"effects": null
         }
     }
 
