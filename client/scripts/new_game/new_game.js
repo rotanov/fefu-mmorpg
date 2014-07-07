@@ -123,6 +123,12 @@ function OnMessage(e) {
             popItem()
         }
         break
+    case "use":
+        if (data.result != "ok") {
+            utils.cryBabyCry(data.result)
+            break
+        }
+        alert(data.message)
     }
 }
 
