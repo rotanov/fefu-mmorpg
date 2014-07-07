@@ -416,6 +416,12 @@ $("#unequip").click(function() {
     }
 })
 
+$("#items select").on("change", function (e) {
+    var optionSelected = $("option:selected", this);
+    var id = this.value;
+    socket.singleExamine(id, sid_)
+});
+
 return {
     start: Start,
     initSocket: initSocket
