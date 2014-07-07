@@ -37,6 +37,7 @@ public:
   virtual void SetRace();
   void SetDamage(QString str, bool b);
   Blow blows;
+  bool GetItemId (int id);
   // represents creature's inventory
   QVector<Item*> items_;
 

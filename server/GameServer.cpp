@@ -633,7 +633,7 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
 {
   auto sid = request["sid"].toByteArray();
   Player* p = sidToPlayer_[sid];
-  if (idToActor_[request["id"].toInt()])
+  if (idToActor_[request["id"].toInt()] && p->GetItemId (request["id"].toInt()))
   {
     Actor* item = idToActor_[request["id"].toInt()];
     if (item->GetType () == "item")
@@ -745,6 +745,24 @@ void GameServer::HandleEquip_(const QVariantMap& request, QVariantMap& response)
     }
   }
    WriteResult_(response, EFEMPResult::BAD_ID);
+}
+
+//==============================================================================
+void GameServer::HandlePutItem_(const QVariantMap& /*request*/, QVariantMap& )
+{
+
+}
+
+//==============================================================================
+void GameServer::HandlePutMob_(const QVariantMap& , QVariantMap& )
+{
+
+}
+
+//==============================================================================
+void GameServer::HandlePutPlayer_(const QVariantMap& , QVariantMap& )
+{
+
 }
 
 //==============================================================================
