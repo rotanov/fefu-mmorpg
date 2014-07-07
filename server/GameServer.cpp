@@ -609,7 +609,7 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
     {
       id << a->GetId();
     }
-    response["id_items"] = id;
+    response["inventory"] = id;
   /*  QVariantList id_slot;
     for(auto& a: SlotToString)
     {
