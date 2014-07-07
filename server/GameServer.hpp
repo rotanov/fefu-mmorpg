@@ -76,6 +76,9 @@ private:
     {"setUpConst", &GameServer::HandleSetUpConstants_},
     {"setUpMap", &GameServer::HandleSetUpMap_},
     {"getConst", &GameServer::HandleGetConst_},
+    {"putItem", &GameServer::HandlePutItem_},
+    {"putMob", &GameServer::HandlePutMob_},
+    {"putPlayer", &GameServer::HandlePutPlayer_},
     // Authorization
     {"login", &GameServer::HandleLogin_},
     {"logout", &GameServer::HandleLogout_},
@@ -99,6 +102,9 @@ private:
   void HandleSetUpConstants_(const QVariantMap& request, QVariantMap& response);
   void HandleSetUpMap_(const QVariantMap& request, QVariantMap& response);
   void HandleGetConst_(const QVariantMap& request, QVariantMap& response);
+  void HandlePutItem_(const QVariantMap& request, QVariantMap& response);
+  void HandlePutMob_(const QVariantMap& request, QVariantMap& response);
+  void HandlePutPlayer_(const QVariantMap& request, QVariantMap& response);
 
   void HandleLogin_(const QVariantMap& request, QVariantMap& response);
   void HandleLogout_(const QVariantMap& request, QVariantMap& response);

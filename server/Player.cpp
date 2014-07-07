@@ -84,3 +84,12 @@ void Player::SetSlot(Slot st, Item* item)
   slot_[st] = item;
 }
 
+bool Player::GetItemId (int id)
+ {
+   for (auto& a: items_)
+   {
+     if (a->GetId() == id)
+       return false;
+   }
+   return true;
+ }
