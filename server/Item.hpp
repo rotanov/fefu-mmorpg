@@ -31,10 +31,13 @@ private:
   int weight_;
   QString type_item;
   QString class_item;
+  //QString type_item_;
+  //QString class_item_;
   QString subtype_;
   QString massege_;
   int ammor_;
   QString demage_;
+  //QString damage_;
   std::vector<QString> class_ =
   {
     "garment",
