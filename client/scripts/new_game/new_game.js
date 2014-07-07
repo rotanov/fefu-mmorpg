@@ -410,9 +410,8 @@ $("#equip").click(function() {
 $("#unequip").click(function() {
     var slot = $("#p-slots input:radio[name=slot]:checked", "").val()
     if (slot != undefined) {
-        var id = $("div#"+slot).val()
         $("div#"+slot).text("")
-        socket.unequip(id, sid_)
+        socket.unequip(slot, sid_)
     }
 })
 
