@@ -112,6 +112,9 @@ function OnMessage(e) {
         break
 
     case "unequip":
+        if (data.result != "ok") {
+            utils.cryBabyCry(data.result)
+        }
         break
 
     case "pickUp":
@@ -212,6 +215,7 @@ function updateSlot(data) {
         return
     }
     $("div#"+curr_slot.slot).text(data.name)
+    $("div#"+curr_slot.slot).val(data.id)
 }
 
 function onUpdate() {
@@ -401,6 +405,15 @@ $("#reset").click(function() {
 
 $("#equip").click(function() {
     $("#slots").show()
+})
+
+$("#unequip").click(function() {
+    var slot = $("#p-slots input:radio[name=slot]:checked", "").val()
+    if (slot != undefined) {
+        var id = $("div#"+slot).val()
+        $("div#"+slot).text("")
+        socket.unequip(id, sid_)
+    }
 })
 
 return {
