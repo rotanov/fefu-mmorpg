@@ -57,7 +57,7 @@ h1, form
   position: absolute;
 }
 
-#inf-about-obj, #items, #slots
+#inf-about-obj, #items, #slots, #p-slots
 {
   padding: 5px 5px 5px 5px;
   background: rgb(247, 247, 247);
@@ -65,10 +65,18 @@ h1, form
   border-radius: 5px;
 }
 
+#p-slots
+{
+  float: right;
+  margin: 30px 200px 0px 0px;
+  top: 70px;
+  font-size: 12px;
+}
+
 #slots
 {
   float: right;
-  margin: 0px 25px 0px 0px;
+  margin: 0px 0px 150px 0px;
   margin-top: 144px;
   font-size: 12px;
 }
@@ -78,7 +86,7 @@ h1, form
   display:inline;
 }
 
-#logout, #inf-about-obj, #items, #slots
+#logout, #inf-about-obj, #items, #slots, #p-slots
 {
   display: none;
 }

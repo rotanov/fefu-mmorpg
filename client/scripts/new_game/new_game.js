@@ -34,6 +34,7 @@ var max_h = 0
 var curr_h = 0
 var health
 var lifespan = 1
+var curr_slot = {"slot": null, "id": null}
 
 function initSocket(wsUri) {
     socket = sock.WSConnect(wsUri, OnMessage)
@@ -59,6 +60,7 @@ function OnMessage(e) {
             break
         }
         object.showInf(data)
+        updateSlot(data)
         if (data.id == id_) {
             curr_h = data.health
             max_h = data.maxHealth
@@ -102,6 +104,11 @@ function OnMessage(e) {
         break
 
     case "equip":
+        if (data.result != "ok") {
+            utils.cryBabyCry(data.result)
+            return
+        }
+        socket.singleExamine(curr_slot.id, sid_)
         break
 
     case "unequip":
@@ -134,6 +141,7 @@ function Start(id, sid, h, w) {
             render: onRender
         }
     )
+    $("#p-slots").css({"left": (64 * width + 100)+"px", "position": "fixed"}).show()
 }
 
 function onPreload() {
@@ -197,6 +205,13 @@ function updateHealth(h, m) {
         msg.setText("GAME OVER")
         lifespan = 0
     }
+}
+
+function updateSlot(data) {
+    if (data.id != curr_slot.id) {
+        return
+    }
+    $("input:radio[name=slot]#"+curr_slot.slot+" div#"+curr_slot.slot).val(data.name)
 }
 
 function onUpdate() {
@@ -371,6 +386,9 @@ $("#ok").click(function() {
     if (slot != undefined) {
         socket.equip(id, sid_, slot)
     }
+    curr_slot.slot = slot
+    curr_slot.id = id
+    console.log(curr_slot)
 })
 
 $("#close").click(function() {
