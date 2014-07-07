@@ -171,15 +171,15 @@ private:
   QMap <QString, Slot> SlotToString =
   {
     {"ammo", ammo},
-    {"body_armor", body_armor},
+    {"body-armor", body_armor},
     {"feet", feet},
-    {"forearm_gloves", forearm_gloves},
-    {"head_helmet" ,head_helmet},
-    {"left_finger", left_finger},
-    {"left_hand", left_hand},
-    {"neck_amulet", neck_amulet},
-    {"right_finger", right_finger},
-    {"right_hand", right_hand}
+    {"forearm-gloves", forearm_gloves},
+    {"head-helmet" ,head_helmet},
+    {"left-finger", left_finger},
+    {"left-hand", left_hand},
+    {"neck-amulet", neck_amulet},
+    {"right-finger", right_finger},
+    {"right-hand", right_hand}
   };
 };
 
