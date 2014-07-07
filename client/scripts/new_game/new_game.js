@@ -358,7 +358,7 @@ $("#destroyItem").click(function() {
     socket.destroyItem(id, sid_)
 })
 
-$("#drop").click(function(id, sid_) {
+$("#drop").click(function(id) {
     var id = $("#items select#items").find(":selected").val()
     $("#items select#items").find(":selected").remove()
     socket.drop(id, sid_)
