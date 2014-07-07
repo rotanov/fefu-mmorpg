@@ -269,7 +269,7 @@ void GameServer::tick()
           {
             if (static_cast<Creature*>(actor)->GetHealth () > 10)
             {
-              if (static_cast<Creature*>(neighbour)->GetHealth () > 0)
+              if (static_cast<Creature*>(neighbour)->GetHealth () > 0 )
               {
                 QVariantMap a = static_cast<Creature*>(neighbour)->atack(static_cast<Creature*>(actor));
                 events_ << a;
@@ -663,10 +663,10 @@ void GameServer::HandleUnequip_(const QVariantMap& request, QVariantMap& respons
   for (auto& slot : SlotToString)
   {
     Item* item = p->GetSlot(slot);
-    if (item->GetId () != -1 && item->GetId() == id)
+    if (item && item->GetId () != -1 && item->GetId() == id)
     {
       p->items_.push_back (item);
-      p->SetDemage (item->GetDemage (), false);
+      p->SetDamage (item->GetDamage (), false);
       p->SetHealth (p->GetHealth() - item->Getammor ());
       Item* i = new Item();
       i->SetId(-1);
@@ -712,6 +712,7 @@ void GameServer::HandleDrop_(const QVariantMap& request, QVariantMap& response)
       idToActor_[item->GetId()] = item;
       actors_.push_back(item);
       item->SetPosition (p->GetPosition ());
+      levelMap_.IndexActor(item);
       p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
       WriteResult_(response, EFEMPResult::OK);
       return;
@@ -732,14 +733,14 @@ void GameServer::HandleEquip_(const QVariantMap& request, QVariantMap& response)
     {
       QString slot = request["slot"].toString();
       Item* i = p->GetSlot(SlotToString[slot]);
-      if (i->GetId () != -1)
+      if (i && i->GetId() != -1)
       {
         p->items_.push_back (i);
       }
       p->SetSlot(SlotToString[slot], item);
       p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
-      p->SetDemage (item->GetDemage (), true);
-      p->SetHealth (p->GetHealth() + item->Getammor ());
+      p->SetDamage (item->GetDamage (), true);
+      p->SetMaxHealth (p->GetMaxHealth () + item->Getammor ());
       WriteResult_(response, EFEMPResult::OK);
       return;
     }
@@ -850,7 +851,7 @@ void GameServer::GetItems (Creature* actor)
   } else {
     Item* item = CreateActor_<Item>();
     SetActorPosition_(item, actor->GetPosition ());
-    storage_.GetItem (item, item->GetId() % 33 + 1 );
+    storage_.GetItem (item, (item->GetId() % 31) + 1);
   }
 
 }

@@ -22,7 +22,7 @@ int Item::GetWeight()
 
 QString Item::GetTypeItem()
 {
-  return type_item;
+  return type_item_;
 }
 
 QString Item::GetSubtype()
@@ -37,7 +37,7 @@ QString Item::GetMessage()
 
 QString Item::GetClass()
 {
-  return class_item;
+  return class_item_;
 }
 
 void Item::SetName(QString str)
@@ -57,7 +57,7 @@ void Item::SetMessage (QString str)
 
 void Item::SetTypeItem(QString str)
 {
-  type_item = type[str.toInt()];
+  type_item_ = type[str.toInt()];
 }
 
 int Item::Getammor()
@@ -65,9 +65,9 @@ int Item::Getammor()
   return ammor_;
 }
 
-QString Item::GetDemage()
+QString Item::GetDamage()
 {
-  return demage_;
+  return damage_;
 }
 
 void Item::Setammor(int str)
@@ -75,9 +75,9 @@ void Item::Setammor(int str)
   ammor_ = str;
 }
 
-void Item::SetDemage(QString str)
+void Item::SetDamage(QString str)
 {
-  demage_ = str;
+  damage_ = str;
 }
 
 void Item::SetSubtype(QString str)
@@ -89,5 +89,5 @@ void Item::SetSubtype(QString str)
 void Item::SetClass(QString str)
 {
   int i = str.toInt () > 0?str.toInt ():0;
-  class_item = class_[i];
+  class_item_ = class_[i];
 }
