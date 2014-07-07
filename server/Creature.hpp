@@ -7,6 +7,18 @@
 
 class Item;
 
+struct Damage {
+  int count;
+  int to;
+};
+
+struct Blow {
+  QString attack;
+  QString effect;
+  Damage* damage;
+};
+
+
 class Creature : public Actor
 {
 public:

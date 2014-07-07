@@ -39,42 +39,37 @@ void Player::SetRace()
 
 void Player::SetBlows()
 {
-  Blows["attack"] = "BITE";
-  Blows["damage"] = "1d5";
-  Blows["effect"] = "HURT";
+  blows.attack = "BITE";
+  blows.damage = new Damage();
+  blows.damage->count = 1;
+  blows.damage->to = 5;
+  blows.effect = "HURT";
 }
-void Player::SetDemage(QString str, bool b)
+void Player::SetDamage(QString str, bool b)
 {
-  QStringList s1;
-  s1 << Blows["damage"].toString().split("d");
   QStringList s2;
   s2 << str.split("d");
-  QString result;
+  Damage* result = new Damage;
   if (b)
   {
-    int d1 = s1[0].toInt() + s2[0].toInt();
-    int d2 = s1[1].toInt() + s2[1].toInt();
-    result = QString(d1) + "d" + QString(d2);
+    result->count = s2[0].toInt() + blows.damage->count;
+    result->count = s2[1].toInt() + blows.damage->to;
   } else {
-    int d1 = s1[0].toInt() - s2[0].toInt();
-    int d2 = s1[1].toInt() - s2[1].toInt();
-    result = QString(d1) + "d" + QString(d2);
+    result->count = s2[0].toInt() - blows.damage->count;
+    result->count = s2[1].toInt() - blows.damage->to;
   }
-  Blows["damage"] = result;
+  blows.damage = result;
 }
 
 QVariantMap Player::atack(Creature* actor)
 {
   int val = rand();
-  QStringList s;
-  QString str = Blows["damage"].toString();
-  s << str.split ("d");
-  val = actor->GetHealth() - (val % s[0].toInt()+ s[1].toInt ());
-  actor->SetHealth(val);
+  val = (val % (blows.damage->count*blows.damage->to));
+  actor->SetHealth(actor->GetHealth()- val);
   QVariantMap ans;
   ans["dealtDamage"] = val;
   ans["target"] = actor->GetId();
-  ans["blowType"] = Blows["attack"];
+  ans["blowType"] = blows.attack;
   ans["attacker"] = GetId();
   return ans;
 }

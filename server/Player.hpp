@@ -1,8 +1,10 @@
 #pragma once
 
 #include <QString>
+#include <QVector>
 
 #include "Creature.hpp"
+#include "Item.hpp"
 
 enum Slot
 {
@@ -33,10 +35,10 @@ public:
   Item* GetSlot(Slot st);
   void SetSlot(Slot st, Item* item);
   virtual void SetRace();
-  void SetDemage(QString str, bool b);
-  QVariantMap Blows;
+  void SetDamage(QString str, bool b);
+  Blow blows;
   // represents creature's inventory
-  std::vector<Item*> items_;
+  QVector<Item*> items_;
 
 private:
   QString login_;
