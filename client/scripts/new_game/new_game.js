@@ -211,7 +211,7 @@ function updateSlot(data) {
     if (data.id != curr_slot.id) {
         return
     }
-    $("input:radio[name=slot]#"+curr_slot.slot+" div#"+curr_slot.slot).val(data.name)
+    $("div#"+curr_slot.slot).text(data.name)
 }
 
 function onUpdate() {

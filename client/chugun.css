@@ -81,7 +81,7 @@ h1, form
   font-size: 12px;
 }
 
-#slots input
+#slots input, #p-slots div
 {
   display:inline;
 }
