@@ -97,7 +97,8 @@ function(packages, utils, ws) {
                         "slideThreshold": 0.1,
                         "ticksPerSecond": 60,
                         "screenRowCount": 7,
-                        "screenColumnCount": 9
+                        "screenColumnCount": 9,
+                        "pickUpRadius": 1.5,
                     }).result)
                 })
 
@@ -109,6 +110,7 @@ function(packages, utils, ws) {
                     assert.equal(packages.consts().ticksPerSecond, response.ticksPerSecond)
                     assert.equal(packages.consts().screenRowCount, response.screenRowCount)
                     assert.equal(packages.consts().screenColumnCount, response.screenColumnCount)
+                    assert.equal(packages.consts().pickUpRadius, response.pickUpRadius)
                 })
             })
 

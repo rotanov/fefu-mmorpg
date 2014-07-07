@@ -9,6 +9,7 @@ function() {
            "ticksPerSecond": 60,
            "screenRowCount": 7,
            "screenColumnCount": 9,
+           "pickUpRadius": 1.5,
         }
         return pack
     }

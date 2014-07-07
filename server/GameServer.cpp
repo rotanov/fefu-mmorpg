@@ -333,6 +333,7 @@ void GameServer::HandleSetUpConstants_(const QVariantMap& request, QVariantMap& 
   ticksPerSecond_ = request["ticksPerSecond"].toInt();
   screenRowCount_ = request["screenRowCount"].toInt();
   screenColumnCount_ = request["screenColumnCount"].toInt();
+  pickUpRadius_ = request["pickUpRadius"].toFloat();
 }
 
 //==============================================================================
@@ -386,6 +387,7 @@ void GameServer::HandleGetConst_(const QVariantMap& request, QVariantMap& respon
   response["ticksPerSecond"] = ticksPerSecond_;
   response["screenRowCount"] = screenRowCount_;
   response["screenColumnCount"] = screenColumnCount_;
+  response["pickUpRadius"] = pickUpRadius_;
 }
 
 //==============================================================================
