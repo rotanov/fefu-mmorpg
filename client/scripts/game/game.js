@@ -1,5 +1,5 @@
-define(["phaser", "utils", "object", "new_game/socket", "new_game/monsters", "new_game/items"],
-function (phaser, utils, object, sock, monsters, items) {
+define(["jquery", "lib/phaser", "utils/utils", "game/object", "utils/socket", "game/monsters", "game/items"],
+function($, phaser, utils, object, sock, monsters, items) {
 
 var game
 var socket
@@ -37,7 +37,7 @@ var lifespan = 1
 var curr_slot = {"slot": null, "id": null}
 
 function initSocket(wsUri) {
-    socket = sock.WSConnect(wsUri, OnMessage)
+    socket = sock.WSConnect(wsUri, null, OnMessage)
 }
 
 function OnMessage(e) {
@@ -425,7 +425,7 @@ $("#items select").on("change", function (e) {
     var optionSelected = $("option:selected", this);
     var id = this.value;
     socket.singleExamine(id, sid_)
-});
+})
 
 return {
     start: Start,
