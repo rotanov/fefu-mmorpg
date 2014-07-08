@@ -1,72 +1,24 @@
-﻿define(["jquery", "utils", "packages", "test/mocha", "test/chai", "test/register", "test/websocket", "test/location"],
-function ($, utils, packages, m, chai, tr, tw, tl) {
+﻿define(["lib/mocha", "test/register", "test/websocket", "test/location"],
+function (m, tr, tw, tl) {
 
-    function testHandler (list) {
+    function testHandler(list) {
         document.title = "Test"
         $("#mocha, #msg").empty()
         mocha.setup("bdd")
-        var assert = chai.assert
 
         switch ($("#tests").find(":selected").text()) {
             case "register":
-                var action = utils.serverHandler({"action": "startTesting"})
-                if (action.result == "ok") {
-                    var response = utils.serverHandler(packages.consts())
-
-                    if (response.result == "ok") {
-                        tr.testRegister(assert)
-
-
-                    } else if (response.result == "badAction") {
-                        $("#msg").text("Invalid action.")
-                        .css("color", "red")
-                    }
-
-                } else if (action.result == "badAction") {
-                    $("#msg").text("Invalid action.")
-                    .css("color", "red")
-                }
+                tr.testRegister()
                 break
 
             case "websocket":
-                var action = utils.serverHandler({"action": "startTesting"})
-                if (action.result == "ok") {
-                    var response = utils.serverHandler(packages.consts())
-
-                    if (response.result == "ok") {
-                        tw.testWebSocket(assert)
-
-                    } else if (response.result == "badAction") {
-                        $("#msg").text("Invalid action.")
-                        .css("color", "red")
-                    }
-
-                } else if (action.result == "badAction") {
-                    $("#msg").text("Invalid action.")
-                    .css("color", "red")
-                }
+                tw.testWebSocket()
                 break
 
             case "location":
-                var action = utils.serverHandler({"action": "startTesting"})
-                if (action.result == "ok") {
-                    var response = utils.serverHandler(packages.consts())
-
-                    if (response.result == "ok") {
-                        tl.testLocation(assert)
-
-                    } else if (response.result == "badAction") {
-                        $("#msg").text("Invalid action.")
-                        .css("color", "red")
-                    }
-
-                } else if (action.result == "badAction") {
-                    $("#msg").text("Invalid action.")
-                    .css("color", "red")
-                }
+                tl.testLocation()
                 break
         }
-        mocha.run()
     }
 
     return {

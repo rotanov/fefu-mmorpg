@@ -1,335 +1,249 @@
-define(["packages", "utils", "ws"],
-function(packages, utils, ws) {
+define(["jquery", "lib/chai", "utils/utils", "utils/socket"],
+function($, chai, utils, ws) {
 
-    function testLocation(assert) {
+var socket
+var userData
+var dictionary
 
-        describe.only("Location", function(done) {
-            var playerVelocity = packages.consts().playerVelocity
-            var ticksPerSecond = packages.consts().ticksPerSecond
+var playerVelocity
+var slideThreshold
+var ticksPerSecond
+var screenRowCount
+var screenColumnCount
+var pickUpRadius
 
-            utils.serverHandler({
-                "action": "register",
-                "login": "Location",
-                "password": "Location"
-            })
+function testLocation() {
+    utils.serverHandler({
+        "action": "register",
+        "login": "Location",
+        "password": "Location"
+    })
 
-            var userData = utils.serverHandler({
-                "action": "login",
-                "login": "Location",
-                "password": "Location"
-            })
+    userData = utils.serverHandler({
+        "action": "login",
+        "login": "Location",
+        "password": "Location"
+    })
 
-            before(function(done) {
-                ws.startGame(userData.id, userData.sid, userData.webSocket)
-                setTimeout(done, 200)
-            })
+    onopen = function() {
+        socket.startTesting()
+    }
 
-            describe("Upload map to server", function() {
-                it("should return badMap", function() {
-                    var map = [
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", "$", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."]
-                    ]
+    onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        if (data.action == "startTesting" && data.result == "ok") {
+          test()
+        }
+    }
+    socket = ws.WSConnect(userData.webSocket, onopen, onmessage)
+}
 
-                    assert.equal("badMap", utils.serverHandler({
-                        "action": "setUpMap",
-                        "map": map
-                    }).result)
-                })
+function getKey(map, value) {
+    var flag = false
+    var keyVal
+    for (key in map) {
+        if (map[key] != value) {
+            continue
+        }
+        flag = true
+        keyVal = key
+        break
+    }
+    if (flag) {
+        return keyVal
+    } else {
+        return false
+    }
+}
 
-                it("should return badAction [mast setUpMap]", function() {
-                    var map = [
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."]
-                    ]
+function test() {
+    socket.startTesting()
+    var assert = chai.assert
 
-                    assert.equal("badAction", utils.serverHandler({
-                        "action": "uploadMap",
-                        "map": map
-                    }).result)
-                })
+    describe("Location", function() {
 
-                it("should return ok", function() {
-                    var map = [
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."],
-                        [".", ".", ".", ".", ".", ".", "."]
-                    ]
-
-                    assert.equal("ok", utils.serverHandler({
-                        "action": "setUpMap",
-                        "map": map
-                    }).result)
-                })
-            })
-
-            describe("Set Up / Get Constants", function() {
-                it("should return ok", function() {
-                    assert.equal("ok", utils.serverHandler(
-                        packages.consts()
-                    ).result)
-                })
-
-                it("should return badAction [must setUpConst]", function() {
-                    assert.equal("badAction", utils.serverHandler({
-                        "action": "setUploadConst",
-                        "playerVelocity": 1.0,
-                        "slideThreshold": 0.1,
-                        "ticksPerSecond": 60,
-                        "screenRowCount": 7,
-                        "screenColumnCount": 9,
-                        "pickUpRadius": 1.5,
-                    }).result)
-                })
-
-                it("should return ok", function() {
-                    var response = utils.serverHandler({"action": "getConst"})
-                    assert.equal("ok", response.result)
-                    assert.equal(packages.consts().playerVelocity, response.playerVelocity)
-                    assert.equal(packages.consts().slideThreshold, (response.slideThreshold).toFixed(1))
-                    assert.equal(packages.consts().ticksPerSecond, response.ticksPerSecond)
-                    assert.equal(packages.consts().screenRowCount, response.screenRowCount)
-                    assert.equal(packages.consts().screenColumnCount, response.screenColumnCount)
-                    assert.equal(packages.consts().pickUpRadius, response.pickUpRadius)
-                })
-            })
-
-            describe("Move left", function() {
-                var examineData
-                var lastTick
-                var newTick
-                it("should return ok", function() {
-                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
-                    .done(function (examine, data_1) {
-                        lastTick = ws.getTick()
-                        $.when(ws.move("west", lastTick, userData.sid), ws.timeout(200, ws.getMoveData))
-                        .done(function (move, data) {
-                            newTick = ws.getTick()
-                            $.when(ws.examine(userData.id, userData.sid), ws.getExamineData())
-                            .done(function (examine, data_2) {
-                                newTick = ws.getTick()
-                                var time = Math.round((newTick - lastTick) / ticksPerSecond)
-                                var xClient = Math.round(data_1.x - time * playerVelocity)
-                                var xServer = Math.round(data_2.x)
-                                assert.equal(xClient, xServer)
-                                assert.equal(data_1.y, data_2.y)
-                            })
-                        })
-                    })
-                })
-            })
-
-            describe("Move left again", function() {
-                var examineData
-                var lastTick
-                var newTick
-                it("should return ok", function() {
-                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
-                    .done(function (examine, data_1) {
-                        lastTick = ws.getTick()
-                        $.when(ws.move("west", lastTick, userData.sid), ws.timeout(200, ws.getMoveData))
-                        .done(function (move, data) {
-                            newTick = ws.getTick()
-                            $.when(ws.examine(userData.id, userData.sid), ws.getExamineData())
-                            .done(function (examine, data_2) {
-                                newTick = ws.getTick()
-                                var time = Math.round((newTick - lastTick) / ticksPerSecond)
-                                var xClient = Math.round(data_1.x - time * playerVelocity)
-                                var xServer = Math.round(data_2.x)
-                                assert.equal(xClient, xServer)
-                                assert.equal(data_1.y, data_2.y)
-                            })
-                        })
-                    })
-                })
-            })
-
-            describe("Move right", function() {
-                var examineData
-                var lastTick
-                var newTick
-                it("should return ok", function() {
-                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
-                    .done(function (examine, data_1) {
-                        lastTick = ws.getTick()
-                        $.when(ws.move("east", lastTick, userData.sid), ws.timeout(200, ws.getMoveData))
-                        .done(function (move, data) {
-                            newTick = ws.getTick()
-                            $.when(ws.examine(userData.id, userData.sid), ws.getExamineData())
-                            .done(function (examine, data_2) {
-                                newTick = ws.getTick()
-                                var time = Math.round((newTick - lastTick) / ticksPerSecond)
-                                var xClient = Math.round(data_1.x + time * playerVelocity)
-                                var xServer = Math.round(data_2.x)
-                                assert.equal(xClient, xServer)
-                                assert.equal(data_1.y, data_2.y)
-                            })
-                        })
-                    })
-                })
-            })
-
-            describe("Move right again", function() {
-                var examineData
-                var lastTick
-                var newTick
-                it("should return ok", function() {
-                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
-                    .done(function (examine, data_1) {
-                        lastTick = ws.getTick()
-                        $.when(ws.move("east", lastTick, userData.sid), ws.timeout(200, ws.getMoveData))
-                        .done(function (move, data) {
-                            newTick = ws.getTick()
-                            $.when(ws.examine(userData.id, userData.sid), ws.getExamineData())
-                            .done(function (examine, data_2) {
-                                newTick = ws.getTick()
-                                var time = Math.round((newTick - lastTick) / ticksPerSecond)
-                                var xClient = Math.round(data_1.x + time * playerVelocity)
-                                var xServer = Math.round(data_2.x)
-                                assert.equal(xClient, xServer)
-                                assert.equal(data_1.y, data_2.y)
-                            })
-                        })
-                    })
-                })
-            })
-
-            describe("Move up", function() {
-                var examineData
-                var lastTick
-                var newTick
-                it("should return ok", function() {
-                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
-                    .done(function (examine, data_1) {
-                        lastTick = ws.getTick()
-                        $.when(ws.move("north", lastTick, userData.sid), ws.timeout(200, ws.getMoveData))
-                        .done(function (move, data) {
-                            newTick = ws.getTick()
-                            $.when(ws.examine(userData.id, userData.sid), ws.getExamineData())
-                            .done(function (examine, data_2) {
-                                newTick = ws.getTick()
-                                var time = Math.round((newTick - lastTick) / ticksPerSecond)
-                                var yClient = Math.round(data_1.y + time * playerVelocity)
-                                var yServer = Math.round(data_2.y)
-                                assert.equal(yClient, yServer)
-                                assert.equal(data_1.x, data_2.x)
-                            })
-                        })
-                    })
-                })
-            })
-
-            describe("Move up again", function() {
-                var examineData
-                var lastTick
-                var newTick
-                it("should return ok", function() {
-                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
-                    .done(function (examine, data_1) {
-                        lastTick = ws.getTick()
-                        $.when(ws.move("north", lastTick, userData.sid), ws.timeout(200, ws.getMoveData))
-                        .done(function (move, data) {
-                            newTick = ws.getTick()
-                            $.when(ws.examine(userData.id, userData.sid), ws.getExamineData())
-                            .done(function (examine, data_2) {
-                                newTick = ws.getTick()
-                                var time = Math.round((newTick - lastTick) / ticksPerSecond)
-                                var yClient = Math.round(data_1.y + time * playerVelocity)
-                                var yServer = Math.round(data_2.y)
-                                assert.equal(yClient, yServer)
-                                assert.equal(data_1.x, data_2.x)
-                            })
-                        })
-                    })
-                })
-            })
-
-            describe("Move down", function() {
-                var examineData
-                var lastTick
-                var newTick
-                it("should return ok", function() {
-                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
-                    .done(function (examine, data_1) {
-                        lastTick = ws.getTick()
-                        $.when(ws.move("south", lastTick, userData.sid), ws.timeout(200, ws.getMoveData))
-                        .done(function (move, data) {
-                            newTick = ws.getTick()
-                            $.when(ws.examine(userData.id, userData.sid), ws.getExamineData())
-                            .done(function (examine, data_2) {
-                                newTick = ws.getTick()
-                                var time = Math.round((newTick - lastTick) / ticksPerSecond)
-                                var yClient = Math.round(data_1.y - time * playerVelocity)
-                                var yServer = Math.round(data_2.y)
-                                assert.equal(yClient, yServer)
-                                assert.equal(data_1.x, data_2.x)
-                            })
-                        })
-                    })
-                })
-            })
-
-            describe("Move down again", function() {
-                var examineData
-                var lastTick
-                var newTick
-                it("should return ok", function() {
-                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
-                    .done(function (examine, data_1) {
-                        lastTick = ws.getTick()
-                        $.when(ws.move("south", lastTick, userData.sid), ws.timeout(200, ws.getMoveData))
-                        .done(function (move, data) {
-                            newTick = ws.getTick()
-                            $.when(ws.examine(userData.id, userData.sid), ws.getExamineData())
-                            .done(function (examine, data_2) {
-                                newTick = ws.getTick()
-                                var time = Math.round((newTick - lastTick) / ticksPerSecond)
-                                var yClient = Math.round(data_1.y - time * playerVelocity)
-                                var yServer = Math.round(data_2.y)
-                                assert.equal(yClient, yServer)
-                                assert.equal(data_1.x, data_2.x)
-                            })
-                        })
-                    })
+        describe("Tick", function() {
+            it("should successfully get tick", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data);
+                    if (data.tick) {
+                        done()
+                   }
                 })
             })
         })
 
-        after(function() {
-            var stop = utils.serverHandler({"action": "stopTesting"}).result
-            if (stop == "badAction") {
-                $("#msg").text("Invalid action.")
-                .css("color", "red")
-            } else if (stop == "ok") {
-                $("#msg").text("Test is successful.")
-                .css("color", "green")
+        describe("getDictionary", function() {
+            it("should return badSid", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    if (data.action == "getDictionary") {
+                        assert.equal("badSid", data.result)
+                        done()
+                    }
+                })
+                socket.getDictionary("...")
+            })
+
+            it("should return ok", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data);
+                    if (data.action == "getDictionary") {
+                        assert.equal("ok", data.result)
+                        assert.isDefined(data.dictionary)
+                        var grass = getKey(data.dictionary, "grass")
+                        var wall = getKey(data.dictionary, "wall")
+                        assert.isTrue(grass != undefined)
+                        assert.isTrue(wall != undefined)
+                        dictionary = data.dictionary
+                        done()
+                    }
+                })
+                socket.getDictionary(userData.sid)
+            })
+        })
+
+        describe("Upload map to server", function() {
+            it("should return badMap", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data);
+                    if (data.action == "setUpMap") {
+                        assert.equal("badMap", data.result, "empty map")
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": []})
+            })
+
+            it("should return badMap", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data);
+                    if (data.action == "setUpMap") {
+                        assert.equal("badMap", data.result, "bad symbol")
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": [["/"]]})
+            })
+
+            it("should return badAction", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data);
+                    if (data.action == "setUploadMap") {
+                        assert.equal("badAction", data.result, "must setUpMap")
+                        done()
+                    }
+                })
+                var map = [[getKey(dictionary, "grass")]]
+                socket.setUpMap({"action": "setUploadMap", "map": map})
+            })
+
+            it("should return ok", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data);
+                    if (data.action == "setUpMap") {
+                        assert.equal("ok", data.result)
+                        done()
+                    }
+                })
+                var grass = getKey(dictionary, "grass")
+                var map = [
+                    [grass, grass, grass],
+                    [grass, grass, grass],
+                    [grass, grass, grass]
+                ]
+                socket.setUpMap({"action": "setUpMap", "map": map})
+            })
+        })
+
+        describe("Set Up / Get Constants", function() {
+            it("should return ok", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data);
+                    if (data.action == "getConst") {
+                        assert.equal("ok", data.result)
+                        assert.isDefined(data.playerVelocity)
+                        assert.isDefined(data.slideThreshold)
+                        assert.isDefined(data.ticksPerSecond)
+                        assert.isDefined(data.screenRowCount)
+                        assert.isDefined(data.screenColumnCount)
+                        assert.isDefined(data.pickUpRadius)
+
+                        playerVelocity = data.playerVelocity
+                        slideThreshold = data.slideThreshold
+                        ticksPerSecond = data.ticksPerSecond
+                        screenRowCount = data.screenRowCount
+                        screenColumnCount = data.screenColumnCount
+                        pickUpRadius = data.pickUpRadius
+                        done()
+                    }
+                })
+                socket.getConst()
+            })
+
+            it("should return badAction", function(done) {
+                var data = {
+                    "action": "setUploadConst",
+                    "playerVelocity": 1.0,
+                    "slideThreshold": 0.1,
+                    "ticksPerSecond": 60,
+                    "screenRowCount": 7,
+                    "screenColumnCount": 9,
+                    "pickUpRadius": 1.5,
+                }
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data);
+                    if (data.action == "setUploadConst") {
+                        assert.equal("badAction", data.result, "must setUpConst")
+                        done()
+                    }
+                })
+                socket.setUpConst(data)
+            })
+
+            it("should return ok", function(done) {
+                var data = {
+                    "action": "setUpConst",
+                    "playerVelocity": playerVelocity,
+                    "slideThreshold": slideThreshold,
+                    "ticksPerSecond": ticksPerSecond,
+                    "screenRowCount": screenRowCount,
+                    "screenColumnCount": screenColumnCount,
+                    "pickUpRadius": pickUpRadius,
+                }
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data);
+                    if (data.action == "setUpConst") {
+                        assert.equal("ok", data.result)
+                        done()
+                    }
+                })
+                socket.setUpConst(data)
+            })
+        })
+    })
+
+    after(function() {
+        socket.setOnMessage(function(e) {
+            var data = JSON.parse(e.data)
+            if (data.action == "stopTesting") {
+                if (data.result == "badAction") {
+                    $("#msg").text("Invalid action.")
+                    .css("color", "red")
+                } else if (data.result == "ok") {
+                    $("#msg").text("Test is successful.")
+                    .css("color", "green")
+                }
             }
-        });
+        })
+        socket.stopTesting()
+        //socket.setOnMessage(undefined)
+    })
+    mocha.run()
+}
 
-    }
-
-    return {
-        testLocation: testLocation
-    }
+return {
+    testLocation: testLocation
+}
 
 })

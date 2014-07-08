@@ -1,169 +1,229 @@
-define(["test/mocha", "utils", "ws"],
-function (m, utils, ws) {
+define(["jquery", "lib/chai", "utils/utils", "utils/socket"],
+function($, chai, utils, ws) {
 
-    function testWebSocket(assert) {
-        describe.only("WebSocket", function(done) {
-            utils.serverHandler({
-                "action": "register",
-                "login": "Pavel",
-                "password": "111111"
-            })
+var tick
+var socket
+var userData
 
-            userData = utils.serverHandler({
-                "action": "login",
-                "login": "Pavel",
-                "password": "111111"
-            })
+function testWebSocket() {
+    utils.serverHandler({
+        "action": "register",
+        "login": "WebSocket",
+        "password": "WebSocket"
+    })
 
-            before(function(done) {
-                ws.startGame(userData.id, userData.sid, userData.webSocket)
-                if (ws.readyState === 1) {
-                    done
-                } else {
-                    setTimeout(done, 200)
-                }
-            })
+    userData = utils.serverHandler({
+        "action": "login",
+        "login": "WebSocket",
+        "password": "WebSocket"
+    })
 
-            describe("getDictionary", function() {
-                it("should return ok", function() {
-                    $.when(ws.getDictionary(userData.sid), ws.timeout(200, ws.getDictionData()))
-                    .done(function (getDictionary, data) {
+    onopen = function() {
+        socket.startTesting()
+    }
+
+    onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        if (data.action == "startTesting" && data.result == "ok") {
+          test()
+        }
+    }
+    socket = ws.WSConnect(userData.webSocket, onopen, onmessage)
+}
+
+function test() {
+    socket.startTesting()
+    var assert = chai.assert
+
+    describe.only("WebSocket", function(done) {
+
+        describe("Look", function() {
+            it("should return ok", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    tick = data.tick
+                    if (data.action == "look") {
                         assert.equal("ok", data.result)
-                    })
+                        done()
+                    }
                 })
-
-                it("should have properties ['.', '#']", function() {
-                    $.when(ws.getDictionary(userData.sid), ws.timeout(200, ws.getDictionData()))
-                    .done(function (getDictionary, data) {
-                    console.log(data);
-                        assert.property(data.dictionary, ".")
-                        assert.property(data.dictionary, "#")
-                    })
-                })
-
-                it("should return badSid", function() {
-                    $.when(ws.getDictionary("123"), ws.timeout(200, ws.getDictionData()))
-                    .done(function (getDictionary, data) {
-                        assert.equal("badSid", data.result)
-                    })
-                })
+                socket.look(userData.sid)
             })
 
-            describe("Look", function() {
-                it("should return ok", function() {
-                    $.when(ws.look(userData.sid), ws.timeout(200, ws.getLookData()))
-                    .done(function (look, data) {
-                        assert.equal("ok", data.result)
-                    })
-                })
-
-                it("should have properties [map, actors]", function() {
-                    $.when(ws.look(userData.sid), ws.timeout(200, ws.getLookData()))
-                    .done(function (look, data) {
+            it("should have properties [map, actors]", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    tick = data.tick
+                    if (data.action == "look") {
                         assert.property(data, "map")
                         assert.property(data, "actors")
-                    })
+                        done()
+                    }
                 })
-
-                it("coordinates must be defined", function() {
-                    $.when(ws.look(userData.sid), ws.timeout(200, ws.getLookData()))
-                    .done(function (look, data) {
-                        assert.isDefined(data.x)
-                        assert.isDefined(data.y)
-                    })
-                })
-
-                it("should return badSid", function() {
-                    $.when(ws.look("."), ws.timeout(200, ws.getLookData()))
-                    .done(function (look, data) {
-                        assert.equal("badSid", data.result)
-                    })
-                })
+                socket.look(userData.sid)
             })
 
-            describe("Examine", function() {
-                it("should return ok", function() {
-                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
-                    .done(function (examine, data) {
-                        assert.equal("ok", data.result)
-                    })
-                })
-
-                it("id must be defined", function() {
-                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
-                    .done(function (examine, data) {
-                        ssert.isDefined(data.id)
-                    })
-                })
-
-                it("type must be player", function() {
-                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
-                    .done(function (examine, data) {
-                        assert.equal("player", data.type)
-                    })
-                })
-
-                it("login must be defined", function() {
-                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
-                    .done(function (examine, data) {
-                        assert.isDefined(data.login)
-                    })
-                })
-
-                it("coordinates must be defined", function() {
-                    $.when(ws.examine(userData.id, userData.sid), ws.timeout(200, ws.getExamineData()))
-                    .done(function (examine, data) {
+            it("coordinates must be defined", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    tick = data.tick
+                    if (data.action == "look") {
                         assert.isDefined(data.x)
                         assert.isDefined(data.y)
-                    })
+                        done()
+                    }
                 })
-
-                it("should return badId", function() {
-                    $.when(ws.examine(".", userData.sid), ws.timeout(200, ws.getExamineData()))
-                    .done(function (examine, data) {
-                        assert.equal("badId", data.result)
-                    })
-                })
-
-                it("should return badSid", function() {
-                    $.when(ws.examine(userData.id, "."), ws.timeout(200, ws.getExamineData()))
-                    .done(function (examine, data) {
-                        assert.equal("badSid", data.result)
-                    }) 
-                })
+                socket.look(userData.sid)
             })
 
-            describe("Move", function() {
-                it("should return ok", function() {
-                    $.when(ws.move("west", ws.getTick, userData.sid), ws.timeout(200, ws.getMoveData()))
-                    .done(function (move, data) {
-                        assert.equal("ok", data.result)
-                    }) 
-                })
-
-                it("should return badSid", function() {
-                    $.when(ws.move("west", ws.getTick, "."), ws.timeout(200, ws.getMoveData()))
-                    .done(function (move, data) {
+            it("should return badSid", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    tick = data.tick
+                    if (data.action == "look") {
                         assert.equal("badSid", data.result)
-                    }) 
+                        done()
+                    }
                 })
+                socket.look(".")
             })
         })
 
-        after(function() {
-            var stop = utils.serverHandler({"action": "stopTesting"}).result
-            if (stop == "badAction") {
-                $("#msg").text("Invalid action.")
-                .css("color", "red")
-            } else if (stop == "ok") {
-                $("#msg").text("Test is successful.")
-                .css("color", "green")
-            }
-        });
-    }
+        describe("Examine", function() {
+            it("should return ok", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    tick = data.tick
+                    if (data.action == "examine") {
+                        assert.equal("ok", data.result)
+                        done()
+                    }
+                })
+                socket.singleExamine(userData.id, userData.sid)
+            })
 
-    return {
-        testWebSocket: testWebSocket
-    }
+            it("id must be defined", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    tick = data.tick
+                    if (data.action == "examine") {
+                        assert.isDefined(data.id)
+                        done()
+                    }
+                })
+                socket.singleExamine(userData.id, userData.sid)
+            })
+
+            it("type must be player", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    tick = data.tick
+                    if (data.action == "examine") {
+                        assert.equal("player", data.type)
+                        done()
+                    }
+                })
+                socket.singleExamine(userData.id, userData.sid)
+            })
+
+            it("login must be defined", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    tick = data.tick
+                    if (data.action == "examine") {
+                        assert.isDefined(data.login)
+                        done()
+                    }
+                })
+                socket.singleExamine(userData.id, userData.sid)
+            })
+
+            it("coordinates must be defined", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    tick = data.tick
+                    if (data.action == "examine") {
+                        assert.isDefined(data.x)
+                        assert.isDefined(data.y)
+                        done()
+                    }
+                })
+                socket.singleExamine(userData.id, userData.sid)
+            })
+
+            it("should return badId", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    tick = data.tick
+                    if (data.action == "examine") {
+                        assert.equal("badId", data.result)
+                        done()
+                    }
+                })
+                socket.singleExamine(".", userData.sid)
+            })
+
+            it("should return badSid", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    tick = data.tick
+                    if (data.action == "examine") {
+                        assert.equal("badSid", data.result)
+                        done()
+                    }
+                })
+                socket.singleExamine(userData.id, ".")
+            })
+        })
+
+        describe("Move", function() {
+            it("should return ok", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    tick = data.tick
+                    if (data.action == "move") {
+                        assert.equal("ok", data.result)
+                        done()
+                    }
+                })
+                socket.move("west", tick, userData.sid)
+            })
+
+            it("should return badSid", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    tick = data.tick
+                    if (data.action == "move") {
+                        assert.equal("badSid", data.result)
+                        done()
+                    }
+                })
+                socket.move("west", tick, ".")
+            })
+        })
+    })
+
+    after(function() {
+        socket.setOnMessage(function(e) {
+            var data = JSON.parse(e.data)
+            if (data.action == "stopTesting") {
+                if (data.result == "badAction") {
+                    $("#msg").text("Invalid action.")
+                    .css("color", "red")
+                } else if (data.result == "ok") {
+                    $("#msg").text("Test is successful.")
+                    .css("color", "green")
+                }
+            }
+        })
+        socket.stopTesting()
+        //socket.setOnMessage(undefined)
+    })
+    mocha.run()
+}
+
+return {
+    testWebSocket: testWebSocket
+}
 
 })

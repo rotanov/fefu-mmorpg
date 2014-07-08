@@ -1,5 +1,5 @@
-define(["jquery", "utils", "ws", "new_game/new_game"],
-function ($, utils, ws, game) {
+define(["jquery", "utils/utils", "game/game"],
+function($, utils, game) {
 
     var sid_
 
@@ -39,8 +39,8 @@ function ($, utils, ws, game) {
             var consts = utils.serverHandler({"action": "getConst"})
             $.when(
                 game.initSocket(data.webSocket),
-                ws.timeout(
-                    1000,
+                utils.timeout(
+                    3000,
                     function() {
                         $("#content, #test-form").hide()
                         $("#logout, #items, #items select").show()

@@ -1,5 +1,5 @@
-﻿require(["jquery", "phaser", "authorization", "test/test", "utils", "packages"],
-function ($, phaser, auth, test, utils, packages) {
+﻿require(["jquery", "lib/phaser", "authorization", "test/test", "utils/utils"],
+function($, phaser, auth, test, utils) {
 
     $("#register").click(function() {
         auth.jsonHandle("register", auth.registerCallback)
