@@ -48,9 +48,9 @@ function OnMessage(e) {
         for (var i = 0, l = data.events.length; i < l; ++i)
             if (data.events[i].attaker != id_) {
                 curr_h -= data.events[i].dealtDamage
-                updateHealth(curr_h, max_h)
             }
         if (curr_h < max_h) ++curr_h
+        updateHealth(curr_h, max_h)
     }
 
     switch(data.action) {
@@ -123,6 +123,12 @@ function OnMessage(e) {
             popItem()
         }
         break
+    case "use":
+        if (data.result != "ok") {
+            utils.cryBabyCry(data.result)
+            break
+        }
+        alert(data.message)
     }
 }
 
@@ -410,11 +416,16 @@ $("#equip").click(function() {
 $("#unequip").click(function() {
     var slot = $("#p-slots input:radio[name=slot]:checked", "").val()
     if (slot != undefined) {
-        var id = $("div#"+slot).val()
         $("div#"+slot).text("")
-        socket.unequip(id, sid_)
+        socket.unequip(slot, sid_)
     }
 })
+
+$("#items select").on("change", function (e) {
+    var optionSelected = $("option:selected", this);
+    var id = this.value;
+    socket.singleExamine(id, sid_)
+});
 
 return {
     start: Start,

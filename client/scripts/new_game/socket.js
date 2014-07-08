@@ -16,6 +16,8 @@ define(function() {
         this.sock.onmessage = onmessage
     }
 
+    /*Game Interaction*/
+
     Socket.prototype.singleExamine = function(id, sid) {
         this.sock.send(JSON.stringify({
             "action": "examine",
@@ -104,10 +106,10 @@ define(function() {
         }))
     }
 
-    Socket.prototype.unequip = function(id, sid) {
+    Socket.prototype.unequip = function(slot, sid) {
         this.sock.send(JSON.stringify({
             "action": "unequip",
-            "id": id,
+            "slot": id,
             "sid": sid
         }))
     }

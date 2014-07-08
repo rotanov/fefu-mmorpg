@@ -596,10 +596,11 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
   if (response["type"] == "item")
   {
     auto m = static_cast<Item*>(actor);
-    response["name"] = m->Getname ();
-    response["type_item"] = m->GetTypeItem();
-    response["class_item"] = m->GetClass ();
-    response["subtype"] = m->GetSubtype ();
+    response["name"] = m->Getname();
+    response["type"] = m->GetTypeItem();
+    response["class"] = m->GetClass();
+    response["subtype"] = m->GetSubtype();
+    response["weight"] = m->GetWeight();
   }
   if (actor->GetType () == "player")
   {
