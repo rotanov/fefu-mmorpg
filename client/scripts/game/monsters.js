@@ -1,5 +1,4 @@
 define(function() {
-
     var name_monster = []
     name_monster["Scrawny cat"] = 83
     name_monster["Scruffy little dog"] = 84
