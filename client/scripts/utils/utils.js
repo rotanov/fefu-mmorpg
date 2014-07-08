@@ -1,5 +1,5 @@
-define(["jquery"],
-function ($) {
+define(
+function() {
 
     var serverAddress_ = "http://localhost:6543";
 
@@ -60,12 +60,23 @@ function ($) {
         console.log("Error: " + result)
     }
 
+    function timeout(x, callback) {
+        var dfd = $.Deferred()
+        setTimeout(function () {
+            if (typeof callback !== 'undefined') {
+                dfd.resolve(callback())
+            }
+        }, x)
+        return dfd.promise()
+    }
+
     return {
         getServerAddress: getServerAddress,
         setServerAddress: setServerAddress,
         postRequest: postRequest,
         serverHandler: serverHandler,
-        cryBabyCry: cryBabyCry
+        cryBabyCry: cryBabyCry,
+        timeout: timeout
     }
 
 })
