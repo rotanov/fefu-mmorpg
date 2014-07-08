@@ -764,13 +764,13 @@ void GameServer::HandlePutItem_(const QVariantMap& request, QVariantMap& respons
     WriteResult_(response, EFEMPResult::BAD_ACTION);
     return;
   }
-  int x = request["x"].toInt();
-  int y = request["y"].toInt();
-//  if (levelMap_.GetCell (x, y) == "#")
-//  {
-//    WriteResult_(response, EFEMPResult::BAD_POINT);
-//    return;
-//  }
+  float x = request["x"].toFloat();
+  float y = request["y"].toFloat();
+  if (levelMap_.GetCell(x, y) != '.')
+  {
+    WriteResult_(response, EFEMPResult::BAD_PLACING);
+    return;
+  }
   Item* item = CreateActor_<Item>();
   SetActorPosition_(item, Vector2(x,y));
   SetItemDescription (request, item);
@@ -779,24 +779,29 @@ void GameServer::HandlePutItem_(const QVariantMap& request, QVariantMap& respons
 }
 
 //==============================================================================
-void GameServer::HandlePutMob_(const QVariantMap& request, QVariantMap& response )
+void GameServer::HandlePutMob_(const QVariantMap& request, QVariantMap& response)
 {
   if (!testingStageActive_)
   {
     WriteResult_(response, EFEMPResult::BAD_ACTION);
     return;
   }
-  double x = request["x"].toDouble();
-  double y = request["y"].toDouble();
- // if (levelMap_.GetCell (x,y) == "#")
- // {
- //   WriteResult_(response, EFEMPResult::BAD_POINT);
- //   return;
-//  }
+  float x = request["x"].toFloat();
+  float y = request["y"].toFloat();
+  if (levelMap_.GetCell(x, y) != '.')
+  {
+    WriteResult_(response, EFEMPResult::BAD_PLACING);
+    return;
+  }
   Monster* m = CreateActor_<Monster>();
   SetActorPosition_(m, Vector2(x,y));
-  //m->Flags = request["flags"].toByteArray();
-  //m->SetRace (request["race"].toString());
+  auto flag = request["flags"].toList();
+  for (auto a: flag)
+    m->Flags.push_back (a.toString());
+  m->SetRace (request["race"].toString());
+  m->SetDamage (request["dealtDamage"].toInt());
+  response["id"] = m->GetId ();
+  WriteResult_(response, EFEMPResult::OK);
   /*action: "putMob"
     x: <mob's x coordinate>
     y: <mob's y coordinate>
@@ -809,13 +814,47 @@ void GameServer::HandlePutMob_(const QVariantMap& request, QVariantMap& response
 }
 
 //==============================================================================
-void GameServer::HandlePutPlayer_(const QVariantMap& , QVariantMap& )
+void GameServer::HandlePutPlayer_(const QVariantMap&  request, QVariantMap& response)
 {
- /* if (!testingStageActive_)
+  if (!testingStageActive_)
   {
     WriteResult_(response, EFEMPResult::BAD_ACTION);
     return;
-  }*/
+  }
+  float x = request["x"].toFloat();
+  float y = request["y"].toFloat();
+  if (levelMap_.GetCell(x, y) != '.')
+  {
+    WriteResult_(response, EFEMPResult::BAD_PLACING);
+    return;
+  }
+  Player* p = CreateActor_<Player>();
+  SetActorPosition_(p, Vector2(x,y));
+  auto inventory = request["inventory"].toList();
+  for (auto a: inventory)
+  {
+    Item* item =   CreateActor_<Item>();
+    SetItemDescription (a.toMap(), item);
+    p->items_.push_back (item);
+  }
+  auto slot = request["slot"].toList();
+  for (auto a: slot)
+  {
+    for(QMap<QString, Slot>::iterator i = SlotToString.begin(); i != SlotToString.end(); i++)
+    {
+     /* QVariantMap b = a.toMap();
+      if (b[])
+      {
+        Item* item =   CreateActor_<Item>();
+        SetItemDescription (b.toMap(), item);
+        p->SetSlot (i.value (), item);
+      }*/
+    }
+  }
+  response["id"] = p->GetId ();
+  WriteResult_(response, EFEMPResult::OK);
+ /* inventory: [{<Item Description*>}, ...]
+slots: {<Slot name. Slots*> : {<Item Description*>}, ...}*/
 }
 
 //==============================================================================

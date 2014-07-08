@@ -25,7 +25,7 @@ enum class EFEMPResult
   BAD_ACTION,
   BAD_MAP,
   BAD_SLOT,
-  BAD_POINT,
+  BAD_PLACING,
 };
 
 
@@ -41,7 +41,7 @@ const std::vector<QString> fempResultToString =
   [EFEMPResult::BAD_ACTION] = "badAction",
   [EFEMPResult::BAD_MAP] = "badMap",
   [EFEMPResult::BAD_SLOT] = "badSlot",
-  [EFEMPResult::BAD_POINT] = "badPoint",
+  [EFEMPResult::BAD_PLACING] = "badPlacing",
 };
 
 

@@ -63,6 +63,8 @@ public:
   virtual bool OnCollideActor(Actor* actor);
   virtual void Update(float dt);
   virtual void SetRace();
+  void SetDamage(int d);
+  virtual void SetRace(QString r);
   virtual QVariantMap atack(Creature* actor);
   QString GetName();
   QString name;
@@ -72,6 +74,7 @@ public:
   QStringList Blows;
 private:
     QString race_;
+    int damage_;
     QMap<QString,QString> Hates =
   {
     {"HATE_ORC","ORC"},
