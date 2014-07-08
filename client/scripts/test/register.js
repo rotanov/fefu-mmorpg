@@ -31,6 +31,7 @@ function testRegister() {
 }
 
 function test() {
+    var assert = chai.assert
     describe.only("Register", function() {
         describe.only("Registration", function() {
             it("should return ok", function() {
