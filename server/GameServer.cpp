@@ -593,14 +593,16 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
       auto m = static_cast<Monster*> (actor);
       response["mobType"] = m->GetName();
   }
+
+  QVariantMap item;
   if (response["type"] == "item")
   {
     auto m = static_cast<Item*>(actor);
-    response["name"] = m->Getname();
-    response["type"] = m->GetTypeItem();
-    response["class"] = m->GetClass();
-    response["subtype"] = m->GetSubtype();
-    response["weight"] = m->GetWeight();
+    item["name"] = m->Getname();
+    item["type"] = m->GetTypeItem();
+    item["class"] = m->GetClass();
+    item["subtype"] = m->GetSubtype();
+    item["weight"] = m->GetWeight();
   }
   if (actor->GetType () == "player")
   {
@@ -621,7 +623,7 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
   response["x"] = actor->GetPosition().x;
   response["y"] = actor->GetPosition().y;
   response["id"] = actor->GetId();
-
+  response["item"] = item;
   Player* p = dynamic_cast<Player*>(actor);
   if (p != NULL)
   {
