@@ -38,8 +38,8 @@ private:
   std::vector<QString> class_ =
   {
     "garment",
-    "food",
-    "bow"
+    "consumable",
+
   };
 
   std::vector<QString> type =
@@ -52,11 +52,12 @@ private:
     "gloves",
     "boots",
     "weapon",
+    "expendable",
   };
   std::vector<QString> subtype =
   {
-    "sword",
-    "polearms",
+    "one-handed",
+    "two-handed",
     "bow",
   };
 };

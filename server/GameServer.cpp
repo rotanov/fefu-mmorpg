@@ -748,21 +748,65 @@ void GameServer::HandleEquip_(const QVariantMap& request, QVariantMap& response)
 }
 
 //==============================================================================
-void GameServer::HandlePutItem_(const QVariantMap& /*request*/, QVariantMap& )
+void GameServer::HandlePutItem_(const QVariantMap& request, QVariantMap& response)
 {
-
+  if (!testingStageActive_)
+  {
+    WriteResult_(response, EFEMPResult::BAD_ACTION);
+    return;
+  }
+  int x = request["x"].toInt();
+  int y = request["y"].toInt();
+//  if (levelMap_.GetCell (x, y) == "#")
+//  {
+//    WriteResult_(response, EFEMPResult::BAD_POINT);
+//    return;
+//  }
+  Item* item = CreateActor_<Item>();
+  SetActorPosition_(item, Vector2(x,y));
+  SetItemDescription (request, item);
+  response["id"] = item->GetId ();
+  WriteResult_(response, EFEMPResult::OK);
 }
 
 //==============================================================================
-void GameServer::HandlePutMob_(const QVariantMap& , QVariantMap& )
+void GameServer::HandlePutMob_(const QVariantMap& request, QVariantMap& response )
 {
+  if (!testingStageActive_)
+  {
+    WriteResult_(response, EFEMPResult::BAD_ACTION);
+    return;
+  }
+  double x = request["x"].toDouble();
+  double y = request["y"].toDouble();
+ // if (levelMap_.GetCell (x,y) == "#")
+ // {
+ //   WriteResult_(response, EFEMPResult::BAD_POINT);
+ //   return;
+//  }
+  Monster* m = CreateActor_<Monster>();
+  SetActorPosition_(m, Vector2(x,y));
+  //m->Flags = request["flags"].toByteArray();
+  //m->SetRace (request["race"].toString());
+  /*action: "putMob"
+    x: <mob's x coordinate>
+    y: <mob's y coordinate>
+    stats: {<Stats*>}
+    inventory : [{<Item Description*>}, ...]
+    flags: [<Flags*>, ...]
+    race: <Race*>
+    dealtDamage: <mob's dealt damage by single attack>*/
 
 }
 
 //==============================================================================
 void GameServer::HandlePutPlayer_(const QVariantMap& , QVariantMap& )
 {
-
+ /* if (!testingStageActive_)
+  {
+    WriteResult_(response, EFEMPResult::BAD_ACTION);
+    return;
+  }*/
 }
 
 //==============================================================================
@@ -879,4 +923,15 @@ void GameServer::SetActorPosition_(Actor* actor, const Vector2& position)
   levelMap_.RemoveActor(actor);
   actor->SetPosition(position);
   levelMap_.IndexActor(actor);
+}
+
+
+//==============================================================================
+void GameServer::SetItemDescription (const QVariantMap& request, Item* item)
+{
+  item->SetSubtype (request["subtype"].toString());
+  item->SetClass (request["class"].toString());
+  item->SetTypeItem (request["type"].toString());
+  item->SetWeight (request["weight"].toInt());
+  //item->bonus = request["bonus"];
 }

@@ -25,6 +25,7 @@ enum class EFEMPResult
   BAD_ACTION,
   BAD_MAP,
   BAD_SLOT,
+  BAD_POINT,
 };
 
 
@@ -40,6 +41,7 @@ const std::vector<QString> fempResultToString =
   [EFEMPResult::BAD_ACTION] = "badAction",
   [EFEMPResult::BAD_MAP] = "badMap",
   [EFEMPResult::BAD_SLOT] = "badSlot",
+  [EFEMPResult::BAD_POINT] = "badPoint",
 };
 
 
@@ -130,6 +132,7 @@ private:
   void GetItems(Creature* actor);
   Player* CreatePlayer_(const QString login);
   void SetActorPosition_(Actor* actor, const Vector2& position);
+  void SetItemDescription (const QVariantMap &request, Item* item);
 
   template <typename T>
   T* CreateActor_();
