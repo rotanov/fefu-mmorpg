@@ -79,9 +79,29 @@ Item* Player::GetSlot(Slot st)
   return slot_[st];
 }
 
-void Player::SetSlot(Slot st, Item* item)
+bool Player::SetSlot(Slot st, Item* item)
 {
-  slot_[st] = item;
+  bool result = false;
+  if ((st == left_hand || st == right_hand) &&
+      (item->GetTypeItem () == "weapon"  || item->GetTypeItem () == "shield" ))
+    result = true;
+  else if ((st == left_finger || st == right_finger) && (item->GetTypeItem () == "ring"))
+    result = true;
+  else if (st == ammo && item->GetTypeItem () == "expendable")
+    result = true;
+  else if (st == neck && item->GetTypeItem () == "eamulet")
+    result = true;
+  else if (st == body && item->GetTypeItem () == "armor")
+    result = true;
+  else if (st == head && item->GetTypeItem () == "helm")
+    result = true;
+  else if (st == forearm && item->GetTypeItem () == "gloves")
+    result = true;
+  else if (st == feet && item->GetTypeItem () == "boots")
+    result = true;
+  if (result)
+    slot_[st] = item;
+  return result;
 }
 
 bool Player::GetItemId (int id)

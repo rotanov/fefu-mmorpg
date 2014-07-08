@@ -13,10 +13,10 @@ enum Slot
   ammo,
   left_finger,
   right_finger,
-  neck_amulet,
-  body_armor,
-  head_helmet,
-  forearm_gloves,
+  neck,
+  body,
+  head,
+  forearm,
   feet,
 };
 
@@ -33,7 +33,7 @@ public:
   virtual QVariantMap atack(Creature* actor);
   void SetBlows();
   Item* GetSlot(Slot st);
-  void SetSlot(Slot st, Item* item);
+  bool SetSlot(Slot st, Item* item);
   virtual void SetRace();
   void SetDamage(QString str, bool b);
   Blow blows;

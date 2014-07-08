@@ -745,7 +745,11 @@ void GameServer::HandleEquip_(const QVariantMap& request, QVariantMap& response)
       {
         p->items_.push_back (i);
       }
-      p->SetSlot(SlotToString[slot], item);
+      if (!p->SetSlot(SlotToString[slot], item))
+      {
+        WriteResult_(response, EFEMPResult::BAD_SLOT);
+        return;
+      }
       p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
       p->SetDamage (item->GetDamage (), true);
       p->SetMaxHealth (p->GetMaxHealth () + item->Getammor ());
