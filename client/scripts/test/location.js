@@ -57,7 +57,6 @@ function getKey(map, value) {
 }
 
 function test() {
-    socket.startTesting()
     var assert = chai.assert
 
     describe("Location", function() {

@@ -32,7 +32,6 @@ function testWebSocket() {
 }
 
 function test() {
-    socket.startTesting()
     var assert = chai.assert
 
     describe.only("WebSocket", function(done) {
