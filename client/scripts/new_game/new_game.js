@@ -48,9 +48,9 @@ function OnMessage(e) {
         for (var i = 0, l = data.events.length; i < l; ++i)
             if (data.events[i].attaker != id_) {
                 curr_h -= data.events[i].dealtDamage
-                updateHealth(curr_h, max_h)
             }
         if (curr_h < max_h) ++curr_h
+        updateHealth(curr_h, max_h)
     }
 
     switch(data.action) {
