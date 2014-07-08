@@ -296,23 +296,29 @@ void GameServer::HandleAttack_(const QVariantMap& request, QVariantMap& response
       if (actor->GetType () == "monster" || actor->GetType () == "player")
       {
         Creature* target = static_cast<Creature*>(actor);
-        Box box0(actor->GetPosition(), 1.0f, 1.0f);
+        Box box0(actor->GetPosition(), 0.5f, 0.5f);
         auto pos = request["target"].toList();
-        Box box1(Vector2(pos[0].toFloat(),pos[1].toFloat()) , 1.0f, 1.0f);
+        Box box1(Vector2(pos[0].toFloat(),pos[1].toFloat()) , 0.5f, 0.5f);
         auto sid = request["sid"].toByteArray();
         auto it = sidToPlayer_.find(sid);
         Player* p = it.value();
         if (box1.Intersect(box0) && p->GetId () != target->GetId () && target->GetHealth () > 0)
         {
-          QVariantMap a = p->atack (target);
-          events_ << a;
-          a = target->atack (p);
-          if (target->GetHealth () < 0)
+          Vector2 player = p->GetPosition ();
+          Vector2 targets = target->GetPosition ();
+          Vector2 vec = Vector2((player.x - targets.x),(player.y - targets.y));
+          if (sqrt(vec.x*vec.x + vec.y*vec.y) < pickUpRadius_)
           {
-            GetItems(target);
+            QVariantMap a = p->atack (target);
+            events_ << a;
+            a = target->atack (p);
+            if (target->GetHealth () < 0)
+            {
+              GetItems(target);
+            }
+            events_ << a;
+            WriteResult_(response, EFEMPResult::OK);
           }
-          events_ << a;
-          WriteResult_(response, EFEMPResult::OK);
         }
       }
     }
@@ -641,9 +647,9 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
     Actor* item = idToActor_[request["id"].toInt()];
     if (item->GetType () == "item")
     {
-      Box box0(p->GetPosition(), pickUpRadius_, pickUpRadius_);
-      Box box1(item->GetPosition (), pickUpRadius_, pickUpRadius_);
-      if (box0.Intersect(box1))
+      Vector2 player = p->GetPosition ();
+      Vector2 items = item->GetPosition ();
+      if (sqrt((player.x - items.x)*(player.x - items.x) + (player.y - items.y)*(player.y - items.y)) < pickUpRadius_)
       {
         levelMap_.RemoveActor(item);
         actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());
