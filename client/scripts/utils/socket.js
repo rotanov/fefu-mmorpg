@@ -186,7 +186,7 @@ define(function() {
     }
 
     Socket.prototype.putMob = function(x, y, stats, inventory, flags, race, dealtDamage) {
-        this.sock.send(JSON.srungify({
+        this.sock.send(JSON.stringify({
             "action": "putMob",
             "x": x,
             "y": y,
@@ -199,7 +199,7 @@ define(function() {
     }
 
     Socket.prototype.putPlayer = function(x, y, stats, inventory, slots) {
-        this.sock.send(JSON.srungify({
+        this.sock.send(JSON.stringify({
             "action": "putPlayer",
             "x": x,
             "y": y,
@@ -210,7 +210,7 @@ define(function() {
     }
 
     Socket.prototype.enforce = function(object) {
-        this.sock.send(JSON.srungify({
+        this.sock.send(JSON.stringify({
             "action": "enforce",
             "enforcedAction": object
         }))
