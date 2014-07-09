@@ -167,7 +167,7 @@ private:
 
   bool testingStageActive_ = false;
 
-  const std::unordered_set<std::string> sidCheckExcpetions_ =
+  const std::unordered_set<std::string> sidCheckExceptions_ =
   {
     "register",
     "login",
