@@ -24,7 +24,7 @@ function($) {
             "inventory": null,
 
             /*item*/
-            "weigth": null,
+            "weight": null,
             "class": null,
             "subtype": null,
             //"bonuses": null,
