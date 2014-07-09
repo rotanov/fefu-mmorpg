@@ -30,8 +30,11 @@ var id_
 var sid_
 var tick_
 
-var max_h = 0
-var curr_h = 0
+//player
+var inventory_ids = []
+var inventory = []
+var max_h = 100
+var curr_h = 100
 var health
 var lifespan = 1
 var curr_slot = {"slot": null, "id": null}
@@ -59,9 +62,18 @@ function OnMessage(e) {
             utils.cryBabyCry(data.result)
             break
         }
-        object.showInf(data)
+        if (data.type == "item") {
+            object.showInf(data.item)
+            if (contains(inventory_ids, data.id) && !exists(inventory, data.id))
+                inventory.push(data)
+        } else {
+            object.showInf(data)
+        }
         updateSlot(data)
         if (data.id == id_) {
+            inventory_ids = data.inventory
+            updateItems()
+
             curr_h = data.health
             max_h = data.maxHealth
             updateHealth(curr_h, max_h)
@@ -122,6 +134,7 @@ function OnMessage(e) {
             utils.cryBabyCry(data.result)
             popItem()
         }
+        socket.singleExamine(id_, sid_)
         break
     case "use":
         if (data.result != "ok") {
@@ -224,9 +237,21 @@ function updateSlot(data) {
     $("div#"+curr_slot.slot).val(data.id)
 }
 
+function updateItems() {
+    $("#items select")
+    .find("option")
+    .remove()
+    .end()
+    for (var i = 0, l = inventory_ids.length; i < l; ++i) {
+        socket.singleExamine(inventory_ids[i], sid_)
+    }
+    for (var i = 0, l = inventory.length; i < l; ++i) {
+        pushItem(inventory[i].id, inventory[i].item.name)
+    }
+}
+
 function onUpdate() {
     fpsText.setText("FPS: " + game.time.fps)
-
     if (game.input.mousePointer.isDown) {
         var data = getObgect()
         if (data.id && lifespan) {
@@ -343,12 +368,12 @@ function setProperties(actor, idx) {
 
 function getItem(data) {
     socket.pickUp(data.id, sid_)
-    pushItem({"id": data.id, "name": data.name})
+    pushItem(data.id, data.name)
 }
 
-function pushItem(data) {
+function pushItem(id, name) {
     $("#items select#items")
-    .append("<option value='" + data.id + "'>" + data.name + "</option>")
+    .append("<option value='" + id + "'>" + name + "</option>")
 }
 
 function popItem() {
@@ -426,6 +451,28 @@ $("#items select").on("change", function (e) {
     var id = this.value;
     socket.singleExamine(id, sid_)
 })
+
+function contains(array, id) {
+  var flag = false
+  for (var i = 0; i < array.length; ++i) {
+    if (array[i] == id) {
+      flag = true
+      break
+    }
+  }
+  return flag
+}
+
+function exists(array, id) {
+  var flag = false
+  for (var i = 0; i < array.length; ++i) {
+    if (array[i].id == id) {
+      flag = true
+      break
+    }
+  }
+  return flag
+}
 
 return {
     start: Start,
