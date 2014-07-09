@@ -72,7 +72,7 @@ function test() {
             })
         })
 
-        describe("getDictionary", function() {
+        describe("Get Dictionary", function() {
             it("should return badSid", function(done) {
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)

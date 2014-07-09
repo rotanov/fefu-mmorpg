@@ -1,5 +1,5 @@
-﻿define(["lib/mocha", "test/register", "test/websocket", "test/location"],
-function (m, tr, tw, tl) {
+﻿define(["lib/mocha", "test/register", "test/websocket", "test/location", "test/items"],
+function (m, tr, tw, tl, ti) {
 
     function testHandler(list) {
         document.title = "Test"
@@ -17,6 +17,10 @@ function (m, tr, tw, tl) {
 
             case "location":
                 tl.testLocation()
+                break
+
+            case "items":
+                ti.testItems()
                 break
         }
     }
