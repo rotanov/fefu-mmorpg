@@ -171,8 +171,6 @@ private:
   {
     "register",
     "login",
-    "startTesting",
-    "stopTesting",
     "setUpConst",
     "setUpMap",
     "getConst",

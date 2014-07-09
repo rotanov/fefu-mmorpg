@@ -141,20 +141,21 @@ define(function() {
 
     /*Testing*/
 
-    Socket.prototype.startTesting = function() {
+    Socket.prototype.startTesting = function(sid) {
         this.sock.send(JSON.stringify({
-            "action": "startTesting"
+            "action": "startTesting",
+            "sid": sid
         }))
     }
 
-    Socket.prototype.stopTesting = function() {
+    Socket.prototype.stopTesting = function(sid) {
         this.sock.send(JSON.stringify({
-            "action": "stopTesting"
+            "action": "stopTesting",
+            "sid": sid
         }))
     }
 
     Socket.prototype.getDictionary = function(sid) {
-        console.log("getDictionary")
         this.sock.send(JSON.stringify({
             action: "getDictionary",
             "sid": sid
