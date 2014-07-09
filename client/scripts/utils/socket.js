@@ -141,20 +141,21 @@ define(function() {
 
     /*Testing*/
 
-    Socket.prototype.startTesting = function() {
+    Socket.prototype.startTesting = function(sid) {
         this.sock.send(JSON.stringify({
-            "action": "startTesting"
+            "action": "startTesting",
+            "sid": sid
         }))
     }
 
-    Socket.prototype.stopTesting = function() {
+    Socket.prototype.stopTesting = function(sid) {
         this.sock.send(JSON.stringify({
-            "action": "stopTesting"
+            "action": "stopTesting",
+            "sid": sid
         }))
     }
 
     Socket.prototype.getDictionary = function(sid) {
-        console.log("getDictionary")
         this.sock.send(JSON.stringify({
             action: "getDictionary",
             "sid": sid
@@ -173,6 +174,46 @@ define(function() {
 
     Socket.prototype.setUpConst = function(data) {
         this.sock.send(JSON.stringify(data))
+    }
+
+    Socket.prototype.putItem = function(x, y, item) {
+        this.sock.send(JSON.stringify({
+            "action": "putItem",
+            "x": x,
+            "y": y,
+            "item": item
+        }))
+    }
+
+    Socket.prototype.putMob = function(x, y, stats, inventory, flags, race, dealtDamage) {
+        this.sock.send(JSON.srungify({
+            "action": "putMob",
+            "x": x,
+            "y": y,
+            "stats": stats,
+            "inventory": inventory,
+            "flags": flags,
+            "race": race,
+            "dealtDamage": dealtDamage
+        }))
+    }
+
+    Socket.prototype.putPlayer = function(x, y, stats, inventory, slots) {
+        this.sock.send(JSON.srungify({
+            "action": "putMob",
+            "x": x,
+            "y": y,
+            "stats": stats,
+            "inventory": inventory,
+            "slots": slots
+        }))
+    }
+
+    Socket.prototype.enforce = function(object) {
+        this.sock.send(JSON.srungify({
+            "action": "enforce",
+            "enforcedAction": object
+        }))
     }
 
     function WSConnect(wsuri, onopen, onmessage) {

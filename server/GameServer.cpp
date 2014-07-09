@@ -87,7 +87,7 @@ void GameServer::handleFEMPRequest(const QVariantMap& request, QVariantMap& resp
   }
 
   // TODO: extract into unordered_map
-  if (sidCheckExcpetions_.count(action.toStdString()) == 0)
+  if (sidCheckExceptions_.count(action.toStdString()) == 0)
   {
     if (request.find("sid") == request.end()
         || sidToPlayer_.find(request["sid"].toByteArray()) == sidToPlayer_.end())

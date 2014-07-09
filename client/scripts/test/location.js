@@ -26,7 +26,7 @@ function testLocation() {
     })
 
     onopen = function() {
-        socket.startTesting()
+        socket.startTesting(userData.sid)
     }
 
     onmessage = function(e) {
@@ -235,7 +235,7 @@ function test() {
                 }
             }
         })
-        socket.stopTesting()
+        socket.stopTesting(userData.sid)
         //socket.setOnMessage(undefined)
     })
     mocha.run()
