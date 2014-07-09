@@ -160,8 +160,10 @@ void PermaStorage::GetItem(Item* i, const int id )
     i->SetSubtype (s[2]);
     QStringList power_info;
     power_info << q.value("power_info").toString().split(":") ;
-    i->Setammor (power_info[0].toInt ());
-    i->SetDamage (power_info[1]);
+    if (power_info.length () > 0)
+      i->Setammor (power_info[0].toInt ());
+    if (power_info.length () > 1)
+      i->SetDamage (power_info[1]);
   }
 }
 

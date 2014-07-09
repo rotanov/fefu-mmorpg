@@ -108,6 +108,8 @@ QVariantMap Monster::atack(Creature* actor)
   } else{
     val = 2.0f;
   }
+  if (val < 0)
+    val = 2;
   actor->SetHealth(actor->GetHealth() - val);
   QVariantMap ans;
   ans["dealtDamage"] = val;
