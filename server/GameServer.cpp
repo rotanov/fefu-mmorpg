@@ -182,7 +182,8 @@ void GameServer::tick()
 {
   float dt = (time_.elapsed() - lastTime_) * 0.001f;
   lastTime_ = time_.elapsed();
-
+  if (actors_.size () < 100)
+    GenMonsters_ ();
   auto collideWithGrid = [=](Actor* actor)
   {
     auto& p = *actor;
@@ -567,6 +568,11 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
         actor["x"] = a->GetPosition().x;
         actor["y"] = a->GetPosition().y;
         actor["id"] = a->GetId();
+        if (actor["health"] < 0 && (actor["type"] == "monster" ) )
+        {
+          Creature* b = static_cast<Creature*>(a);
+          KillActor_(b);
+        }
         if (actor["type"] == "item" || actor["health"] > 0 )
           actors << actor;
    }
