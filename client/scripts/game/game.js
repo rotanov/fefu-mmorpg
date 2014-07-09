@@ -132,7 +132,7 @@ function OnMessage(e) {
     case "pickUp":
         if (data.result != "ok") {
             utils.cryBabyCry(data.result)
-            popItem()
+            break
         }
         socket.singleExamine(id_, sid_)
         break
@@ -233,15 +233,13 @@ function updateSlot(data) {
     if (data.id != curr_slot.id) {
         return
     }
-    $("div#"+curr_slot.slot).text(data.name)
+    $("div#"+curr_slot.slot).text(data.item.name)
     $("div#"+curr_slot.slot).val(data.id)
 }
 
 function updateItems() {
-    $("#items select")
-    .find("option")
-    .remove()
-    .end()
+    $("#items select").empty()
+
     for (var i = 0, l = inventory_ids.length; i < l; ++i) {
         socket.singleExamine(inventory_ids[i], sid_)
     }
@@ -256,7 +254,7 @@ function onUpdate() {
         var data = getObgect()
         if (data.id && lifespan) {
             if (aKey.isDown) {
-                getItem(data)
+                socket.pickUp(data.id, sid_)
             } else {
                 socket.singleExamine(data.id, sid_)
             }
@@ -366,18 +364,9 @@ function setProperties(actor, idx) {
     }
 }
 
-function getItem(data) {
-    socket.pickUp(data.id, sid_)
-    pushItem(data.id, data.name)
-}
-
 function pushItem(id, name) {
     $("#items select#items")
     .append("<option value='" + id + "'>" + name + "</option>")
-}
-
-function popItem() {
-    $("#items select#items option:last").remove()
 }
 
 var rectTop = new phaser.Rectangle(0, 0, 64 * width, 32)
