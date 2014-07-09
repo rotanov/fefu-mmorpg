@@ -200,7 +200,7 @@ define(function() {
 
     Socket.prototype.putPlayer = function(x, y, stats, inventory, slots) {
         this.sock.send(JSON.srungify({
-            "action": "putMob",
+            "action": "putPlayer",
             "x": x,
             "y": y,
             "stats": stats,
