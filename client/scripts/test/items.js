@@ -530,6 +530,32 @@ function test() {
                 socket.putPlayer(player.x, player.y, {}, [makeItem()], {})
             })
 
+            it("should fail equip item [object doesn't exists]", function(done) {
+                item.id = null
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player with item")
+                        player.id = data.id
+                        player.sid = data.sid
+                        item.id = -1
+                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"})
+                        break
+                    case "enforce":
+                        assert.equal("ok", data.result, "enforce request")
+                        assert.equal("badId", data.actionResult.result, data.actionResult.action + " request")
+                        if (data.actionResult.action == "equip") {
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
+                        } else if (data.actionResult.action == "examine") {
+                            assert.equal(undefined, data.actionResult.slots["left-hand"], "no item in slot")
+                            done()
+                        }
+                    }
+                })
+                socket.putPlayer(player.x, player.y, {}, [], {})
+            })
+
             it("should successfully equip item [item's center is equal constant pickUpRadius]", function(done) {
                 item.id = null
                 item.x = player.x + pickUpRadius
