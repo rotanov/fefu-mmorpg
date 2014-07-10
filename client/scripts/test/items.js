@@ -138,7 +138,6 @@ function test() {
                         assert.equal("ok", data.result, "examine request")
                         assert.equal(item.id, data.inventory[0], "item in inventory")
                         done()
-                        break
                     }
                 })
                 socket.putPlayer(player.x, player.y, {}, [], {})
@@ -164,6 +163,11 @@ function test() {
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         assert.equal("badId", data.actionResult.result, "pick up item")
+                        socket.singleExamine(player.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(undefined, data.inventory[0], "no item in inventory")
                         done()
                     }
                 })
@@ -190,6 +194,11 @@ function test() {
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         assert.equal("ok", data.actionResult.result, "pick up item")
+                        socket.singleExamine(player.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(item.id, data.inventory[0], "item in inventory")
                         done()
                     }
                 })
@@ -210,6 +219,11 @@ function test() {
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         assert.equal("badId", data.actionResult.result, "pick up item")
+                        socket.singleExamine(player.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(1, data.inventory.length, "one item in inventory")
                         done()
                     }
                 })
@@ -230,6 +244,11 @@ function test() {
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         assert.equal("badId", data.actionResult.result, "pick up")
+                        socket.singleExamine(player.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(0, data.inventory.length, "no item in inventory")
                         done()
                     }
                 })
@@ -257,6 +276,11 @@ function test() {
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         assert.equal("tooHeavy", data.actionResult.result, "pick up item")
+                        socket.singleExamine(player.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(0, data.inventory.length, "no item in inventory")
                         done()
                     }
                 })
@@ -394,6 +418,11 @@ function test() {
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         assert.equal("badId", data.actionResult.result, "destroy item")
+                        socket.singleExamine(player.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(undefined, data.inventory[0], "no item in inventory")
                         done()
                     }
                 })
