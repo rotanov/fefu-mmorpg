@@ -474,7 +474,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
-                        assert.equal(undefined, data.inventory[0], "no item in inventory")
+                        assert.equal(item.id, data.inventory[0], "item in inventory")
                         done()
                     }
                 })
