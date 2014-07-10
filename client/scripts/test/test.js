@@ -1,32 +1,36 @@
-﻿define(["lib/mocha", "test/register", "test/websocket", "test/location", "test/items"],
-function (m, tr, tw, tl, ti) {
+﻿define(["lib/mocha", "test/register", "test/websocket", "test/location", "test/items", "test/mobs"],
+function (m, tr, tw, tl, ti, tm) {
 
-    function testHandler(list) {
-        document.title = "Test"
-        $("#mocha, #msg").empty()
-        mocha.setup("bdd")
+function testHandler(list) {
+    document.title = "Test"
+    $("#mocha, #msg").empty()
+    mocha.setup("bdd")
 
-        switch ($("#tests").find(":selected").text()) {
-            case "register":
-                tr.testRegister()
-                break
+    switch ($("#tests").find(":selected").text()) {
+        case "register":
+            tr.testRegister()
+            break
 
-            case "websocket":
-                tw.testWebSocket()
-                break
+        case "websocket":
+            tw.testWebSocket()
+            break
 
-            case "location":
-                tl.testLocation()
-                break
+        case "location":
+            tl.testLocation()
+            break
 
-            case "items":
-                ti.testItems()
-                break
-        }
+        case "items":
+            ti.testItems()
+            break
+
+        case "mobs":
+            tm.testMobs()
+            break
     }
+}
 
-    return {
-        testHandler: testHandler
-    }
+return {
+    testHandler: testHandler
+}
 
 })
