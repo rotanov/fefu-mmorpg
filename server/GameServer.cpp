@@ -683,12 +683,12 @@ void GameServer::HandleUnequip_(const QVariantMap& request, QVariantMap& respons
  // for (auto& slot : SlotToString)
  // {
     Item* item = p->GetSlot(slot);
-    if (item && item->GetId () != -1)
+    if (item)
     {
       p->items_.push_back (item);
      // p->SetDamage (item->GetDamage (), false);
     //  p->SetHealth (p->GetHealth() - item->Getammor ());
-      p->SetSlot (slot, 0);
+      p->SetSlot (slot);
       WriteResult_(response, EFEMPResult::OK);
       return;
     }

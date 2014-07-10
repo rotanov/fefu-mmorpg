@@ -290,7 +290,7 @@ function test() {
                 socket.setUpConst(consts)
             })
 
-           /* it("should return badId", function(done) {
+           it("should return badId", function(done) {
                 item_id = null
                 map = [
                             [".", ".", "."],
@@ -314,7 +314,7 @@ function test() {
                     case "putPlayer":
                         assert.equal("ok", data.result)
                         player.sid = data.sid
-                        item_id = 0123456789
+                        item_id = 12345
                         socket.enforce({"action": "destroyItem", "id": item_id, "sid": player.sid})
                         break
                     case "enforce":
@@ -324,7 +324,7 @@ function test() {
                     }
                 })
                 socket.setUpConst(consts)
-            })*/
+            })
         })
 
         describe("Drop", function() {
@@ -568,7 +568,7 @@ function test() {
                         } else if (data.actionResult.action == "examine") {
                             if (flag) {
                                 flag = false
-                                assert.equal(item_id, data.actionResult.slots["left-hand"]["id"])
+                                assert.equal(item_id, data.actionResult.slots["left-hand"])
                                 socket.enforce({"action": "unequip", "sid": player.sid, "slot": "left-hand"})
 
                             } else {

@@ -103,6 +103,11 @@ bool Player::SetSlot(Slot st, Item* item)
     slot_[st] = item;
   return result;
 }
+bool Player::SetSlot(Slot st)
+{
+  slot_[st] = 0;
+  return true;
+}
 
 bool Player::GetItemId (int id)
  {

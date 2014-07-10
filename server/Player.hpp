@@ -34,6 +34,7 @@ public:
   void SetBlows();
   Item* GetSlot(Slot st);
   bool SetSlot(Slot st, Item* item);
+  bool SetSlot(Slot st);
   virtual void SetRace();
   void SetDamage(QString str, bool b);
   Blow blows;

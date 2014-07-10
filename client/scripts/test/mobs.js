@@ -71,7 +71,7 @@ function test() {
                         break
                     case "putMob":
                         assert.equal("ok", data.result)
-                        mob.id = mob.id
+                        mob.id = data.id
                         socket.singleExamine(mob.id, userData.sid)
                         break
                     case "examine":
