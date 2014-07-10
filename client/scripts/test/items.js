@@ -456,6 +456,31 @@ function test() {
                 socket.putPlayer(player.x, player.y, {}, [makeItem()], {})
             })
 
+            it("should fail drop item [invalid sid]", function(done) {
+                item.id = null
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player with item")
+                        player.sid = data.sid
+                        item.id = data.inventory[0]
+                        socket.enforce({"action": "drop", "id": item.id, "sid": -1})
+                        break
+                    case "enforce":
+                        assert.equal("ok", data.result, "enforce request")
+                        assert.equal("badSid", data.actionResult.result, "drop item")
+                        socket.singleExamine(player.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(undefined, data.inventory[0], "no item in inventory")
+                        done()
+                    }
+                })
+                socket.putPlayer(player.x, player.y, {}, [makeItem()], {})
+            })
+
             it("should fail drop item [player hasn't it in inventory]", function(done) {
                 item.id = null
                 item.x = player.x + 0.5
