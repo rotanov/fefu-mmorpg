@@ -862,6 +862,15 @@ void GameServer::HandlePutPlayer_(const QVariantMap&  request, QVariantMap& resp
     }
   }
   response["id"] = p->GetId ();
+  QByteArray sid;
+  do
+  {
+    QByteArray id = QString::number(qrand()).toLatin1();
+    sid = QCryptographicHash::hash(id, QCryptographicHash::Sha1);
+  } while (sidToPlayer_.find(sid) != sidToPlayer_.end());
+  sid = sid.toHex();
+  sidToPlayer_.insert(sid, p);
+  response["sid"] = sid;
   WriteResult_(response, EFEMPResult::OK);
  /* inventory: [{<Item Description*>}, ...]
 slots: {<Slot name. Slots*> : {<Item Description*>}, ...}*/
