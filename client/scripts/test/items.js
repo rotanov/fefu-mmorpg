@@ -530,6 +530,31 @@ function test() {
                 socket.putPlayer(player.x, player.y, {}, [makeItem()], {})
             })
 
+            it("should fail equip item [invalid sid]", function(done) {
+                item.id = null
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player with item")
+                        player.sid = data.sid
+                        item.id = data.inventory[0]
+                        socket.enforce({"action": "equip", "id": item.id, "sid": -1, "slot": "left-hand"})
+                        break
+                    case "enforce":
+                        assert.equal("ok", data.result, "enforce request")
+                        assert.equal("badSid", data.actionResult.result, data.actionResult.action + " request")
+                        if (data.actionResult.action == "equip") {
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
+                        } else if (data.actionResult.action == "examine") {
+                            assert.equal(undefined, data.actionResult.slots["left-hand"], "no item in slot")
+                            done()
+                        }
+                    }
+                })
+                socket.putPlayer(player.x, player.y, {}, [makeItem()], {})
+            })
+
             it("should fail equip item [object doesn't exists]", function(done) {
                 item.id = null
                 socket.setOnMessage(function(e) {
