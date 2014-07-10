@@ -625,12 +625,16 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
       id << a->GetId();
     }
     response["inventory"] = id;
-  /*  QVariantList id_slot;
-    for(auto& a: SlotToString)
+    QVariantMap id_slot;
+    for(QMap<QString, Slot>::const_iterator i = SlotToString.begin(); i != SlotToString.end(); i++)
     {
-      id_slot << p->GetSlot(a)->GetId ();
+      Item* k = p->GetSlot(i.value());
+      if (k && k->GetId ()!= -1)
+      {
+        id_slot[i.key()] = k->GetId ();
+      }
     }
-    response["id_slot"] = id_slot;*/
+    response["slots"] = id_slot;
   }
   response["x"] = actor->GetPosition().x;
   response["y"] = actor->GetPosition().y;
@@ -655,7 +659,8 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
     {
       Vector2 player = p->GetPosition ();
       Vector2 items = item->GetPosition ();
-      if (sqrt((player.x - items.x)*(player.x - items.x) + (player.y - items.y)*(player.y - items.y)) < pickUpRadius_)
+      if (sqrt((player.x - items.x)*(player.x - items.x) +
+      (player.y - items.y)*(player.y - items.y)) <= pickUpRadius_)
       {
         levelMap_.RemoveActor(item);
         actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());
@@ -674,21 +679,20 @@ void GameServer::HandleUnequip_(const QVariantMap& request, QVariantMap& respons
   auto sid = request["sid"].toByteArray();
   Player* p = sidToPlayer_[sid];
   int id = request["id"].toInt();
-  for (auto& slot : SlotToString)
-  {
+  Slot slot = SlotToString[request["slot"].toString()];
+ // for (auto& slot : SlotToString)
+ // {
     Item* item = p->GetSlot(slot);
-    if (item && item->GetId () != -1 && item->GetId() == id)
+    if (item && item->GetId () != -1)
     {
       p->items_.push_back (item);
-      p->SetDamage (item->GetDamage (), false);
-      p->SetHealth (p->GetHealth() - item->Getammor ());
-      Item* i = new Item();
-      i->SetId(-1);
-      p->SetSlot (slot, i);
+     // p->SetDamage (item->GetDamage (), false);
+    //  p->SetHealth (p->GetHealth() - item->Getammor ());
+      p->SetSlot (slot, 0);
       WriteResult_(response, EFEMPResult::OK);
       return;
     }
-  }
+ // }
   WriteResult_(response, EFEMPResult::BAD_ID);
 }
 
@@ -757,8 +761,8 @@ void GameServer::HandleEquip_(const QVariantMap& request, QVariantMap& response)
         return;
       }
       p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
-      p->SetDamage (item->GetDamage (), true);
-      p->SetMaxHealth (p->GetMaxHealth () + item->Getammor ());
+      //p->SetDamage (item->GetDamage (), true);
+      //p->SetMaxHealth (p->GetMaxHealth () + item->Getammor ());
       WriteResult_(response, EFEMPResult::OK);
       return;
     }
@@ -847,21 +851,27 @@ void GameServer::HandlePutPlayer_(const QVariantMap&  request, QVariantMap& resp
     SetItemDescription (a.toMap(), item);
     p->items_.push_back (item);
   }
-  auto slot = request["slot"].toList();
-  for (auto a: slot)
+  auto slot = request["slots"].toMap();
+  QVariantMap id_slot;
+  for(QMap<QString, Slot>::const_iterator i = SlotToString.begin(); i != SlotToString.end(); i++)
   {
-    for(QMap<QString, Slot>::iterator i = SlotToString.begin(); i != SlotToString.end(); i++)
+    if (slot.find(i.key()) != slot.end())
     {
-     /* QVariantMap b = a.toMap();
-      if (b[])
-      {
-        Item* item =   CreateActor_<Item>();
-        SetItemDescription (b.toMap(), item);
-        p->SetSlot (i.value (), item);
-      }*/
+      Item* item =   CreateActor_<Item>();
+      SetItemDescription (slot[i.key()].toMap(), item);
+      p->items_.push_back (item);
+      p->SetSlot (i.value(), item);
+      id_slot[i.key()] = item->GetId ();
     }
   }
+  response["slots"] = id_slot;
   response["id"] = p->GetId ();
+  QVariantList id;
+  for (auto& a: p->items_)
+  {
+    id << a->GetId();
+  }
+  response["inventory"] = id;
   QByteArray sid;
   do
   {

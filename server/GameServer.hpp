@@ -176,6 +176,9 @@ private:
     "enforce",
     "setUpConst",
     "setUpMap",
+    "putPlayer",
+    "putItem",
+    "putMob",
     "getConst",
   };
   QMap <QString, Slot> SlotToString =
