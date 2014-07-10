@@ -875,6 +875,18 @@ void GameServer::HandlePutPlayer_(const QVariantMap&  request, QVariantMap& resp
  /* inventory: [{<Item Description*>}, ...]
 slots: {<Slot name. Slots*> : {<Item Description*>}, ...}*/
 }
+//==============================================================================
+
+void GameServer::HandleEnforce_(const QVariantMap &request, QVariantMap &response)
+{
+  QVariantMap res;
+  QVariantMap req;
+  req = QVariantMap(request["enforcedAction"].toMap());
+  handleFEMPRequest(req, res);
+  response["actionResult"] = res;
+  WriteResult_ (response, EFEMPResult::OK);
+}
+
 
 //==============================================================================
 void GameServer::WriteResult_(QVariantMap& response, const EFEMPResult result)

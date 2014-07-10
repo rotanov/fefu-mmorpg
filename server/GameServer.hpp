@@ -97,6 +97,7 @@ private:
     {"use", &GameServer::HandleUse_},// использовать
     {"drop", &GameServer::HandleDrop_},// положить
     {"equip", &GameServer::HandleEquip_},// одеть
+    {"enforce", &GameServer::HandleEnforce_},
   };
 
   void HandleStartTesting_(const QVariantMap& request, QVariantMap& response);
@@ -107,6 +108,7 @@ private:
   void HandlePutItem_(const QVariantMap& request, QVariantMap& response);
   void HandlePutMob_(const QVariantMap& request, QVariantMap& response);
   void HandlePutPlayer_(const QVariantMap& request, QVariantMap& response);
+  void HandleEnforce_(const QVariantMap& request, QVariantMap& response);
 
   void HandleLogin_(const QVariantMap& request, QVariantMap& response);
   void HandleLogout_(const QVariantMap& request, QVariantMap& response);
@@ -171,6 +173,7 @@ private:
   {
     "register",
     "login",
+    "enforce",
     "setUpConst",
     "setUpMap",
     "getConst",
