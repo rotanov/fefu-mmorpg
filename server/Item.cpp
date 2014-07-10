@@ -57,7 +57,11 @@ void Item::SetMessage (QString str)
 
 void Item::SetTypeItem(QString str)
 {
-  type_item_ = type[str.toInt()];
+  type_item_ = str;
+}
+void Item::SetTypeItem(int str)
+{
+  type_item_ = type[str];
 }
 
 int Item::Getammor()

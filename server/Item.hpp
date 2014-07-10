@@ -19,6 +19,7 @@ public:
   void SetName(QString str);
   void SetWeight(int str);
   void SetTypeItem(QString str);
+  void SetTypeItem(int str);
   void SetSubtype(QString str);
   void SetClass(QString str);
   void SetMessage(QString str);

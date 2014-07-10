@@ -156,7 +156,7 @@ void PermaStorage::GetItem(Item* i, const int id )
     QStringList s ;
     s << q.value("atype").toString().split(":");
     i->SetClass (s[0]);
-    i->SetTypeItem (s[1]);
+    i->SetTypeItem (s[1].toInt());
     i->SetSubtype (s[2]);
     QStringList power_info;
     power_info << q.value("power_info").toString().split(":") ;
