@@ -751,6 +751,31 @@ function test() {
                 })
                 socket.putPlayer(player.x, player.y, {}, [makeItem()], {"left-hand": makeItem()})
             })
+
+            it("should fail unequip item [invalid slot specificator]", function(done) {
+                item.id = null
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player")
+                        player.id = data.id
+                        player.sid = data.sid
+                        socket.enforce({"action": "unequip", "sid": player.sid, "slot": "ear"})
+                        break
+                    case "enforce":
+                        assert.equal("ok", data.result, "enforce request")
+                        assert.equal("badSlot", data.actionResult.result, data.actionResult.action + " request")
+                        if (data.actionResult.action == "unequip") {
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
+                        } else if (data.actionResult.action == "examine") {
+                            assert.equal(undefined, data.actionResult.slots["ear"], "no such slot")
+                            done()
+                        }
+                    }
+                })
+                socket.putPlayer(player.x, player.y, {}, [], {})
+            })
         })
 
         describe("Equip / Unequip", function() {
