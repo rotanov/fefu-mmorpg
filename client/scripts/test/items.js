@@ -273,7 +273,7 @@ function test() {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "putPlayer":
-                        assert.equal("ok", data.result, "put player with item")
+                        assert.equal("ok", data.result, "put player")
                         player.sid = data.sid
                         socket.putItem(item.x, item.y, makeItem())
                         break
@@ -285,7 +285,37 @@ function test() {
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         assert.equal("ok", data.actionResult.result, "destroy item")
-                        socket.singleExamine(player.id, userData.sid)
+                        socket.singleExamine(item.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("badId", data.result, "examine request")
+                        done()
+                    }
+                })
+                socket.putPlayer(player.x, player.y, {}, [], {})
+            })
+
+            it("should successfully destroy item [item's center is equal constant pickUpRadius]", function(done) {
+                item.id = null
+                item.x = player.x + pickUpRadius
+                item.y = player.y + pickUpRadius
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player")
+                        player.sid = data.sid
+                        socket.putItem(item.x, item.y, makeItem())
+                        break
+                    case "putItem":
+                        assert.equal("ok", data.result, "put item")
+                        item.id = data.id
+                        socket.enforce({"action": "destroyItem", "id": item.id, "sid": player.sid})
+                        break
+                    case "enforce":
+                        assert.equal("ok", data.result, "enforce request")
+                        assert.equal("ok", data.actionResult.result, "destroy item")
+                        socket.singleExamine(item.id, userData.sid)
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
