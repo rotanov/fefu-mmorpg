@@ -152,6 +152,7 @@ function test() {
                     switch(data.action) {
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player")
+                        player.id = data.id
                         player.sid = data.sid
                         socket.putItem(item.x, item.y, makeItem())
                         break
@@ -268,6 +269,7 @@ function test() {
                     switch(data.action) {
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player")
+                        player.id = data.id
                         player.sid = data.sid
                         socket.putItem(item.x, item.y, makeItem(item.weight))
                         break
@@ -300,6 +302,7 @@ function test() {
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player")
                         if (flag) {
+                            player.id = data.id
                             player.sid = data.sid
                             item.id = data.inventory[0]
                             flag = false
@@ -396,7 +399,6 @@ function test() {
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player")
                         player.sid = data.sid
-                        player.id = data.id
                         socket.putItem(item.x, item.y, makeItem())
                         break
                     case "putItem":
@@ -450,6 +452,7 @@ function test() {
                     switch(data.action) {
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player")
+                        player.id = data.id
                         player.sid = data.sid
                         item.id = -1
                         socket.enforce({"action": "destroyItem", "id": item.id, "sid": player.sid})
@@ -651,6 +654,7 @@ function test() {
                     switch(data.action) {
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player with item")
+                        player.id = data.id
                         player.sid = data.sid
                         item.id = data.inventory[0]
                         socket.enforce({"action": "equip", "id": item.id, "sid": -1, "slot": "left-hand"})
@@ -734,6 +738,7 @@ function test() {
                     switch(data.action) {
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player")
+                        player.id = data.id
                         player.sid = data.sid
                         socket.putItem(item.x, item.y, makeItem())
                         break
@@ -797,6 +802,7 @@ function test() {
                     switch(data.action) {
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player")
+                        player.id = data.id
                         player.sid = data.sid
                         socket.putItem(item.x, item.y, makeItem())
                         break
