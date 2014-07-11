@@ -20,11 +20,7 @@ var map = [
             [".", ".", ".", ".", ".", ".", "."],
             [".", ".", ".", ".", ".", ".", "."],
         ]
-var item = {}
-var player = {
-    "x": 3.5,
-    "y": 3.5
-}
+
 var consts = {
     "action": "setUpConst",
     "playerVelocity": playerVelocity,
@@ -88,9 +84,8 @@ function test() {
 
         describe("Put Item", function() {
             it("should successfully put item", function(done) {
-                item.id = null
-                item.x = player.x + 0.5
-                item.y = player.y + 0.5
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {"x": player.x + 0.5, "y": player.y + 0.5}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -112,9 +107,8 @@ function test() {
 
         describe("Pick Up", function() {
             it("should successfully pick up item [item's center is less constant pickUpRadius]", function(done) {
-                item.id = null
-                item.x = player.x + 0.5
-                item.y = player.y + 0.5
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {"x": player.x + 0.5, "y": player.y + 0.5}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -144,9 +138,8 @@ function test() {
             })
 
             it("should fail pick up item [item's center is more constant pickUpRadius]", function(done) {
-                item.id = null
-                item.x = player.x + pickUpRadius + 1
-                item.y = player.y + pickUpRadius + 1
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {"x": player.x + pickUpRadius + 1, "y": player.y + pickUpRadius + 1}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -176,9 +169,8 @@ function test() {
             })
 
             it("should successfully pick up item [item's center is equal constant pickUpRadius]", function(done) {
-                item.id = null
-                item.x = player.x + pickUpRadius
-                item.y = player.y
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {"x": player.x + pickUpRadius, "y": player.y + pickUpRadius}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -208,7 +200,8 @@ function test() {
             })
 
             it("should fail pick up item [player already has it in inventory]", function(done) {
-                item.id = null
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -234,7 +227,8 @@ function test() {
             })
 
             it("should fail pick up item [object doesn't exists]", function(done) {
-                item.id = null
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -260,10 +254,8 @@ function test() {
             })
 
             /*it("should fail pick up item [too heavy]", function(done) {
-                item.id = null
-                item.x = player.x + 0.5
-                item.y = player.y + 0.5
-                item.weight = 10000
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {"x": player.x + 0.5, "y": player.y + 0.5, "weight": 10000}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -294,16 +286,17 @@ function test() {
 
             it("should fail pick up item [object in other player's inventory]", function(done) {
                 var flag = true
+                var player1 = {"x": 3.5, "y": 3.5}
                 var player2 = {"x": 1.5, "y": 1.5}
-                item.id = null
+                var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player")
                         if (flag) {
-                            player.id = data.id
-                            player.sid = data.sid
+                            player1.id = data.id
+                            player1.sid = data.sid
                             item.id = data.inventory[0]
                             flag = false
                         } else {
@@ -315,7 +308,7 @@ function test() {
                         assert.equal("ok", data.result, "enforce request")
                         if (data.actionResult.action == "pickUp") {
                             assert.equal("badId", data.actionResult.result, data.actionResult.action + " request")
-                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
+                            socket.enforce({"action": "examine", "id": player1.id, "sid": player1.sid})
                         } else if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(item.id, data.actionResult.inventory[0], "item in player's invetory")
@@ -323,16 +316,15 @@ function test() {
                         }
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [makeItem()], {})
+                socket.putPlayer(player1.x, player1.y, {}, [makeItem()], {})
                 socket.putPlayer(player2.x, player2.y, {}, [], {})
             })
         })
 
         describe("Destroy Item", function() {
             it("should successfully destroy item [item's center is less constant pickUpRadius]", function(done) {
-                item.id = null
-                item.x = player.x + 0.5
-                item.y = player.y + 0.5
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {"x": player.x + 0.5, "y": player.y + 0.5}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -360,9 +352,8 @@ function test() {
             })
 
             it("should successfully destroy item [item's center is equal constant pickUpRadius]", function(done) {
-                item.id = null
-                item.x = player.x + pickUpRadius
-                item.y = player.y 
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {"x": player.x + pickUpRadius, "y": player.y + pickUpRadius}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -389,10 +380,9 @@ function test() {
                 socket.putPlayer(player.x, player.y, {}, [], {})
             })
 
-            /*it("should successfully destroy item [item's center is more constant pickUpRadius]", function(done) {
-                item.id = null
-                item.x = player.x + pickUpRadius + 1
-                item.y = player.y + pickUpRadius + 1
+            it("should successfully destroy item [item's center is more constant pickUpRadius]", function(done) {
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {"x": player.x + pickUpRadius + 1, "y": player.y + pickUpRadius + 1}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -420,7 +410,8 @@ function test() {
             })
 
             it("should successfully destroy item from inventory", function(done) {
-                item.id = null
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -446,7 +437,8 @@ function test() {
             })
 
             it("should fail destroy item [object doesn't exists]", function(done) {
-                item.id = null
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -469,12 +461,13 @@ function test() {
                     }
                 })
                 socket.putPlayer(player.x, player.y, {}, [], {})
-            })*/
+            })
         })
 
         describe("Drop", function() {
             it("should successfully drop item from inventory", function(done) {
-                item.id = null
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -500,7 +493,8 @@ function test() {
             })
 
             it("should fail drop item [invalid sid]", function(done) {
-                item.id = null
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -526,9 +520,8 @@ function test() {
             })
 
             it("should fail drop item [player hasn't it in inventory]", function(done) {
-                item.id = null
-                item.x = player.x + 0.5
-                item.y = player.y + 0.5
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {"x": player.x + 0.5, "y": player.y + 0.5}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -552,7 +545,8 @@ function test() {
             })
 
             it("should fail drop item [object doesn't exists]", function(done) {
-                item.id = null
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -574,7 +568,8 @@ function test() {
 
         describe("Equip", function() {
             it("should successfully equip item from inventory", function(done) {
-                item.id = null
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -600,7 +595,8 @@ function test() {
             })
 
             it("should fail equip item [slot doesn't exist in request]", function(done) {
-                item.id = null
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -621,7 +617,8 @@ function test() {
             })
 
             it("should fail equip item from inventory [invalid slot specificator]", function(done) {
-                item.id = null
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -648,7 +645,8 @@ function test() {
             })
 
             it("should fail equip item [invalid sid]", function(done) {
-                item.id = null
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -675,7 +673,8 @@ function test() {
             })
 
             it("should fail equip item [object doesn't exists]", function(done) {
-                item.id = null
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -703,7 +702,8 @@ function test() {
             })
 
             it("should fail equip item [object doesn't match slot]", function(done) {
-                item.id = null
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -730,9 +730,8 @@ function test() {
             })
 
             /*it("should successfully equip item [item's center is equal constant pickUpRadius]", function(done) {
-                item.id = null
-                item.x = player.x + pickUpRadius
-                item.y = player.y + pickUpRadius
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {"x": player.x + pickUpRadius, "y": player.y + pickUpRadius}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -762,9 +761,8 @@ function test() {
             })
 
             it("should successfully equip item [item's center is less constant pickUpRadius]", function(done) {
-                item.id = null
-                item.x = player.x + 0.5
-                item.y = player.y + 0.5
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {"x": player.x + 0.5, "y": player.y + 0.5}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -794,9 +792,8 @@ function test() {
             })*/
 
             it("should successfully equip item [item's center is more constant pickUpRadius]", function(done) {
-                item.id = null
-                item.x = player.x + pickUpRadius + 1
-                item.y = player.y + pickUpRadius + 1
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {"x": player.x + pickUpRadius + 1, "y": player.y + pickUpRadius + 1}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -829,7 +826,7 @@ function test() {
 
         describe("Unequip", function() {
             it("should successfully unequip item", function(done) {
-                item.id = null
+                var player = {"x": 3.5, "y": 3.5}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -854,7 +851,7 @@ function test() {
             })
 
             it("should fail unequip item [invalid slot specificator]", function(done) {
-                item.id = null
+                var player = {"x": 3.5, "y": 3.5}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -880,7 +877,7 @@ function test() {
             })
 
             it("should fail unequip item [slot doesn't exist in request]", function(done) {
-                item.id = null
+                var player = {"x": 3.5, "y": 3.5}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -903,7 +900,8 @@ function test() {
         describe("Equip / Unequip", function() {
             it("should successfully equip/unequip item", function(done) {
                 var flag = true
-                item.id = null
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
