@@ -81,6 +81,7 @@ private:
     {"putItem", &GameServer::HandlePutItem_},
     {"putMob", &GameServer::HandlePutMob_},
     {"putPlayer", &GameServer::HandlePutPlayer_},
+    {"setLocation", &GameServer::HandleSetLocation_},
     // Authorization
     {"login", &GameServer::HandleLogin_},
     {"logout", &GameServer::HandleLogout_},
@@ -109,6 +110,7 @@ private:
   void HandlePutMob_(const QVariantMap& request, QVariantMap& response);
   void HandlePutPlayer_(const QVariantMap& request, QVariantMap& response);
   void HandleEnforce_(const QVariantMap& request, QVariantMap& response);
+  void HandleSetLocation_(const QVariantMap& request, QVariantMap& response);
 
   void HandleLogin_(const QVariantMap& request, QVariantMap& response);
   void HandleLogout_(const QVariantMap& request, QVariantMap& response);
@@ -159,7 +161,7 @@ private:
   float lastTime_ = 0.0f;
   unsigned tick_ = 0;
   QVariantList events_;
-  float playerVelocity_ = 3.0;
+  float playerVelocity_ = 0.2;
   float slideThreshold_ = 0.1;
   int ticksPerSecond_ = 30;
   int screenRowCount_ = 7;
