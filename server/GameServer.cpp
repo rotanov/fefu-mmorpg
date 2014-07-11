@@ -162,13 +162,24 @@ void GameServer::HandleDestroyItem_(const QVariantMap& request, QVariantMap& res
 
   BAD_ID(idToActor_.find(id) == idToActor_.end());
 
-  auto actor = idToActor_[id];
-  Player* player = sidToPlayer_[request["sid"].toByteArray()];
-
+  Item* actor = static_cast<Item*>(idToActor_[id]);
+  Player* p = sidToPlayer_[request["sid"].toByteArray()];
+  Vector2 player = p->GetPosition ();
+  if (actor)
+  {
+    Vector2 items = actor->GetPosition ();
+    if ((sqrt((player.x - items.x)*(player.x - items.x) +
+      (player.y - items.y)*(player.y - items.y)) <= pickUpRadius_+0.3f || p->GetItemId (id)))
+    {
+      KillActor_(actor);
+      WriteResult_(response, EFEMPResult::OK);
+      return;
+    }
+   }
   //    pickUpRadius_
   // TODO: implement
-
-#undef BAD_ID
+  WriteResult_(response, EFEMPResult::BAD_ID);
+ #undef BAD_ID
 }
 
 //==============================================================================
@@ -679,7 +690,13 @@ void GameServer::HandleUnequip_(const QVariantMap& request, QVariantMap& respons
   auto sid = request["sid"].toByteArray();
   Player* p = sidToPlayer_[sid];
   int id = request["id"].toInt();
-  Slot slot = SlotToString[request["slot"].toString()];
+  QString str = request["slot"].toString();
+  if (SlotToString.find(str) == SlotToString.end())
+  {
+    WriteResult_(response, EFEMPResult::BAD_SLOT);
+    return;
+  }
+   Slot slot = SlotToString[str];
  // for (auto& slot : SlotToString)
  // {
     Item* item = p->GetSlot(slot);
@@ -693,7 +710,7 @@ void GameServer::HandleUnequip_(const QVariantMap& request, QVariantMap& respons
       return;
     }
  // }
-  WriteResult_(response, EFEMPResult::BAD_ID);
+   WriteResult_(response, EFEMPResult::BAD_ID);
 }
 
 //==============================================================================
@@ -750,8 +767,13 @@ void GameServer::HandleEquip_(const QVariantMap& request, QVariantMap& response)
     if (item->GetId() == id)
     {
       QString slot = request["slot"].toString();
+      if (SlotToString.find(slot) == SlotToString.end())
+      {
+        WriteResult_(response, EFEMPResult::BAD_SLOT);
+        return;
+      }
       Item* i = p->GetSlot(SlotToString[slot]);
-      if (i && i->GetId() != -1)
+      if (i )
       {
         p->items_.push_back (i);
       }
