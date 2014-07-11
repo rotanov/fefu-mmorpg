@@ -289,6 +289,40 @@ function test() {
                 })
                 socket.putPlayer(player.x, player.y, {}, [], {})
             })*/
+
+            it("should fail pick up item [object in other player's inventory]", function(done) {
+                var flag = true
+                var player2 = {"x": 1.5, "y": 1.5}
+                item.id = null
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player")
+                        if (flag) {
+                            player.sid = data.sid
+                            item.id = data.inventory[0]
+                            flag = false
+                        } else {
+                            player2.sid = data.sid
+                            socket.enforce({"action": "pickUp", "id": item.id, "sid": player2.sid})
+                        }
+                        break
+                    case "enforce":
+                        assert.equal("ok", data.result, "enforce request")
+                        if (data.actionResult.action == "pickUp") {
+                            assert.equal("badId", data.actionResult.result, data.actionResult.action + " request")
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
+                        } else if (data.actionResult.action == "examine") {
+                            assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
+                            assert.equal(item.id, data.actionResult.inventory[0], "item in player's invetory")
+                            done()
+                        }
+                    }
+                })
+                socket.putPlayer(player.x, player.y, {}, [makeItem()], {})
+                socket.putPlayer(player2.x, player2.y, {}, [], {})
+            })
         })
 
         describe("Destroy Item", function() {
