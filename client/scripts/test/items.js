@@ -600,6 +600,42 @@ function test() {
                 })
                 socket.putPlayer(player.x, player.y, {}, [], {})
             })
+
+            it("should fail drop item [object in other player's inventory]", function(done) {
+                var flag = true
+                var player1 = {"x": 3.5, "y": 3.5}
+                var player2 = {"x": 1.5, "y": 1.5}
+                var item = {}
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player")
+                        if (flag) {
+                            player1.id = data.id
+                            player1.sid = data.sid
+                            item.id = data.inventory[0]
+                            flag = false
+                        } else {
+                            player2.sid = data.sid
+                            socket.enforce({"action": "drop", "id": item.id, "sid": player2.sid})
+                        }
+                        break
+                    case "enforce":
+                        assert.equal("ok", data.result, "enforce request")
+                        if (data.actionResult.action == "drop") {
+                            assert.equal("badId", data.actionResult.result, data.actionResult.action + " request")
+                            socket.enforce({"action": "examine", "id": player1.id, "sid": player1.sid})
+                        } else if (data.actionResult.action == "examine") {
+                            assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
+                            assert.equal(item.id, data.actionResult.inventory[0], "item in player's invetory")
+                            done()
+                        }
+                    }
+                })
+                socket.putPlayer(player1.x, player1.y, {}, [makeItem()], {})
+                socket.putPlayer(player2.x, player2.y, {}, [], {})
+            })
         })
 
         describe("Equip", function() {
