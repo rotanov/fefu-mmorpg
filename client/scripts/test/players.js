@@ -110,6 +110,37 @@ function test() {
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map})
             })
+
+            it("should successfully put player", function(done) {
+                var player = {"x": 1.5, "y": 1.5}
+                var map = [
+                    [".", ".", "."],
+                    [".", ".", "."],
+                    [".", ".", "."]
+                ]
+                socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putPlayer(player.x, player.y, {}, [], {})
+                        break
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player")
+                        player.id = data.id
+                        player.sid = data.sid
+                        socket.singleExamine(player.id, player.sid)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(player.x, (data.x).toFixed(1))
+                        assert.equal(player.y, (data.y).toFixed(1))
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map})
+            })
         })
 
 
