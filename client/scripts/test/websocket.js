@@ -86,22 +86,22 @@ function test() {
         })
 
         describe("Upload map to server", function() {
-            it("should return badMap", function(done) {
+            it("should return badMap [empty map]", function(done) {
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data);
                     if (data.action == "setUpMap") {
-                        assert.equal("badMap", data.result, "empty map")
+                        assert.equal("badMap", data.result, "load map")
                         done()
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": []})
             })
 
-            it("should return badMap", function(done) {
+            it("should return badMap [symbol out of dictionary]", function(done) {
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data);
                     if (data.action == "setUpMap") {
-                        assert.equal("badMap", data.result, "bad symbol")
+                        assert.equal("badMap", data.result, "load map")
                         done()
                     }
                 })
@@ -133,6 +133,23 @@ function test() {
                     [grass, grass, grass],
                     [grass, grass, grass],
                     [grass, grass, grass]
+                ]
+                socket.setUpMap({"action": "setUpMap", "map": map})
+            })
+
+            it("should return badMap [columns unequal rows]", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data);
+                    if (data.action == "setUpMap") {
+                        assert.equal("badMap", data.result, "load map")
+                        done()
+                    }
+                })
+                var grass = getKey(dictionary, "grass")
+                var map = [
+                    [grass, grass, grass],
+                    [grass, grass],
+                    [grass]
                 ]
                 socket.setUpMap({"action": "setUpMap", "map": map})
             })
