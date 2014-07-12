@@ -78,6 +78,7 @@ function test() {
                         assert.isTrue(grass != undefined)
                         assert.isTrue(wall != undefined)
                         dictionary = data.dictionary
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -98,6 +99,26 @@ function test() {
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.putItem(item.x, item.y, items_.makeItem())
+            })
+
+            it("should fail put item [badPlacing: coordinates are incorrect]", function(done) {
+                var item = {"x": ".", "y": "."}
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putItem":
+                        assert.equal("badPlacing", data.result, "put item")
+                        item.id = data.id
+                        socket.singleExamine(item.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -111,6 +132,7 @@ function test() {
                     var data = JSON.parse(e.data);
                     if (data.action == "setUpMap") {
                         assert.equal("badMap", data.result, "load map")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -122,6 +144,7 @@ function test() {
                     var data = JSON.parse(e.data);
                     if (data.action == "setUpMap") {
                         assert.equal("badMap", data.result, "load map")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -133,6 +156,7 @@ function test() {
                     var data = JSON.parse(e.data);
                     if (data.action == "setUploadMap") {
                         assert.equal("badAction", data.result, "must setUpMap")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -145,6 +169,7 @@ function test() {
                     var data = JSON.parse(e.data);
                     if (data.action == "setUpMap") {
                         assert.equal("ok", data.result)
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -162,6 +187,7 @@ function test() {
                     var data = JSON.parse(e.data);
                     if (data.action == "setUpMap") {
                         assert.equal("badMap", data.result, "load map")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -194,6 +220,7 @@ function test() {
                         screenRowCount = data.screenRowCount
                         screenColumnCount = data.screenColumnCount
                         pickUpRadius = data.pickUpRadius
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -214,6 +241,7 @@ function test() {
                     var data = JSON.parse(e.data);
                     if (data.action == "setUploadConst") {
                         assert.equal("badAction", data.result, "must setUpConst")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -242,6 +270,7 @@ function test() {
                         assert.equal(screenRowCount, data.screenRowCount, "screenRowCount")
                         assert.equal(screenColumnCount, data.screenColumnCount, "screenColumnCount")
                         assert.equal(pickUpRadius, data.pickUpRadius, "pickUpRadius")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -262,6 +291,7 @@ function test() {
                     var data = JSON.parse(e.data);
                     if (data.action == "setUpConst") {
                         assert.equal("badAction", data.result)
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -277,6 +307,7 @@ function test() {
                     tick = data.tick
                     if (data.action == "look") {
                         assert.equal("ok", data.result)
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -290,6 +321,7 @@ function test() {
                     if (data.action == "look") {
                         assert.property(data, "map")
                         assert.property(data, "actors")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -303,6 +335,7 @@ function test() {
                     if (data.action == "look") {
                         assert.isDefined(data.x)
                         assert.isDefined(data.y)
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -315,6 +348,7 @@ function test() {
                     tick = data.tick
                     if (data.action == "look") {
                         assert.equal("badSid", data.result)
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -329,6 +363,7 @@ function test() {
                     tick = data.tick
                     if (data.action == "examine") {
                         assert.equal("ok", data.result)
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -341,6 +376,7 @@ function test() {
                     tick = data.tick
                     if (data.action == "examine") {
                         assert.isDefined(data.id)
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -353,6 +389,7 @@ function test() {
                     tick = data.tick
                     if (data.action == "examine") {
                         assert.equal("player", data.type)
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -365,6 +402,7 @@ function test() {
                     tick = data.tick
                     if (data.action == "examine") {
                         assert.isDefined(data.login)
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -378,6 +416,7 @@ function test() {
                     if (data.action == "examine") {
                         assert.isDefined(data.x)
                         assert.isDefined(data.y)
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -390,6 +429,7 @@ function test() {
                     tick = data.tick
                     if (data.action == "examine") {
                         assert.equal("badId", data.result)
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -402,6 +442,7 @@ function test() {
                     tick = data.tick
                     if (data.action == "examine") {
                         assert.equal("badSid", data.result)
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -416,6 +457,7 @@ function test() {
                     tick = data.tick
                     if (data.action == "move") {
                         assert.equal("ok", data.result)
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -428,6 +470,7 @@ function test() {
                     tick = data.tick
                     if (data.action == "move") {
                         assert.equal("badSid", data.result)
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
