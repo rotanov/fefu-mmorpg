@@ -111,7 +111,7 @@ void GameServer::HandleRegister_(const QVariantMap& request, QVariantMap& respon
 {
   QString login = request["login"].toString();
   QString password = request["password"].toString();
-
+//  qDebug() << login;
   bool passHasInvalidChars = false;
 
   for (int i = 0; i < password.size(); i++)
@@ -413,7 +413,7 @@ void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
 {
   auto login = request["login"].toString();
   auto password = request["password"].toString();
-
+  // qDebug() << login;
   if (!storage_.IfLoginPresent(login))
   {
     WriteResult_(response, EFEMPResult::INVALID_CREDENTIALS);
@@ -593,6 +593,17 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
 }
 
 //==============================================================================
+void GameServer::HandleSetLocation_(const QVariantMap& request, QVariantMap& response)
+{
+  float x = request["x"].toFloat();
+  float y = request["y"].toFloat();
+  auto sid = request["sid"].toByteArray();
+  Player* p = sidToPlayer_[sid];
+  p->SetPosition (Vector2(x,y));
+  WriteResult_(response, EFEMPResult::OK);
+}
+
+//==============================================================================
 void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& response)
 {
   auto id = request["id"].toInt();
@@ -719,15 +730,34 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
   auto sid = request["sid"].toByteArray();
   Player* p = sidToPlayer_[sid];
   int id = request["id"].toInt();
-  for (auto& item: p->items_)
+  for (Actor* actor : actors_)
   {
-    if (item->GetId() == id)
+    if (actor->GetType () == "monster" || actor->GetType () == "player")
     {
-      if (item->GetMessage().length () > 1)
+      Creature* target = static_cast<Creature*>(actor);
+      Box box0(actor->GetPosition(), 0.5f, 0.5f);
+      auto pos = request["target"].toList();
+      Box box1(Vector2(pos[0].toFloat(),pos[1].toFloat()) , 0.5f, 0.5f);
+      auto sid = request["sid"].toByteArray();
+      auto it = sidToPlayer_.find(sid);
+      Player* p = it.value();
+      if (box1.Intersect(box0) && p->GetId () != target->GetId () && target->GetHealth () > 0)
       {
-        response["message"] = item->GetMessage();
-        WriteResult_(response, EFEMPResult::OK);
-        return;
+        Vector2 player = p->GetPosition ();
+        Vector2 targets = target->GetPosition ();
+        Vector2 vec = Vector2((player.x - targets.x),(player.y - targets.y));
+        if (sqrt(vec.x*vec.x + vec.y*vec.y) < pickUpRadius_)
+        {
+          QVariantMap a = p->atack (target);
+          events_ << a;
+          a = target->atack (p);
+          if (target->GetHealth () < 0)
+          {
+            GetItems(target);
+          }
+          events_ << a;
+          WriteResult_(response, EFEMPResult::OK);
+        }
       }
     }
   }
