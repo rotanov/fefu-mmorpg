@@ -110,7 +110,7 @@ function test() {
                         ++counter
                         assert.equal("ok", data.result, "put mob " + counter)
                         if (counter == races.length) {
-                            done();
+                            done()
                         }
                         break
                     }
@@ -131,7 +131,24 @@ function test() {
                     case "putMob":
                         assert.equal("badRace", data.result, "put mob")
                         done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map})
+            })
+
+            it("should fail put mob [badPlacing: out of map]", function(done) {
+                var mob = {"x": 3.5, "y": 3.5}
+                var map = [["."]]
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result)
+                        socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage)
                         break
+                    case "putMob":
+                        assert.equal("badPlacing", data.result, "put mob")
+                        done()
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map})
