@@ -144,6 +144,7 @@ function test() {
             })
 
             it("should fail put player [put player on another player]", function(done) {
+                var flag = true
                 var player = {"x": 1.5, "y": 1.5}
                 var map = [
                     [".", ".", "."],
@@ -152,7 +153,6 @@ function test() {
                 ]
                 socket.setOnMessage(function(e) {
                     console.log(JSON.parse(e.data))
-                    var flag = true
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
@@ -230,6 +230,7 @@ function test() {
             })
 
             it("should put two players with different ids and sids", function(done) {
+                var flag = true
                 var player1 = {"x": 0.5, "y": 0.5}
                 var player2 = {"x": 1.5, "y": 1.5}
                 var map = [
@@ -239,7 +240,6 @@ function test() {
                 ]
                 socket.setOnMessage(function(e) {
                     console.log(JSON.parse(e.data))
-                    var flag = true
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":

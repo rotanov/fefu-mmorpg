@@ -169,6 +169,7 @@ function test() {
             })
 
             it("should fail put mob [put mob on another mob]", function(done) {
+                var flag = true
                 var mob = {"x": 1.5, "y": 1.5}
                 var map = [
                     [".", ".", "."],
@@ -177,7 +178,6 @@ function test() {
                 ]
                 socket.setOnMessage(function(e) {
                     console.log(JSON.parse(e.data))
-                    var flag = true
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
