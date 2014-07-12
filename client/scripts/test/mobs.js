@@ -368,6 +368,41 @@ function test() {
                 socket.setUpMap({"action": "setUpMap", "map": map})
             })
 
+            it("should put two mobs with different ids", function(done) {
+                var flag = true
+                var mob1 = {"x": 1.5, "y": 1.5}
+                var mob2 = {"x": 0.5, "y": 0.5}
+                var map = [
+                    [".", ".", "."],
+                    [".", ".", "."],
+                    [".", ".", "."]
+                ]
+                socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putMob(mob1.x, mob1.y, {}, [], [], "ORC", defaultDamage)
+                        break
+                    case "putMob":
+                        if (flag) {
+                            flag = false
+                            assert.equal("ok", data.result, "put mob")
+                            mob1.id = data.id
+                            socket.putMob(mob2.x, mob2.y, {}, [], [], "ORC", defaultDamage)
+                        } else {
+                            assert.equal("ok", data.result, "put mob")
+                            mob2.id = data.id
+                            assert.notEqual(mob1.id, mob2.id, "different ids")
+                            socket.setOnMessage(undefined)
+                            done()
+                        }
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map})
+            })
+
         })
 
     })
