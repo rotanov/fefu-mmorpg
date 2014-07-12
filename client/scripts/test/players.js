@@ -229,7 +229,7 @@ function test() {
                 socket.setUpMap({"action": "setUpMap", "map": map})
             })
 
-            it("should put two players with different ids", function(done) {
+            it("should put two players with different ids and sids", function(done) {
                 var player1 = {"x": 0.5, "y": 0.5}
                 var player2 = {"x": 1.5, "y": 1.5}
                 var map = [
@@ -251,11 +251,14 @@ function test() {
                             flag = false
                             assert.equal("ok", data.result, "put player")
                             player1.id = data.id
+                            player1.sid = data.sid
                             socket.putPlayer(player2.x, player2.y, {}, [], {})
                         } else {
                             assert.equal("ok", data.result, "put player")
                             player2.id = data.id
+                            player2.sid = data.sid
                             assert.notEqual(player1.id, player2.id, "different ids")
+                            assert.notEqual(player1.sid, player2.sid, "different sids")
                         }
                         socket.setOnMessage(undefined)
                         done()
