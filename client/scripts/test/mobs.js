@@ -5,8 +5,6 @@ var socket
 var userData
 var defaultDamage = 10
 
-var map = []
-var mob = {"x": 1.5, "y": 1.5}
 var consts = {
     "action": "setUpConst",
     "playerVelocity": 1.0,
@@ -60,12 +58,13 @@ function test() {
         })
 
         describe("Put Mob", function() {
-            it("stay in place", function(done) {
-                map = [
-                        [".", ".", "."],
-                        [".", ".", "."],
-                        [".", ".", "."]
-                    ]
+            it("put mob on place", function(done) {
+                var mob = {"x": 1.5, "y": 1.5}
+                var map = [
+                    [".", ".", "."],
+                    [".", ".", "."],
+                    [".", ".", "."]
+                ]
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -80,14 +79,45 @@ function test() {
                         break
                     case "examine":
                         assert.equal("ok", data.result)
-                        assert.equal(mob.x, data.x)
-                        assert.equal(mob.y, data.y)
+                        assert.equal(mob.x, (data.x).toFixed(1))
+                        assert.equal(mob.y, (data.y).toFixed(1))
                         done()
                         break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map})
             })
+
+            it("put mobs with all possible races", function(done) {
+                var counter = 0
+                var races = [
+                    "ORC", "EVIL", "TROLL", "GIANT", "DEMON",
+                    "METAL", "DRAGON", "UNDEAD", "ANIMAL", "PLAYER"
+                ]
+                var map = [
+                    [".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."]
+                ]
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result)
+                        for (var i = 0, l = races.length; i < l; ++i) {
+                            socket.putMob(0.5 + i, 0.5, {}, [], [], races[i], defaultDamage)
+                        }
+                        break
+                    case "putMob":
+                        ++counter
+                        assert.equal("ok", data.result, "put mob" + counter)
+                        if (counter == races.length) {
+                            done();
+                        }
+                        break
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map})
+            })
+
         })
 
     })
