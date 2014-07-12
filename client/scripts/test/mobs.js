@@ -181,11 +181,12 @@ function test() {
                         socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage)
                         break
                     case "putMob":
-                        assert.equal("ok", data.result, "put mob")
                         if (flag) {
                             flag = false
+                            assert.equal("ok", data.result, "put mob")
                             socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage)
                         } else {
+                            assert.equal("badPlacing", data.result, "put mob")
                             mob.id = data.id
                             socket.singleExamine(mob.id, userData.sid)
                         }
