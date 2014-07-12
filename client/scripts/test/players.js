@@ -228,6 +228,41 @@ function test() {
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map})
             })
+
+            it("should put two players with different ids", function(done) {
+                var player1 = {"x": 0.5, "y": 0.5}
+                var player2 = {"x": 1.5, "y": 1.5}
+                var map = [
+                    [".", ".", "."],
+                    [".", ".", "."],
+                    [".", ".", "."]
+                ]
+                socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
+                    var flag = true
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putPlayer(player1.x, player1.y, {}, [], {})
+                        break
+                    case "putPlayer":
+                        if (flag) {
+                            flag = false
+                            assert.equal("ok", data.result, "put player")
+                            player1.id = data.id
+                            socket.putPlayer(player2.x, player2.y, {}, [], {})
+                        } else {
+                            assert.equal("ok", data.result, "put player")
+                            player2.id = data.id
+                            assert.notEqual(player1.id, player2.id, "different ids")
+                        }
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map})
+            })
         })
 
 
