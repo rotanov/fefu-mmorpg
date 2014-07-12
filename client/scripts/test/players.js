@@ -266,6 +266,37 @@ function test() {
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map})
             })
+
+            it("should successfully put players in all cells", function(done) {
+                var map = [
+                    [".", ".", "."],
+                    [".", ".", "."],
+                    [".", ".", "."]
+                ]
+                var counter = 0
+                var cellsCount = map.length * map[0].length
+                socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        for (var i = 0, l = map.length; i < l; ++i) {
+                            for (var j = 0, l = map[i].length; j < l; ++j) {
+                                socket.putPlayer(i + 0.5, j + 0.5, {}, [], {})
+                            }
+                        }
+                        break
+                    case "putPlayer":
+                        ++counter
+                        assert.equal("ok", data.result, "put player " + counter)
+                        if (counter == cellsCount) {
+                            done()
+                        }
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map})
+            })
         })
 
 
