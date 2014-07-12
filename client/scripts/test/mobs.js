@@ -58,7 +58,7 @@ function test() {
         })
 
         describe("Put Mob", function() {
-            it("put mob on place", function(done) {
+            it("should successfully put mob", function(done) {
                 var mob = {"x": 1.5, "y": 1.5}
                 var map = [
                     [".", ".", "."],
@@ -88,7 +88,7 @@ function test() {
                 socket.setUpMap({"action": "setUpMap", "map": map})
             })
 
-            it("put mobs with all possible races", function(done) {
+            it("should successfully put mobs with all possible races", function(done) {
                 var counter = 0
                 var races = [
                     "ORC", "EVIL", "TROLL", "GIANT", "DEMON",
@@ -108,10 +108,29 @@ function test() {
                         break
                     case "putMob":
                         ++counter
-                        assert.equal("ok", data.result, "put mob" + counter)
+                        assert.equal("ok", data.result, "put mob " + counter)
                         if (counter == races.length) {
                             done();
                         }
+                        break
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map})
+            })
+
+            it("should fail put mob [badRace]", function(done) {
+                var mob = {"x": 0.5, "y": 0.5}
+                var map = [["."]]
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result)
+                        socket.putMob(mob.x, mob.y, {}, [], [], "BAD RACE", defaultDamage)
+                        break
+                    case "putMob":
+                        assert.equal("badRace", data.result, "put mob")
+                        done()
                         break
                     }
                 })
