@@ -63,8 +63,14 @@ function test() {
                 socket.setOnMessage(function(e) {
                     console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    if (data.action == "putMob") {
+                    switch(data.action) {
+                    case "putMob":
                         assert.equal("badPlacing", data.result, "put mob")
+                        mob.id = data.id
+                        socket.singleExamine(mob.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("badId", data.result, "examine request")
                         done()
                     }
                 })
@@ -145,6 +151,11 @@ function test() {
                         break
                     case "putMob":
                         assert.equal("badRace", data.result, "put mob")
+                        mob.id = data.id
+                        socket.singleExamine(mob.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("badId", data.result, "examine request")
                         done()
                     }
                 })
@@ -164,6 +175,11 @@ function test() {
                         break
                     case "putMob":
                         assert.equal("badPlacing", data.result, "put mob")
+                        mob.id = data.id
+                        socket.singleExamine(mob.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("badId", data.result, "examine request")
                         done()
                     }
                 })
@@ -183,6 +199,11 @@ function test() {
                         break
                     case "putMob":
                         assert.equal("badPlacing", data.result, "put mob")
+                        mob.id = data.id
+                        socket.singleExamine(mob.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("badId", data.result, "examine request")
                         done()
                     }
                 })
@@ -233,6 +254,11 @@ function test() {
                         break
                     case "putMob":
                         assert.equal("badDamage", data.result, "put mob")
+                        mob.id = data.id
+                        socket.singleExamine(mob.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("badId", data.result, "examine request")
                         done()
                     }
                 })
