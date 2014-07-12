@@ -60,7 +60,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     if (data.action == "getDictionary") {
-                        assert.equal("badSid", data.result)
+                        assert.equal("badSid", data.result, "get dictionary")
                         done()
                     }
                 })
@@ -71,7 +71,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data);
                     if (data.action == "getDictionary") {
-                        assert.equal("ok", data.result)
+                        assert.equal("ok", data.result, "get dictionary")
                         assert.isDefined(data.dictionary)
                         var grass = getKey(data.dictionary, "grass")
                         var wall = getKey(data.dictionary, "wall")
@@ -160,13 +160,13 @@ function test() {
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data);
                     if (data.action == "getConst") {
-                        assert.equal("ok", data.result, "get consts")
-                        assert.isDefined(data.playerVelocity)
-                        assert.isDefined(data.slideThreshold)
-                        assert.isDefined(data.ticksPerSecond)
-                        assert.isDefined(data.screenRowCount)
-                        assert.isDefined(data.screenColumnCount)
-                        assert.isDefined(data.pickUpRadius)
+                        assert.equal("ok", data.result, "get constants")
+                        assert.isDefined(data.playerVelocity, "playerVelocity")
+                        assert.isDefined(data.slideThreshold, "slideThreshold")
+                        assert.isDefined(data.ticksPerSecond, "ticksPerSecond")
+                        assert.isDefined(data.screenRowCount, "screenRowCount")
+                        assert.isDefined(data.screenColumnCount, "screenColumnCount")
+                        assert.isDefined(data.pickUpRadius, "pickUpRadius")
 
                         playerVelocity = data.playerVelocity
                         slideThreshold = data.slideThreshold
@@ -180,7 +180,7 @@ function test() {
                 socket.getConst()
             })
 
-            it("should return badAction", function(done) {
+            it("should fail set up constants [badAction]", function(done) {
                 var data = {
                     "action": "setUploadConst",
                     "playerVelocity": 1.0,
@@ -213,20 +213,41 @@ function test() {
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data);
                     if (data.action == "setUpConst") {
-                        assert.equal("ok", data.result)
+                        assert.equal("ok", data.result, "set up constants")
                         socket.getConst()
                     } else if (data.action == "getConst") {
-                        assert.equal(playerVelocity, data.playerVelocity)
-                        assert.equal(slideThreshold, data.slideThreshold)
-                        assert.equal(ticksPerSecond, data.ticksPerSecond)
-                        assert.equal(screenRowCount, data.screenRowCount)
-                        assert.equal(screenColumnCount, data.screenColumnCount)
-                        assert.equal(pickUpRadius, data.pickUpRadius)
+                        assert.equal(playerVelocity, data.playerVelocity, "playerVelocity")
+                        assert.equal(slideThreshold, data.slideThreshold, "slideThreshold")
+                        assert.equal(ticksPerSecond, data.ticksPerSecond, "ticksPerSecond")
+                        assert.equal(screenRowCount, data.screenRowCount, "screenRowCount")
+                        assert.equal(screenColumnCount, data.screenColumnCount, "screenColumnCount")
+                        assert.equal(pickUpRadius, data.pickUpRadius, "pickUpRadius")
                         done()
                     }
                 })
                 socket.setUpConst(data)
             })
+
+            it("should fail set up constants [constants are not numbers]", function(done) {
+                var data = {
+                    "action": "setUploadConst",
+                    "playerVelocity": "a",
+                    "slideThreshold": "b",
+                    "ticksPerSecond": "c",
+                    "screenRowCount": "d",
+                    "screenColumnCount": "e",
+                    "pickUpRadius": "f",
+                }
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data);
+                    if (data.action == "setUpConst") {
+                        assert.equal("badAction", data.result)
+                        done()
+                    }
+                })
+                socket.setUpConst(data)
+            })
+
         })
 
         describe("Look", function() {
