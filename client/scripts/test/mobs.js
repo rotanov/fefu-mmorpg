@@ -61,7 +61,7 @@ function test() {
             it("should fail put mob [badPlacing: map doesn't set]", function(done) {
                 var mob = {"x": 0.5, "y": 0.5}
                 socket.setOnMessage(function(e) {
-                    console.log(JSON.parse(e.data))
+                    //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "putMob":
@@ -86,7 +86,7 @@ function test() {
                     ["#", "#", "#"]
                 ]
                 socket.setOnMessage(function(e) {
-                    console.log(JSON.parse(e.data))
+                    //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
@@ -145,7 +145,7 @@ function test() {
                     [".", ".", "."]
                 ]
                 socket.setOnMessage(function(e) {
-                    console.log(JSON.parse(e.data))
+                    //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
@@ -177,7 +177,7 @@ function test() {
                     [".", ".", "."]
                 ]
                 socket.setOnMessage(function(e) {
-                    console.log(JSON.parse(e.data))
+                    //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
@@ -214,7 +214,7 @@ function test() {
                     [".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."]
                 ]
                 socket.setOnMessage(function(e) {
-                    console.log(JSON.parse(e.data))
+                    //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
@@ -240,7 +240,7 @@ function test() {
                 var mob = {"x": 0.5, "y": 0.5}
                 var map = [["."]]
                 socket.setOnMessage(function(e) {
-                    console.log(JSON.parse(e.data))
+                    //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
@@ -265,7 +265,7 @@ function test() {
                 var mob = {"x": 3.5, "y": 3.5}
                 var map = [["."]]
                 socket.setOnMessage(function(e) {
-                    console.log(JSON.parse(e.data))
+                    //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
@@ -290,7 +290,7 @@ function test() {
                 var mob = {"x": ".", "y": "."}
                 var map = [["."]]
                 socket.setOnMessage(function(e) {
-                    console.log(JSON.parse(e.data))
+                    //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
@@ -320,7 +320,7 @@ function test() {
                 var counter = 0
                 var cellsCount = map.length * map[0].length
                 socket.setOnMessage(function(e) {
-                    console.log(JSON.parse(e.data))
+                    //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
@@ -347,7 +347,7 @@ function test() {
                 var mob = {"x": 0.5, "y": 0.5}
                 var map = [["."]]
                 socket.setOnMessage(function(e) {
-                    console.log(JSON.parse(e.data))
+                    //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
@@ -378,7 +378,7 @@ function test() {
                     [".", ".", "."]
                 ]
                 socket.setOnMessage(function(e) {
-                    console.log(JSON.parse(e.data))
+                    //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
@@ -398,6 +398,40 @@ function test() {
                             socket.setOnMessage(undefined)
                             done()
                         }
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map})
+            })
+
+            it("should successfully walk around", function(done) {
+                var mob = {"x": 2.5, "y": 2.5}
+                map = [
+                        ["#", "#", "#", "#", "#"],
+                        ["#", ".", ".", ".", "#"],
+                        ["#", ".", ".", ".", "#"],
+                        ["#", ".", ".", ".", "#"],
+                        ["#", "#", "#", "#", "#"]
+                    ]
+                socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putMob(mob.x, mob.y, {}, [], ["CAN_MOVE"], "ORC", defaultDamage)
+                        break
+                    case "putMob":
+                        assert.equal("ok", data.result, "put mob")
+                        mob.id = mob.id
+                        setTimeout(socket.singleExamine(mob.id, userData.sid), 1000)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.notEqual(mob.x, data.x, "diff coordinate x")
+                        assert.notEqual(mob.y, data.y, "diff coordinate y")
+                        socket.setOnMessage(undefined)
+                        done()
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map})
