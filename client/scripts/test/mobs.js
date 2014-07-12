@@ -69,11 +69,11 @@ function test() {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
-                        assert.equal("ok", data.result)
+                        assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage)
                         break
                     case "putMob":
-                        assert.equal("ok", data.result)
+                        assert.equal("ok", data.result, "put mob")
                         mob.id = data.id
                         socket.singleExamine(mob.id, userData.sid)
                         break
@@ -82,7 +82,6 @@ function test() {
                         assert.equal(mob.x, (data.x).toFixed(1))
                         assert.equal(mob.y, (data.y).toFixed(1))
                         done()
-                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map})
@@ -101,7 +100,7 @@ function test() {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
-                        assert.equal("ok", data.result)
+                        assert.equal("ok", data.result, "load map")
                         for (var i = 0, l = races.length; i < l; ++i) {
                             socket.putMob(0.5 + i, 0.5, {}, [], [], races[i], defaultDamage)
                         }
@@ -125,7 +124,7 @@ function test() {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
-                        assert.equal("ok", data.result)
+                        assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {}, [], [], "BAD RACE", defaultDamage)
                         break
                     case "putMob":
@@ -143,7 +142,7 @@ function test() {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
-                        assert.equal("ok", data.result)
+                        assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage)
                         break
                     case "putMob":
@@ -161,12 +160,42 @@ function test() {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
-                        assert.equal("ok", data.result)
+                        assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage)
                         break
                     case "putMob":
                         assert.equal("badPlacing", data.result, "put mob")
                         done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map})
+            })
+
+            it("should successfully put mobs in all cells", function(done) {
+                var map = [
+                    [".", ".", "."],
+                    [".", ".", "."],
+                    [".", ".", "."]
+                ]
+                var counter = 0
+                var cellsCount = map.length * map[0].length
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        for (var i = 0, l = map.length; i < l; ++i) {
+                            for (var j = 0, l = map[i].length; j < l; ++j) {
+                                socket.putMob(i + 0.5, j + 0.5, {}, [], [], "ORC", defaultDamage)
+                            }
+                        }
+                        break
+                    case "putMob":
+                        ++counter
+                        assert.equal("ok", data.result, "put mob " + counter)
+                        if (counter == cellsCount) {
+                            done()
+                        }
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map})
