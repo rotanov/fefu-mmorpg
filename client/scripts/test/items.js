@@ -1053,7 +1053,8 @@ function makeItem(weight, class_, type, bonuses, effects, subtype) {
 }
 
 return {
-    testItems: testItems
+    testItems: testItems,
+    makeItem: makeItem
 }
 
 })

@@ -1,5 +1,5 @@
-define(["jquery", "lib/chai", "utils/utils", "utils/socket"],
-function($, chai, utils, ws) {
+define(["jquery", "lib/chai", "utils/utils", "utils/socket", "test/items"],
+function($, chai, utils, ws, items_) {
 
 var tick
 var socket
@@ -82,6 +82,26 @@ function test() {
                     }
                 })
                 socket.getDictionary(userData.sid)
+            })
+        })
+
+        describe("Put Item", function() {
+            it("should fail put item [badPlacing: map doesn't set]", function(done) {
+                var item = {"x": 0.5, "y": 0.5}
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putItem":
+                        assert.equal("badPlacing", data.result, "put item")
+                        item.id = data.id
+                        socket.singleExamine(item.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("badId", data.result, "examine request")
+                        done()
+                    }
+                })
+                socket.putItem(item.x, item.y, items_.makeItem())
             })
         })
 
