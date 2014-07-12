@@ -105,6 +105,34 @@ function test() {
                 socket.setUpMap({"action": "setUpMap", "map": map})
             })
 
+            it("should fail put mob [mob's collision with walls]", function(done) {
+                map = [
+                        ["#", "#", "#"],
+                        ["#", ".", "#"],
+                        ["#", "#", "#"],
+                    ]
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putMob(mob.x, mob.y, {}, [], ["CAN_MOVE"], "ORC", defaultDamage)
+                        break
+                    case "putMob":
+                        assert.equal("ok", data.result, "put mob")
+                        mob.id = mob.id
+                        setTimeout(socket.singleExamine(mob.id, userData.sid), 3000)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(mob.x, data.x, "can't move by x")
+                        assert.equal(mob.y, data.y, "can't move by y")
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map})
+            })
+
             it("should successfully put mob", function(done) {
                 var mob = {"x": 1.5, "y": 1.5}
                 var map = [
@@ -126,7 +154,7 @@ function test() {
                         socket.singleExamine(mob.id, userData.sid)
                         break
                     case "examine":
-                        assert.equal("ok", data.result)
+                        assert.equal("ok", data.result, "examine request")
                         assert.equal(mob.x, (data.x).toFixed(1))
                         assert.equal(mob.y, (data.y).toFixed(1))
                         done()
