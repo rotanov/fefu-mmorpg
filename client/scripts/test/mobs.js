@@ -201,6 +201,24 @@ function test() {
                 socket.setUpMap({"action": "setUpMap", "map": map})
             })
 
+            it("should fail put mob [badDamage]", function(done) {
+                var mob = {"x": 0.5, "y": 0.5}
+                var map = [["."]]
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putMob(mob.x, mob.y, {}, [], [], "ORC", "ddd")
+                        break
+                    case "putMob":
+                        assert.equal("badDamage", data.result, "put mob")
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map})
+            })
+
         })
 
     })
