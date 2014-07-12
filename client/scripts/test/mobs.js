@@ -58,6 +58,19 @@ function test() {
         })
 
         describe("Put Mob", function() {
+            it("should fail put mob [badPlacing: map doesn't set]", function(done) {
+                var mob = {"x": 0.5, "y": 0.5}
+                socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    if (data.action == "putMob") {
+                        assert.equal("badPlacing", data.result, "put mob")
+                        done()
+                    }
+                })
+                socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage)
+            })
+
             it("should successfully put mob", function(done) {
                 var mob = {"x": 1.5, "y": 1.5}
                 var map = [
@@ -66,6 +79,7 @@ function test() {
                     [".", ".", "."]
                 ]
                 socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
@@ -97,6 +111,7 @@ function test() {
                     [".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."]
                 ]
                 socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
@@ -121,6 +136,7 @@ function test() {
                 var mob = {"x": 0.5, "y": 0.5}
                 var map = [["."]]
                 socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
@@ -139,6 +155,7 @@ function test() {
                 var mob = {"x": 3.5, "y": 3.5}
                 var map = [["."]]
                 socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
@@ -157,6 +174,7 @@ function test() {
                 var mob = {"x": ".", "y": "."}
                 var map = [["."]]
                 socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
@@ -180,6 +198,7 @@ function test() {
                 var counter = 0
                 var cellsCount = map.length * map[0].length
                 socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
@@ -205,6 +224,7 @@ function test() {
                 var mob = {"x": 0.5, "y": 0.5}
                 var map = [["."]]
                 socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
