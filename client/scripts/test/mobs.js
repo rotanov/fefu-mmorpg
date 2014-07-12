@@ -48,23 +48,27 @@ function test() {
 
     describe.only("Mobs", function(done) {
 
+        before(function(done) {
+            socket.setOnMessage(function(e) {
+                var data = JSON.parse(e.data)
+                if (data.action == "setUpConst") {
+                    assert.equal("ok", data.result)
+                    done()
+                }
+            })
+            socket.setUpConst(consts)
+        })
+
         describe("Put Mob", function() {
-            it("should return ok", function(done) {
+            it("stay in place", function(done) {
                 map = [
-                            [".", ".", "."],
-                            [".", ".", "."],
-                            [".", ".", "."]
-                        ]
+                        [".", ".", "."],
+                        [".", ".", "."],
+                        [".", ".", "."]
+                    ]
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
-                    case "setUpConst":
-                        assert.equal("ok", data.result)
-                        socket.setUpMap({
-                            "action": "setUpMap",
-                            "map": map
-                        })
-                        break
                     case "setUpMap":
                         assert.equal("ok", data.result)
                         socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage)
@@ -82,7 +86,7 @@ function test() {
                         break
                     }
                 })
-                socket.setUpConst(consts)
+                socket.setUpMap({"action": "setUpMap", "map": map})
             })
         })
 
