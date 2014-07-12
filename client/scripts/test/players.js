@@ -177,6 +177,31 @@ function test() {
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map})
             })
+
+            it("should fail put player [badPlacing: out of map]", function(done) {
+                var player = {"x": 3.5, "y": 3.5}
+                var map = [["."]]
+                socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putPlayer(player.x, player.y, {}, [], [], "ORC", defaultDamage)
+                        break
+                    case "putPlayer":
+                        assert.equal("badPlacing", data.result, "put player")
+                        player.id = data.id
+                        player.sid = data.sid
+                        socket.singleExamine(player.id, player.sid)
+                        break
+                    case "examine":
+                        assert.equal("badId", data.result, "examine request")
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map})
+            })
         })
 
 
