@@ -65,8 +65,7 @@ function test() {
                     case "putPlayer":
                         assert.equal("badPlacing", data.result, "put player")
                         player.id = data.id
-                        player.sid = data.sid
-                        socket.singleExamine(player.id, player.sid)
+                        socket.singleExamine(player.id, userData.sid)
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
@@ -129,8 +128,7 @@ function test() {
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player")
                         player.id = data.id
-                        player.sid = data.sid
-                        socket.singleExamine(player.id, player.sid)
+                        socket.singleExamine(player.id, userData.sid)
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
@@ -166,8 +164,7 @@ function test() {
                         } else {
                             assert.equal("badPlacing", data.result, "put player")
                             player.id = data.id
-                            player.sid = data.sid
-                            socket.singleExamine(player.id, player.sid)
+                            socket.singleExamine(player.id, userData.sid)
                         }
                         break
                     case "examine":
@@ -187,13 +184,36 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putPlayer(player.x, player.y, {}, [], [], "ORC", defaultDamage)
+                        socket.putPlayer(player.x, player.y, {}, [], {})
                         break
                     case "putPlayer":
                         assert.equal("badPlacing", data.result, "put player")
                         player.id = data.id
-                        player.sid = data.sid
-                        socket.singleExamine(player.id, player.sid)
+                        socket.singleExamine(player.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("badId", data.result, "examine request")
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map})
+            })
+
+            it("should fail put player [badPlacing: coordinates are incorrect]", function(done) {
+                var player = {"x": ".", "y": "."}
+                var map = [["."]]
+                socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putPlayer(player.x, player.y, {}, [], {})
+                        break
+                    case "putPlayer":
+                        assert.equal("badPlacing", data.result, "put player")
+                        player.id = data.id
+                        setTimeout(socket.singleExamine(player.id, userData.sid), 500)
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
