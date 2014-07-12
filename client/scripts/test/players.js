@@ -57,7 +57,7 @@ function test() {
         })
 
         describe("Put Player", function() {
-            it("should fail put player [badPlacing: map doesn't set]", function(done) {//put player
+            it("should fail put player [badPlacing: map doesn't set]", function(done) {
                 var player = {"x": 0.5, "y": 0.5}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
@@ -65,7 +65,8 @@ function test() {
                     case "putPlayer":
                         assert.equal("badPlacing", data.result, "put player")
                         player.id = data.id
-                        socket.singleExamine(item.id, userData.sid)
+                        player.sid = data.sid
+                        socket.singleExamine(player.id, player.sid)
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
@@ -73,6 +74,41 @@ function test() {
                     }
                 })
                 socket.putPlayer(player.x, player.y, {}, [], {})
+            })
+
+            it("should fail put player [player's collision with walls]", function(done) {
+                var player = {"x": 1.5, "y": 1.5}
+                var tick = null
+                var map = [
+                        ["#", "#", "#"],
+                        ["#", ".", "#"],
+                        ["#", "#", "#"],
+                    ]
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    tick = data.tick
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putPlayer(player.x, player.y, {}, [], {})
+                        break
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player")
+                        player.id = data.id
+                        player.sid = data.sid
+                        socket.move("west", tick, player.sid)
+                    case "move":
+                        assert.equal("ok", data.result, "move")
+                        socket.singleExamine(player.id, player.sid)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(player.x, data.x, "can't move by x")
+                        assert.equal(player.y, data.y, "can't move by y")
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map})
             })
         })
 
