@@ -71,6 +71,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -99,6 +100,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -128,6 +130,7 @@ function test() {
                         assert.equal("ok", data.result, "examine request")
                         assert.equal(mob.x, data.x, "can't move by x")
                         assert.equal(mob.y, data.y, "can't move by y")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -158,6 +161,7 @@ function test() {
                         assert.equal("ok", data.result, "examine request")
                         assert.equal(mob.x, (data.x).toFixed(1))
                         assert.equal(mob.y, (data.y).toFixed(1))
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -193,6 +197,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -222,6 +227,7 @@ function test() {
                         ++counter
                         assert.equal("ok", data.result, "put mob " + counter)
                         if (counter == races.length) {
+                            socket.setOnMessage(undefined)
                             done()
                         }
                         break
@@ -248,6 +254,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -272,6 +279,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -296,6 +304,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -326,6 +335,7 @@ function test() {
                         ++counter
                         assert.equal("ok", data.result, "put mob " + counter)
                         if (counter == cellsCount) {
+                            socket.setOnMessage(undefined)
                             done()
                         }
                     }
@@ -351,6 +361,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })

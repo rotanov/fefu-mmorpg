@@ -69,6 +69,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -104,6 +105,7 @@ function test() {
                         assert.equal("ok", data.result, "examine request")
                         assert.equal(player.x, data.x, "can't move by x")
                         assert.equal(player.y, data.y, "can't move by y")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -134,6 +136,7 @@ function test() {
                         assert.equal("ok", data.result, "examine request")
                         assert.equal(player.x, (data.x).toFixed(1))
                         assert.equal(player.y, (data.y).toFixed(1))
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -169,6 +172,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -193,6 +197,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -217,6 +222,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })

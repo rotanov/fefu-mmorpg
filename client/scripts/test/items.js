@@ -75,8 +75,8 @@ function test() {
                     break
                 case "setUpMap":
                     assert.equal("ok", data.result)
+                    socket.setOnMessage(undefined)
                     done()
-                    break
                 }
             })
             socket.setUpConst(consts)
@@ -98,6 +98,7 @@ function test() {
                         assert.equal("ok", data.result, "examine request")
                         assert.equal(item.x, data.x, "correspondence between coordinates x")
                         assert.equal(item.y, data.y, "correspondence between coordinates x")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -131,6 +132,7 @@ function test() {
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
                         assert.equal(item.id, data.inventory[0], "item in inventory")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -162,6 +164,7 @@ function test() {
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
                         assert.equal(undefined, data.inventory[0], "no item in inventory")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -193,6 +196,7 @@ function test() {
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
                         assert.equal(item.id, data.inventory[0], "item in inventory")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -220,6 +224,7 @@ function test() {
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
                         assert.equal(1, data.inventory.length, "one item in inventory")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -247,6 +252,7 @@ function test() {
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
                         assert.equal(0, data.inventory.length, "no item in inventory")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -278,6 +284,7 @@ function test() {
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
                         assert.equal(0, data.inventory.length, "no item in inventory")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -312,6 +319,7 @@ function test() {
                         } else if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(item.id, data.actionResult.inventory[0], "item in player's invetory")
+                            socket.setOnMessage(undefined)
                             done()
                         }
                     }
@@ -345,6 +353,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -374,6 +383,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -403,6 +413,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -430,6 +441,7 @@ function test() {
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
                         assert.equal(undefined, data.inventory[0], "no item in inventory")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -457,6 +469,7 @@ function test() {
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
                         assert.equal(undefined, data.inventory[0], "no item in inventory")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -491,6 +504,7 @@ function test() {
                         } else if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(item.id, data.actionResult.inventory[0], "item in player's invetory")
+                            socket.setOnMessage(undefined)
                             done()
                         }
                     }
@@ -522,6 +536,7 @@ function test() {
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
                         assert.equal(undefined, data.inventory[0], "no item in inventory")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -549,6 +564,7 @@ function test() {
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
                         assert.equal(item.id, data.inventory[0], "item in inventory")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -574,6 +590,7 @@ function test() {
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         assert.equal("badId", data.actionResult.result, "drop item")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -595,6 +612,7 @@ function test() {
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         assert.equal("badId", data.actionResult.result, "drop item")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -629,6 +647,7 @@ function test() {
                         } else if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(item.id, data.actionResult.inventory[0], "item in player's invetory")
+                            socket.setOnMessage(undefined)
                             done()
                         }
                     }
@@ -659,6 +678,7 @@ function test() {
                             socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
                         } else if (data.actionResult.action == "examine") {
                             assert.equal(item.id, data.actionResult.slots["left-hand"], "item in slot")
+                            socket.setOnMessage(undefined)
                             done()
                         }
                     }
@@ -682,6 +702,7 @@ function test() {
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         assert.equal("badSlot", data.actionResult.result, data.actionResult.action + " request")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -709,6 +730,7 @@ function test() {
                         } else if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(undefined, data.actionResult.slots["ear"], "no such slot")
+                            socket.setOnMessage(undefined)
                             done()
                         }
                     }
@@ -737,6 +759,7 @@ function test() {
                         } else if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(undefined, data.actionResult.slots["left-hand"], "no item in slot")
+                            socket.setOnMessage(undefined)
                             done()
                         }
                     }
@@ -766,6 +789,7 @@ function test() {
                         } else if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(undefined, data.actionResult.slots["left-hand"], "no item in slot")
+                            socket.setOnMessage(undefined)
                             done()
                         }
                     }
@@ -794,6 +818,7 @@ function test() {
                         }  if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(undefined, data.actionResult.slots["feet"], "no item in slot")
+                            socket.setOnMessage(undefined)
                             done()
                         }
                     }
@@ -825,6 +850,7 @@ function test() {
                             socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
                         } else if (data.actionResult.action == "examine") {
                             assert.equal(item.id, data.actionResult.slots["left-hand"], "item in slot")
+                            socket.setOnMessage(undefined)
                             done()
                         }
                     }
@@ -856,6 +882,7 @@ function test() {
                             socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
                         } else if (data.actionResult.action == "examine") {
                             assert.equal(item.id, data.actionResult.slots["left-hand"], "item in slot")
+                            socket.setOnMessage(undefined)
                             done()
                         }
                     }
@@ -888,6 +915,7 @@ function test() {
                         } else if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(undefined, data.actionResult.slots["left-hand"], "no item in slot")
+                            socket.setOnMessage(undefined)
                             done()
                         }
                     }
@@ -915,6 +943,7 @@ function test() {
                             socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
                         } else if (data.actionResult.action == "examine") {
                             assert.equal(undefined, data.actionResult.slots["left-hand"], "slot is empty")
+                            socket.setOnMessage(undefined)
                             done()
                         }
                     }
@@ -941,6 +970,7 @@ function test() {
                         } else if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(undefined, data.actionResult.slots["ear"], "no such slot")
+                            socket.setOnMessage(undefined)
                             done()
                         }
                     }
@@ -962,6 +992,7 @@ function test() {
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         assert.equal("badSlot", data.actionResult.result, data.actionResult.action + " request")
+                        socket.setOnMessage(undefined)
                         done()
                     }
                 })
@@ -998,6 +1029,7 @@ function test() {
 
                             } else {
                                 assert.equal(undefined, data.actionResult.slots["left-hand"], "unequip item")
+                                socket.setOnMessage(undefined)
                                 done()
                             }
 
