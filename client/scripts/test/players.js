@@ -259,9 +259,9 @@ function test() {
                             player2.sid = data.sid
                             assert.notEqual(player1.id, player2.id, "different ids")
                             assert.notEqual(player1.sid, player2.sid, "different sids")
+                            socket.setOnMessage(undefined)
+                            done()
                         }
-                        socket.setOnMessage(undefined)
-                        done()
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map})
