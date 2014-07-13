@@ -445,7 +445,7 @@ function test() {
                     [".", ".", "."]
                 ]
                 socket.setOnMessage(function(e) {
-                    console.log(JSON.parse(e.data))
+                    //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch(data.action) {
                     case "setUpMap":
@@ -459,6 +459,36 @@ function test() {
                         break
                     case "examine":
                         assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map})
+            })
+
+            it("should fail put mob [badInventory]", function(done) {
+                var mob = {"x": 1.5, "y": 1.5}
+                var map = [
+                    [".", ".", "."],
+                    [".", ".", "."],
+                    [".", ".", "."]
+                ]
+                socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putMob(mob.x, mob.y, {}, [{
+                            "weight": "BAD_WEIGHT",
+                            "class": "BAD_CLASS",
+                            "type": "BAD_TYPE",
+                            "bonuses": "BAD_BONUSES",
+                            "effects": "BAD_EFFECTS"
+                        }], [], "ORC", defaultDamage)
+                        break
+                    case "putMob":
+                        assert.equal("badInventory", data.result, "put mob")
                         socket.setOnMessage(undefined)
                         done()
                     }
