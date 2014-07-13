@@ -3,6 +3,7 @@ function($, chai, utils, ws) {
 
 var socket
 var userData
+var assert = chai.assert
 
 var playerVelocity = 1.0
 var slideThreshold = 0.1
@@ -57,32 +58,29 @@ function testItems() {
     socket = ws.WSConnect(userData.webSocket, onopen, onmessage)
 }
 
+function BF(done) {
+    socket.setOnMessage(function(e) {
+        var data = JSON.parse(e.data)
+        switch(data.action) {
+        case "setUpConst":
+            assert.equal("ok", data.result, "set up constans")
+            socket.setUpMap({"action": "setUpMap", "map": map})
+            break
+        case "setUpMap":
+            assert.equal("ok", data.result, "load map")
+            socket.setOnMessage(undefined)
+            setTimeout(done, 1000)
+        }
+    })
+    socket.setUpConst(consts)
+}
+
 function test() {
-    var assert = chai.assert
 
     describe.only("Items", function(done) {
 
-        before(function(done) {
-            socket.setOnMessage(function(e) {
-                var data = JSON.parse(e.data)
-                switch(data.action) {
-                case "setUpConst":
-                    assert.equal("ok", data.result)
-                    socket.setUpMap({
-                        "action": "setUpMap",
-                        "map": map
-                    })
-                    break
-                case "setUpMap":
-                    assert.equal("ok", data.result)
-                    socket.setOnMessage(undefined)
-                    done()
-                }
-            })
-            socket.setUpConst(consts)
-        })
-
         describe("Put Item", function() {
+            beforeEach(BF)
             it("should successfully put item", function(done) {
                 var player = {"x": 3.5, "y": 3.5}
                 var item = {"x": player.x + 0.5, "y": player.y + 0.5}
@@ -107,6 +105,7 @@ function test() {
         })
 
         describe("Pick Up", function() {
+            beforeEach(BF)
             it("should successfully pick up item [item's center is less constant pickUpRadius]", function(done) {
                 var player = {"x": 3.5, "y": 3.5}
                 var item = {"x": player.x + 0.5, "y": player.y + 0.5}
@@ -330,6 +329,7 @@ function test() {
         })
 
         describe("Destroy Item", function() {
+            beforeEach(BF)
             it("should successfully destroy item [item's center is less constant pickUpRadius]", function(done) {
                 var player = {"x": 3.5, "y": 3.5}
                 var item = {"x": player.x + 0.5, "y": player.y + 0.5}
@@ -515,6 +515,7 @@ function test() {
         })
 
         describe("Drop", function() {
+            beforeEach(BF)
             it("should successfully drop item from inventory", function(done) {
                 var player = {"x": 3.5, "y": 3.5}
                 var item = {}
@@ -658,6 +659,7 @@ function test() {
         })
 
         describe("Equip", function() {
+            beforeEach(BF)
             it("should successfully equip item from inventory", function(done) {
                 var player = {"x": 3.5, "y": 3.5}
                 var item = {}
@@ -925,6 +927,7 @@ function test() {
         })
 
         describe("Unequip", function() {
+            beforeEach(BF)
             it("should successfully unequip item", function(done) {
                 var player = {"x": 3.5, "y": 3.5}
                 socket.setOnMessage(function(e) {
@@ -1001,6 +1004,7 @@ function test() {
         })
 
         describe("Equip / Unequip", function() {
+            beforeEach(BF)
             it("should successfully equip/unequip item", function(done) {
                 var flag = true
                 var player = {"x": 3.5, "y": 3.5}
