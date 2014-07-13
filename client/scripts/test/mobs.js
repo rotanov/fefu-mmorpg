@@ -123,7 +123,7 @@ function test() {
                         break
                     case "putMob":
                         assert.equal("ok", data.result, "put mob")
-                        mob.id = mob.id
+                        mob.id = data.id
                         setTimeout(socket.singleExamine(mob.id, userData.sid), 500)
                         break
                     case "examine":
@@ -371,7 +371,7 @@ function test() {
             it("should put two mobs with different ids", function(done) {
                 var flag = true
                 var mob1 = {"x": 1.5, "y": 1.5}
-                var mob2 = {"x": 0.5, "y": 0.5}
+                var mob2 = {"x": 0.4, "y": 0.4}
                 var map = [
                     [".", ".", "."],
                     [".", ".", "."],
@@ -388,11 +388,11 @@ function test() {
                     case "putMob":
                         if (flag) {
                             flag = false
-                            assert.equal("ok", data.result, "put mob")
+                            assert.equal("ok", data.result, "put mob1")
                             mob1.id = data.id
                             socket.putMob(mob2.x, mob2.y, {}, [], [], "ORC", defaultDamage)
                         } else {
-                            assert.equal("ok", data.result, "put mob")
+                            assert.equal("ok", data.result, "put mob2")
                             mob2.id = data.id
                             assert.notEqual(mob1.id, mob2.id, "different ids")
                             socket.setOnMessage(undefined)
@@ -422,13 +422,13 @@ function test() {
                         break
                     case "putMob":
                         assert.equal("ok", data.result, "put mob")
-                        mob.id = mob.id
+                        mob.id = data.id
                         setTimeout(socket.singleExamine(mob.id, userData.sid), 1000)
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
-                        assert.notEqual(mob.x, data.x, "diff coordinate x")
-                        assert.notEqual(mob.y, data.y, "diff coordinate y")
+                        assert.equal(mob.x, data.x, "diff coordinate x")
+                        assert.equal(mob.y, data.y, "diff coordinate y")
                         socket.setOnMessage(undefined)
                         done()
                         break
