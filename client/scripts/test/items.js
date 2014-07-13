@@ -172,7 +172,7 @@ function test() {
 
             it("should successfully pick up item [item's center is equal constant pickUpRadius]", function(done) {
                 var player = {"x": 3.5, "y": 3.5}
-                var item = {"x": player.x + pickUpRadius, "y": player.y + pickUpRadius}
+                var item = {"x": player.x + pickUpRadius, "y": player.y}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
