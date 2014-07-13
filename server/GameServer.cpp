@@ -268,25 +268,13 @@ void GameServer::tick()
         {
          if (actor->OnCollideActor(neighbour))
           {
-           if (static_cast<Creature*>(neighbour)->GetHealth () > 10)
-           {
-             if (static_cast<Creature*>(actor)->GetHealth () > 0)
-             {
                QVariantMap a = static_cast<Creature*>(actor)->atack(static_cast<Creature*>(neighbour));
                events_ << a;
-             }
-           }
           }
           if (neighbour->OnCollideActor(actor))
           {
-            if (static_cast<Creature*>(actor)->GetHealth () > 10)
-            {
-              if (static_cast<Creature*>(neighbour)->GetHealth () > 0 )
-              {
                 QVariantMap a = static_cast<Creature*>(neighbour)->atack(static_cast<Creature*>(actor));
                 events_ << a;
-              }
-            }
           }
         }
       }
@@ -391,7 +379,7 @@ void GameServer::HandleSetUpMap_(const QVariantMap& request, QVariantMap& respon
       levelMap_.SetCell(j, i, value);
     }
   }
-
+  actors_.clear();
 #undef BAD_MAP
 }
 
@@ -708,19 +696,14 @@ void GameServer::HandleUnequip_(const QVariantMap& request, QVariantMap& respons
     return;
   }
    Slot slot = SlotToString[str];
- // for (auto& slot : SlotToString)
- // {
-    Item* item = p->GetSlot(slot);
-    if (item)
-    {
-      p->items_.push_back (item);
-     // p->SetDamage (item->GetDamage (), false);
-    //  p->SetHealth (p->GetHealth() - item->Getammor ());
-      p->SetSlot (slot);
-      WriteResult_(response, EFEMPResult::OK);
-      return;
+   Item* item = p->GetSlot(slot);
+   if (item)
+   {
+     p->items_.push_back (item);
+     p->SetSlot (slot);
+     WriteResult_(response, EFEMPResult::OK);
+     return;
     }
- // }
    WriteResult_(response, EFEMPResult::BAD_ID);
 }
 
@@ -813,8 +796,6 @@ void GameServer::HandleEquip_(const QVariantMap& request, QVariantMap& response)
         return;
       }
       p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
-      //p->SetDamage (item->GetDamage (), true);
-      //p->SetMaxHealth (p->GetMaxHealth () + item->Getammor ());
       WriteResult_(response, EFEMPResult::OK);
       return;
     }
@@ -854,16 +835,17 @@ void GameServer::HandlePutMob_(const QVariantMap& request, QVariantMap& response
   }
   float x = request["x"].toFloat();
   float y = request["y"].toFloat();
-  if (levelMap_.GetCell(x, y) != '.')
-  {
-    WriteResult_(response, EFEMPResult::BAD_PLACING);
-    return;
-  }
   Monster* m = CreateActor_<Monster>();
   SetActorPosition_(m, Vector2(x,y));
   auto flag = request["flags"].toList();
   for (auto a: flag)
     m->Flags.push_back (a.toString());
+  if (IsCorrectPosition (x, y, m))
+  {
+    WriteResult_(response, EFEMPResult::BAD_PLACING);
+    KillActor_(m);
+    return;
+  }
   m->SetRace (request["race"].toString());
   m->SetDamage (request["dealtDamage"].toInt());
   response["id"] = m->GetId ();
@@ -887,13 +869,13 @@ void GameServer::HandlePutPlayer_(const QVariantMap&  request, QVariantMap& resp
     WriteResult_(response, EFEMPResult::BAD_ACTION);
     return;
   }
-  float x = request["x"].toFloat();
-  float y = request["y"].toFloat();
-  if (levelMap_.GetCell(x, y) != '.')
+  if (request["y"].toString() == "." || request["y"].toString() == ".")
   {
     WriteResult_(response, EFEMPResult::BAD_PLACING);
     return;
   }
+  float x = request["x"].toFloat();
+  float y = request["y"].toFloat();
   Player* p = CreateActor_<Player>();
   SetActorPosition_(p, Vector2(x,y));
   auto inventory = request["inventory"].toList();
@@ -902,6 +884,12 @@ void GameServer::HandlePutPlayer_(const QVariantMap&  request, QVariantMap& resp
     Item* item =   CreateActor_<Item>();
     SetItemDescription (a.toMap(), item);
     p->items_.push_back (item);
+  }
+  if (IsCorrectPosition (x, y, p))
+  {
+    WriteResult_(response, EFEMPResult::BAD_PLACING);
+    KillActor_(p);
+    return;
   }
   auto slot = request["slots"].toMap();
   QVariantMap id_slot;
@@ -1075,4 +1063,27 @@ void GameServer::SetItemDescription (const QVariantMap& request, Item* item)
   item->SetTypeItem (request["type"].toString());
   item->SetWeight (request["weight"].toInt());
   //item->bonus = request["bonus"];
+}
+
+bool GameServer::IsCorrectPosition(float x, float y, Actor* actor)
+{
+  if (levelMap_.GetCell(x, y) != '.')
+  {
+    return true;
+  }
+  for (auto p : actors_)
+  {
+      if (p == actor || p->GetType() == "item")
+      {
+        continue;
+      }
+
+     Box box0(actor->GetPosition(), actor->GetSize(), actor->GetSize());
+     Box box1(p->GetPosition(), p->GetSize(), p->GetSize());
+     if (box0.Intersect(box1))
+     {
+       return true;
+     }
+  }
+  return false;
 }
