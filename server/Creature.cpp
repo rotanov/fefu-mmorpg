@@ -12,27 +12,38 @@ Creature::~Creature()
 
 float Creature::GetHealth() const
 {
-  return health_;
+  return Stat[HP];
 }
 void Creature::SetHealth(const float health)
 {
-  health_ = health;
+  Stat[HP] = health;
 }
 
 float Creature::GetMaxHealth() const
 {
-  return maxHealth_;
+  return Stat[MAX_HP];
 }
 
 void Creature::SetMaxHealth(const float maxHealth)
 {
-  maxHealth_ = maxHealth;
+  Stat[MAX_HP] = maxHealth;
 }
 
 void Creature::SetRace()
 {
 
 }
+void Creature::SetStat(bool flag, Item* item)
+{
+  for (QMap<Stat_const, float>::const_iterator i = item->bonus.begin(); i != item->bonus.end(); i++)
+  {
+    if (flag)
+      Stat[i.key()] += i.value ();
+    else
+      Stat[i.key()] -= i.value ();
+  }
+}
+
 QVariantMap Creature::atack(Creature* /*actor*/)
 {
   QVariantMap ans;

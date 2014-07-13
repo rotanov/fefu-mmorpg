@@ -169,7 +169,7 @@ void GameServer::HandleDestroyItem_(const QVariantMap& request, QVariantMap& res
   {
     Vector2 items = actor->GetPosition ();
     if ((sqrt((player.x - items.x)*(player.x - items.x) +
-      (player.y - items.y)*(player.y - items.y)) <= pickUpRadius_+0.3f || p->GetItemId (id)))
+      (player.y - items.y)*(player.y - items.y)) <= pickUpRadius_ || p->GetItemId (id)))
     {
       KillActor_(actor);
       WriteResult_(response, EFEMPResult::OK);
@@ -701,6 +701,7 @@ void GameServer::HandleUnequip_(const QVariantMap& request, QVariantMap& respons
    {
      p->items_.push_back (item);
      p->SetSlot (slot);
+     p->SetStat(false, item);
      WriteResult_(response, EFEMPResult::OK);
      return;
     }
@@ -795,6 +796,7 @@ void GameServer::HandleEquip_(const QVariantMap& request, QVariantMap& response)
         WriteResult_(response, EFEMPResult::BAD_SLOT);
         return;
       }
+      p->SetStat(true, item);
       p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
       WriteResult_(response, EFEMPResult::OK);
       return;
