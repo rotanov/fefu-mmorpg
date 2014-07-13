@@ -427,8 +427,8 @@ function test() {
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
-                        assert.equal(mob.x, data.x, "diff coordinate x")
-                        assert.equal(mob.y, data.y, "diff coordinate y")
+                        assert.notEqual(mob.x, data.x, "diff coordinate x")
+                        assert.notEqual(mob.y, data.y, "diff coordinate y")
                         socket.setOnMessage(undefined)
                         done()
                         break
