@@ -2,6 +2,9 @@
 
 #include "Actor.hpp"
 #include <QStringList>
+#include <QMap>
+
+
 
 class Item : public Actor
 {
@@ -14,8 +17,6 @@ public:
   QString GetSubtype();
   QString GetClass();
   QString GetMessage();
-  int Getammor();
-  QString GetDamage();
   void SetName(QString str);
   void SetWeight(int str);
   void SetTypeItem(QString str);
@@ -23,10 +24,8 @@ public:
   void SetSubtype(QString str);
   void SetClass(QString str);
   void SetMessage(QString str);
-  void Setammor(int str);
-  void SetDamage(QString str);
   QStringList Flags;
-  QStringList bonus;
+  QMap <Stat_const, float> bonus;
 private:
   QString name_;
   int weight_;
@@ -34,8 +33,6 @@ private:
   QString class_item_;
   QString subtype_;
   QString massege_;
-  int ammor_;
-  QString damage_;
   std::vector<QString> class_ =
   {
     "garment",
@@ -61,4 +58,5 @@ private:
     "two-handed",
     "bow",
   };
+
 };

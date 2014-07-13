@@ -151,19 +151,22 @@ void PermaStorage::GetItem(Item* i, const int id )
     i->SetMessage (q.value("message").toString () );
     QString str = q.value("flags").toString();
     i->Flags << str.split("|");
-    QString st = q.value("bonus").toString();
-    i->bonus << st.split("@");
+    QStringList st;
+    st << q.value("bonus").toString().split("@");
+    for (auto a: st)
+    {
+      QStringList k;
+      k << a.split(":");
+      for (auto j: k[1].split("|"))
+      {
+        i->bonus[Stats[j]] = k[0].toFloat();
+      }
+    }
     QStringList s ;
     s << q.value("atype").toString().split(":");
     i->SetClass (s[0]);
     i->SetTypeItem (s[1].toInt());
     i->SetSubtype (s[2]);
-    QStringList power_info;
-    power_info << q.value("power_info").toString().split(":") ;
-    if (power_info.length () > 0)
-      i->Setammor (power_info[0].toInt ());
-    if (power_info.length () > 1)
-      i->SetDamage (power_info[1]);
   }
 }
 

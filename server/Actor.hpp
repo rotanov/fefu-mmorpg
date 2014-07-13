@@ -16,7 +16,20 @@ enum class EActorDirection
   SOUTH,
   WEST,
 };
-
+enum Stat_const
+{
+    STRENGTH,
+    INTELLIGENCE,
+    DEXTERITY,
+    SPEED,
+    DEFENSE,
+    MAGIC_RESISTANCE,
+    CAPACITY,
+    HP,
+    MAX_HP,
+    MP,
+    MAX_MP,
+};
 const std::vector<Vector2> directionToVector =
 {
   [EActorDirection::NONE] = Vector2(0.0f, 0.0f),

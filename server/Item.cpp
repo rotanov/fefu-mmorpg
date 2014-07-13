@@ -64,26 +64,6 @@ void Item::SetTypeItem(int str)
   type_item_ = type[str];
 }
 
-int Item::Getammor()
-{
-  return ammor_;
-}
-
-QString Item::GetDamage()
-{
-  return damage_;
-}
-
-void Item::Setammor(int str)
-{
-  ammor_ = str;
-}
-
-void Item::SetDamage(QString str)
-{
-  damage_ = str;
-}
-
 void Item::SetSubtype(QString str)
 {
   int i = str.toInt () > 0?str.toInt ():0;
