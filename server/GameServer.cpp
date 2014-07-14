@@ -191,7 +191,7 @@ void GameServer::setWSAddress(QString address)
 //==============================================================================
 void GameServer::tick()
 {
-  float dt = (time_.elapsed() - lastTime_) * 0.001f;
+  float dt = playerVelocity_;//(time_.elapsed() - lastTime_) * 0.001f;
   lastTime_ = time_.elapsed();
   if (actors_.size () < 100)
     GenMonsters_ ();
@@ -268,13 +268,19 @@ void GameServer::tick()
         {
          if (actor->OnCollideActor(neighbour))
           {
+           if (static_cast<Creature*>(neighbour)->GetHealth () > 10)
+           {
                QVariantMap a = static_cast<Creature*>(actor)->atack(static_cast<Creature*>(neighbour));
                events_ << a;
+           }
           }
           if (neighbour->OnCollideActor(actor))
           {
+            if(static_cast<Creature*>(actor)->GetHealth () > 10)
+            {
                 QVariantMap a = static_cast<Creature*>(neighbour)->atack(static_cast<Creature*>(actor));
                 events_ << a;
+            }
           }
         }
       }
@@ -713,26 +719,42 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
 {
   auto sid = request["sid"].toByteArray();
   Player* p = sidToPlayer_[sid];
-  int id = request["id"].toInt();
+  Item* item = static_cast<Item*>(idToActor_[request["id"].toInt()]);
+  float x = request["x"].toFloat();
+  float y = request["y"].toFloat();
+  if (!x)
+  {
+    if (item->GetSubtype () != "consumable")
+    {
+      WriteResult_ (response,EFEMPResult::BAD_ID);
+      return;
+    } else
+    {
+      p->SetHealth (p->GetHealth () + item->bonus[HP]);
+      WriteResult_ (response,EFEMPResult::OK);
+      return;
+    }
+  }
+  if (item != p->GetSlot (left_hand) || item != p->GetSlot (right_hand) )
+  {
+    WriteResult_ (response,EFEMPResult::BAD_SLOT);
+    return;
+  }
   for (Actor* actor : actors_)
   {
     if (actor->GetType () == "monster" || actor->GetType () == "player")
     {
       Creature* target = static_cast<Creature*>(actor);
       Box box0(actor->GetPosition(), 0.5f, 0.5f);
-      auto pos = request["target"].toList();
-      Box box1(Vector2(pos[0].toFloat(),pos[1].toFloat()) , 0.5f, 0.5f);
-      auto sid = request["sid"].toByteArray();
-      auto it = sidToPlayer_.find(sid);
-      Player* p = it.value();
+      Box box1(Vector2(x, y) , 0.5f, 0.5f);
       if (box1.Intersect(box0) && p->GetId () != target->GetId () && target->GetHealth () > 0)
       {
         Vector2 player = p->GetPosition ();
         Vector2 targets = target->GetPosition ();
-        Vector2 vec = Vector2((player.x - targets.x),(player.y - targets.y));
-        if (sqrt(vec.x*vec.x + vec.y*vec.y) < pickUpRadius_)
+        Vector2 vec = Vector2((player.x - targets.x), (player.y - targets.y));
+        if (sqrt(vec.x*vec.x + vec.y*vec.y) <= pickUpRadius_)
         {
-          QVariantMap a = p->atack (target);
+          QVariantMap a = p->atack(target);
           events_ << a;
           a = target->atack (p);
           if (target->GetHealth () < 0)
