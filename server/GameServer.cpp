@@ -328,8 +328,13 @@ void GameServer::HandleAttack_(const QVariantMap& request, QVariantMap& response
 //==============================================================================
 void GameServer::HandleSetUpConstants_(const QVariantMap& request, QVariantMap& response)
 {
-  if (!testingStageActive_)
-  {
+  if (!testingStageActive_
+      || !request["playerVelocity"].toFloat()
+      || !request["slideThreshold"].toFloat()
+      || !request["ticksPerSecond"].toInt()
+      || !request["screenRowCount"].toInt()
+      || !request["screenColumnCount"].toInt()
+      || !request["pickUpRadius"].toFloat()) {
     WriteResult_(response, EFEMPResult::BAD_ACTION);
     return;
   }
