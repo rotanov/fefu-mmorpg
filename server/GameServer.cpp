@@ -152,34 +152,52 @@ void GameServer::HandleDestroyItem_(const QVariantMap& request, QVariantMap& res
 #define BAD_ID(COND)\
   if (COND)\
   {\
-  WriteResult_(response, EFEMPResult::BAD_ID);\
-  return;\
-}\
+    WriteResult_(response, EFEMPResult::BAD_ID);\
+    return;\
+  }\
 
   BAD_ID(request.find("id") == request.end());
 
   int id = request["id"].toInt();
-
-  BAD_ID(idToActor_.find(id) == idToActor_.end());
-
-  Item* actor = static_cast<Item*>(idToActor_[id]);
   Player* p = sidToPlayer_[request["sid"].toByteArray()];
-  Vector2 player = p->GetPosition ();
-  if (actor)
+
+  BAD_ID(idToActor_.find(id) == idToActor_.end() && !p->GetItemId(id));
+
+  Item* it = NULL;
+
+  if (p->GetItemId(id))
   {
-    Vector2 items = actor->GetPosition ();
-    if ((sqrt((player.x - items.x)*(player.x - items.x) +
-      (player.y - items.y)*(player.y - items.y)) <= pickUpRadius_ || p->GetItemId (id)))
+    for (auto& item: p->items_)
     {
-      KillActor_(actor);
-      WriteResult_(response, EFEMPResult::OK);
-      return;
+      if (item->GetId() == id)
+      {
+        it = item;
+        break;
+      }
     }
-   }
-  //    pickUpRadius_
+
+    p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), it), p->items_.end());
+  }
+  else if (idToActor_.find(id) != idToActor_.end())
+  {
+    it = static_cast<Item*>(idToActor_[id]);
+    Vector2 player = p->GetPosition();
+    Vector2 item = it->GetPosition();
+    float distance = sqrt((player.x - item.x)*(player.x - item.x) +
+                          (player.y - item.y)*(player.y - item.y));
+    BAD_ID(distance > pickUpRadius_)
+    KillActor_(it);
+  } else
+  {
+      WriteResult_(response, EFEMPResult::BAD_ID);
+      return;
+  }
+
+  WriteResult_(response, EFEMPResult::OK);
+  return;
+
   // TODO: implement
-  WriteResult_(response, EFEMPResult::BAD_ID);
- #undef BAD_ID
+#undef BAD_ID
 }
 
 //==============================================================================
@@ -667,7 +685,7 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
 {
   auto sid = request["sid"].toByteArray();
   Player* p = sidToPlayer_[sid];
-  if (!idToActor_[request["id"].toInt()] || !p->GetItemId(request["id"].toInt()))
+  if (!idToActor_[request["id"].toInt()] || p->GetItemId(request["id"].toInt()))
   {
     WriteResult_(response, EFEMPResult::BAD_ID);
     return;
