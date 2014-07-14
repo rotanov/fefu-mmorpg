@@ -719,7 +719,7 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
 //==============================================================================
 void GameServer::HandleUnequip_(const QVariantMap& request, QVariantMap& response)
 {
-  if (!request["slot"].toString())
+  if (request["slot"].toString() != "")
   {
     WriteResult_(response, EFEMPResult::BAD_ID);
     return;
