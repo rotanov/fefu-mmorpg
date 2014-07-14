@@ -152,34 +152,52 @@ void GameServer::HandleDestroyItem_(const QVariantMap& request, QVariantMap& res
 #define BAD_ID(COND)\
   if (COND)\
   {\
-  WriteResult_(response, EFEMPResult::BAD_ID);\
-  return;\
-}\
+    WriteResult_(response, EFEMPResult::BAD_ID);\
+    return;\
+  }\
 
   BAD_ID(request.find("id") == request.end());
 
   int id = request["id"].toInt();
-
-  BAD_ID(idToActor_.find(id) == idToActor_.end());
-
-  Item* actor = static_cast<Item*>(idToActor_[id]);
   Player* p = sidToPlayer_[request["sid"].toByteArray()];
-  Vector2 player = p->GetPosition ();
-  if (actor)
+
+  BAD_ID(idToActor_.find(id) == idToActor_.end() && !p->GetItemId(id));
+
+  Item* it = NULL;
+
+  if (p->GetItemId(id))
   {
-    Vector2 items = actor->GetPosition ();
-    if ((sqrt((player.x - items.x)*(player.x - items.x) +
-      (player.y - items.y)*(player.y - items.y)) <= pickUpRadius_ || p->GetItemId (id)))
+    for (auto& item: p->items_)
     {
-      KillActor_(actor);
-      WriteResult_(response, EFEMPResult::OK);
-      return;
+      if (item->GetId() == id)
+      {
+        it = item;
+        break;
+      }
     }
-   }
-  //    pickUpRadius_
+
+    p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), it), p->items_.end());
+  }
+  else if (idToActor_.find(id) != idToActor_.end())
+  {
+    it = static_cast<Item*>(idToActor_[id]);
+    Vector2 player = p->GetPosition();
+    Vector2 item = it->GetPosition();
+    float distance = sqrt((player.x - item.x)*(player.x - item.x) +
+                          (player.y - item.y)*(player.y - item.y));
+    BAD_ID(distance > pickUpRadius_)
+    KillActor_(it);
+  } else
+  {
+      WriteResult_(response, EFEMPResult::BAD_ID);
+      return;
+  }
+
+  WriteResult_(response, EFEMPResult::OK);
+  return;
+
   // TODO: implement
-  WriteResult_(response, EFEMPResult::BAD_ID);
- #undef BAD_ID
+#undef BAD_ID
 }
 
 //==============================================================================
@@ -338,8 +356,13 @@ void GameServer::HandleAttack_(const QVariantMap& request, QVariantMap& response
 //==============================================================================
 void GameServer::HandleSetUpConstants_(const QVariantMap& request, QVariantMap& response)
 {
-  if (!testingStageActive_)
-  {
+  if (!testingStageActive_
+      || !request["playerVelocity"].toFloat()
+      || !request["slideThreshold"].toFloat()
+      || !request["ticksPerSecond"].toInt()
+      || !request["screenRowCount"].toInt()
+      || !request["screenColumnCount"].toInt()
+      || !request["pickUpRadius"].toFloat()) {
     WriteResult_(response, EFEMPResult::BAD_ACTION);
     return;
   }
@@ -672,25 +695,30 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
 {
   auto sid = request["sid"].toByteArray();
   Player* p = sidToPlayer_[sid];
-  if (idToActor_[request["id"].toInt()] && p->GetItemId (request["id"].toInt()))
+  if (!idToActor_[request["id"].toInt()] || p->GetItemId(request["id"].toInt()))
   {
-    Actor* item = idToActor_[request["id"].toInt()];
-    if (item->GetType () == "item")
-    {
-      Vector2 player = p->GetPosition ();
-      Vector2 items = item->GetPosition ();
-      if (sqrt((player.x - items.x)*(player.x - items.x) +
-      (player.y - items.y)*(player.y - items.y)) <= pickUpRadius_)
-      {
-        levelMap_.RemoveActor(item);
-        actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());
-        p->items_.push_back (static_cast<Item*>(item));
-        WriteResult_(response, EFEMPResult::OK);
-        return;
-      }
-    }
+    WriteResult_(response, EFEMPResult::BAD_ID);
+    return;
   }
-  WriteResult_(response, EFEMPResult::BAD_ID);
+
+  Actor* item = idToActor_[request["id"].toInt()];
+  if (item->GetType() == "item")
+  {
+    Vector2 player = p->GetPosition();
+    Vector2 items = item->GetPosition();
+    float distance = sqrt((player.x - items.x)*(player.x - items.x) +
+                          (player.y - items.y)*(player.y - items.y));
+    if (distance > pickUpRadius_) {
+      WriteResult_(response, EFEMPResult::BAD_ID);
+      return;
+    }
+
+    levelMap_.RemoveActor(item);
+    actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());
+    p->items_.push_back(static_cast<Item*>(item));
+    WriteResult_(response, EFEMPResult::OK);
+    return;
+  }
 }
 
 //==============================================================================
@@ -913,7 +941,7 @@ void GameServer::HandlePutPlayer_(const QVariantMap&  request, QVariantMap& resp
     SetItemDescription (a.toMap(), item);
     p->items_.push_back (item);
   }
-  if (IsCorrectPosition (x, y, p))
+  if (IsCorrectPosition(x, y, p))
   {
     WriteResult_(response, EFEMPResult::BAD_PLACING);
     KillActor_(p);

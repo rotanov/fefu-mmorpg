@@ -193,7 +193,7 @@ function test() {
 
             it("should successfully pick up item [item's center is equal constant pickUpRadius]", function(done) {
                 var player = {"x": 3.5, "y": 3.5}
-                var item = {"x": player.x + pickUpRadius, "y": player.y}
+                var item = {"x": 3.5, "y": 2} //pickUpRadius = 1.5 = sqtr((3.5 - 3.5)^2 + (3.5 - 2)^2)
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -383,7 +383,7 @@ function test() {
 
             it("should successfully destroy item [item's center is equal constant pickUpRadius]", function(done) {
                 var player = {"x": 3.5, "y": 3.5}
-                var item = {"x": player.x + pickUpRadius, "y": player.y + pickUpRadius}
+                var item = {"x": 3.5, "y": 2} //pickUpRadius = 1.5 = sqtr((3.5 - 3.5)^2 + (3.5 - 2)^2)
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -851,7 +851,7 @@ function test() {
 
             /*it("should successfully equip item [item's center is equal constant pickUpRadius]", function(done) {
                 var player = {"x": 3.5, "y": 3.5}
-                var item = {"x": player.x + pickUpRadius, "y": player.y + pickUpRadius}
+                var item = {"x": 3.5, "y": 2} //pickUpRadius = 1.5 = sqtr((3.5 - 3.5)^2 + (3.5 - 2)^2)
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {

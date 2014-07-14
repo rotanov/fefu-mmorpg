@@ -337,7 +337,7 @@ function test() {
 
             it("should fail set up constants [constants are not numbers]", function(done) {
                 var data = {
-                    "action": "setUploadConst",
+                    "action": "setUpConst",
                     "playerVelocity": "a",
                     "slideThreshold": "b",
                     "ticksPerSecond": "c",

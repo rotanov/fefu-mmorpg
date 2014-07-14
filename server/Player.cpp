@@ -111,12 +111,12 @@ bool Player::SetSlot(Slot st)
   return true;
 }
 
-bool Player::GetItemId (int id)
- {
-   for (auto& a: items_)
-   {
-     if (a->GetId() == id)
-       return false;
-   }
-   return true;
- }
+bool Player::GetItemId(int id)
+{
+  for (auto& a: items_)
+  {
+    if (a->GetId() == id)
+      return true;
+  }
+  return false;
+}
