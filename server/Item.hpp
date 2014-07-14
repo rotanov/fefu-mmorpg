@@ -17,8 +17,10 @@ public:
   QString GetSubtype();
   QString GetClass();
   QString GetMessage();
+  int GetTime();
   void SetName(QString str);
   void SetWeight(int str);
+  void SetTime(int str);
   void SetTypeItem(QString str);
   void SetTypeItem(int str);
   void SetSubtype(QString str);
@@ -28,6 +30,7 @@ public:
   QMap <Stat_const, float> bonus;
 private:
   QString name_;
+  int time_;
   int weight_;
   QString type_item_;
   QString class_item_;

@@ -40,6 +40,11 @@ QString Item::GetClass()
   return class_item_;
 }
 
+int Item::GetTime()
+{
+  return time_;
+}
+
 void Item::SetName(QString str)
 {
   name_ = str;
@@ -62,6 +67,10 @@ void Item::SetTypeItem(QString str)
 void Item::SetTypeItem(int str)
 {
   type_item_ = type[str];
+}
+void Item::SetTime(int str)
+{
+  time_= str;
 }
 
 void Item::SetSubtype(QString str)
