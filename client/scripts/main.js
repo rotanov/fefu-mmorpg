@@ -1,4 +1,4 @@
-﻿require(["jquery", "lib/phaser", "authorization", "test/test", "utils/utils"],
+﻿require(["jquery", "lib/phaser", "authorization", "test/tester", "utils/utils"],
 function($, phaser, auth, test, utils) {
 
     $("#register").click(function() {
