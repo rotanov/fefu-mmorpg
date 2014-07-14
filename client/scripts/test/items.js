@@ -497,6 +497,34 @@ function test() {
                 socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
 
+            it("should fail destroy item [badId: ID is invalid]", function(done) {
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {}
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player")
+                        player.id = data.id
+                        player.sid = data.sid
+                        item.id = "/"
+                        socket.enforce({"action": "destroyItem", "id": item.id, "sid": player.sid}, userData.sid)
+                        break
+                    case "enforce":
+                        assert.equal("ok", data.result, "enforce request")
+                        assert.equal("badId", data.actionResult.result, "destroy item")
+                        socket.singleExamine(player.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(undefined, data.inventory[0], "no item in inventory")
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
+            })
+
             it("should fail destroy item [object in other player's inventory]", function(done) {
                 var flag = true
                 var player1 = {"x": 3.5, "y": 3.5}
