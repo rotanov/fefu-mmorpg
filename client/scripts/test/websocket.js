@@ -283,6 +283,28 @@ function test() {
                 socket.setUpConst(data)
             })
 
+            it("should fail set up constants [badSid]", function(done) {
+                var data = {
+                    "action": "setUpConst",
+                    "playerVelocity": 1.0,
+                    "slideThreshold": 0.1,
+                    "ticksPerSecond": 60,
+                    "screenRowCount": 7,
+                    "screenColumnCount": 9,
+                    "pickUpRadius": 1.5,
+                    "sid": -1
+                }
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data);
+                    if (data.action == "setUpConst") {
+                        assert.equal("badSid", data.result, "must setUpConst")
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.setUpConst(data)
+            })
+
             it("should successfully set up constants", function(done) {
                 var data = {
                     "action": "setUpConst",
