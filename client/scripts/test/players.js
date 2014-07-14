@@ -43,6 +43,11 @@ function testPlayers() {
     socket = ws.WSConnect(userData.webSocket, onopen, onmessage)
 }
 
+function runBeforeEach(done) {
+    console.log("running afterEach function...")
+    setTimeout(done, 1000)
+}
+
 function test() {
     var assert = chai.assert
 
@@ -60,6 +65,8 @@ function test() {
         })
 
         describe("Put Player", function() {
+            beforeEach(runBeforeEach)
+
             it("should fail put player [badPlacing: map doesn't set]", function(done) {
                 var player = {"x": 0.5, "y": 0.5}
                 socket.setOnMessage(function(e) {

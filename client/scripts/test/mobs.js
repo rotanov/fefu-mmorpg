@@ -43,6 +43,11 @@ function testMobs() {
     socket = ws.WSConnect(userData.webSocket, onopen, onmessage)
 }
 
+function runBeforeEach(done) {
+    console.log("running afterEach function...")
+    setTimeout(done, 1000)
+}
+
 function test() {
     var assert = chai.assert
 
@@ -60,6 +65,27 @@ function test() {
         })
 
         describe("Put Mob", function() {
+            beforeEach(runBeforeEach)
+
+            it("should fail put mob [badSid]", function(done) {
+                var mob = {"x": 0.5, "y": 0.5}
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putMob":
+                        assert.equal("badSid", data.result, "put mob")
+                        mob.id = data.id
+                        socket.singleExamine(mob.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, -1)
+            })
+
             it("should fail put mob [badPlacing: map doesn't set]", function(done) {
                 var mob = {"x": 0.5, "y": 0.5}
                 socket.setOnMessage(function(e) {
