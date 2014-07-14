@@ -65,33 +65,25 @@ void Monster::SetRace()
   }
 }
 
-void  Monster::SetDamage(int d)
+void Monster::SetAlertness(float al)
 {
-  damage_= d;
+  alertness_ = al;
+}
+
+float Monster::GetAlertness()
+{
+  return alertness_;
 }
 
 QVariantMap Monster::atack(Creature* actor)
 {
   int val = rand();
-  QStringList s;
-  s << Blows[0].split ("|");
-  if (damage_ != 0) {
-    val = damage_;
-  } else if (s.length () == 3)
-  {
-    QStringList d;
-    d << s[2].split ("d");
-    val = (val % (d[1].toInt()*d[0].toInt ()));
-  } else{
-    val = 2.0f;
-  }
-  if (val < 0)
-    val = 2;
+  val = 2.0f;
   actor->SetHealth(actor->GetHealth() - val);
   QVariantMap ans;
   ans["dealtDamage"] = val;
   ans["target"] = actor->GetId();
-  ans["blowType"] = s[0];
+ // ans["blowType"] = s[0];
   ans["attacker"] = GetId();
   return ans;
 }
