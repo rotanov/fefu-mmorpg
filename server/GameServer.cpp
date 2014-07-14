@@ -721,7 +721,7 @@ void GameServer::HandleUnequip_(const QVariantMap& request, QVariantMap& respons
 {
   if (request["slot"].toString() != "")
   {
-    WriteResult_(response, EFEMPResult::BAD_ID);
+    WriteResult_(response, EFEMPResult::BAD_SLOT);
     return;
   }
 
