@@ -133,12 +133,6 @@ define(function() {
         }))
     }
 
-    Socket.prototype.getConst = function() {
-        this.sock.send(JSON.stringify({
-            "action": "getConst"
-        }))
-    }
-
     /*Testing*/
 
     Socket.prototype.startTesting = function(sid) {
@@ -166,9 +160,10 @@ define(function() {
         this.sock.send(JSON.stringify(data))
     }
 
-    Socket.prototype.getConst = function() {
+    Socket.prototype.getConst = function(sid) {
         this.sock.send(JSON.stringify({
-            "action": "getConst"
+            "action": "getConst",
+            "sid": sid
         }))
     }
 
@@ -176,16 +171,17 @@ define(function() {
         this.sock.send(JSON.stringify(data))
     }
 
-    Socket.prototype.putItem = function(x, y, item) {
+    Socket.prototype.putItem = function(x, y, item, sid) {
         this.sock.send(JSON.stringify({
             "action": "putItem",
             "x": x,
             "y": y,
-            "item": item
+            "item": item,
+            "sid": sid
         }))
     }
 
-    Socket.prototype.putMob = function(x, y, stats, inventory, flags, race, dealtDamage) {
+    Socket.prototype.putMob = function(x, y, stats, inventory, flags, race, dealtDamage, sid) {
         this.sock.send(JSON.stringify({
             "action": "putMob",
             "x": x,
@@ -194,25 +190,28 @@ define(function() {
             "inventory": inventory,
             "flags": flags,
             "race": race,
-            "dealtDamage": dealtDamage
+            "dealtDamage": dealtDamage,
+            "sid": sid
         }))
     }
 
-    Socket.prototype.putPlayer = function(x, y, stats, inventory, slots) {
+    Socket.prototype.putPlayer = function(x, y, stats, inventory, slots, sid) {
         this.sock.send(JSON.stringify({
             "action": "putPlayer",
             "x": x,
             "y": y,
             "stats": stats,
             "inventory": inventory,
-            "slots": slots
+            "slots": slots,
+            "sid": sid
         }))
     }
 
-    Socket.prototype.enforce = function(object) {
+    Socket.prototype.enforce = function(object, sid) {
         this.sock.send(JSON.stringify({
             "action": "enforce",
-            "enforcedAction": object
+            "enforcedAction": object,
+            "sid": sid
         }))
     }
 

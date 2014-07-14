@@ -36,7 +36,7 @@ function($, utils, game) {
         if (data.result === "ok") {
             $("#server-answer").text("Authentication is successful.").css("color", "green")
             sid_ = data.sid
-            var consts = utils.serverHandler({"action": "getConst"})
+            var consts = utils.serverHandler({"action": "getConst", "sid": sid_})
             $.when(
                 game.initSocket(data.webSocket),
                 utils.timeout(

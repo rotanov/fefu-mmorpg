@@ -161,7 +161,7 @@ private:
   float lastTime_ = 0.0f;
   unsigned tick_ = 0;
   QVariantList events_;
-  float playerVelocity_ = 0.2;
+  float playerVelocity_ = 2.2;
   float slideThreshold_ = 0.1;
   int ticksPerSecond_ = 30;
   int screenRowCount_ = 7;
@@ -175,13 +175,6 @@ private:
   {
     "register",
     "login",
-    "enforce",
-    "setUpConst",
-    "setUpMap",
-    "putPlayer",
-    "putItem",
-    "putMob",
-    "getConst",
   };
   QMap <QString, Slot> SlotToString =
   {

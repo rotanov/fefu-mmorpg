@@ -3,16 +3,7 @@ function($, chai, utils, ws) {
 
 var socket
 var userData
-
-var consts = {
-    "action": "setUpConst",
-    "playerVelocity": 1.0,
-    "slideThreshold": 0.1,
-    "ticksPerSecond": 60,
-    "screenRowCount": 1.5,
-    "screenColumnCount": 3,
-    "pickUpRadius": 3,
-}
+var consts = {}
 
 function testPlayers() {
     utils.serverHandler({
@@ -26,6 +17,18 @@ function testPlayers() {
         "login": "testPlayers",
         "password": "testPlayers"
     })
+
+    consts = {
+        "action": "setUpConst",
+        "playerVelocity": 1.0,
+        "slideThreshold": 0.1,
+        "ticksPerSecond": 60,
+        "screenRowCount": 1.5,
+        "screenColumnCount": 3,
+        "pickUpRadius": 3,
+        "sid": userData.sid
+    }
+
 
     onopen = function() {
         socket.startTesting(userData.sid)
@@ -73,7 +76,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [], {})
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
 
             it("should fail put player [player's collision with walls]", function(done) {
@@ -90,7 +93,7 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putPlayer(player.x, player.y, {}, [], {})
+                        socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
                         break
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player")
@@ -109,7 +112,7 @@ function test() {
                         done()
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should successfully put player", function(done) {
@@ -125,7 +128,7 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putPlayer(player.x, player.y, {}, [], {})
+                        socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
                         break
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player")
@@ -140,7 +143,7 @@ function test() {
                         done()
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should fail put player [put player on another player]", function(done) {
@@ -157,13 +160,13 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putPlayer(player.x, player.y, {}, [], {})
+                        socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
                         break
                     case "putPlayer":
                         if (flag) {
                             flag = false
                             assert.equal("ok", data.result, "put player")
-                            socket.putPlayer(player.x, player.y, {}, [], {})
+                            socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
                         } else {
                             assert.equal("badPlacing", data.result, "put player")
                             player.id = data.id
@@ -176,7 +179,7 @@ function test() {
                         done()
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should fail put player [badPlacing: out of map]", function(done) {
@@ -188,7 +191,7 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putPlayer(player.x, player.y, {}, [], {})
+                        socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
                         break
                     case "putPlayer":
                         assert.equal("badPlacing", data.result, "put player")
@@ -201,7 +204,7 @@ function test() {
                         done()
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should fail put player [badPlacing: coordinates are incorrect]", function(done) {
@@ -213,7 +216,7 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putPlayer(player.x, player.y, {}, [], {})
+                        socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
                         break
                     case "putPlayer":
                         assert.equal("badPlacing", data.result, "put player")
@@ -226,7 +229,7 @@ function test() {
                         done()
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should put two players with different ids and sids", function(done) {
@@ -244,7 +247,7 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putPlayer(player1.x, player1.y, {}, [], {})
+                        socket.putPlayer(player1.x, player1.y, {}, [], {}, userData.sid)
                         break
                     case "putPlayer":
                         if (flag) {
@@ -252,7 +255,7 @@ function test() {
                             assert.equal("ok", data.result, "put player")
                             player1.id = data.id
                             player1.sid = data.sid
-                            socket.putPlayer(player2.x, player2.y, {}, [], {})
+                            socket.putPlayer(player2.x, player2.y, {}, [], {}, userData.sid)
                         } else {
                             assert.equal("ok", data.result, "put player")
                             player2.id = data.id
@@ -264,7 +267,7 @@ function test() {
                         }
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should successfully put players in all cells", function(done) {
@@ -283,7 +286,7 @@ function test() {
                         assert.equal("ok", data.result, "load map")
                         for (var i = 0, l = map.length; i < l; ++i) {
                             for (var j = 0, l = map[i].length; j < l; ++j) {
-                                socket.putPlayer(i + 0.5, j + 0.5, {}, [], {})
+                                socket.putPlayer(i + 0.5, j + 0.5, {}, [], {}, userData.sid)
                             }
                         }
                         break
@@ -295,7 +298,7 @@ function test() {
                         }
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
         })
 

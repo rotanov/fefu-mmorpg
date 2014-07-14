@@ -4,16 +4,7 @@ function($, chai, utils, ws) {
 var socket
 var userData
 var defaultDamage = "3d2"
-
-var consts = {
-    "action": "setUpConst",
-    "playerVelocity": 1.0,
-    "slideThreshold": 0.1,
-    "ticksPerSecond": 60,
-    "screenRowCount": 1.5,
-    "screenColumnCount": 3,
-    "pickUpRadius": 3,
-}
+var consts = {}
 
 function testMobs() {
     utils.serverHandler({
@@ -27,6 +18,17 @@ function testMobs() {
         "login": "testMobs",
         "password": "testMobs"
     })
+
+    consts = {
+        "action": "setUpConst",
+        "playerVelocity": 1.0,
+        "slideThreshold": 0.1,
+        "ticksPerSecond": 60,
+        "screenRowCount": 1.5,
+        "screenColumnCount": 3,
+        "pickUpRadius": 3,
+        "sid": userData.sid
+    }
 
     onopen = function() {
         socket.startTesting(userData.sid)
@@ -75,7 +77,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage)
+                socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, userData.sid)
             })
 
             it("should fail put mob [badPlacing: put mob to wall]", function(done) {
@@ -91,7 +93,7 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage)
+                        socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, userData.sid)
                         break
                     case "putMob":
                         assert.equal("badPlacing", data.result, "put mob")
@@ -104,7 +106,7 @@ function test() {
                         done()
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should fail put mob [mob's collision with walls]", function(done) {
@@ -119,7 +121,7 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putMob(mob.x, mob.y, {}, [], ["CAN_MOVE"], "ORC", defaultDamage)
+                        socket.putMob(mob.x, mob.y, {}, [], ["CAN_MOVE"], "ORC", defaultDamage, userData.sid)
                         break
                     case "putMob":
                         assert.equal("ok", data.result, "put mob")
@@ -134,7 +136,7 @@ function test() {
                         done()
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should successfully put mob", function(done) {
@@ -150,7 +152,7 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage)
+                        socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, userData.sid)
                         break
                     case "putMob":
                         assert.equal("ok", data.result, "put mob")
@@ -165,7 +167,7 @@ function test() {
                         done()
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should fail put mob [put mob on another mob]", function(done) {
@@ -182,13 +184,13 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage)
+                        socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, userData.sid)
                         break
                     case "putMob":
                         if (flag) {
                             flag = false
                             assert.equal("ok", data.result, "put mob")
-                            socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage)
+                            socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, userData.sid)
                         } else {
                             assert.equal("badPlacing", data.result, "put mob")
                             mob.id = data.id
@@ -201,7 +203,7 @@ function test() {
                         done()
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should successfully put mobs with all possible races", function(done) {
@@ -220,7 +222,7 @@ function test() {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         for (var i = 0, l = races.length; i < l; ++i) {
-                            socket.putMob(0.5 + i, 0.5, {}, [], [], races[i], defaultDamage)
+                            socket.putMob(0.5 + i, 0.5, {}, [], [], races[i], defaultDamage, userData.sid)
                         }
                         break
                     case "putMob":
@@ -233,7 +235,7 @@ function test() {
                         break
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should fail put mob [badRace]", function(done) {
@@ -245,7 +247,7 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putMob(mob.x, mob.y, {}, [], [], "BAD RACE", defaultDamage)
+                        socket.putMob(mob.x, mob.y, {}, [], [], "BAD RACE", defaultDamage, userData.sid)
                         break
                     case "putMob":
                         assert.equal("badRace", data.result, "put mob")
@@ -258,7 +260,7 @@ function test() {
                         done()
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should fail put mob [badPlacing: out of map]", function(done) {
@@ -270,7 +272,7 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage)
+                        socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, userData.sid)
                         break
                     case "putMob":
                         assert.equal("badPlacing", data.result, "put mob")
@@ -283,7 +285,7 @@ function test() {
                         done()
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should fail put mob [badPlacing: coordinates are incorrect]", function(done) {
@@ -295,7 +297,7 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage)
+                        socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, userData.sid)
                         break
                     case "putMob":
                         assert.equal("badPlacing", data.result, "put mob")
@@ -308,7 +310,7 @@ function test() {
                         done()
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should successfully put mobs in all cells", function(done) {
@@ -327,7 +329,7 @@ function test() {
                         assert.equal("ok", data.result, "load map")
                         for (var i = 0, l = map.length; i < l; ++i) {
                             for (var j = 0, l = map[i].length; j < l; ++j) {
-                                socket.putMob(i + 0.5, j + 0.5, {}, [], [], "ORC", defaultDamage)
+                                socket.putMob(i + 0.5, j + 0.5, {}, [], [], "ORC", defaultDamage, userData.sid)
                             }
                         }
                         break
@@ -340,7 +342,7 @@ function test() {
                         }
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should fail put mob [badDamage]", function(done) {
@@ -352,7 +354,7 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putMob(mob.x, mob.y, {}, [], [], "ORC", "ddd")
+                        socket.putMob(mob.x, mob.y, {}, [], [], "ORC", "ddd", userData.sid)
                         break
                     case "putMob":
                         assert.equal("badDamage", data.result, "put mob")
@@ -365,7 +367,7 @@ function test() {
                         done()
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should put two mobs with different ids", function(done) {
@@ -383,14 +385,14 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putMob(mob1.x, mob1.y, {}, [], [], "ORC", defaultDamage)
+                        socket.putMob(mob1.x, mob1.y, {}, [], [], "ORC", defaultDamage, userData.sid)
                         break
                     case "putMob":
                         if (flag) {
                             flag = false
                             assert.equal("ok", data.result, "put mob1")
                             mob1.id = data.id
-                            socket.putMob(mob2.x, mob2.y, {}, [], [], "ORC", defaultDamage)
+                            socket.putMob(mob2.x, mob2.y, {}, [], [], "ORC", defaultDamage, userData.sid)
                         } else {
                             assert.equal("ok", data.result, "put mob2")
                             mob2.id = data.id
@@ -400,7 +402,7 @@ function test() {
                         }
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should successfully walk around", function(done) {
@@ -418,7 +420,7 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putMob(mob.x, mob.y, {}, [], ["CAN_MOVE"], "ORC", defaultDamage)
+                        socket.putMob(mob.x, mob.y, {}, [], ["CAN_MOVE"], "ORC", defaultDamage, userData.sid)
                         break
                     case "putMob":
                         assert.equal("ok", data.result, "put mob")
@@ -434,7 +436,7 @@ function test() {
                         break
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should fail put mob [badFlag]", function(done) {
@@ -450,7 +452,7 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putMob(mob.x, mob.y, {}, [], ["BAD_FLAG"], "ORC", defaultDamage)
+                        socket.putMob(mob.x, mob.y, {}, [], ["BAD_FLAG"], "ORC", defaultDamage, userData.sid)
                         break
                     case "putMob":
                         assert.equal("badFalg", data.result, "put mob")
@@ -463,7 +465,7 @@ function test() {
                         done()
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should fail put mob [badInventory]", function(done) {
@@ -485,7 +487,7 @@ function test() {
                             "type": "BAD_TYPE",
                             "bonuses": "BAD_BONUSES",
                             "effects": "BAD_EFFECTS"
-                        }], [], "ORC", defaultDamage)
+                        }], [], "ORC", defaultDamage, userData.sid)
                         break
                     case "putMob":
                         assert.equal("badInventory", data.result, "put mob")
@@ -493,7 +495,7 @@ function test() {
                         done()
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
         })

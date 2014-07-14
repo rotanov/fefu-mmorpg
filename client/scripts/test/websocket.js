@@ -103,7 +103,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putItem(item.x, item.y, items_.makeItem())
+                socket.putItem(item.x, item.y, items_.makeItem(), userData.sid)
             })
 
             it("should fail put item [badPlacing: coordinates are incorrect]", function(done) {
@@ -122,7 +122,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putItem(item.x, item.y, items_.makeItem())
+                socket.putItem(item.x, item.y, items_.makeItem(), userData.sid)
             })
         })
 
@@ -136,7 +136,7 @@ function test() {
                         done()
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": []})
+                socket.setUpMap({"action": "setUpMap", "map": [], "sid": userData.sid})
             })
 
             it("should return badMap [symbol out of dictionary]", function(done) {
@@ -148,7 +148,7 @@ function test() {
                         done()
                     }
                 })
-                socket.setUpMap({"action": "setUpMap", "map": [["/"]]})
+                socket.setUpMap({"action": "setUpMap", "map": [["/"]], "sid": userData.sid})
             })
 
             it("should return badAction", function(done) {
@@ -161,7 +161,7 @@ function test() {
                     }
                 })
                 var map = [[getKey(dictionary, "grass")]]
-                socket.setUpMap({"action": "setUploadMap", "map": map})
+                socket.setUpMap({"action": "setUploadMap", "map": map, "sid": userData.sid})
             })
 
             it("should return ok", function(done) {
@@ -179,7 +179,7 @@ function test() {
                     [grass, grass, grass],
                     [grass, grass, grass]
                 ]
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
             it("should return badMap [columns unequal rows]", function(done) {
@@ -197,7 +197,7 @@ function test() {
                     [grass, grass],
                     [grass]
                 ]
-                socket.setUpMap({"action": "setUpMap", "map": map})
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
         })
 
@@ -224,7 +224,7 @@ function test() {
                         done()
                     }
                 })
-                socket.getConst()
+                socket.getConst(userData.sid)
             })
 
             it("should fail set up constants [badAction]", function(done) {
@@ -236,6 +236,7 @@ function test() {
                     "screenRowCount": 7,
                     "screenColumnCount": 9,
                     "pickUpRadius": 1.5,
+                    "sid": userData.sid
                 }
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data);
@@ -257,12 +258,13 @@ function test() {
                     "screenRowCount": screenRowCount,
                     "screenColumnCount": screenColumnCount,
                     "pickUpRadius": pickUpRadius,
+                    "sid": userData.sid
                 }
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data);
                     if (data.action == "setUpConst") {
                         assert.equal("ok", data.result, "set up constants")
-                        socket.getConst()
+                        socket.getConst(userData.sid)
                     } else if (data.action == "getConst") {
                         assert.equal(playerVelocity, data.playerVelocity, "playerVelocity")
                         assert.equal(slideThreshold, data.slideThreshold, "slideThreshold")
@@ -286,6 +288,7 @@ function test() {
                     "screenRowCount": "d",
                     "screenColumnCount": "e",
                     "pickUpRadius": "f",
+                    "sid": userData.sid
                 }
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data);

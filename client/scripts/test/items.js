@@ -22,15 +22,7 @@ var map = [
             [".", ".", ".", ".", ".", ".", "."],
         ]
 
-var consts = {
-    "action": "setUpConst",
-    "playerVelocity": playerVelocity,
-    "slideThreshold": slideThreshold,
-    "ticksPerSecond": ticksPerSecond,
-    "screenRowCount": screenRowCount,
-    "screenColumnCount": screenColumnCount,
-    "pickUpRadius": pickUpRadius,
-}
+var consts = {}
 
 function testItems() {
     utils.serverHandler({
@@ -44,6 +36,17 @@ function testItems() {
         "login": "testItems",
         "password": "testItems"
     })
+
+    consts = {
+        "action": "setUpConst",
+        "playerVelocity": playerVelocity,
+        "slideThreshold": slideThreshold,
+        "ticksPerSecond": ticksPerSecond,
+        "screenRowCount": screenRowCount,
+        "screenColumnCount": screenColumnCount,
+        "pickUpRadius": pickUpRadius,
+        "sid": userData.sid
+    }
 
     onopen = function() {
         socket.startTesting(userData.sid)
@@ -64,7 +67,7 @@ function BF(done) {
         switch(data.action) {
         case "setUpConst":
             assert.equal("ok", data.result, "set up constans")
-            socket.setUpMap({"action": "setUpMap", "map": map})
+            socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             break
         case "setUpMap":
             assert.equal("ok", data.result, "load map")
@@ -100,7 +103,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putItem(item.x, item.y, makeItem())
+                socket.putItem(item.x, item.y, makeItem(), userData.sid)
             })
         })
 
@@ -116,12 +119,12 @@ function test() {
                         assert.equal("ok", data.result, "put player")
                         player.id = data.id
                         player.sid = data.sid
-                        socket.putItem(item.x, item.y, makeItem())
+                        socket.putItem(item.x, item.y, makeItem(), userData.sid)
                         break
                     case "putItem":
                         assert.equal("ok", data.result, "put item")
                         item.id = data.id
-                        socket.enforce({"action": "pickUp", "id": item.id, "sid": player.sid})
+                        socket.enforce({"action": "pickUp", "id": item.id, "sid": player.sid}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
@@ -135,7 +138,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [], {})
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
 
             it("should fail pick up item [item's center is more constant pickUpRadius]", function(done) {
@@ -148,12 +151,12 @@ function test() {
                         assert.equal("ok", data.result, "put player")
                         player.id = data.id
                         player.sid = data.sid
-                        socket.putItem(item.x, item.y, makeItem())
+                        socket.putItem(item.x, item.y, makeItem(), userData.sid)
                         break
                     case "putItem":
                         assert.equal("ok", data.result, "put item")
                         item.id = data.id
-                        socket.enforce({"action": "pickUp", "id": item.id, "sid": player.sid})
+                        socket.enforce({"action": "pickUp", "id": item.id, "sid": player.sid}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
@@ -167,7 +170,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [], {})
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
 
             it("should successfully pick up item [item's center is equal constant pickUpRadius]", function(done) {
@@ -180,12 +183,12 @@ function test() {
                         assert.equal("ok", data.result, "put player")
                         player.sid = data.sid
                         player.id = data.id
-                        socket.putItem(item.x, item.y, makeItem())
+                        socket.putItem(item.x, item.y, makeItem(), userData.sid)
                         break
                     case "putItem":
                         assert.equal("ok", data.result, "put item")
                         item.id = data.id
-                        socket.enforce({"action": "pickUp", "id": item.id, "sid": player.sid})
+                        socket.enforce({"action": "pickUp", "id": item.id, "sid": player.sid}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
@@ -199,7 +202,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [], {})
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
 
             it("should fail pick up item [player already has it in inventory]", function(done) {
@@ -213,7 +216,7 @@ function test() {
                         player.sid = data.sid
                         player.id = data.id
                         item.id = data.inventory[0]
-                        socket.enforce({"action": "pickUp", "id": item.id, "sid": player.sid})
+                        socket.enforce({"action": "pickUp", "id": item.id, "sid": player.sid}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
@@ -227,7 +230,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [makeItem()], {})
+                socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
             })
 
             it("should fail pick up item [object doesn't exists]", function(done) {
@@ -241,7 +244,7 @@ function test() {
                         player.sid = data.sid
                         player.id = data.id
                         item.id = -1
-                        socket.enforce({"action": "pickUp", "id": item.id, "sid": player.sid})
+                        socket.enforce({"action": "pickUp", "id": item.id, "sid": player.sid}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
@@ -255,7 +258,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [], {})
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
 
             /*it("should fail pick up item [too heavy]", function(done) {
@@ -268,12 +271,12 @@ function test() {
                         assert.equal("ok", data.result, "put player")
                         player.id = data.id
                         player.sid = data.sid
-                        socket.putItem(item.x, item.y, makeItem(item.weight))
+                        socket.putItem(item.x, item.y, makeItem(item.weight), userData.sid)
                         break
                     case "putItem":
                         assert.equal("ok", data.result, "put item")
                         item.id = data.id
-                        socket.enforce({"action": "pickUp", "id": item.id, "sid": player.sid})
+                        socket.enforce({"action": "pickUp", "id": item.id, "sid": player.sid}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
@@ -287,7 +290,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [], {})
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })*/
 
             it("should fail pick up item [object in other player's inventory]", function(done) {
@@ -307,14 +310,14 @@ function test() {
                             flag = false
                         } else {
                             player2.sid = data.sid
-                            socket.enforce({"action": "pickUp", "id": item.id, "sid": player2.sid})
+                            socket.enforce({"action": "pickUp", "id": item.id, "sid": player2.sid}, userData.sid)
                         }
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         if (data.actionResult.action == "pickUp") {
                             assert.equal("badId", data.actionResult.result, data.actionResult.action + " request")
-                            socket.enforce({"action": "examine", "id": player1.id, "sid": player1.sid})
+                            socket.enforce({"action": "examine", "id": player1.id, "sid": player1.sid}, userData.sid)
                         } else if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(item.id, data.actionResult.inventory[0], "item in player's invetory")
@@ -323,8 +326,8 @@ function test() {
                         }
                     }
                 })
-                socket.putPlayer(player1.x, player1.y, {}, [makeItem()], {})
-                socket.putPlayer(player2.x, player2.y, {}, [], {})
+                socket.putPlayer(player1.x, player1.y, {}, [makeItem()], {}, userData.sid)
+                socket.putPlayer(player2.x, player2.y, {}, [], {}, userData.sid)
             })
         })
 
@@ -339,12 +342,12 @@ function test() {
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player")
                         player.sid = data.sid
-                        socket.putItem(item.x, item.y, makeItem())
+                        socket.putItem(item.x, item.y, makeItem(), userData.sid)
                         break
                     case "putItem":
                         assert.equal("ok", data.result, "put item")
                         item.id = data.id
-                        socket.enforce({"action": "destroyItem", "id": item.id, "sid": player.sid})
+                        socket.enforce({"action": "destroyItem", "id": item.id, "sid": player.sid}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
@@ -357,7 +360,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [], {})
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
 
             it("should successfully destroy item [item's center is equal constant pickUpRadius]", function(done) {
@@ -369,12 +372,12 @@ function test() {
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player")
                         player.sid = data.sid
-                        socket.putItem(item.x, item.y, makeItem())
+                        socket.putItem(item.x, item.y, makeItem(), userData.sid)
                         break
                     case "putItem":
                         assert.equal("ok", data.result, "put item")
                         item.id = data.id
-                        socket.enforce({"action": "destroyItem", "id": item.id, "sid": player.sid})
+                        socket.enforce({"action": "destroyItem", "id": item.id, "sid": player.sid}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
@@ -387,7 +390,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [], {})
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
 
             it("should successfully destroy item [item's center is more constant pickUpRadius]", function(done) {
@@ -399,12 +402,12 @@ function test() {
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player")
                         player.sid = data.sid
-                        socket.putItem(item.x, item.y, makeItem())
+                        socket.putItem(item.x, item.y, makeItem(), userData.sid)
                         break
                     case "putItem":
                         assert.equal("ok", data.result, "put item")
                         item.id = data.id
-                        socket.enforce({"action": "destroyItem", "id": item.id, "sid": player.sid})
+                        socket.enforce({"action": "destroyItem", "id": item.id, "sid": player.sid}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
@@ -417,7 +420,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [], {})
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
 
             it("should successfully destroy item from inventory", function(done) {
@@ -431,7 +434,7 @@ function test() {
                         player.sid = data.sid
                         player.id = data.id
                         item.id = data.inventory[0]
-                        socket.enforce({"action": "destroyItem", "id": item.id, "sid": player.sid})
+                        socket.enforce({"action": "destroyItem", "id": item.id, "sid": player.sid}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
@@ -445,7 +448,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [makeItem()], {})
+                socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
             })
 
             it("should fail destroy item [object doesn't exists]", function(done) {
@@ -459,7 +462,7 @@ function test() {
                         player.id = data.id
                         player.sid = data.sid
                         item.id = -1
-                        socket.enforce({"action": "destroyItem", "id": item.id, "sid": player.sid})
+                        socket.enforce({"action": "destroyItem", "id": item.id, "sid": player.sid}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
@@ -473,7 +476,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [], {})
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
 
             it("should fail destroy item [object in other player's inventory]", function(done) {
@@ -493,14 +496,14 @@ function test() {
                             flag = false
                         } else {
                             player2.sid = data.sid
-                            socket.enforce({"action": "destroyItem", "id": item.id, "sid": player2.sid})
+                            socket.enforce({"action": "destroyItem", "id": item.id, "sid": player2.sid}, userData.sid)
                         }
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         if (data.actionResult.action == "destroyItem") {
                             assert.equal("badId", data.actionResult.result, data.actionResult.action + " request")
-                            socket.enforce({"action": "examine", "id": player1.id, "sid": player1.sid})
+                            socket.enforce({"action": "examine", "id": player1.id, "sid": player1.sid}, userData.sid)
                         } else if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(item.id, data.actionResult.inventory[0], "item in player's invetory")
@@ -509,8 +512,8 @@ function test() {
                         }
                     }
                 })
-                socket.putPlayer(player1.x, player1.y, {}, [makeItem()], {})
-                socket.putPlayer(player2.x, player2.y, {}, [], {})
+                socket.putPlayer(player1.x, player1.y, {}, [makeItem()], {}, userData.sid)
+                socket.putPlayer(player2.x, player2.y, {}, [], {}, userData.sid)
             })
         })
 
@@ -527,7 +530,7 @@ function test() {
                         player.sid = data.sid
                         player.id = data.id
                         item.id = data.inventory[0]
-                        socket.enforce({"action": "drop", "id": item.id, "sid": player.sid})
+                        socket.enforce({"action": "drop", "id": item.id, "sid": player.sid}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
@@ -541,7 +544,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [makeItem()], {})
+                socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
             })
 
             it("should fail drop item [invalid sid]", function(done) {
@@ -555,7 +558,7 @@ function test() {
                         player.sid = data.sid
                         player.id = data.id
                         item.id = data.inventory[0]
-                        socket.enforce({"action": "drop", "id": item.id, "sid": -1})
+                        socket.enforce({"action": "drop", "id": item.id, "sid": -1}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
@@ -569,7 +572,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [makeItem()], {})
+                socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
             })
 
             it("should fail drop item [player hasn't it in inventory]", function(done) {
@@ -581,12 +584,12 @@ function test() {
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player")
                         player.sid = data.sid
-                        socket.putItem(item.x, item.y, makeItem())
+                        socket.putItem(item.x, item.y, makeItem(), userData.sid)
                         break
                     case "putItem":
                         assert.equal("ok", data.result, "put item")
                         item.id = data.id
-                        socket.enforce({"action": "drop", "id": item.id, "sid": player.sid})
+                        socket.enforce({"action": "drop", "id": item.id, "sid": player.sid}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
@@ -595,7 +598,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [], {})
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
 
             it("should fail drop item [object doesn't exists]", function(done) {
@@ -608,7 +611,7 @@ function test() {
                         assert.equal("ok", data.result, "put player")
                         player.sid = data.sid
                         item.id = -1
-                        socket.enforce({"action": "drop", "id": item.id, "sid": player.sid})
+                        socket.enforce({"action": "drop", "id": item.id, "sid": player.sid}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
@@ -617,7 +620,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [], {})
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
 
             it("should fail drop item [object in other player's inventory]", function(done) {
@@ -637,14 +640,14 @@ function test() {
                             flag = false
                         } else {
                             player2.sid = data.sid
-                            socket.enforce({"action": "drop", "id": item.id, "sid": player2.sid})
+                            socket.enforce({"action": "drop", "id": item.id, "sid": player2.sid}, userData.sid)
                         }
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         if (data.actionResult.action == "drop") {
                             assert.equal("badId", data.actionResult.result, data.actionResult.action + " request")
-                            socket.enforce({"action": "examine", "id": player1.id, "sid": player1.sid})
+                            socket.enforce({"action": "examine", "id": player1.id, "sid": player1.sid}, userData.sid)
                         } else if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(item.id, data.actionResult.inventory[0], "item in player's invetory")
@@ -653,8 +656,8 @@ function test() {
                         }
                     }
                 })
-                socket.putPlayer(player1.x, player1.y, {}, [makeItem()], {})
-                socket.putPlayer(player2.x, player2.y, {}, [], {})
+                socket.putPlayer(player1.x, player1.y, {}, [makeItem()], {}, userData.sid)
+                socket.putPlayer(player2.x, player2.y, {}, [], {}, userData.sid)
             })
         })
 
@@ -671,13 +674,13 @@ function test() {
                         player.id = data.id
                         player.sid = data.sid
                         item.id = data.inventory[0]
-                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"})
+                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                         if (data.actionResult.action == "equip") {
-                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid}, userData.sid)
                         } else if (data.actionResult.action == "examine") {
                             assert.equal(item.id, data.actionResult.slots["left-hand"], "item in slot")
                             socket.setOnMessage(undefined)
@@ -685,7 +688,7 @@ function test() {
                         }
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [makeItem()], {})
+                socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
             })
 
             it("should fail equip item [slot doesn't exist in request]", function(done) {
@@ -699,7 +702,7 @@ function test() {
                         player.id = data.id
                         player.sid = data.sid
                         item.id = data.inventory[0]
-                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid})
+                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
@@ -708,7 +711,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [makeItem()], {})
+                socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
             })
 
             it("should fail equip item from inventory [invalid slot specificator]", function(done) {
@@ -722,13 +725,13 @@ function test() {
                         player.id = data.id
                         player.sid = data.sid
                         item.id = data.inventory[0]
-                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "ear"})
+                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "ear"}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         if (data.actionResult.action == "equip") {
                             assert.equal("badSlot", data.actionResult.result, data.actionResult.action + " request")
-                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid}, userData.sid)
                         } else if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(undefined, data.actionResult.slots["ear"], "no such slot")
@@ -737,7 +740,7 @@ function test() {
                         }
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [makeItem()], {})
+                socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
             })
 
             it("should fail equip item [invalid sid]", function(done) {
@@ -751,13 +754,13 @@ function test() {
                         player.id = data.id
                         player.sid = data.sid
                         item.id = data.inventory[0]
-                        socket.enforce({"action": "equip", "id": item.id, "sid": -1, "slot": "left-hand"})
+                        socket.enforce({"action": "equip", "id": item.id, "sid": -1, "slot": "left-hand"}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         if (data.actionResult.action == "equip") {
                             assert.equal("badSid", data.actionResult.result, data.actionResult.action + " request")
-                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid}, userData.sid)
                         } else if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(undefined, data.actionResult.slots["left-hand"], "no item in slot")
@@ -766,7 +769,7 @@ function test() {
                         }
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [makeItem()], {})
+                socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
             })
 
             it("should fail equip item [object doesn't exists]", function(done) {
@@ -780,14 +783,14 @@ function test() {
                         player.id = data.id
                         player.sid = data.sid
                         item.id = -1
-                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"})
+                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                        
                         if (data.actionResult.action == "equip") {
                             assert.equal("badId", data.actionResult.result, data.actionResult.action + " request")
-                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid}, userData.sid)
                         } else if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(undefined, data.actionResult.slots["left-hand"], "no item in slot")
@@ -796,7 +799,7 @@ function test() {
                         }
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [], {})
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
 
             it("should fail equip item [object doesn't match slot]", function(done) {
@@ -810,13 +813,13 @@ function test() {
                         player.id = data.id
                         player.sid = data.sid
                         item.id = data.inventory[0]
-                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "feet"})
+                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "feet"}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         if (data.actionResult.action == "equip") {
                             assert.equal("badSlot", data.actionResult.result, data.actionResult.action + " request")
-                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid}, userData.sid)
                         }  if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(undefined, data.actionResult.slots["feet"], "no item in slot")
@@ -825,7 +828,7 @@ function test() {
                         }
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [makeItem()], {})
+                socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
             })
 
             /*it("should successfully equip item [item's center is equal constant pickUpRadius]", function(done) {
@@ -838,18 +841,18 @@ function test() {
                         assert.equal("ok", data.result, "put player")
                         player.id = data.id
                         player.sid = data.sid
-                        socket.putItem(item.x, item.y, makeItem())
+                        socket.putItem(item.x, item.y, makeItem(), userData.sid)
                         break
                     case "putItem":
                         assert.equal("ok", data.result, "put item")
                         item.id = data.id
-                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"})
+                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                         if (data.actionResult.action == "equip") {
-                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid}, userData.sid)
                         } else if (data.actionResult.action == "examine") {
                             assert.equal(item.id, data.actionResult.slots["left-hand"], "item in slot")
                             socket.setOnMessage(undefined)
@@ -857,7 +860,7 @@ function test() {
                         }
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [], {})
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
 
             it("should successfully equip item [item's center is less constant pickUpRadius]", function(done) {
@@ -870,18 +873,18 @@ function test() {
                         assert.equal("ok", data.result, "put player")
                         player.sid = data.sid
                         player.id = data.id
-                        socket.putItem(item.x, item.y, makeItem())
+                        socket.putItem(item.x, item.y, makeItem(), userData.sid)
                         break
                     case "putItem":
                         assert.equal("ok", data.result, "put item")
                         item.id = data.id
-                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"})
+                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                         if (data.actionResult.action == "equip") {
-                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid}, userData.sid)
                         } else if (data.actionResult.action == "examine") {
                             assert.equal(item.id, data.actionResult.slots["left-hand"], "item in slot")
                             socket.setOnMessage(undefined)
@@ -889,7 +892,7 @@ function test() {
                         }
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [], {})
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })*/
 
             it("should successfully equip item [item's center is more constant pickUpRadius]", function(done) {
@@ -902,18 +905,18 @@ function test() {
                         assert.equal("ok", data.result, "put player")
                         player.id = data.id
                         player.sid = data.sid
-                        socket.putItem(item.x, item.y, makeItem())
+                        socket.putItem(item.x, item.y, makeItem(), userData.sid)
                         break
                     case "putItem":
                         assert.equal("ok", data.result, "put item")
                         item.id = data.id
-                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"})
+                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         if (data.actionResult.action == "equip") {
                             assert.equal("badId", data.actionResult.result, data.actionResult.action + " request")
-                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid}, userData.sid)
                         } else if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(undefined, data.actionResult.slots["left-hand"], "no item in slot")
@@ -922,7 +925,7 @@ function test() {
                         }
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [], {})
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
         })
 
@@ -937,13 +940,13 @@ function test() {
                         assert.equal("ok", data.result, "put player with item and slot")
                         player.id = data.id
                         player.sid = data.sid
-                        socket.enforce({"action": "unequip", "sid": player.sid, "slot": "left-hand"})
+                        socket.enforce({"action": "unequip", "sid": player.sid, "slot": "left-hand"}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                         if (data.actionResult.action == "unequip") {
-                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid}, userData.sid)
                         } else if (data.actionResult.action == "examine") {
                             assert.equal(undefined, data.actionResult.slots["left-hand"], "slot is empty")
                             socket.setOnMessage(undefined)
@@ -951,7 +954,7 @@ function test() {
                         }
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [makeItem()], {"left-hand": makeItem()})
+                socket.putPlayer(player.x, player.y, {}, [makeItem()], {"left-hand": makeItem()}, userData.sid)
             })
 
             it("should fail unequip item [invalid slot specificator]", function(done) {
@@ -963,13 +966,13 @@ function test() {
                         assert.equal("ok", data.result, "put player")
                         player.id = data.id
                         player.sid = data.sid
-                        socket.enforce({"action": "unequip", "sid": player.sid, "slot": "ear"})
+                        socket.enforce({"action": "unequip", "sid": player.sid, "slot": "ear"}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         if (data.actionResult.action == "unequip") {
                             assert.equal("badSlot", data.actionResult.result, data.actionResult.action + " request")
-                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid}, userData.sid)
                         } else if (data.actionResult.action == "examine") {
                             assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                             assert.equal(undefined, data.actionResult.slots["ear"], "no such slot")
@@ -978,7 +981,7 @@ function test() {
                         }
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [], {})
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
 
             it("should fail unequip item [slot doesn't exist in request]", function(done) {
@@ -990,7 +993,7 @@ function test() {
                         assert.equal("ok", data.result, "put player")
                         player.id = data.id
                         player.sid = data.sid
-                        socket.enforce({"action": "unequip", "sid": player.sid})
+                        socket.enforce({"action": "unequip", "sid": player.sid}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
@@ -999,7 +1002,7 @@ function test() {
                         done()
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [], {})
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
         })
 
@@ -1017,19 +1020,19 @@ function test() {
                         player.id = data.id
                         player.sid = data.sid
                         item.id = data.inventory[0]
-                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"})
+                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"}, userData.sid)
                         break
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
                         if (data.actionResult.action == "equip") {
-                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid}, userData.sid)
 
                         } else if (data.actionResult.action == "examine") {
                             if (flag) {
                                 flag = false
                                 assert.equal(item.id, data.actionResult.slots["left-hand"], "equip item")
-                                socket.enforce({"action": "unequip", "sid": player.sid, "slot": "left-hand"})
+                                socket.enforce({"action": "unequip", "sid": player.sid, "slot": "left-hand"}, userData.sid)
 
                             } else {
                                 assert.equal(undefined, data.actionResult.slots["left-hand"], "unequip item")
@@ -1038,11 +1041,11 @@ function test() {
                             }
 
                         } else if (data.actionResult.action == "unequip") {
-                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid})
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid}, userData.sid)
                         }
                     }
                 })
-                socket.putPlayer(player.x, player.y, {}, [makeItem()], {})
+                socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
             })
         })
     })
