@@ -28,7 +28,15 @@ void Creature::SetMaxHealth(const float maxHealth)
 {
   Stat[MAX_HP] = maxHealth;
 }
+void Creature::SetSpeed(const float speed)
+{
+  Stat[SPEED] = speed;
+}
 
+float Creature::GetSpeed() const
+{
+  return Stat[SPEED];
+}
 void Creature::SetRace()
 {
 

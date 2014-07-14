@@ -30,6 +30,8 @@ public:
   float GetHealth() const;
   void SetHealth(const float health);
   float GetMaxHealth() const;
+  void SetSpeed(const float health);
+  float GetSpeed() const;
   void SetMaxHealth(const float maxHealth);
   virtual QVariantMap atack(Creature* actor);
   virtual void SetRace();
@@ -41,12 +43,12 @@ private:
     {STRENGTH, 10},
     {INTELLIGENCE, 10},
     {DEXTERITY, 10},
-    {SPEED, 0.5},
+    {SPEED, 0.1},
     {DEFENSE, 10},
     {MAGIC_RESISTANCE, 5},
     {CAPACITY, 5},
-    {HP, 500},
-    {MAX_HP, 500},
+    {HP, 100},
+    {MAX_HP, 100},
     {MP, 500},
     {MAX_MP, 500},
   };
