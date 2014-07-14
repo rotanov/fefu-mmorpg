@@ -72,8 +72,6 @@ function OnMessage(e) {
         updateSlot(data)
         if (data.id == id_) {
             inventory_ids = data.inventory
-            updateItems()
-
             curr_h = data.health
             max_h = data.maxHealth
             updateHealth(curr_h, max_h)
@@ -132,7 +130,6 @@ function OnMessage(e) {
     case "pickUp":
         if (data.result != "ok") {
             utils.cryBabyCry(data.result)
-            break
         }
         socket.singleExamine(id_, sid_)
         break
@@ -163,7 +160,7 @@ function Start(id, sid, h, w) {
             render: onRender
         }
     )
-    $("#p-slots").css({"left": (64 * width + 100)+"px", "position": "fixed"}).show()
+    $("#p-slots").css({"left": (64 * width + 100) + "px", "position": "fixed"}).show()
 }
 
 function onPreload() {
@@ -235,17 +232,6 @@ function updateSlot(data) {
     }
     $("div#"+curr_slot.slot).text(data.item.name)
     $("div#"+curr_slot.slot).val(data.id)
-}
-
-function updateItems() {
-    $("#items select").empty()
-
-    for (var i = 0, l = inventory_ids.length; i < l; ++i) {
-        socket.singleExamine(inventory_ids[i], sid_)
-    }
-    for (var i = 0, l = inventory.length; i < l; ++i) {
-        pushItem(inventory[i].id, inventory[i].item.name)
-    }
 }
 
 function onUpdate() {
@@ -382,6 +368,16 @@ function onRender() {
     game.debug.renderRectangle(rectRight, whiteColor)
 }
 
+$("#reload").click(function() {
+    $("#items select").empty()
+    for (var i = 0, l = inventory_ids.length; i < l; ++i) {
+        socket.singleExamine(inventory_ids[i], sid_)
+    }
+    for (var i = 0, l = inventory.length; i < l; ++i) {
+        pushItem(inventory[i].id, inventory[i].item.name)
+    }
+})
+
 $("#logout").click(function() {
     game.destroy()
 })
@@ -435,32 +431,32 @@ $("#unequip").click(function() {
     }
 })
 
-$("#items select").on("change", function (e) {
-    var optionSelected = $("option:selected", this);
-    var id = this.value;
+$("#items select").on("change", function(e) {
+    var optionSelected = $("option:selected", this)
+    var id = this.value
     socket.singleExamine(id, sid_)
 })
 
 function contains(array, id) {
-  var flag = false
-  for (var i = 0; i < array.length; ++i) {
-    if (array[i] == id) {
-      flag = true
-      break
+    var flag = false
+    for (var i = 0; i < array.length; ++i) {
+      if (array[i] == id) {
+        flag = true
+        break
+      }
     }
-  }
-  return flag
+    return flag
 }
 
 function exists(array, id) {
-  var flag = false
-  for (var i = 0; i < array.length; ++i) {
-    if (array[i].id == id) {
-      flag = true
-      break
+    var flag = false
+    for (var i = 0; i < array.length; ++i) {
+        if (array[i].id == id) {
+            flag = true
+            break
+        }
     }
-  }
-  return flag
+    return flag
 }
 
 return {
