@@ -667,25 +667,30 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
 {
   auto sid = request["sid"].toByteArray();
   Player* p = sidToPlayer_[sid];
-  if (idToActor_[request["id"].toInt()] && p->GetItemId (request["id"].toInt()))
+  if (!idToActor_[request["id"].toInt()] || !p->GetItemId(request["id"].toInt()))
   {
-    Actor* item = idToActor_[request["id"].toInt()];
-    if (item->GetType () == "item")
-    {
-      Vector2 player = p->GetPosition ();
-      Vector2 items = item->GetPosition ();
-      if (sqrt((player.x - items.x)*(player.x - items.x) +
-      (player.y - items.y)*(player.y - items.y)) <= pickUpRadius_)
-      {
-        levelMap_.RemoveActor(item);
-        actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());
-        p->items_.push_back (static_cast<Item*>(item));
-        WriteResult_(response, EFEMPResult::OK);
-        return;
-      }
-    }
+    WriteResult_(response, EFEMPResult::BAD_ID);
+    return;
   }
-  WriteResult_(response, EFEMPResult::BAD_ID);
+
+  Actor* item = idToActor_[request["id"].toInt()];
+  if (item->GetType() == "item")
+  {
+    Vector2 player = p->GetPosition();
+    Vector2 items = item->GetPosition();
+    float distance = sqrt((player.x - items.x)*(player.x - items.x) +
+                          (player.y - items.y)*(player.y - items.y));
+    if (distance > pickUpRadius_) {
+      WriteResult_(response, EFEMPResult::BAD_ID);
+      return;
+    }
+
+    levelMap_.RemoveActor(item);
+    actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());
+    p->items_.push_back(static_cast<Item*>(item));
+    WriteResult_(response, EFEMPResult::OK);
+    return;
+  }
 }
 
 //==============================================================================
@@ -892,7 +897,7 @@ void GameServer::HandlePutPlayer_(const QVariantMap&  request, QVariantMap& resp
     SetItemDescription (a.toMap(), item);
     p->items_.push_back (item);
   }
-  if (IsCorrectPosition (x, y, p))
+  if (IsCorrectPosition(x, y, p))
   {
     WriteResult_(response, EFEMPResult::BAD_PLACING);
     KillActor_(p);
