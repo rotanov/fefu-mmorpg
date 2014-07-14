@@ -39,12 +39,18 @@ function testWebSocket() {
     socket = ws.WSConnect(userData.webSocket, onopen, onmessage)
 }
 
+function runBeforeEach(done) {
+    console.log("running afterEach function...")
+    setTimeout(done, 1000)
+}
+
 function test() {
     var assert = chai.assert
 
     describe.only("WebSocket", function(done) {
 
         describe("Tick", function() {
+            beforeEach(runBeforeEach)
             it("should successfully get tick", function(done) {
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data);
@@ -56,6 +62,7 @@ function test() {
         })
 
         describe("Get Dictionary", function() {
+            beforeEach(runBeforeEach)
             it("should return badSid", function(done) {
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
@@ -87,6 +94,7 @@ function test() {
         })
 
         describe("Put Item", function() {
+            beforeEach(runBeforeEach)
             it("should fail put item [badPlacing: map doesn't set]", function(done) {
                 var item = {"x": 0.5, "y": 0.5}
                 socket.setOnMessage(function(e) {
@@ -127,6 +135,19 @@ function test() {
         })
 
         describe("Upload map to server", function() {
+            beforeEach(runBeforeEach)
+            it("should fail load map [badSid]", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data);
+                    if (data.action == "setUpMap") {
+                        assert.equal("badSid", data.result, "load map")
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": [], "sid": -1})
+            })
+
             it("should return badMap [empty map]", function(done) {
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data);
@@ -202,6 +223,7 @@ function test() {
         })
 
         describe("Set Up / Get Constants", function() {
+            beforeEach(runBeforeEach)
             it("should successfully get constants", function(done) {
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data);
@@ -304,6 +326,7 @@ function test() {
         })
 
         describe("Look", function() {
+            beforeEach(runBeforeEach)
             it("should return ok", function(done) {
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
@@ -360,6 +383,7 @@ function test() {
         })
 
         describe("Examine", function() {
+            beforeEach(runBeforeEach)
             it("should return ok", function(done) {
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
@@ -454,6 +478,7 @@ function test() {
         })
 
         describe("Move", function() {
+            beforeEach(runBeforeEach)
             it("should return ok", function(done) {
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
