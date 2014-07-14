@@ -523,7 +523,7 @@ int main ()
     {
         // i->second->AddToDataBase();
     }
-    //AddToDataBase();
-    AddToDataBaseItem ();
+    AddToDataBase();
+    //AddToDataBaseItem ();
     return 0;
 }
