@@ -224,6 +224,18 @@ function test() {
 
         describe("Set Up / Get Constants", function() {
             beforeEach(runBeforeEach)
+            it("should fail get constants [badSid]", function(done) {
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data);
+                    if (data.action == "getConst") {
+                        assert.equal("badSid", data.result, "get constants")
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.getConst(-1)
+            })
+
             it("should successfully get constants", function(done) {
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data);
