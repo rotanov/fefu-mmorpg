@@ -85,8 +85,7 @@ function test() {
         describe("Put Item", function() {
             beforeEach(BF)
             it("should successfully put item", function(done) {
-                var player = {"x": 3.5, "y": 3.5}
-                var item = {"x": player.x + 0.5, "y": player.y + 0.5}
+                var item = {"x": 4.5, "y": 4.5}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -104,6 +103,25 @@ function test() {
                     }
                 })
                 socket.putItem(item.x, item.y, makeItem(), userData.sid)
+            })
+
+            it("should fail put item [badSid]", function(done) {
+                var item = {"x": 4.5, "y": 4.5}
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putItem":
+                        assert.equal("badSid", data.result, "put item")
+                        item.id = data.id
+                        socket.singleExamine(item.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.putItem(item.x, item.y, makeItem(), -1)
             })
         })
 
