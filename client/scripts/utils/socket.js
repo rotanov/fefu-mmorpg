@@ -112,7 +112,7 @@ define(function() {
     Socket.prototype.unequip = function(slot, sid) {
         this.sock.send(JSON.stringify({
             "action": "unequip",
-            "slot": id,
+            "slot": slot,
             "sid": sid
         }))
     }
