@@ -4,6 +4,8 @@ Player::Player()
 {
   type_ = "player";
   SetRace ();
+  SetMaxHealth (1000);
+  SetHealth (1000);
   SetBlows();
 }
 
