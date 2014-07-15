@@ -204,6 +204,10 @@ void GameServer::tick()
 {
   float dt = (time_.elapsed() - lastTime_) * 0.001f;
   lastTime_ = time_.elapsed();
+  if (testingStageActive_)
+  {
+    return;
+  }
   if (actors_.size () < 100)
     GenMonsters_ ();
   auto collideWithGrid = [=](Actor* actor)
@@ -246,7 +250,7 @@ void GameServer::tick()
   };
   for (Actor* actor: actors_)
   {
-    for (Actor* a : actors_)
+    for (Actor* a : levelMap_.GetActors (actor->GetPosition ().x,actor->GetPosition ().y))
     {
       if (actor == a || a->GetType () == "item")
       {
@@ -656,7 +660,14 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
     auto p = static_cast<Player*>(actor);
     for (auto& a: p->items_)
     {
-      id << a->GetId();
+      QVariantMap item;
+      item["id"] = a->GetId();
+      item["name"] = a->Getname();
+      item["type"] = a->GetTypeItem();
+      item["class"] = a->GetClass();
+      item["subtype"] = a->GetSubtype();
+      item["weight"] = a->GetWeight();
+      id << item;
     }
     response["inventory"] = id;
     QVariantMap id_slot;
