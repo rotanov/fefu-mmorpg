@@ -314,7 +314,7 @@ function test() {
             it("should fail pick up item [object in other player's inventory]", function(done) {
                 var flag = true
                 var player1 = {"x": 3.5, "y": 3.5}
-                var player2 = {"x": 1.5, "y": 1.5}
+                var player2 = {"x": 1.4, "y": 1.4}
                 var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
@@ -500,7 +500,7 @@ function test() {
             it("should fail destroy item [object in other player's inventory]", function(done) {
                 var flag = true
                 var player1 = {"x": 3.5, "y": 3.5}
-                var player2 = {"x": 1.5, "y": 1.5}
+                var player2 = {"x": 1.4, "y": 1.4}
                 var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
@@ -644,7 +644,7 @@ function test() {
             it("should fail drop item [object in other player's inventory]", function(done) {
                 var flag = true
                 var player1 = {"x": 3.5, "y": 3.5}
-                var player2 = {"x": 1.5, "y": 1.5}
+                var player2 = {"x": 1.4, "y": 1.4}
                 var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)

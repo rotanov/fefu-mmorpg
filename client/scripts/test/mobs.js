@@ -481,7 +481,7 @@ function test() {
                         socket.putMob(mob.x, mob.y, {}, [], ["BAD_FLAG"], "ORC", defaultDamage, userData.sid)
                         break
                     case "putMob":
-                        assert.equal("badFalg", data.result, "put mob")
+                        assert.equal("badFlag", data.result, "put mob")
                         mob.id = data.id
                         socket.singleExamine(mob.id, userData.sid)
                         break
