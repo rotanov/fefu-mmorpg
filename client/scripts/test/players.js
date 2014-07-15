@@ -37,7 +37,7 @@ function testPlayers() {
     onmessage = function(e) {
         var data = JSON.parse(e.data);
         if (data.action == "startTesting" && data.result == "ok") {
-          test()
+            test()
         }
     }
     socket = ws.WSConnect(userData.webSocket, onopen, onmessage)

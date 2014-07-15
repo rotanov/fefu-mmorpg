@@ -31,8 +31,7 @@ var sid_
 var tick_
 
 //player
-var inventory_ids = []
-var inventory = []
+var inventory
 var max_h = 100
 var curr_h = 100
 var health
@@ -64,14 +63,13 @@ function OnMessage(e) {
         }
         if (data.type == "item") {
             object.showInf(data.item)
-            if (contains(inventory_ids, data.id) && !exists(inventory, data.id))
-                inventory.push(data)
+
         } else {
             object.showInf(data)
         }
         updateSlot(data)
         if (data.id == id_) {
-            inventory_ids = data.inventory
+            inventory = data.inventory
             curr_h = data.health
             max_h = data.maxHealth
             updateHealth(curr_h, max_h)
@@ -133,6 +131,7 @@ function OnMessage(e) {
         }
         socket.singleExamine(id_, sid_)
         break
+
     case "use":
         if (data.result != "ok") {
             utils.cryBabyCry(data.result)
@@ -370,11 +369,8 @@ function onRender() {
 
 $("#reload").click(function() {
     $("#items select").empty()
-    for (var i = 0, l = inventory_ids.length; i < l; ++i) {
-        socket.singleExamine(inventory_ids[i], sid_)
-    }
     for (var i = 0, l = inventory.length; i < l; ++i) {
-        pushItem(inventory[i].id, inventory[i].item.name)
+        pushItem(inventory[i].id, inventory[i].name)
     }
 })
 

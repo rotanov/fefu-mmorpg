@@ -21,7 +21,7 @@ function($) {
             "maxHealth": null,
             "mana": null,
             "maxMana": null,
-            "inventory": null,
+            //"inventory": null,
 
             /*item*/
             "weight": null,
