@@ -1024,7 +1024,14 @@ void GameServer::HandlePutPlayer_(const QVariantMap&  request, QVariantMap& resp
   QVariantList items;
   for (auto& a: p->items_)
   {
-    items << a->GetId();
+    QVariantMap item;
+    item["id"] = a->GetId();
+    item["name"] = a->Getname();
+    item["type"] = a->GetTypeItem();
+    item["class"] = a->GetClass();
+    item["subtype"] = a->GetSubtype();
+    item["weight"] = a->GetWeight();
+    items << item;
   }
   response["inventory"] = items;
 
