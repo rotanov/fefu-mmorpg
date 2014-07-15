@@ -137,7 +137,7 @@ private:
   Player* CreatePlayer_(const QString login);
   void SetActorPosition_(Actor* actor, const Vector2& position);
   void SetItemDescription (const QVariantMap &request, Item* item);
-  bool IsCorrectPosition(float x, float y, Actor *actor);
+  bool IsIncorrectPosition(float x, float y, Actor *actor);
   template <typename T>
   T* CreateActor_();
 
