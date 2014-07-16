@@ -94,7 +94,7 @@ void Actor::SetId(int id)
 
 void Actor::OnCollideWorld()
 {
-
+  SetDirection (EActorDirection::NONE);
 }
 
 bool Actor::OnCollideActor(Actor* /*actor*/)

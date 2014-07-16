@@ -37,13 +37,13 @@ public:
   virtual void SetRace();
   void SetStat(bool flag, Item* item);
   QString race_ = "NONE";
-private:
-  QMap <Stat_const, float> Stat =
+ private:
+   QMap <Stat_const, float> Stat =
   {
     {STRENGTH, 10},
     {INTELLIGENCE, 10},
     {DEXTERITY, 10},
-    {SPEED, 0.1},
+    {SPEED, 0.5},
     {DEFENSE, 10},
     {MAGIC_RESISTANCE, 5},
     {CAPACITY, 5},
