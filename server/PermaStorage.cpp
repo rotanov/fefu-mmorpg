@@ -170,6 +170,18 @@ void PermaStorage::GetItem(Item* i, const int id )
     i->SetClass (s[0]);
     i->SetTypeItem (s[1].toInt());
     i->SetSubtype (s[2]);
+    QStringList str1 ;
+    str1 << q.value("power_info").toString().split(":");
+    if (str1.length () > 0)
+    {
+      QStringList s ;
+      s << str1[1].split("d");
+      if (s.length () > 0)
+      {
+        i->damage.count = s[0].toInt();
+        i->damage.to = s[1].toInt();
+      }
+    }
   }
 }
 

@@ -235,7 +235,7 @@ function test() {
             it("should successfully put mobs with all possible races", function(done) {
                 var counter = 0
                 var races = [
-                    "ORC", "EVIL", "TROLL", "GIGANT", "DEMON",
+                    "ORC", "EVIL", "TROLL", "GIANT", "DEMON",
                     "METAL", "DRAGON", "UNDEAD", "ANIMAL", "PLAYER"
                 ]
                 var map = [

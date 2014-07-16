@@ -28,6 +28,7 @@ public:
   void SetMessage(QString str);
   QStringList Flags;
   QMap <Stat_const, float> bonus;
+  Damage damage;
 private:
   QString name_;
   int time_;

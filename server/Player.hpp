@@ -30,7 +30,7 @@ public:
   void SetLogin(const QString login);
   unsigned GetClientTick() const;
   void SetClientTick(const unsigned clientTick);
-  virtual QVariantMap atack(Creature* actor);
+  virtual QVariantMap atack(Creature* actor, int id);
   void SetBlows();
   Item* GetSlot(Slot st);
   bool SetSlot(Slot st, Item* item);

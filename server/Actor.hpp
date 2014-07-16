@@ -8,6 +8,8 @@
 
 using namespace Deku2D;
 
+
+
 enum class EActorDirection
 {
   NONE,
@@ -30,6 +32,12 @@ enum Stat_const
     MP,
     MAX_MP,
 };
+
+struct Damage {
+  int count;
+  int to;
+};
+
 const std::vector<Vector2> directionToVector =
 {
   [EActorDirection::NONE] = Vector2(0.0f, 0.0f),

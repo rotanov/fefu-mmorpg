@@ -332,7 +332,7 @@ void GameServer::HandleAttack_(const QVariantMap& request, QVariantMap& response
         Vector2 vec = Vector2((player.x - targets.x),(player.y - targets.y));
         if (sqrt(vec.x*vec.x + vec.y*vec.y) <= pickUpRadius_)
         {
-          QVariantMap a = p->atack(target);
+          QVariantMap a = p->atack(target, -5);
           events_ << a;
           a = target->atack(p);
           if (target->GetHealth() <= 0)
@@ -463,6 +463,7 @@ void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
   sidToPlayer_.insert(sid, player);
   response["sid"] = sid;
   response["webSocket"] = wsAddress_;
+  response["firstid"] = -5;
   response["id"] = player->GetId();
 }
 
@@ -781,6 +782,7 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
     WriteResult_(response, EFEMPResult::BAD_ID);
     return;
   }
+  int id = request["id"].toInt() == -5;
 
   Item* item = static_cast<Item*>(idToActor_[request["id"].toInt()]);
 
@@ -799,7 +801,8 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
     }
   }
 
-  if (item != p->GetSlot(left_hand) || item != p->GetSlot(right_hand))
+  if ((item != p->GetSlot(left_hand) || item != p->GetSlot(right_hand))
+      && (p->GetSlot(left_hand) != 0 || p->GetSlot(right_hand)!= 0 ) && id != -5)
   {
     WriteResult_(response, EFEMPResult::BAD_SLOT);
     return;
@@ -831,7 +834,7 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
                             (player_pos.y - target_pos.y)*(player_pos.y - target_pos.y));
       if (distance <= pickUpRadius_)
       {
-        QVariantMap a = p->atack(target);
+        QVariantMap a = p->atack(target, id);
         events_ << a;
         a = target->atack(p);
         if (target->GetHealth() < 0)
