@@ -821,9 +821,9 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
       continue;
     }
     Creature* target = static_cast<Creature*>(actor);
-    Box box0(actor->GetPosition(), 0.5f, 0.5f);
-    Box box1(Vector2(x, y), 0.5f, 0.5f);
-    if (box1.Intersect(box0) && (p->GetId() != target->GetId()) && (target->GetHealth() > 0))
+   // Box box0(actor->GetPosition(), 1f, 1f);
+   // Box box1(Vector2(x, y), 1f, 1f);
+    if ((p->GetId() != target->GetId()) && (target->GetHealth() > 0))
     {
       Vector2 player_pos = p->GetPosition();
       Vector2 target_pos = target->GetPosition();
@@ -839,6 +839,8 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
           GetItems(target);
         }
         events_ << a;
+        WriteResult_(response, EFEMPResult::OK);
+        return;
       }
     }
   }
