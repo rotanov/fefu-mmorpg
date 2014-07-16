@@ -235,7 +235,7 @@ function test() {
             it("should successfully put mobs with all possible races", function(done) {
                 var counter = 0
                 var races = [
-                    "ORC", "EVIL", "TROLL", "GIANT", "DEMON",
+                    "ORC", "EVIL", "TROLL", "GIGANT", "DEMON",
                     "METAL", "DRAGON", "UNDEAD", "ANIMAL", "PLAYER"
                 ]
                 var map = [
@@ -451,12 +451,11 @@ function test() {
                     case "putMob":
                         assert.equal("ok", data.result, "put mob")
                         mob.id = data.id
-                        setTimeout(socket.singleExamine(mob.id, userData.sid), 1000)
+                        setTimeout(socket.singleExamine(mob.id, userData.sid), 6000)
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
-                        assert.notEqual(mob.x, data.x, "diff coordinate x")
-                        assert.notEqual(mob.y, data.y, "diff coordinate y")
+                        assert.equal(true, (mob.x != data.x || mob.y != data.y), "diff coordinate")
                         socket.setOnMessage(undefined)
                         done()
                         break
