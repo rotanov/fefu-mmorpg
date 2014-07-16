@@ -70,9 +70,21 @@ QString Monster::GetName()
     return name;
 }
 
+QString Monster::GetRace()
+{
+  return race_;
+}
+
 void Monster::SetRace(QString r)
 {
-  race_ = r;
+   for (auto& k: Races)
+   {
+     if (k == r)
+     {
+      race_ = r;
+      return;
+     }
+   }
 }
 
 void Monster::SetRace()

@@ -64,6 +64,7 @@ public:
   virtual void Update(float dt);
   virtual void SetRace();
   virtual void SetRace(QString r);
+  QString GetRace();
   virtual QVariantMap atack(Creature* actor);
   QString GetName();
   void SetAlertness(float al);
@@ -75,7 +76,6 @@ public:
   QStringList Blows;
   Creature* target = 0;
 private:
-    QString race_;
     int damage_;
     float alertness_;
     QMap<QString,QString> Hates =

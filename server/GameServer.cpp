@@ -601,7 +601,7 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
       actor["name"] = static_cast<Item*>(a)->Getname();
     }
 
-    if (actor["health"] < 0 && (actor["type"] == "monster"))
+    if (actor["health"] <= 0 && (actor["type"] == "monster"))
     {
       Creature* b = static_cast<Creature*>(a);
       KillActor_(b);

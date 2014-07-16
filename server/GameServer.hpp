@@ -26,6 +26,8 @@ enum class EFEMPResult
   BAD_MAP,
   BAD_SLOT,
   BAD_PLACING,
+  BAD_RACE,
+  BAD_FLAG,
 };
 
 
@@ -42,6 +44,8 @@ const std::vector<QString> fempResultToString =
   [EFEMPResult::BAD_MAP] = "badMap",
   [EFEMPResult::BAD_SLOT] = "badSlot",
   [EFEMPResult::BAD_PLACING] = "badPlacing",
+  [EFEMPResult::BAD_SLOT] = "badRace",
+  [EFEMPResult::BAD_PLACING] = "badFlag",
 };
 
 
@@ -163,7 +167,7 @@ private:
   QVariantList events_;
   float playerVelocity_ = 2.2;
   float slideThreshold_ = 0.1;
-  int ticksPerSecond_ = 30;
+  int ticksPerSecond_ = 40;
   int screenRowCount_ = 7;
   int screenColumnCount_ = 9;
   float epsilon_ = 0.00001;
