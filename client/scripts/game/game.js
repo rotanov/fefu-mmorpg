@@ -142,9 +142,10 @@ function OnMessage(e) {
     }
 }
 
-function Start(id, sid, h, w) {
-    id_ = id
-    sid_ = sid
+function Start(data, h, w) {
+    id_ = data.id
+    sid_ = data.sid
+    fistId = data.fistId
 
     height = h
     width = w

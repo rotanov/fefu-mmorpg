@@ -47,7 +47,7 @@ function($, utils, game) {
                     })
             ).done(
                 function() {
-                    game.start(data.id, data.sid, consts.screenRowCount, consts.screenColumnCount)
+                    game.start(data, consts.screenRowCount, consts.screenColumnCount)
                 }
             )
 
