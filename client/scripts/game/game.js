@@ -138,7 +138,7 @@ function OnMessage(e) {
             utils.cryBabyCry(data.result)
             break
         }
-        alert(data.message)
+       // alert(data.result)
     }
 }
 
