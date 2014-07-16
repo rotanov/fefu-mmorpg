@@ -463,7 +463,7 @@ void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
   sidToPlayer_.insert(sid, player);
   response["sid"] = sid;
   response["webSocket"] = wsAddress_;
-  response["firstid"] = FirstId_;
+  response["fistId"] = FistId_;
   response["id"] = player->GetId();
 }
 
@@ -802,7 +802,7 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
   }
 
   if ((item != p->GetSlot(left_hand) || item != p->GetSlot(right_hand))
-      && (p->GetSlot(left_hand) != 0 || p->GetSlot(right_hand)!= 0 ) && id != FirstId_)
+      && (p->GetSlot(left_hand) != 0 || p->GetSlot(right_hand)!= 0 ) && id != FistId_)
   {
     WriteResult_(response, EFEMPResult::BAD_SLOT);
     return;
