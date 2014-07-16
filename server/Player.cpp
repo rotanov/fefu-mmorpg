@@ -97,21 +97,21 @@ bool Player::SetSlot(Slot st, Item* item)
 {
   bool result = false;
   if ((st == left_hand || st == right_hand) &&
-      (item->GetTypeItem () == "weapon"  || item->GetTypeItem () == "shield" ))
+      (item->GetTypeItem() == "weapon" || item->GetTypeItem() == "shield" ))
     result = true;
-  else if ((st == left_finger || st == right_finger) && (item->GetTypeItem () == "ring"))
+  else if ((st == left_finger || st == right_finger) && (item->GetTypeItem() == "ring"))
     result = true;
-  else if (st == ammo && item->GetTypeItem () == "expendable")
+  else if (st == ammo && item->GetTypeItem() == "expendable")
     result = true;
-  else if (st == neck && item->GetTypeItem () == "eamulet")
+  else if (st == neck && item->GetTypeItem() == "eamulet")
     result = true;
-  else if (st == body && item->GetTypeItem () == "armor")
+  else if (st == body && item->GetTypeItem() == "armor")
     result = true;
-  else if (st == head && item->GetTypeItem () == "helm")
+  else if (st == head && item->GetTypeItem() == "helm")
     result = true;
-  else if (st == forearm && item->GetTypeItem () == "gloves")
+  else if (st == forearm && item->GetTypeItem() == "gloves")
     result = true;
-  else if (st == feet && item->GetTypeItem () == "boots")
+  else if (st == feet && item->GetTypeItem() == "boots")
     result = true;
   if (result)
     slot_[st] = item;

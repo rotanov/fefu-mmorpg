@@ -176,18 +176,15 @@ void GameServer::HandleDestroyItem_(const QVariantMap& request, QVariantMap& res
   }
   else
   {//item is on the ground
-    Item* it = static_cast<Item*>(idToActor_[id]);
-    BAD_ID(!it);
-    Vector2 player = p->GetPosition();
-    Vector2 item = it->GetPosition();
-    float distance = sqrt((player.x - item.x)*(player.x - item.x) +
-                          (player.y - item.y)*(player.y - item.y));
+    Item* item = static_cast<Item*>(idToActor_[id]);
+    BAD_ID(!item);
+    Vector2 player_pos = p->GetPosition();
+    Vector2 item_pos = item->GetPosition();
+    float distance = sqrt((player_pos.x - item_pos.x)*(player_pos.x - item_pos.x) +
+                          (player_pos.y - item_pos.y)*(player_pos.y - item_pos.y));
     BAD_ID(distance > pickUpRadius_)
-    KillActor_(it);
+    KillActor_(item);
   }
-
-  WriteResult_(response, EFEMPResult::OK);
-  return;
 
   // TODO: implement
 #undef BAD_ID
@@ -879,9 +876,20 @@ void GameServer::HandleDrop_(const QVariantMap& request, QVariantMap& response)
 //==============================================================================
 void GameServer::HandleEquip_(const QVariantMap& request, QVariantMap& response)
 {
-  if (!request["id"].toInt())
+#define BAD_ID(COND)\
+  if (COND)\
+  {\
+    WriteResult_(response, EFEMPResult::BAD_ID);\
+    return;\
+  }\
+
+  BAD_ID(request.find("id") == request.end());
+  BAD_ID(!request["id"].toInt());
+
+  QString slot = request["slot"].toString();
+  if (SlotToString.find(slot) == SlotToString.end())
   {
-    WriteResult_(response, EFEMPResult::BAD_ID);
+    WriteResult_(response, EFEMPResult::BAD_SLOT);
     return;
   }
 
@@ -889,33 +897,49 @@ void GameServer::HandleEquip_(const QVariantMap& request, QVariantMap& response)
   auto sid = request["sid"].toByteArray();
   Player* p = sidToPlayer_[sid];
 
-  for (auto& item: p->items_)
-  {
-    if (item->GetId() == id)
+  BAD_ID((idToActor_.find(id) == idToActor_.end()) && !p->GetItemId(id));
+
+  if (p->GetItemId(id))
+  {//equip item from inventory
+    for (auto& item: p->items_)
     {
-      QString slot = request["slot"].toString();
-      if (SlotToString.find(slot) == SlotToString.end())
+      if (item->GetId() == id)
       {
-        WriteResult_(response, EFEMPResult::BAD_SLOT);
+        Item* i = p->GetSlot(SlotToString[slot]);
+        if (i)
+        {
+          p->items_.push_back(i);
+        }
+        if (!p->SetSlot(SlotToString[slot], item))
+        {
+          WriteResult_(response, EFEMPResult::BAD_SLOT);
+          return;
+        }
+        p->SetStat(true, item);
+        p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
+        WriteResult_(response, EFEMPResult::OK);
         return;
       }
-      Item* i = p->GetSlot(SlotToString[slot]);
-      if (i)
-      {
-        p->items_.push_back(i);
-      }
-      if (!p->SetSlot(SlotToString[slot], item))
-      {
-        WriteResult_(response, EFEMPResult::BAD_SLOT);
-        return;
-      }
-      p->SetStat(true, item);
-      p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
-      WriteResult_(response, EFEMPResult::OK);
-      return;
     }
   }
-  WriteResult_(response, EFEMPResult::BAD_ID);
+  else
+  {//item is on the ground
+    Item* item = static_cast<Item*>(idToActor_[id]);
+    BAD_ID(!item);
+    Vector2 player_pos = p->GetPosition();
+    Vector2 item_pos = item->GetPosition();
+    float distance = sqrt((player_pos.x - item_pos.x)*(player_pos.x - item_pos.x) +
+                          (player_pos.y - item_pos.y)*(player_pos.y - item_pos.y));
+    BAD_ID(distance > pickUpRadius_)
+    if (!p->SetSlot(SlotToString[slot], item))
+    {
+      WriteResult_(response, EFEMPResult::BAD_SLOT);
+      return;
+    }
+    p->SetStat(true, item);
+    KillActor_(item);
+  }
+#undef BAD_ID
 }
 
 //==============================================================================

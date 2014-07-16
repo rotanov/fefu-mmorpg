@@ -43,7 +43,7 @@ void Creature::SetRace()
 }
 void Creature::SetStat(bool flag, Item* item)
 {
-  for (QMap<Stat_const, float>::const_iterator i = item->bonus.begin(); i != item->bonus.end(); i++)
+  for (auto i = item->bonus.begin(); i != item->bonus.end(); i++)
   {
     if (flag)
       Stat[i.key()] += i.value ();
