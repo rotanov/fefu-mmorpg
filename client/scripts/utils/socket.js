@@ -76,14 +76,6 @@ define(function() {
         }))
     }
 
-    Socket.prototype.attack = function(arr, sid) {
-        this.sock.send(JSON.stringify({
-            "action": "attack",
-            "target": arr,
-            "sid": sid
-        }))
-    }
-
     Socket.prototype.destroyItem = function(id, sid) {
         this.sock.send(JSON.stringify({
             "action": "destroyItem",
@@ -125,12 +117,17 @@ define(function() {
         }))
     }
 
-    Socket.prototype.use = function(id, sid) {
-        this.sock.send(JSON.stringify({
+    Socket.prototype.use = function(id, sid, x, y) {
+        var request = {
             "action": "use",
             "id": id,
             "sid": sid
-        }))
+        }
+        if (x && y) {
+            request["x"] = x
+            request["y"] = y
+        }
+        this.sock.send(JSON.stringify(request))
     }
 
     /*Testing*/

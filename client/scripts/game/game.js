@@ -29,6 +29,7 @@ var gPlayerY
 var id_
 var sid_
 var tick_
+var fistId
 
 //player
 var inventory
@@ -263,7 +264,7 @@ function onUpdate() {
     }
 
     if (zKey.isDown && lifespan) {
-        socket.attack([gPlayerX, gPlayerY], sid_)
+        socket.use(fistId, sid_, gPlayerX, gPlayerY)
     }
 
     if (lifespan) {
@@ -272,7 +273,7 @@ function onUpdate() {
 }
 
 function coordinate(x, coord, g) {
-    return (-(x - coord) + g * 0.5 ) * step
+    return (-(x - coord) + g * 0.5) * step
 }
 
 function createActors(start) {
@@ -432,28 +433,6 @@ $("#items select").on("change", function(e) {
     var id = this.value
     socket.singleExamine(id, sid_)
 })
-
-function contains(array, id) {
-    var flag = false
-    for (var i = 0; i < array.length; ++i) {
-      if (array[i] == id) {
-        flag = true
-        break
-      }
-    }
-    return flag
-}
-
-function exists(array, id) {
-    var flag = false
-    for (var i = 0; i < array.length; ++i) {
-        if (array[i].id == id) {
-            flag = true
-            break
-        }
-    }
-    return flag
-}
 
 return {
     start: Start,
