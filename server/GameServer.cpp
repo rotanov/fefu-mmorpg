@@ -463,7 +463,7 @@ void GameServer::HandleLogin_(const QVariantMap& request, QVariantMap& response)
   sidToPlayer_.insert(sid, player);
   response["sid"] = sid;
   response["webSocket"] = wsAddress_;
-  response["firstid"] = -5;
+  response["firstid"] = FirstId_;
   response["id"] = player->GetId();
 }
 
@@ -782,7 +782,7 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
     WriteResult_(response, EFEMPResult::BAD_ID);
     return;
   }
-  int id = request["id"].toInt() == -5;
+  int id = request["id"].toInt();
 
   Item* item = static_cast<Item*>(idToActor_[request["id"].toInt()]);
 
@@ -802,7 +802,7 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
   }
 
   if ((item != p->GetSlot(left_hand) || item != p->GetSlot(right_hand))
-      && (p->GetSlot(left_hand) != 0 || p->GetSlot(right_hand)!= 0 ) && id != -5)
+      && (p->GetSlot(left_hand) != 0 || p->GetSlot(right_hand)!= 0 ) && id != FirstId_)
   {
     WriteResult_(response, EFEMPResult::BAD_SLOT);
     return;

@@ -172,6 +172,7 @@ private:
   int screenColumnCount_ = 9;
   float epsilon_ = 0.00001;
   float pickUpRadius_ = 1.5f;
+  int FirstId_ = -5;
 
   bool testingStageActive_ = false;
 
