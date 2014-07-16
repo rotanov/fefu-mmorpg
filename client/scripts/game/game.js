@@ -134,11 +134,12 @@ function OnMessage(e) {
         break
 
     case "use":
+        console.log(data.message)
+        $("#msg").text(data.message)
         if (data.result != "ok") {
             utils.cryBabyCry(data.result)
             break
         }
-       // alert(data.result)
     }
 }
 
