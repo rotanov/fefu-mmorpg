@@ -974,7 +974,7 @@ function test() {
                 socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
 
-            it("should successfully equip item [slot is already occupied]", function(done) {
+            it("should successfully equip item [slot is already occupied item that was on the ground]", function(done) {
                 var flag = true
                 var player = {"x": 3.5, "y": 3.5}
                 var item = {"x": player.x + 0.5, "y": player.y + 0.5}
@@ -1015,6 +1015,45 @@ function test() {
                     }
                 })
                 socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
+            })
+
+            it("should successfully equip item [slot is already occupied item that was in inventory]", function(done) {
+                var flag = true
+                var player = {"x": 3.5, "y": 3.5}
+                var item1_id
+                var item2_id
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player with item")
+                        player.id = data.id
+                        player.sid = data.sid
+                        item1_id = data.inventory[0].id
+                        item2_id = data.inventory[1].id
+                        socket.enforce({"action": "equip", "id": item1_id, "sid": player.sid, "slot": "left-hand"}, userData.sid)
+                        break
+                    case "enforce":
+                        assert.equal("ok", data.result, "enforce request")
+                        assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
+                        if (data.actionResult.action == "equip") {
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid}, userData.sid)
+
+                        } else if (data.actionResult.action == "examine") {
+                            if (flag) {
+                                flag = false
+                                assert.equal(item1_id, data.actionResult.slots["left-hand"], "equip item")
+                                socket.enforce({"action": "equip", "id": item2_id, "sid": player.sid, "slot": "left-hand"}, userData.sid)
+
+                            } else {
+                                assert.equal(item2_id, data.actionResult.slots["left-hand"], "equip item")
+                                socket.setOnMessage(undefined)
+                                done()
+                            }
+                        }
+                    }
+                })
+                socket.putPlayer(player.x, player.y, {}, [makeItem(), makeItem()], {}, userData.sid)
             })
         })
 
