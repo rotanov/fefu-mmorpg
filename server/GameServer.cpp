@@ -205,44 +205,53 @@ void GameServer::tick()
   auto collideWithGrid = [=](Actor* actor)
   {
     auto& p = *actor;
-
-    float x = p.GetPosition().x;
-    float y = p.GetPosition().y;
-    EActorDirection dir = actor->GetDirection();
-    bool collided = false;
-
-    if (dir == EActorDirection::EAST && levelMap_.GetCell(x + 0.5f, y) == '#')
+    int col = 0;
+    for (int i = 0; i < 4; i++)
     {
-     // p.SetPosition(Vector2(round(x + 0.5f) - 0.5f, p.GetPosition().y));
-      collided = true;
-    }
+      float x = p.GetPosition().x;
+      float y = p.GetPosition().y;
+      EActorDirection dir = actor->GetDirection();
+      bool collided = false;
 
-    if (dir == EActorDirection::WEST && levelMap_.GetCell(x - 0.5f, y) == '#')
-    {
-     // p.SetPosition(Vector2(round(x - 0.6f) + 0.5f, p.GetPosition().y));
-      collided = true;
-    }
+      if (dir == EActorDirection::EAST && levelMap_.GetCell(x + 0.5f, y) == '#')
+      {
+        // p.SetPosition(Vector2(round(x + 0.5f) - 0.5f, p.GetPosition().y));
+        collided = true;
+        col++;
+      }
 
-    if (dir == EActorDirection::SOUTH && levelMap_.GetCell(x, y + 0.5f) == '#')
-    {
-     // p.SetPosition(Vector2(p.GetPosition().x, round(y + 0.5f) - 0.5f));
-      collided = true;
-    }
+      if (dir == EActorDirection::WEST && levelMap_.GetCell(x - 0.6f, y) == '#')
+      {
+        // p.SetPosition(Vector2(round(x - 0.6f) + 0.5f, p.GetPosition().y));
+        collided = true;
+        col++;
+      }
 
-    if (dir == EActorDirection::NORTH &&  levelMap_.GetCell(x, y - 0.5f) == '#')
-    {
-     // p.SetPosition(Vector2(p.GetPosition().x, round(y - 0.6f) + 0.5f));
-      collided = true;
-    }
+      if (dir == EActorDirection::SOUTH && levelMap_.GetCell(x, y + 0.5f) == '#')
+      {
+        // p.SetPosition(Vector2(p.GetPosition().x, round(y + 0.5f) - 0.5f));
+        collided = true;
+        col++;
+      }
 
-    if (collided)
-    {
-      actor->OnCollideWorld();
+      if (dir == EActorDirection::NORTH &&  levelMap_.GetCell(x, y - 0.6f) == '#')
+      {
+        // p.SetPosition(Vector2(p.GetPosition().x, round(y - 0.6f) + 0.5f));
+        collided = true;
+        col++;
+      }
+
+      if (collided)
+      {
+        actor->OnCollideWorld();
+      }
     }
+    if (col > 3)
+      p.SetDirection(EActorDirection::NONE);
   };
   for (Actor* actor: actors_)
   {
-    for (Actor* a: actors_)
+   /* for (Actor* a: actors_)
     {
       if (actor == a || a->GetType() == "item")
       {
@@ -258,7 +267,7 @@ void GameServer::tick()
         {
           if (static_cast<Creature*>(a))
           {
-            m->target = static_cast<Creature*>(a);
+            //m->target = static_cast<Creature*>(a);
           }
         }
       }
@@ -267,9 +276,9 @@ void GameServer::tick()
         Vector2 player = m->GetPosition();
         Vector2 targets = m->target->GetPosition();
         Vector2 vec = Vector2((player.x - targets.x), (player.y - targets.y));
-        if (sqrt(vec.x*vec.x + vec.y*vec.y) <= pickUpRadius_*pickUpRadius_)
+        if (sqrt(vec.x*vec.x + vec.y*vec.y) <= pickUpRadius_)
         {
-          if (m->target->GetHealth() > 20)
+          if (m->target->GetHealth() > 20 && m->GetHealth () > 0)
           {
             events_ << m->atack(m->target);
             break;
@@ -287,7 +296,7 @@ void GameServer::tick()
             m->SetDirection(EActorDirection::NORTH);
         }
       }
-    }
+    }*/
     collideWithGrid(actor);
     auto v = directionToVector[static_cast<unsigned>(actor->GetDirection())];
 
