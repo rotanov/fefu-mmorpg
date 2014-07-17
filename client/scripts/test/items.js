@@ -973,6 +973,49 @@ function test() {
                 })
                 socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
+
+            it("should successfully equip item [slot is already occupied]", function(done) {
+                var flag = true
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {"x": player.x + 0.5, "y": player.y + 0.5}
+                var p_item_id
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player with item")
+                        player.id = data.id
+                        player.sid = data.sid
+                        p_item_id = data.inventory[0].id
+                        socket.putItem(item.x, item.y, makeItem(), userData.sid)
+                        break
+                    case "putItem":
+                        assert.equal("ok", data.result, "put item")
+                        item.id = data.id
+                        socket.enforce({"action": "equip", "id": p_item_id, "sid": player.sid, "slot": "left-hand"}, userData.sid)
+                        break
+                    case "enforce":
+                        assert.equal("ok", data.result, "enforce request")
+                        assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
+                        if (data.actionResult.action == "equip") {
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid}, userData.sid)
+
+                        } else if (data.actionResult.action == "examine") {
+                            if (flag) {
+                                flag = false
+                                assert.equal(p_item_id, data.actionResult.slots["left-hand"], "equip item")
+                                socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"}, userData.sid)
+
+                            } else {
+                                assert.equal(item.id, data.actionResult.slots["left-hand"], "equip item")
+                                socket.setOnMessage(undefined)
+                                done()
+                            }
+                        }
+                    }
+                })
+                socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
+            })
         })
 
         describe("Unequip", function() {
@@ -1094,7 +1137,8 @@ function test() {
                 socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
             })
 
-            it("should successfully equip item [slot is already occupied]", function(done) {
+
+            it("should successfully equip/unequip item [slot is already occupied]", function(done) {
                 var flag = true
                 var player = {"x": 3.5, "y": 3.5}
                 var item = {"x": player.x + 0.5, "y": player.y + 0.5}
@@ -1128,10 +1172,18 @@ function test() {
 
                             } else {
                                 assert.equal(item.id, data.actionResult.slots["left-hand"], "equip item")
-                                socket.setOnMessage(undefined)
-                                done()
+                                socket.enforce({"action": "unequip", "sid": player.sid, "slot": "left-hand"}, userData.sid)
                             }
+
+                        } else if (data.actionResult.action == "unequip") {
+                            socket.singleExamine(player.id, userData.sid)
                         }
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(undefined, data.slots["left-hand"], "slot isn't occupied")
+                        socket.setOnMessage(undefined)
+                        done()
                     }
                 })
                 socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
