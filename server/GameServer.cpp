@@ -1031,6 +1031,13 @@ void GameServer::HandlePutMob_(const QVariantMap& request, QVariantMap& response
     WriteResult_(response, EFEMPResult::BAD_RACE);
     return;
   }
+  QStringList str ;
+  str << request["dealtDamage"].toString().split("d");
+  if (str.length() < 2 || !str[0].toInt() || !str[2].toInt() || str[1] != "d")
+  {
+    WriteResult_(response, EFEMPResult::BAD_DAMAGE);
+    return;
+  }
   response["id"] = m->GetId();
   WriteResult_(response, EFEMPResult::OK);
 }
