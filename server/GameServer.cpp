@@ -213,25 +213,25 @@ void GameServer::tick()
 
     if (dir == EActorDirection::EAST && levelMap_.GetCell(x + 0.5f, y) == '#')
     {
-      p.SetPosition(Vector2(round(x + 0.5f) - 0.5f, p.GetPosition().y));
+     // p.SetPosition(Vector2(round(x + 0.5f) - 0.5f, p.GetPosition().y));
       collided = true;
     }
 
-    if (dir == EActorDirection::WEST && levelMap_.GetCell(x - 0.6f, y) == '#')
+    if (dir == EActorDirection::WEST && levelMap_.GetCell(x - 0.5f, y) == '#')
     {
-      p.SetPosition(Vector2(round(x - 0.6f) + 0.5f, p.GetPosition().y));
+     // p.SetPosition(Vector2(round(x - 0.6f) + 0.5f, p.GetPosition().y));
       collided = true;
     }
 
     if (dir == EActorDirection::SOUTH && levelMap_.GetCell(x, y + 0.5f) == '#')
     {
-      p.SetPosition(Vector2(p.GetPosition().x, round(y + 0.5f) - 0.5f));
+     // p.SetPosition(Vector2(p.GetPosition().x, round(y + 0.5f) - 0.5f));
       collided = true;
     }
 
-    if (dir == EActorDirection::NORTH &&  levelMap_.GetCell(x, y - 0.6f) == '#')
+    if (dir == EActorDirection::NORTH &&  levelMap_.GetCell(x, y - 0.5f) == '#')
     {
-      p.SetPosition(Vector2(p.GetPosition().x, round(y - 0.6f) + 0.5f));
+     // p.SetPosition(Vector2(p.GetPosition().x, round(y - 0.6f) + 0.5f));
       collided = true;
     }
 
@@ -259,14 +259,6 @@ void GameServer::tick()
           if (static_cast<Creature*>(a))
           {
             m->target = static_cast<Creature*>(a);
-            if (m->GetPosition().x < a->GetPosition().x)
-              m->SetDirection(EActorDirection::WEST);
-            else if (m->GetPosition().x > a->GetPosition().x)
-              m->SetDirection(EActorDirection::EAST);
-            else if (m->GetPosition().y > a->GetPosition().y)
-              m->SetDirection(EActorDirection::SOUTH);
-            else if (m->GetPosition().y < a->GetPosition().y)
-              m->SetDirection(EActorDirection::NORTH);
           }
         }
       }
@@ -277,11 +269,22 @@ void GameServer::tick()
         Vector2 vec = Vector2((player.x - targets.x), (player.y - targets.y));
         if (sqrt(vec.x*vec.x + vec.y*vec.y) <= pickUpRadius_*pickUpRadius_)
         {
-          if (m->target->GetHealth () > 20)
+          if (m->target->GetHealth() > 20)
           {
             events_ << m->atack(m->target);
             break;
           }
+        }
+         else
+        {
+          if (m->GetPosition().x < a->GetPosition().x)
+            m->SetDirection(EActorDirection::WEST);
+          else if (m->GetPosition().x > a->GetPosition().x)
+            m->SetDirection(EActorDirection::EAST);
+          else if (m->GetPosition().y > a->GetPosition().y)
+            m->SetDirection(EActorDirection::SOUTH);
+          else if (m->GetPosition().y < a->GetPosition().y)
+            m->SetDirection(EActorDirection::NORTH);
         }
       }
     }
@@ -970,7 +973,7 @@ void GameServer::HandlePutItem_(const QVariantMap& request, QVariantMap& respons
 
   Item* item = CreateActor_<Item>();
   SetActorPosition_(item, Vector2(x, y));
-  SetItemDescription(request, item);
+  SetItemDescription(request["item"].toMap(), item);
   response["id"] = item->GetId();
 }
 
@@ -1005,11 +1008,11 @@ void GameServer::HandlePutMob_(const QVariantMap& request, QVariantMap& response
   auto flag = request["flags"].toList();
   for (auto a: flag)
   {
-   /* if (m->IsInCorrectFlag(a.toString()))
+    if (m->Flag_.lastIndexOf(a.toString()) == -1)
     {
       WriteResult_(response, EFEMPResult::BAD_FLAG);
       return;
-    }*/
+    }
      m->Flags.push_back(a.toString());
   }
 

@@ -6,23 +6,6 @@
 #include <QString>
 #include <QMap>
 #include <QStringList>
-enum class Flag
-{
-      CAN_BLOW,
-      CAN_MOVE,
-      PASS_WALL,
-      HATE_ORCS,
-      HATE_EVILS,
-      HATE_TROLLS,
-      HATE_GIANTS,
-      HATE_DEMONS,
-      HATE_METALS,
-      HATE_PLAYERS,
-      HATE_DRAGONS,
-      HATE_UNDEADS,
-      HATE_ANIMALS,
-};
-
 enum class Race {
     ORCS,
     EVILS,
@@ -75,6 +58,22 @@ public:
   QStringList Flags;
   QStringList Blows;
   Creature* target = 0;
+  QStringList Flag_ =
+  {
+    "CAN_BLOW",
+    "CAN_MOVE",
+    "PASS_WALL",
+    "HATE_ORCS",
+    "HATE_EVILS",
+    "HATE_TROLLS",
+    "HATE_GIANTS",
+    "HATE_DEMONS",
+    "HATE_METALS",
+    "HATE_PLAYERS",
+    "HATE_DRAGONS",
+    "HATE_UNDEADS",
+    "HATE_ANIMALS",
+  };
 private:
     int damage_;
     float alertness_;
