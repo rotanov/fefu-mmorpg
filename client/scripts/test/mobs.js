@@ -440,6 +440,7 @@ function test() {
                         ["#", ".", ".", ".", "#"],
                         ["#", "#", "#", "#", "#"]
                     ]
+                this.timeout(7000)
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
@@ -451,7 +452,8 @@ function test() {
                     case "putMob":
                         assert.equal("ok", data.result, "put mob")
                         mob.id = data.id
-                        setTimeout(socket.singleExamine(mob.id, userData.sid), 6000)
+                        $.when(setTimeout(function(){}, 6000))
+                        .done(function(data) {socket.singleExamine(mob.id, userData.sid)})
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
