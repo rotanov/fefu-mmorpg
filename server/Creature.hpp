@@ -38,7 +38,7 @@ public:
     {STRENGTH, 10},
     {INTELLIGENCE, 10},
     {DEXTERITY, 10},
-    {SPEED, 0.5},
+    {SPEED, 0.2},
     {DEFENSE, 10},
     {MAGIC_RESISTANCE, 5},
     {CAPACITY, 5},
