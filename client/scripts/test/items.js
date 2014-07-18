@@ -1144,6 +1144,34 @@ function test() {
                 })
                 socket.putPlayer(player.x, player.y, {}, [makeItem(), makeItem()], {}, userData.sid)
             })
+
+            it("should fail equip item [object is player's fist]", function(done) {
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {}
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player")
+                        player.sid = data.sid
+                        player.id = data.id
+                        item.id = data.fistId
+                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"}, userData.sid)
+                        break
+                    case "enforce":
+                        assert.equal("ok", data.result, "enforce request")
+                        assert.equal("badId", data.actionResult.result, "equip item")
+                        socket.singleExamine(player.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(0, data.inventory.length, "no item in inventory")
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
+            })
         })
 
         describe("Unequip", function() {
