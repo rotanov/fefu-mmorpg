@@ -368,7 +368,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
-                        assert.equal(0, data.inventory.length, "one item in inventory")
+                        assert.equal(0, data.inventory.length, "no item in inventory")
                         socket.setOnMessage(undefined)
                         done()
                     }
@@ -588,6 +588,34 @@ function test() {
                 })
                 socket.putPlayer(player1.x, player1.y, {}, [makeItem()], {}, userData.sid)
                 socket.putPlayer(player2.x, player2.y, {}, [], {}, userData.sid)
+            })
+
+            it("should fail destroy item [object is player's fist]", function(done) {
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {}
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player")
+                        player.sid = data.sid
+                        player.id = data.id
+                        item.id = data.fistId
+                        socket.enforce({"action": "destroyItem", "id": item.id, "sid": player.sid}, userData.sid)
+                        break
+                    case "enforce":
+                        assert.equal("ok", data.result, "enforce request")
+                        assert.equal("badId", data.actionResult.result, "destroy item")
+                        socket.singleExamine(player.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(0, data.inventory.length, "no item in inventory")
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
         })
 
