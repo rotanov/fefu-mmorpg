@@ -596,6 +596,12 @@ void GameServer::HandleSetLocation_(const QVariantMap& request, QVariantMap& res
 {
   Q_UNUSED(response);
 
+  if (!request["x"].toFloat() || !request["y"].toFloat())
+  {
+    WriteResult_(response, EFEMPResult::BAD_PLACING);
+    return;
+  }
+
   float x = request["x"].toFloat();
   float y = request["y"].toFloat();
   auto sid = request["sid"].toByteArray();
