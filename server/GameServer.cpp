@@ -1089,6 +1089,7 @@ void GameServer::HandlePutPlayer_(const QVariantMap&  request, QVariantMap& resp
 
   sidToPlayer_.insert(sid, p);
   response["sid"] = sid;
+  response["fistId"] = FistId_;
 }
 
 //==============================================================================

@@ -139,6 +139,8 @@ function test() {
                         break
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player")
+                        assert.property(data, "fistId")
+                        assert.isDefined(data.fistId)
                         player.id = data.id
                         socket.singleExamine(player.id, userData.sid)
                         break
