@@ -411,7 +411,7 @@ function test() {
                 socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
 
-            it("should successfully destroy item [item's center is more constant pickUpRadius]", function(done) {
+            it("should fail destroy item [item's center is more constant pickUpRadius]", function(done) {
                 var player = {"x": 3.5, "y": 3.5}
                 var item = {"x": player.x + pickUpRadius + 1, "y": player.y + pickUpRadius + 1}
                 socket.setOnMessage(function(e) {
@@ -753,6 +753,11 @@ function test() {
                     case "enforce":
                         assert.equal("ok", data.result, "enforce request")
                         assert.equal("badSlot", data.actionResult.result, data.actionResult.action + " request")
+                        socket.singleExamine(player.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(undefined, data.slots["left-hand"], "no item in slot")
                         socket.setOnMessage(undefined)
                         done()
                     }
@@ -941,7 +946,7 @@ function test() {
                 socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
 
-            it("should successfully equip item [item's center is more constant pickUpRadius]", function(done) {
+            it("should fail equip item [item's center is more constant pickUpRadius]", function(done) {
                 var player = {"x": 3.5, "y": 3.5}
                 var item = {"x": player.x + pickUpRadius + 1, "y": player.y + pickUpRadius + 1}
                 socket.setOnMessage(function(e) {

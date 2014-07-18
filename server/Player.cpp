@@ -97,7 +97,7 @@ bool Player::SetSlot(Slot st, Item* item)
 {
   bool result = false;
   if ((st == left_hand || st == right_hand) &&
-      (item->GetTypeItem() == "weapon" || item->GetTypeItem() == "shield" ))
+      (item->GetTypeItem() == "weapon" || item->GetTypeItem() == "shield"))
     result = true;
   else if ((st == left_finger || st == right_finger) && (item->GetTypeItem() == "ring"))
     result = true;

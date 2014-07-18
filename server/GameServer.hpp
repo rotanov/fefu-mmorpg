@@ -99,7 +99,6 @@ private:
     {"getDictionary", &GameServer::HandleGetDictionary_},
     {"look", &GameServer::HandleLook_},
     {"move", &GameServer::HandleMove_},
-    {"attack", &GameServer::HandleAttack_},
     {"pickUp", &GameServer::HandlePickUp_}, //взять
     {"unequip", &GameServer::HandleUnequip_}, // снять
     {"use", &GameServer::HandleUse_},// использовать
@@ -128,7 +127,6 @@ private:
   void HandleGetDictionary_(const QVariantMap& request, QVariantMap& response);
   void HandleLook_(const QVariantMap& request, QVariantMap& response);
   void HandleMove_(const QVariantMap& request, QVariantMap& response);
-  void HandleAttack_(const QVariantMap& request, QVariantMap& response);
   void HandlePickUp_(const QVariantMap& request, QVariantMap& response);
   void HandleUnequip_(const QVariantMap& request, QVariantMap& response);
   void HandleUse_(const QVariantMap& request, QVariantMap& response);
