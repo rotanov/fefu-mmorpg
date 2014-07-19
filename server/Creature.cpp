@@ -14,6 +14,7 @@ float Creature::GetHealth() const
 {
   return Stat[HP];
 }
+
 void Creature::SetHealth(const float health)
 {
   Stat[HP] = health;
@@ -28,6 +29,7 @@ void Creature::SetMaxHealth(const float maxHealth)
 {
   Stat[MAX_HP] = maxHealth;
 }
+
 void Creature::SetSpeed(const float speed)
 {
   Stat[SPEED] = speed;
@@ -37,18 +39,32 @@ float Creature::GetSpeed() const
 {
   return Stat[SPEED];
 }
+
+float Creature::GetStatValue(Stat_const key) const
+{
+  return Stat[key];
+}
+
 void Creature::SetRace()
 {
 
 }
+
 void Creature::SetStat(bool flag, Item* item)
 {
-  for (auto i = item->bonus.begin(); i != item->bonus.end(); i++)
+  for (auto i = item->bonuses.begin(); i != item->bonuses.end(); i++)
   {
+    auto v = *i;
     if (flag)
-      Stat[i.key()] += i.value ();
+    {
+      if (v["effectCalculation"] == "const")
+        Stat[i.key()] += v["value"].toFloat();
+    }
     else
-      Stat[i.key()] -= i.value ();
+    {
+      if (v["effectCalculation"] == "const")
+        Stat[i.key()] -= v["value"].toFloat();
+    }
   }
 }
 

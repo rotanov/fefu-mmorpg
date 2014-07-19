@@ -64,10 +64,12 @@ void Item::SetTypeItem(QString str)
 {
   type_item_ = str;
 }
+
 void Item::SetTypeItem(int str)
 {
   type_item_ = type[str];
 }
+
 void Item::SetTime(int str)
 {
   time_= str;

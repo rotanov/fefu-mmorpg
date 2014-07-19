@@ -162,7 +162,7 @@ void PermaStorage::GetItem(Item* i, const int id )
       k << a.split(":");
       for (auto j: k[1].split("|"))
       {
-        i->bonus[Stats[j]] = k[0].toFloat();
+        i->bonuses[Stats[j]]["value"] = k[0];
       }
     }
     QStringList s ;

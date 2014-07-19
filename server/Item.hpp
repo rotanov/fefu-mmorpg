@@ -2,15 +2,15 @@
 
 #include "Actor.hpp"
 #include <QStringList>
+#include <QVariant>
 #include <QMap>
-
-
 
 class Item : public Actor
 {
 public:
   Item();
   virtual ~Item();
+
   QString Getname();
   int GetWeight();
   QString GetTypeItem();
@@ -18,6 +18,7 @@ public:
   QString GetClass();
   QString GetMessage();
   int GetTime();
+
   void SetName(QString str);
   void SetWeight(int str);
   void SetTime(int str);
@@ -26,17 +27,20 @@ public:
   void SetSubtype(QString str);
   void SetClass(QString str);
   void SetMessage(QString str);
+
   QStringList Flags;
-  QMap <Stat_const, float> bonus;
+  QMap <Stat_const, QMap <QString, QVariant> > bonuses;
   Damage damage;
+
 private:
-  QString name_;
   int time_;
   int weight_;
+  QString name_;
   QString type_item_;
   QString class_item_;
   QString subtype_;
   QString massege_;
+
   std::vector<QString> class_ =
   {
     "garment",
@@ -56,6 +60,7 @@ private:
     "weapon",
     "expendable",
   };
+
   std::vector<QString> subtype =
   {
     "one-handed",
