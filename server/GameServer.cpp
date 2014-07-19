@@ -676,6 +676,13 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
       }
     }
     response["slots"] = id_slot;
+
+    QVariantMap stats;
+    for (auto i = StringToStat.begin(); i != StringToStat.end(); i++)
+    {
+      stats[i.key()] = p->GetStatValue(i.value());
+    }
+    response["stats"] = stats;
   }
 
   response["x"] = actor->GetPosition().x;
@@ -774,7 +781,7 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
     }
     else
     {
-      p->SetHealth(p->GetHealth() + item->bonus[HP]);
+      p->SetHealth(p->GetHealth() + item->bonuses[HP]["value"].toFloat());
       WriteResult_(response, EFEMPResult::OK);
       return;
     }
@@ -793,8 +800,8 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
     return;
   }
 
-  float x = request["x"].toFloat();
-  float y = request["y"].toFloat();
+  //float x = request["x"].toFloat();
+  //float y = request["y"].toFloat();
 
   for (Actor* actor: actors_)
   {
@@ -803,8 +810,8 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
       continue;
     }
     Creature* target = static_cast<Creature*>(actor);
-   // Box box0(actor->GetPosition(), 1f, 1f);
-   // Box box1(Vector2(x, y), 1f, 1f);
+    //Box box0(actor->GetPosition(), 1f, 1f);
+    //Box box1(Vector2(x, y), 1f, 1f);
     if ((p->GetId() != target->GetId()) && (target->GetHealth() > 0))
     {
       Vector2 player_pos = p->GetPosition();
@@ -901,6 +908,7 @@ void GameServer::HandleEquip_(const QVariantMap& request, QVariantMap& response)
         }
         p->SetStat(true, item);
         p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
+
         WriteResult_(response, EFEMPResult::OK);
         return;
       }
@@ -1228,7 +1236,18 @@ void GameServer::SetItemDescription(const QVariantMap& request, Item* item)
   item->SetClass(request["class"].toString());
   item->SetTypeItem(request["type"].toString());
   item->SetWeight(request["weight"].toInt());
-  //item->bonus = request["bonus"];
+
+  //set bonuses
+  auto bonuses_ = request["bonuses"].toList();
+  for (auto i = bonuses_.begin(); i != bonuses_.end(); i++)
+  {
+      auto elem = (*i).toMap();
+      auto stat = elem["stat"].toString();
+      QMap <QString, QVariant> m;
+      m["effectCalculation"] = elem["effectCalculation"].toString();
+      m["value"] = elem["value"];
+      item->bonuses[StringToStat[stat]] = m;
+  }
 }
 
 //==============================================================================
