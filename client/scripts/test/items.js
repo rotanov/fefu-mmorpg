@@ -1172,6 +1172,44 @@ function test() {
                 })
                 socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
+
+            it("should successfully equip item with bonus from inventory [change of stats]", function(done) {
+                var player = {"x": 3.5, "y": 3.5, "STRENGTH": 5}
+                var bonus = {
+                    "stat": "STRENGTH",
+                    "effectCalculation": "const",
+                    "value": 10
+                }
+                var item = {}
+                var answer = player.STRENGTH + bonus.value
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player with item")
+                        player.id = data.id
+                        player.sid = data.sid
+                        item.id = data.inventory[0].id
+                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"}, userData.sid)
+                        break
+                    case "enforce":
+                        assert.equal("ok", data.result, "enforce request")
+                        assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
+                        if (data.actionResult.action == "equip") {
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid}, userData.sid)
+                        } else if (data.actionResult.action == "examine") {
+                            assert.equal(item.id, data.actionResult.slots["left-hand"], "item in slot")
+                            assert.equal(answer, data.actionResult.stats.STRENGTH, "change of stats")
+                            socket.setOnMessage(undefined)
+                            done()
+                        }
+                    }
+                })
+                socket.putPlayer(player.x, player.y,
+                                {"STRENGTH": player.STRENGTH},
+                                [makeItem(null, null, null, [bonus])],
+                                {}, userData.sid)
+            })
         })
 
         describe("Unequip", function() {
