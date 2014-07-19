@@ -1054,7 +1054,15 @@ void GameServer::HandlePutPlayer_(const QVariantMap&  request, QVariantMap& resp
     Item* item = CreateActor_<Item>();
     SetItemDescription(a.toMap(), item);
     p->items_.push_back(item);
-    actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());
+    actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());//???
+  }
+
+  auto stats = request["stats"].toMap();
+  for (auto s = stats.begin(); s != stats.end(); s++)
+  {
+    Stat_const stat = StringToStat[s.key()];
+    QVariant val = s.value();
+    p->SetStat(stat, val.toFloat());
   }
 
   QVariantList items;
