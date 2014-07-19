@@ -31,6 +31,7 @@ public:
   void SetSpeed(const float health);
   void SetMaxHealth(const float maxHealth);
   void SetStat(bool flag, Item* item);
+  void SetStat(Stat_const key, float value);
 
   virtual QVariantMap atack(Creature* actor);
   virtual void SetRace();

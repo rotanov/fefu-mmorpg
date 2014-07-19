@@ -68,6 +68,11 @@ void Creature::SetStat(bool flag, Item* item)
   }
 }
 
+void Creature::SetStat(Stat_const key, float value)
+{
+  Stat[key] = value;
+}
+
 QVariantMap Creature::atack(Creature* /*actor*/)
 {
   QVariantMap ans;
