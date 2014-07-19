@@ -182,18 +182,34 @@ private:
     "register",
     "login",
   };
+
   QMap <QString, Slot> SlotToString =
   {
     {"ammo", ammo},
     {"body", body},
     {"feet", feet},
     {"forearm", forearm},
-    {"head" ,head},
+    {"head", head},
     {"left-finger", left_finger},
     {"left-hand", left_hand},
     {"neck", neck},
     {"right-finger", right_finger},
     {"right-hand", right_hand}
+  };
+
+  QMap <QString, Stat_const> StringToStat =
+  {
+    {"STRENGTH", STRENGTH},
+    {"INTELLIGENCE", INTELLIGENCE},
+    {"DEXTERITY", DEXTERITY},
+    {"SPEED", SPEED},
+    {"DEFENSE", DEFENSE},
+    {"MAGIC_RESISTANCE", MAGIC_RESISTANCE},
+    {"CAPACITY", CAPACITY},
+    {"HP", HP},
+    {"MAX_HP", MAX_HP},
+    {"MP", MP},
+    {"MAX_MP", MAX_MP}
   };
 };
 
