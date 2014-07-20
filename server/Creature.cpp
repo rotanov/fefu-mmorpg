@@ -67,7 +67,7 @@ void Creature::SetStat(bool flag, Item* item)
       if (v["effectCalculation"] == "const")
         Stat[i.key()] -= v["value"].toFloat();
       else if (v["effectCalculation"] == "percent")
-        Stat[i.key()] += v["value"].toFloat() * Stat[i.key()] / 100;
+        Stat[i.key()] -= v["value"].toFloat() * Stat[i.key()] / 100;
     }
   }
 }
