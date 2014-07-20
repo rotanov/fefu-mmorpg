@@ -1175,14 +1175,19 @@ function test() {
 
             it("should successfully equip item with bonus from inventory \
                 [change of stats if effectCalculation - const]", function(done) {
-                var player = {"x": 3.5, "y": 3.5, "STRENGTH": 5}
-                var bonus = {
+                var player = {"x": 3.5, "y": 3.5, "STRENGTH": 5, "SPEED": 10}
+                var bonus1 = {
                     "stat": "STRENGTH",
                     "effectCalculation": "const",
                     "value": 10
                 }
+
+                var bonus2 = {
+                    "stat": "SPEED",
+                    "effectCalculation": "const",
+                    "value": -5
+                }
                 var item = {}
-                var answer = player.STRENGTH + bonus.value
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
                     switch(data.action) {
@@ -1200,15 +1205,16 @@ function test() {
                             socket.enforce({"action": "examine", "id": player.id, "sid": player.sid}, userData.sid)
                         } else if (data.actionResult.action == "examine") {
                             assert.equal(item.id, data.actionResult.slots["left-hand"], "item in slot")
-                            assert.equal(answer, data.actionResult.stats.STRENGTH, "change of stats")
+                            assert.equal(player.STRENGTH + bonus1.value, data.actionResult.stats.STRENGTH, "bonus1: change of stats")
+                            assert.equal(player.SPEED + bonus2.value, data.actionResult.stats.SPEED, "bonus2: change of stats")
                             socket.setOnMessage(undefined)
                             done()
                         }
                     }
                 })
                 socket.putPlayer(player.x, player.y,
-                                {"STRENGTH": player.STRENGTH},
-                                [makeItem(null, null, null, [bonus])],
+                                {"STRENGTH": player.STRENGTH, "SPEED": player.SPEED},
+                                [makeItem(null, null, null, [bonus1, bonus2])],
                                 {}, userData.sid)
             })
 
