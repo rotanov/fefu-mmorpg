@@ -390,10 +390,56 @@ function test() {
                         var newCoor = shift(dirs[counter], player.x, player.y, val)
                         assert.equal(Math.round(newCoor.x), Math.round(data.x), dirs[counter]+": equal coordinate by x")
                         assert.equal(Math.round(newCoor.y), Math.round(data.y), dirs[counter]+": equal coordinate by y")
-                        player.x = newCoor.x
-                        player.y = newCoor.y
+                        player.x = data.x
+                        player.y = data.y
                         if (++counter < dirs.length) {
                             tick1 = tick
+                            socket.move(dirs[counter], tick, player.sid)
+                        } else {
+                            socket.setOnMessage(undefined)
+                            done()
+                        }
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
+            })
+
+            it("should successfully move in all directions [collision with walls]", function(done) {
+                var dirs = ["west", "north", "east", "south"]
+                var counter = 0
+                var tick
+                var player = {"x": 1.5, "y": 1.5}
+                var map = [
+                    ["#", "#", "#"],
+                    ["#", ".", "#"],
+                    ["#", "#", "#"]
+                ]
+                socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    if (data.tick) {
+                        tick = data.tick
+                    }
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
+                        break
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player")
+                        player.id = data.id
+                        player.sid = data.sid
+                        socket.move(dirs[counter], tick, player.sid)
+                        break
+                    case "move":
+                        assert.equal("ok", data.result, "move request")
+                        socket.singleExamine(player.id, player.sid)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(player.x, data.x, dirs[counter]+": equal coordinate by x")
+                        assert.equal(player.y, data.y, dirs[counter]+": equal coordinate by y")
+                        if (++counter < dirs.length) {
                             socket.move(dirs[counter], tick, player.sid)
                         } else {
                             socket.setOnMessage(undefined)
