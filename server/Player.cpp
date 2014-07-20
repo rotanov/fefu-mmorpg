@@ -3,9 +3,9 @@
 Player::Player()
 {
   type_ = "player";
-  SetRace ();
-  SetMaxHealth (1000);
-  SetHealth (1000);
+  SetRace();
+  SetMaxHealth(1000);
+  SetHealth(1000);
   SetBlows();
 }
 
@@ -47,6 +47,7 @@ void Player::SetBlows()
   blows.damage->to = 5;
   blows.effect = "HURT";
 }
+
 void Player::SetDamage(QString str, bool b)
 {
   QStringList s2;
@@ -56,7 +57,9 @@ void Player::SetDamage(QString str, bool b)
   {
     result->count = s2[0].toInt() + blows.damage->count;
     result->count = s2[1].toInt() + blows.damage->to;
-  } else {
+  }
+  else
+  {
     result->count = s2[0].toInt() - blows.damage->count;
     result->count = s2[1].toInt() - blows.damage->to;
   }
@@ -69,12 +72,13 @@ QVariantMap Player::atack(Creature* actor, int id)
   int n = blows.damage->count, m = blows.damage->to;
   if (id == 1)
   {
-    Item* item = GetSlot (left_hand);
+    Item* item = GetSlot(left_hand);
     n = item->damage.count;
     m = item->damage.to;
-  } else if (id == 2)
+  }
+  else if (id == 2)
   {
-    Item* item = GetSlot (right_hand);
+    Item* item = GetSlot(right_hand);
     n = item->damage.count;
     m = item->damage.to;
   }
@@ -117,6 +121,7 @@ bool Player::SetSlot(Slot st, Item* item)
     slot_[st] = item;
   return result;
 }
+
 bool Player::SetSlot(Slot st)
 {
   slot_[st] = 0;

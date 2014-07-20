@@ -55,7 +55,7 @@ void Item::SetWeight(int str)
   weight_ = str;
 }
 
-void Item::SetMessage (QString str)
+void Item::SetMessage(QString str)
 {
   massege_ = str;
 }
@@ -77,12 +77,12 @@ void Item::SetTime(int str)
 
 void Item::SetSubtype(QString str)
 {
-  int i = str.toInt () > 0?str.toInt ():0;
+  int i = str.toInt() > 0 ? str.toInt() : 0;
   subtype_ = subtype[i];
 }
 
 void Item::SetClass(QString str)
 {
-  int i = str.toInt () > 0?str.toInt ():0;
+  int i = str.toInt() > 0 ? str.toInt() : 0;
   class_item_ = class_[i];
 }

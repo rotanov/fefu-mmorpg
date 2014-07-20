@@ -13,21 +13,21 @@ Monster::~Monster()
 
 void Monster::OnCollideWorld()
 {
-    if (Flags.lastIndexOf("PASS_WALL") == -1)
-    {
-        SetDirection(static_cast<EActorDirection>(rand() % 4 + 1));
-        return;
-    }
+  if (Flags.lastIndexOf("PASS_WALL") == -1)
+  {
+    SetDirection(static_cast<EActorDirection>(rand() % 4 + 1));
+    return;
+  }
 }
 
 bool Monster::OnCollideActor(Actor* actor)
 {
-  if (actor->GetType () == "monster" || actor->GetType () == "player")
+  if (actor->GetType() == "monster" || actor->GetType() == "player")
   {
-    QStringList str = Flags.filter ("HATE");
+    QStringList str = Flags.filter("HATE");
     for (auto& a: str)
     {
-      if (Hates[a] == race_ )
+      if (Hates[a] == race_)
         return true;
     }
   }
@@ -37,15 +37,15 @@ bool Monster::OnCollideActor(Actor* actor)
 
 void Monster::Update(float dt)
 {
-    if (Flags.lastIndexOf("NEVER_MOVE") == -1)
-    {
-        position_ += velocity_ * dt;
-    }
+  if (Flags.lastIndexOf("NEVER_MOVE") == -1)
+  {
+    position_ += velocity_ * dt;
+  }
 }
 
 QString Monster::GetName()
 {
-    return name;
+  return name;
 }
 
 QString Monster::GetRace()
@@ -55,21 +55,21 @@ QString Monster::GetRace()
 
 void Monster::SetRace(QString r)
 {
-   for (auto& k: Races)
-   {
-     if (k == r)
-     {
+  for (auto& k: Races)
+  {
+    if (k == r)
+    {
       race_ = r;
       return;
-     }
-   }
+    }
+  }
 }
 
 void Monster::SetRace()
 {
   for (auto& r: Races)
   {
-    if (Flags.lastIndexOf (r) != -1)
+    if (Flags.lastIndexOf(r) != -1)
     {
       race_ = r;
       return;
@@ -95,7 +95,7 @@ QVariantMap Monster::atack(Creature* actor)
   QVariantMap ans;
   ans["dealtDamage"] = val;
   ans["target"] = actor->GetId();
- // ans["blowType"] = s[0];
+  //ans["blowType"] = s[0];
   ans["attacker"] = GetId();
   return ans;
 }

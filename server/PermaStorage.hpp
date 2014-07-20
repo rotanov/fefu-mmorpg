@@ -3,6 +3,7 @@
 #include <QSqlDatabase>
 #include "Monster.hpp"
 #include "Item.hpp"
+
 class PermaStorage
 {
 public:
@@ -15,10 +16,9 @@ public:
   void AddUser(const QString login, const QString passHash, const QString salt);
   QString GetSalt(const QString login);
   QString GetPassHash(const QString login);
-  void GetMonster (Monster* m, const int id);
+  void GetMonster(Monster* m, const int id);
   void GetItem (Item* i, const int id );
   bool IfLoginPresent(const QString login);
-
 
 private:
   QSqlDatabase db_;

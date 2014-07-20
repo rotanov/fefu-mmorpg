@@ -12,21 +12,27 @@ public:
   virtual ~Item();
 
   QString Getname();
-  int GetWeight();
-  QString GetTypeItem();
-  QString GetSubtype();
-  QString GetClass();
-  QString GetMessage();
-  int GetTime();
-
   void SetName(QString str);
+
+  int GetWeight();
   void SetWeight(int str);
-  void SetTime(int str);
+
+  QString GetTypeItem();
   void SetTypeItem(QString str);
   void SetTypeItem(int str);
-  void SetSubtype(QString str);
-  void SetClass(QString str);
+
+  QString GetSubtype();
+  QString GetClass();
+
+  QString GetMessage();
   void SetMessage(QString str);
+
+  int GetTime();
+  void SetTime(int str);
+
+  void SetSubtype(QString str);
+
+  void SetClass(QString str);
 
   QStringList Flags;
   QMap <Stat_const, QMap <QString, QVariant> > bonuses;
@@ -67,5 +73,4 @@ private:
     "two-handed",
     "bow",
   };
-
 };

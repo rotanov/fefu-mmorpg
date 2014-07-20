@@ -1,14 +1,9 @@
 #pragma once
 
 #include <unordered_map>
-
 #include <QString>
-
 #include "2de_Vector2.h"
-
 using namespace Deku2D;
-
-
 
 enum class EActorDirection
 {
@@ -18,19 +13,20 @@ enum class EActorDirection
   SOUTH,
   WEST,
 };
+
 enum Stat_const
 {
-    STRENGTH,
-    INTELLIGENCE,
-    DEXTERITY,
-    SPEED,
-    DEFENSE,
-    MAGIC_RESISTANCE,
-    CAPACITY,
-    HP,
-    MAX_HP,
-    MP,
-    MAX_MP,
+  STRENGTH,
+  INTELLIGENCE,
+  DEXTERITY,
+  SPEED,
+  DEFENSE,
+  MAGIC_RESISTANCE,
+  CAPACITY,
+  HP,
+  MAX_HP,
+  MP,
+  MAX_MP,
 };
 
 struct Damage {
@@ -73,7 +69,6 @@ public:
 
   virtual void OnCollideWorld();
   virtual bool OnCollideActor(Actor* actor);
-
 
   QString GetType() const;
 

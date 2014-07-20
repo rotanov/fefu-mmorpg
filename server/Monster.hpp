@@ -6,6 +6,7 @@
 #include <QString>
 #include <QMap>
 #include <QStringList>
+
 enum class Race {
     ORCS,
     EVILS,
@@ -18,8 +19,6 @@ enum class Race {
     UNDEADS,
     ANIMALS,
 };
-
-
 
 const std::vector<QString> Races =
 {
@@ -35,23 +34,27 @@ const std::vector<QString> Races =
   [Race::ANIMALS] = "ANIMAL",
 };
 
-
-
 class Monster : public Creature
 {
 public:
   Monster();
   virtual ~Monster();
+
   virtual void OnCollideWorld();
   virtual bool OnCollideActor(Actor* actor);
   virtual void Update(float dt);
+
   virtual void SetRace();
   virtual void SetRace(QString r);
   QString GetRace();
-  virtual QVariantMap atack(Creature* actor);
-  QString GetName();
+
   void SetAlertness(float al);
   float GetAlertness();
+
+  QString GetName();
+
+  virtual QVariantMap atack(Creature* actor);
+
   QString name;
   QString description;
   QString symbol;
@@ -74,10 +77,11 @@ public:
     "HATE_UNDEADS",
     "HATE_ANIMALS",
   };
+
 private:
-    int damage_;
-    float alertness_;
-    QMap<QString,QString> Hates =
+  int damage_;
+  float alertness_;
+  QMap<QString,QString> Hates =
   {
     {"HATE_ORC","ORC"},
     {"HATE_EVIL","EVIL"},

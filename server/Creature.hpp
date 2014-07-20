@@ -23,13 +23,15 @@ public:
   virtual ~Creature();
 
   float GetHealth() const;
-  float GetSpeed() const;
-  float GetMaxHealth() const;
-  float GetStatValue(Stat_const key) const;
-
   void SetHealth(const float health);
+
+  float GetSpeed() const;
   void SetSpeed(const float health);
+
+  float GetMaxHealth() const;
   void SetMaxHealth(const float maxHealth);
+
+  float GetStatValue(Stat_const key) const;
   void SetStat(bool flag, Item* item);
   void SetStat(Stat_const key, float value);
 
@@ -39,18 +41,18 @@ public:
   QString race_ = "NONE";
 
 private:
-   QMap <Stat_const, float> Stat =
-   {
-     {STRENGTH, 10},
-     {INTELLIGENCE, 10},
-     {DEXTERITY, 10},
-     {SPEED, 0.2},
-     {DEFENSE, 10},
-     {MAGIC_RESISTANCE, 5},
-     {CAPACITY, 5},
-     {HP, 100},
-     {MAX_HP, 100},
-     {MP, 500},
-     {MAX_MP, 500},
-   };
+  QMap <Stat_const, float> Stat =
+  {
+    {STRENGTH, 10},
+    {INTELLIGENCE, 10},
+    {DEXTERITY, 10},
+    {SPEED, 0.2},
+    {DEFENSE, 10},
+    {MAGIC_RESISTANCE, 5},
+    {CAPACITY, 5},
+    {HP, 100},
+    {MAX_HP, 100},
+    {MP, 500},
+    {MAX_MP, 500},
+  };
 };

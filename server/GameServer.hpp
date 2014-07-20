@@ -31,7 +31,6 @@ enum class EFEMPResult
   BAD_DAMAGE,
 };
 
-
 const std::vector<QString> fempResultToString =
 {
   [EFEMPResult::OK] = "ok",
@@ -49,8 +48,6 @@ const std::vector<QString> fempResultToString =
   [EFEMPResult::BAD_FLAG] = "badFlag",
   [EFEMPResult::BAD_DAMAGE] = "badDamage",
 };
-
-
 
 // TODO: separate module
 // TODO: proper class name
@@ -141,7 +138,7 @@ private:
   void GetItems(Creature* actor);
   Player* CreatePlayer_(const QString login);
   void SetActorPosition_(Actor* actor, const Vector2& position);
-  void SetItemDescription (const QVariantMap &request, Item* item);
+  void SetItemDescription(const QVariantMap &request, Item* item);
   bool IsIncorrectPosition(float x, float y, Actor *actor);
   template <typename T>
   T* CreateActor_();

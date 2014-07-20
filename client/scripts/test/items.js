@@ -1371,6 +1371,64 @@ function test() {
                 })
                 socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
+
+            it("should successfully unequip item with bonus \
+                [change of stats if effectCalculation - const]", function(done) {
+                var flag = true
+                var player = {"x": 3.5, "y": 3.5, "STRENGTH": 5, "SPEED": 10}
+                var bonus1 = {
+                    "stat": "STRENGTH",
+                    "effectCalculation": "const",
+                    "value": 10
+                }
+
+                var bonus2 = {
+                    "stat": "SPEED",
+                    "effectCalculation": "const",
+                    "value": -5
+                }
+                var item = {}
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player with item")
+                        player.id = data.id
+                        player.sid = data.sid
+                        item.id = data.inventory[0].id
+                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"}, userData.sid)
+                        break
+                    case "enforce":
+                        assert.equal("ok", data.result, "enforce request")
+                        assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
+                        if (data.actionResult.action == "equip") {
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid}, userData.sid)
+
+                        } else if (data.actionResult.action == "examine") {
+                            if (flag) {
+                                flag = false
+                                assert.equal(item.id, data.actionResult.slots["left-hand"], "item in slot")
+                                assert.equal(player.STRENGTH + bonus1.value, data.actionResult.stats.STRENGTH, "bonus1: change of stats")
+                                assert.equal(player.SPEED + bonus2.value, data.actionResult.stats.SPEED, "bonus2: change of stats")
+                                socket.enforce({"action": "unequip", "sid": player.sid, "slot": "left-hand"}, userData.sid)
+                            } else {
+                                assert.equal(undefined, data.actionResult.slots["left-hand"], "no item in slot")
+                                assert.equal(player.STRENGTH, data.actionResult.stats.STRENGTH, "bonus1: change of stats after unequip")
+                                assert.equal(player.SPEED, data.actionResult.stats.SPEED, "bonus2: change of stats after unequip")
+                                socket.setOnMessage(undefined)
+                                done()
+                            }
+
+                        } else if (data.actionResult.action == "unequip") {
+                            socket.enforce({"action": "examine", "id": player.id, "sid": player.sid}, userData.sid)
+                        }
+                    }
+                })
+                socket.putPlayer(player.x, player.y,
+                                {"STRENGTH": player.STRENGTH, "SPEED": player.SPEED},
+                                [makeItem(null, null, null, [bonus1, bonus2])],
+                                {}, userData.sid)
+            })
         })
 
         describe("Equip / Unequip", function() {
