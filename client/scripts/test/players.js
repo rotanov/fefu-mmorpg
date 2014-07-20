@@ -309,6 +309,44 @@ function test() {
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
+
+            it("should fail put player \
+            [badPlacing: intersection with another player]", function(done) {
+                var flag = true
+                var player1 = {"x": 0.5, "y": 0.5}
+                var player2 = {"x": 1.0, "y": 1.0}
+                var map = [
+                    [".", ".", "."],
+                    [".", ".", "."],
+                    [".", ".", "."]
+                ]
+                socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putPlayer(player1.x, player1.y, {}, [], {}, userData.sid)
+                        break
+                    case "putPlayer":
+                        if (flag) {
+                            flag = false
+                            assert.equal("ok", data.result, "put player1")
+                            socket.putPlayer(player2.x, player2.y, {}, [], {}, userData.sid)
+                        } else {
+                            assert.equal("badPlacing", data.result, "put player2")
+                            player2.id = data.id
+                            socket.singleExamine(player2.id, userData.sid)
+                        }
+                        break
+                    case "examine":
+                        assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
+            })
         })
 
 
