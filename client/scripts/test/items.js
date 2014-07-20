@@ -82,7 +82,7 @@ function test() {
 
     describe.only("Items", function(done) {
 
-        describe("Put Item", function() {
+        /*describe("Put Item", function() {
             beforeEach(BF)
             it("should successfully put item", function(done) {
                 var item = {"x": 4.5, "y": 4.5}
@@ -277,7 +277,7 @@ function test() {
                     }
                 })
                 socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
-            })
+            })*/
 
             /*it("should fail pick up item [too heavy]", function(done) {
                 var player = {"x": 3.5, "y": 3.5}
@@ -311,7 +311,7 @@ function test() {
                 socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })*/
 
-            it("should fail pick up item [object in other player's inventory]", function(done) {
+            /*it("should fail pick up item [object in other player's inventory]", function(done) {
                 var flag = true
                 var player1 = {"x": 3.5, "y": 3.5}
                 var player2 = {"x": 1.4, "y": 1.4}
@@ -789,11 +789,11 @@ function test() {
                 })
                 socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
             })
-        })
+        })*/
 
         describe("Equip", function() {
             beforeEach(BF)
-            it("should successfully equip item from inventory", function(done) {
+            /*it("should successfully equip item from inventory", function(done) {
                 var player = {"x": 3.5, "y": 3.5}
                 var item = {}
                 socket.setOnMessage(function(e) {
@@ -964,9 +964,47 @@ function test() {
                     }
                 })
                 socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
+            })*/
+
+            it("should fail equip item [object in other player's inventory]", function(done) {//////////
+                var flag = true
+                var player1 = {"x": 3.5, "y": 3.5}
+                var player2 = {"x": 1.4, "y": 1.4}
+                var item = {}
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player")
+                        if (flag) {
+                            player1.id = data.id
+                            player1.sid = data.sid
+                            item.id = data.inventory[0].id
+                            flag = false
+                        } else {
+                            player2.id = data.id
+                            player2.sid = data.sid
+                            socket.enforce({"action": "equip", "id": item.id, "sid": player2.sid, "slot": "left-hand"}, userData.sid)
+                        }
+                        break
+                    case "enforce":
+                        assert.equal("ok", data.result, "enforce request")
+                        if (data.actionResult.action == "equip") {
+                            assert.equal("badId", data.actionResult.result, data.actionResult.action + " request")
+                            socket.enforce({"action": "examine", "id": player2.id, "sid": player2.sid}, userData.sid)
+                        } else if (data.actionResult.action == "examine") {
+                            assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
+                            assert.equal(undefined, data.actionResult.slots["left-hand"], "no item in slot")
+                            socket.setOnMessage(undefined)
+                            done()
+                        }
+                    }
+                })
+                socket.putPlayer(player1.x, player1.y, {}, [makeItem()], {}, userData.sid)
+                socket.putPlayer(player2.x, player2.y, {}, [], {}, userData.sid)
             })
 
-            it("should successfully equip item [item's center is equal constant pickUpRadius]", function(done) {
+            /*it("should successfully equip item [item's center is equal constant pickUpRadius]", function(done) {
                 var player = {"x": 3.5, "y": 3.5}
                 var item = {"x": 3.5, "y": 2} //pickUpRadius = 1.5 = sqtr((3.5 - 3.5)^2 + (3.5 - 2)^2)
                 socket.setOnMessage(function(e) {
@@ -1255,10 +1293,10 @@ function test() {
                                 {"STRENGTH": player.STRENGTH},
                                 [makeItem(null, null, null, [bonus])],
                                 {}, userData.sid)
-            })
+            })*/
         })
 
-        describe("Unequip", function() {
+        /*describe("Unequip", function() {
             beforeEach(BF)
             it("should successfully unequip item", function(done) {
                 var player = {"x": 3.5, "y": 3.5}
@@ -1428,7 +1466,7 @@ function test() {
                 })
                 socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
             })
-        })
+        })*/
     })
 
     after(function() {
