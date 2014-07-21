@@ -567,7 +567,7 @@ function test() {
 
             it("should successfully move player [south: slide effect]", function(done) {
                 var tick
-                var player = {"x": 0.5+consts.slideThreshold, "y": 0.5}
+                var player = {"x": 1+consts.slideThreshold, "y": 0.5}
                 var map = [
                     [".", ".", "."],
                     [".", "#", "."],
@@ -607,7 +607,7 @@ function test() {
 
             it("should successfully move player [north: slide effect]", function(done) {
                 var tick
-                var player = {"x": 0.5+consts.slideThreshold, "y": 2.5}
+                var player = {"x": 1+consts.slideThreshold, "y": 2.5}
                 var map = [
                     [".", ".", "."],
                     [".", "#", "."],
@@ -647,7 +647,7 @@ function test() {
 
             it("should successfully move player [east: slide effect]", function(done) {
                 var tick
-                var player = {"x": 0.5, "y": 0.5+consts.slideThreshold}
+                var player = {"x": 0.5, "y": 1+consts.slideThreshold}
                 var map = [
                     [".", ".", "."],
                     [".", "#", "."],
@@ -687,7 +687,7 @@ function test() {
 
             it("should successfully move player [west: slide effect]", function(done) {
                 var tick
-                var player = {"x": 2.5, "y": 0.5+consts.slideThreshold}
+                var player = {"x": 2.5, "y": 1+consts.slideThreshold}
                 var map = [
                     [".", ".", "."],
                     [".", "#", "."],
