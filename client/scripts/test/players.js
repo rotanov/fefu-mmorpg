@@ -351,7 +351,7 @@ function test() {
 
         describe("Move Player", function() {
             it("should successfully move in all directions", function(done) {
-                var dirs = ["west", "north", "east", "south"]
+                var dirs = ["west", "east", "north", "south"]
                 var counter = 0
                 var tick, tick1, tick2
                 var player = {"x": 1.5, "y": 1.5}
@@ -360,7 +360,7 @@ function test() {
                     [".", ".", "."],
                     [".", ".", "."]
                 ]
-                this.timeout = 8000
+                //this.timeout = 8000
                 socket.setOnMessage(function(e) {
                     console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
@@ -409,7 +409,7 @@ function test() {
             })
 
             it("should successfully move in all directions [collision with walls]", function(done) {
-                var dirs = ["west", "north", "east", "south"]
+                var dirs = ["west", "east", "south", "north"]
                 var counter = 0
                 var tick
                 var player = {"x": 1.5, "y": 1.5}
@@ -454,8 +454,8 @@ function test() {
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
-            it("should successfully move in all directions [collision with players]", function(done) {
-                var dirs = ["west", "north", "east", "south"]
+            it("should successfully move in all directions [collision with another players]", function(done) {
+                var dirs = ["west", "east", "south", "north"]
                 var counter = 0
                 var tick
                 var player = {"x": 1.5, "y": 1.5}
@@ -486,6 +486,61 @@ function test() {
                             player.sid = data.sid
                         }
                         if (counter == 4) {
+                            counter = 0
+                            socket.move(dirs[counter], tick, player.sid)
+                        }
+                        ++counter
+                        break
+                    case "move":
+                        assert.equal("ok", data.result, "move request")
+                        socket.singleExamine(player.id, player.sid)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(player.x, data.x, dirs[counter]+": equal coordinate by x")
+                        assert.equal(player.y, data.y, dirs[counter]+": equal coordinate by y")
+                        if (++counter < dirs.length) {
+                            socket.move(dirs[counter], tick, player.sid)
+                        } else {
+                            socket.setOnMessage(undefined)
+                            done()
+                        }
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
+            })
+
+            it("should successfully move in all directions \
+                [collision with walls and another players]", function(done) {
+                var dirs = ["west", "east", "north", "south"]
+                var counter = 0
+                var tick
+                var player = {"x": 1.5, "y": 1.5}
+                var map = [
+                    [".", "#", "."],
+                    [".", ".", "."],
+                    [".", "#", "."]
+                ]
+                socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    if (data.tick) {
+                        tick = data.tick
+                    }
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
+                        socket.putPlayer(player.x-1, player.y, {}, [], {}, userData.sid)//west
+                        socket.putPlayer(player.x+1, player.y, {}, [], {}, userData.sid)//east
+                        break
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player")
+                        if (counter == 0) {
+                            player.id = data.id
+                            player.sid = data.sid
+                        }
+                        if (counter == 2) {
                             counter = 0
                             socket.move(dirs[counter], tick, player.sid)
                         }
