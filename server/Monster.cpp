@@ -55,9 +55,9 @@ QString Monster::GetRace()
 
 void Monster::SetRace(QString r)
 {
-  for (auto& k: Races)
+  for (auto& race: Races)
   {
-    if (k == r)
+    if (race == r)
     {
       race_ = r;
       return;
