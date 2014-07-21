@@ -20,7 +20,7 @@ function testPlayers() {
 
     consts = {
         "action": "setUpConst",
-        "playerVelocity": 1.0,
+        "playerVelocity": 0.5,
         "slideThreshold": 0.1,
         "ticksPerSecond": 60,
         "screenRowCount": 1.5,
@@ -360,6 +360,7 @@ function test() {
                     [".", ".", "."],
                     [".", ".", "."]
                 ]
+                this.timeout(8000)
                 socket.setOnMessage(function(e) {
                     console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
@@ -381,15 +382,16 @@ function test() {
                     case "move":
                         assert.equal("ok", data.result, "move request")
                         tick2 = tick
-                        socket.singleExamine(player.id, player.sid)
+                        $.when(setTimeout(function(){}, 7000))
+                        .done(function(data) {socket.singleExamine(player.id, player.sid)})
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
-                        var time = (tick2 - tick1) / consts.ticksPerSecond
-                        var val = time * consts.playerVelocity
-                        var newCoor = shift(dirs[counter], player.x, player.y, val)
-                        assert.equal(Math.round(newCoor.x), Math.round(data.x), dirs[counter]+": equal coordinate by x")
-                        assert.equal(Math.round(newCoor.y), Math.round(data.y), dirs[counter]+": equal coordinate by y")
+                      // var time = (tick2 - tick1) / consts.ticksPerSecond
+                       // var val = time * consts.playerVelocity
+                        var newCoor = shift(dirs[counter], player.x, player.y, consts.playerVelocity)
+                        assert.equal(newCoor.x, data.x, dirs[counter]+": equal coordinate by x")
+                        assert.equal(newCoor.y, data.y, dirs[counter]+": equal coordinate by y")
                         player.x = data.x
                         player.y = data.y
                         if (++counter < dirs.length) {
@@ -483,10 +485,10 @@ function shift(dir, x_, y_, val) {
         x += val
         break
     case "north":
-        y += val
+        y -= val
         break
     case "south":
-        y -= val
+        y += val
         break
     }
     return {"x": x, "y": y}

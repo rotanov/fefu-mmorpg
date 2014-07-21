@@ -1056,7 +1056,7 @@ void GameServer::HandlePutPlayer_(const QVariantMap&  request, QVariantMap& resp
     p->items_.push_back(item);
     actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());//???
   }
-
+  p->SetStat(SPEED, playerVelocity_);
   auto stats = request["stats"].toMap();
   for (auto s = stats.begin(); s != stats.end(); s++)
   {
