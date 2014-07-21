@@ -56,12 +56,14 @@ public:
   virtual QVariantMap atack(Creature* actor);
 
   QString name;
-  QString description;
   QString symbol;
+  QString description;
+
   QStringList Flags;
   QStringList Blows;
   Creature* target = 0;
-  QStringList Flag_ =
+
+  QStringList possibleFlags =
   {
     "CAN_BLOW",
     "CAN_MOVE",
@@ -81,6 +83,7 @@ public:
 private:
   int damage_;
   float alertness_;
+
   QMap<QString,QString> Hates =
   {
     {"HATE_ORC", "ORC"},

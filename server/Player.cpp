@@ -82,8 +82,8 @@ QVariantMap Player::atack(Creature* actor, int id)
     n = item->damage.count;
     m = item->damage.to;
   }
-  val = (val % (n*m));
-  actor->SetHealth(actor->GetHealth()- val);
+  val = (val % (n * m));
+  actor->SetHealth(actor->GetHealth() - val);
   QVariantMap ans;
   ans["dealtDamage"] = val;
   ans["target"] = actor->GetId();

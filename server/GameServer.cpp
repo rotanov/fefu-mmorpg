@@ -982,46 +982,57 @@ void GameServer::HandlePutMob_(const QVariantMap& request, QVariantMap& response
   float x = request["x"].toFloat();
   float y = request["y"].toFloat();
 
-  Monster* m = CreateActor_<Monster>();
-  SetActorPosition_(m, Vector2(x, y));
-  m->SetDirection(EActorDirection::SOUTH);
-  if (IsIncorrectPosition(x, y, m))
+  Monster* monster = CreateActor_<Monster>();
+  SetActorPosition_(monster, Vector2(x, y));
+
+  monster->SetDirection(EActorDirection::SOUTH);
+
+  if (IsIncorrectPosition(x, y, monster))
   {
-    KillActor_(m);
+    KillActor_(monster);
     WriteResult_(response, EFEMPResult::BAD_PLACING);
     return;
   }
 
-  auto flag = request["flags"].toList();
-  for (auto a: flag)
+  auto flags = request["flags"].toList();
+  for (auto flag: flags)
   {
-    if (m->Flag_.lastIndexOf(a.toString()) == -1)
+    if (monster->possibleFlags.lastIndexOf(flag.toString()) == -1)
     {
       WriteResult_(response, EFEMPResult::BAD_FLAG);
       return;
     }
-     m->Flags.push_back(a.toString());
+     monster->Flags.push_back(flag.toString());
   }
 
-  m->SetRace(request["race"].toString());
-  if(m->GetRace() == "NONE")
+  monster->SetRace(request["race"].toString());
+  if (monster->GetRace() == "NONE")
   {
     WriteResult_(response, EFEMPResult::BAD_RACE);
     return;
   }
-  QStringList str ;
-  str << request["dealtDamage"].toString().split("d");
-  if (str.size() < 2 || !str[0].toInt() || !str[1].toInt())
+
+  auto stats = request["stats"].toMap();
+  for (auto s = stats.begin(); s != stats.end(); s++)
+  {
+    Stat_const stat = StringToStat[s.key()];
+    QVariant val = s.value();
+    monster->SetStat(stat, val.toFloat());
+  }
+
+  QStringList damage;
+  damage << request["dealtDamage"].toString().split("d");
+  if (damage.size() < 2 || !damage[0].toInt() || !damage[1].toInt())
   {
     WriteResult_(response, EFEMPResult::BAD_DAMAGE);
     return;
   }
-  response["id"] = m->GetId();
-  WriteResult_(response, EFEMPResult::OK);
+
+  response["id"] = monster->GetId();
 }
 
 //==============================================================================
-void GameServer::HandlePutPlayer_(const QVariantMap&  request, QVariantMap& response)
+void GameServer::HandlePutPlayer_(const QVariantMap& request, QVariantMap& response)
 {
   if (!testingStageActive_)
   {
@@ -1038,43 +1049,43 @@ void GameServer::HandlePutPlayer_(const QVariantMap&  request, QVariantMap& resp
   float x = request["x"].toFloat();
   float y = request["y"].toFloat();
 
-  Player* p = CreateActor_<Player>();
-  SetActorPosition_(p, Vector2(x, y));
+  Player* player = CreateActor_<Player>();
+  SetActorPosition_(player, Vector2(x, y));
 
-  if (IsIncorrectPosition(x, y, p))
+  if (IsIncorrectPosition(x, y, player))
   {
-    KillActor_(p);
+    KillActor_(player);
     WriteResult_(response, EFEMPResult::BAD_PLACING);
     return;
   }
 
   auto inventory = request["inventory"].toList();
-  for (auto a: inventory)
+  for (auto elem: inventory)
   {
     Item* item = CreateActor_<Item>();
-    SetItemDescription(a.toMap(), item);
-    p->items_.push_back(item);
+    SetItemDescription(elem.toMap(), item);
+    player->items_.push_back(item);
     actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());//???
   }
-  p->SetStat(SPEED, playerVelocity_);
+
   auto stats = request["stats"].toMap();
   for (auto s = stats.begin(); s != stats.end(); s++)
   {
     Stat_const stat = StringToStat[s.key()];
     QVariant val = s.value();
-    p->SetStat(stat, val.toFloat());
+    player->SetStat(stat, val.toFloat());
   }
 
   QVariantList items;
-  for (auto& a: p->items_)
+  for (auto& elem: player->items_)
   {
     QVariantMap item;
-    item["id"] = a->GetId();
-    item["name"] = a->Getname();
-    item["type"] = a->GetTypeItem();
-    item["class"] = a->GetClass();
-    item["subtype"] = a->GetSubtype();
-    item["weight"] = a->GetWeight();
+    item["id"] = elem->GetId();
+    item["name"] = elem->Getname();
+    item["type"] = elem->GetTypeItem();
+    item["class"] = elem->GetClass();
+    item["subtype"] = elem->GetSubtype();
+    item["weight"] = elem->GetWeight();
     items << item;
   }
   response["inventory"] = items;
@@ -1087,13 +1098,13 @@ void GameServer::HandlePutPlayer_(const QVariantMap&  request, QVariantMap& resp
     {
       Item* item = CreateActor_<Item>();
       SetItemDescription(slot[i.key()].toMap(), item);
-      p->items_.push_back(item);
-      p->SetSlot(i.value(), item);
+      player->items_.push_back(item);
+      player->SetSlot(i.value(), item);
       id_slot[i.key()] = item->GetId();
     }
   }
   response["slots"] = id_slot;
-  response["id"] = p->GetId();
+  response["id"] = player->GetId();
 
   QByteArray sid;
   do
@@ -1103,7 +1114,7 @@ void GameServer::HandlePutPlayer_(const QVariantMap&  request, QVariantMap& resp
   } while (sidToPlayer_.find(sid) != sidToPlayer_.end());
   sid = sid.toHex();
 
-  sidToPlayer_.insert(sid, p);
+  sidToPlayer_.insert(sid, player);
   response["sid"] = sid;
   response["fistId"] = FistId_;
 }
