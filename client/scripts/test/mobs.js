@@ -520,7 +520,7 @@ function test() {
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
-            it("should fail put mob [badInventory]", function(done) {
+            /*it("should fail put mob [badInventory]", function(done) {
                 var mob = {"x": 1.5, "y": 1.5}
                 var map = [
                     [".", ".", "."],
@@ -548,8 +548,40 @@ function test() {
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
-            })
+            })*/
+        })
 
+        describe("Attack Mob", function() {
+            beforeEach(runBeforeEach)
+
+            it("mob should fail attack itself", function(done) {
+                var mob = {"x": 0.5, "y": 0.5, "HP": 50, "MAX_HP": 100}
+                var map = [["."]]
+                this.timeout(4000)
+                socket.setOnMessage(function(e) {
+                    //console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putMob(mob.x, mob.y, {"HP": mob.HP, "MAX_HP": mob.MAX_HP},
+                                      [/*inventory*/], ["HATE_ORC", "CAN_BLOW"],
+                                      "ORC", defaultDamage, userData.sid)
+                        break
+                    case "putMob":
+                        assert.equal("ok", data.result, "put mob")
+                        mob.id = data.id
+                        setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 2000)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(mob.HP, data.health, "health hasn't changed")
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
+            })
         })
 
     })
