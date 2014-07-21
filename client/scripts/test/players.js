@@ -96,7 +96,9 @@ function test() {
                     ]
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
-                    tick = data.tick
+                    if (data.tick) {
+                        tick = data.tick
+                    }
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
@@ -350,6 +352,8 @@ function test() {
         })
 
         describe("Move Player", function() {
+            beforeEach(runBeforeEach)
+
             it("should successfully move in all directions", function(done) {
                 var dirs = ["west", "east", "north", "south"]
                 var counter = 0
@@ -411,7 +415,7 @@ function test() {
             it("should successfully move in all directions [collision with walls]", function(done) {
                 var dirs = ["west", "east", "south", "north"]
                 var counter = 0
-                var tick
+                var tick = null
                 var player = {"x": 1.5, "y": 1.5}
                 var map = [
                     ["#", "#", "#"],
@@ -457,7 +461,7 @@ function test() {
             it("should successfully move in all directions [collision with another players]", function(done) {
                 var dirs = ["west", "east", "south", "north"]
                 var counter = 0
-                var tick
+                var tick = null
                 var player = {"x": 1.5, "y": 1.5}
                 var map = [
                     [".", ".", "."],
@@ -514,7 +518,7 @@ function test() {
                 [collision with walls and another players]", function(done) {
                 var dirs = ["west", "east", "north", "south"]
                 var counter = 0
-                var tick
+                var tick = null
                 var player = {"x": 1.5, "y": 1.5}
                 var map = [
                     [".", "#", "."],
@@ -566,7 +570,7 @@ function test() {
             })
 
             it("should successfully move player [south: slide effect]", function(done) {
-                var tick
+                var tick = null
                 var player = {"x": 1+consts.slideThreshold, "y": 0.5}
                 var map = [
                     [".", ".", "."],
@@ -606,7 +610,7 @@ function test() {
             })
 
             it("should successfully move player [north: slide effect]", function(done) {
-                var tick
+                var tick = null
                 var player = {"x": 1+consts.slideThreshold, "y": 2.5}
                 var map = [
                     [".", ".", "."],
@@ -646,7 +650,7 @@ function test() {
             })
 
             it("should successfully move player [east: slide effect]", function(done) {
-                var tick
+                var tick = null
                 var player = {"x": 0.5, "y": 1+consts.slideThreshold}
                 var map = [
                     [".", ".", "."],
@@ -686,7 +690,7 @@ function test() {
             })
 
             it("should successfully move player [west: slide effect]", function(done) {
-                var tick
+                var tick = null
                 var player = {"x": 2.5, "y": 1+consts.slideThreshold}
                 var map = [
                     [".", ".", "."],
@@ -718,6 +722,46 @@ function test() {
                         assert.equal("ok", data.result, "examine request")
                         assert.equal(1.5, data.x, "west: equal coordinate by x")
                         assert.equal(0.5, data.y, "west: equal coordinate by y")
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
+            })
+        })
+
+        describe("Attack Player", function() {
+            beforeEach(runBeforeEach)
+
+            it("player should fail attack itself", function(done) {
+                var player = {"x": 1.5, "y": 1.5, "HP": 5}
+                var map = [
+                        ["#", "#", "#"],
+                        ["#", ".", "#"],
+                        ["#", "#", "#"],
+                    ]
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putPlayer(player.x, player.y,
+                                        {"HP": player.HP},
+                                        [], {}, userData.sid)
+                        break
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player")
+                        player.id = data.id
+                        player.sid = data.sid
+                        player.fistId = data.fistId
+                        socket.use(player.fistId, player.sid, player.x, player.y)
+                    case "use":
+                        assert.equal("ok", data.result, "use request")
+                        socket.singleExamine(player.id, player.sid)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(player.HP, data.health, "health hasn't changed")
                         socket.setOnMessage(undefined)
                         done()
                     }

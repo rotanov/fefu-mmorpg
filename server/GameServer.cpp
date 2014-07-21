@@ -1011,7 +1011,7 @@ void GameServer::HandlePutMob_(const QVariantMap& request, QVariantMap& response
   }
   QStringList str ;
   str << request["dealtDamage"].toString().split("d");
-  if (str.size () < 2 || !str[0].toInt() || !str[1].toInt())
+  if (str.size() < 2 || !str[0].toInt() || !str[1].toInt())
   {
     WriteResult_(response, EFEMPResult::BAD_DAMAGE);
     return;
