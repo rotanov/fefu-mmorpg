@@ -396,6 +396,31 @@ function test() {
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
+            it("should fail put mob [badDamage]", function(done) {
+                var mob = {"x": 0.5, "y": 0.5}
+                var map = [["."]]
+                socket.setOnMessage(function(e) {
+                    //console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putMob(mob.x, mob.y, {}, [], [], "ORC", "2g3", userData.sid)
+                        break
+                    case "putMob":
+                        assert.equal("badDamage", data.result, "put mob")
+                        mob.id = data.id
+                        socket.singleExamine(mob.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
+            })
+
             it("should put two mobs with different ids", function(done) {
                 var flag = true
                 var mob1 = {"x": 1.5, "y": 1.5}
@@ -440,7 +465,7 @@ function test() {
                         ["#", ".", ".", ".", "#"],
                         ["#", "#", "#", "#", "#"]
                     ]
-                this.timeout(7000)
+                this.timeout(8000)
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)

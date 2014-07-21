@@ -303,9 +303,9 @@ void GameServer::tick()
     actor->SetVelocity(v);
     levelMap_.RemoveActor(actor);
     actor->Update(static_cast<Creature*>(actor)->GetSpeed());
-    if (actor->GetType() == "player" )
+    if (actor->GetType() == "player")
     {
-      Creature* a  = static_cast<Creature*>(actor);
+      Creature* a = static_cast<Creature*>(actor);
       if (a->GetHealth() < a->GetMaxHealth())
       {
         a->SetHealth(a->GetHealth() + 1);
