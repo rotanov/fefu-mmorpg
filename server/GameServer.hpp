@@ -140,6 +140,7 @@ private:
   void SetActorPosition_(Actor* actor, const Vector2& position);
   void SetItemDescription(const QVariantMap &request, Item* item);
   bool IsIncorrectPosition(float x, float y, Actor *actor);
+  bool CollideWithGrid(Actor* actor);
   template <typename T>
   T* CreateActor_();
 

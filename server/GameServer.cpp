@@ -1281,3 +1281,50 @@ bool GameServer::IsIncorrectPosition(float x, float y, Actor* actor)
   }
   return false;
 }
+
+//==============================================================================
+bool GameServer::CollideWithGrid(Actor* actor)
+{
+  auto& p = *actor;
+  int col = 0;
+  for (int i = 0; i < 4; i++)
+  {
+    float x = p.GetPosition().x;
+    float y = p.GetPosition().y;
+   // EActorDirection dir = actor->GetDirection();
+    bool collided = false;
+    if (levelMap_.GetCell(x + 0.5f, y) == '#')
+    {
+      p.SetPosition(Vector2(round(x + 0.5f) - 0.5f, p.GetPosition().y));
+      collided = true;
+      col++;
+    }
+    if (levelMap_.GetCell(x - 0.6f, y) == '#')
+    {
+      p.SetPosition(Vector2(round(x - 0.6f) + 0.5f, p.GetPosition().y));
+      collided = true;
+      col++;
+    }
+
+    if (levelMap_.GetCell(x, y + 0.5f) == '#')
+    {
+      p.SetPosition(Vector2(p.GetPosition().x, round(y + 0.5f) - 0.5f));
+      collided = true;
+      col++;
+    }
+
+    if (levelMap_.GetCell(x, y - 0.6f) == '#')
+    {
+      p.SetPosition(Vector2(p.GetPosition().x, round(y - 0.6f) + 0.5f));
+      collided = true;
+      col++;
+    }
+
+    if (collided)
+    {
+      actor->OnCollideWorld();
+    }
+  }
+  return true;
+}
+

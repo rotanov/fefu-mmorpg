@@ -78,7 +78,7 @@ protected:
   Vector2 position_ = Const::Math::V2_ZERO;
   Vector2 velocity_ = Const::Math::V2_ZERO;
   EActorDirection direction_ = EActorDirection::NONE;
-  float size_ = 0.5f;
+  float size_ = 1.0f;
   int id_ = -1;
   QString type_ = "undefined";
 };
