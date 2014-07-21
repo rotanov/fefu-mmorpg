@@ -66,16 +66,16 @@ public:
     "CAN_BLOW",
     "CAN_MOVE",
     "PASS_WALL",
-    "HATE_ORCS",
-    "HATE_EVILS",
-    "HATE_TROLLS",
-    "HATE_GIANTS",
-    "HATE_DEMONS",
-    "HATE_METALS",
-    "HATE_PLAYERS",
-    "HATE_DRAGONS",
-    "HATE_UNDEADS",
-    "HATE_ANIMALS",
+    "HATE_ORC",
+    "HATE_EVIL",
+    "HATE_TROLL",
+    "HATE_GIANT",
+    "HATE_DEMON",
+    "HATE_METAL",
+    "HATE_PLAYER",
+    "HATE_DRAGON",
+    "HATE_UNDEAD",
+    "HATE_ANIMAL",
   };
 
 private:
@@ -83,9 +83,9 @@ private:
   float alertness_;
   QMap<QString,QString> Hates =
   {
-    {"HATE_ORC","ORC"},
-    {"HATE_EVIL","EVIL"},
-    {"HATE_TROLL","TROLL"},
+    {"HATE_ORC", "ORC"},
+    {"HATE_EVIL", "EVIL"},
+    {"HATE_TROLL", "TROLL"},
     {"HATE_GIANT", "GIANT"},
     {"HATE_DEMON", "DEMON"},
     {"HATE_METAL", "METAL"},
