@@ -94,7 +94,7 @@ QVariantMap Player::atack(Creature* actor, int id)
 
 Item* Player::GetSlot(Slot st)
 {
-  return slot_[st];
+  return slots_[st];
 }
 
 bool Player::SetSlot(Slot st, Item* item)
@@ -118,21 +118,21 @@ bool Player::SetSlot(Slot st, Item* item)
   else if (st == feet && item->GetTypeItem() == "boots")
     result = true;
   if (result)
-    slot_[st] = item;
+    slots_[st] = item;
   return result;
 }
 
 bool Player::SetSlot(Slot st)
 {
-  slot_[st] = 0;
+  slots_[st] = 0;
   return true;
 }
 
 bool Player::GetItemId(int id)
 {
-  for (auto& a: items_)
+  for (auto& item: items_)
   {
-    if (a->GetId() == id)
+    if (item->GetId() == id)
       return true;
   }
   return false;

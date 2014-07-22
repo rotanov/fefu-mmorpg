@@ -729,7 +729,8 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
 //==============================================================================
 void GameServer::HandleUnequip_(const QVariantMap& request, QVariantMap& response)
 {
-  if (request["slot"].toString() == "")
+  if (request["slot"].toString() == ""
+      || SlotToString.find(request["slot"].toString()) == SlotToString.end())
   {
     WriteResult_(response, EFEMPResult::BAD_SLOT);
     return;
@@ -737,15 +738,7 @@ void GameServer::HandleUnequip_(const QVariantMap& request, QVariantMap& respons
 
   auto sid = request["sid"].toByteArray();
   Player* player = sidToPlayer_[sid];
-
-  QString str = request["slot"].toString();
-  if (SlotToString.find(str) == SlotToString.end())
-  {
-    WriteResult_(response, EFEMPResult::BAD_SLOT);
-    return;
-  }
-
-  Slot slot = SlotToString[str];
+  Slot slot = SlotToString[request["slot"].toString()];
   Item* item = player->GetSlot(slot);
   if (!item)
   {

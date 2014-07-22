@@ -1130,11 +1130,11 @@ function test() {
                         } else if (data.actionResult.action == "examine") {
                             if (flag) {
                                 flag = false
-                                assert.equal(p_item_id, data.actionResult.slots["left-hand"], "equip item")
+                                assert.equal(p_item_id, data.actionResult.slots["left-hand"], "equip item1")
                                 socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"}, userData.sid)
 
                             } else {
-                                assert.equal(item.id, data.actionResult.slots["left-hand"], "equip item")
+                                assert.equal(item.id, data.actionResult.slots["left-hand"], "equip item2")
                                 socket.setOnMessage(undefined)
                                 done()
                             }
@@ -1475,6 +1475,38 @@ function test() {
 
 
             it("should successfully equip/unequip item [slot is already occupied]", function(done) {
+                var player = {"x": 3.5, "y": 3.5}
+                var item = {"x": player.x + 0.5, "y": player.y + 0.5}
+                socket.setOnMessage(function(e) {
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player with item")
+                        player.id = data.id
+                        player.sid = data.sid
+                        item.id = data.inventory[0].id
+                        socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"}, userData.sid)
+                        break
+                    case "enforce":
+                        assert.equal("ok", data.result, "enforce request")
+                        assert.equal("ok", data.actionResult.result, data.actionResult.action + " request")
+                        if (data.actionResult.action == "equip") {
+                            socket.enforce({"action": "unequip", "sid": player.sid, "slot": "left-hand"}, userData.sid)
+                        } else if (data.actionResult.action == "unequip") {
+                            socket.singleExamine(player.id, player.sid)
+                        }
+                        break
+                        case "examine":
+                            assert.equal("ok", data.result, "examine request")
+                            assert.equal(undefined, data.slots["left-hand"], "slot isn't occupied")
+                            socket.setOnMessage(undefined)
+                            done()
+                    }
+                })
+                socket.putPlayer(player.x, player.y, {}, [makeItem()], {"left-hand": -1}, userData.sid)
+            })
+
+            /*it("should successfully equip/unequip item [slot is already occupied]", function(done) {
                 var flag = true
                 var player = {"x": 3.5, "y": 3.5}
                 var item = {"x": player.x + 0.5, "y": player.y + 0.5}
@@ -1523,7 +1555,7 @@ function test() {
                     }
                 })
                 socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
-            })
+            })*/
 
             it("should successfully unequip item [object in other player's slot]", function(done) {
                 var flag = true

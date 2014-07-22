@@ -23,27 +23,34 @@ enum Slot
 class Player : public Creature
 {
 public:
+  Blow blows;
+  QVector<Item*> items_;
+
   Player();
   virtual ~Player();
 
   QString GetLogin() const;
   void SetLogin(const QString login);
+
   unsigned GetClientTick() const;
   void SetClientTick(const unsigned clientTick);
-  virtual QVariantMap atack(Creature* actor, int id);
-  void SetBlows();
+
   Item* GetSlot(Slot st);
   bool SetSlot(Slot st, Item* item);
   bool SetSlot(Slot st);
-  virtual void SetRace();
+
+  void SetBlows();
+
   void SetDamage(QString str, bool b);
-  Blow blows;
+
   bool GetItemId (int id);
-  // represents creature's inventory
-  QVector<Item*> items_;
+
+  virtual void SetRace();
+
+  virtual QVariantMap atack(Creature* actor, int id);
 
 private:
   QString login_;
   unsigned clientTick_ = 0;
-  QMap<Slot, Item*> slot_;
+  QMap<Slot, Item*> slots_;
 };

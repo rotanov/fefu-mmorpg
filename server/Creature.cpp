@@ -80,6 +80,6 @@ void Creature::SetStat(Stat_const key, float value)
 QVariantMap Creature::atack(Creature* /*actor*/)
 {
   QVariantMap ans;
-  ans["ok"]= "ok";
+  ans["ok"] = "ok";
   return ans;
 }
