@@ -215,10 +215,46 @@ function test() {
                     case "putMob":
                         if (flag) {
                             flag = false
-                            assert.equal("ok", data.result, "put mob")
+                            assert.equal("ok", data.result, "put mob1")
                             socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, userData.sid)
                         } else {
-                            assert.equal("badPlacing", data.result, "put mob")
+                            assert.equal("badPlacing", data.result, "put mob2")
+                            mob.id = data.id
+                            socket.singleExamine(mob.id, userData.sid)
+                        }
+                        break
+                    case "examine":
+                        assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
+            })
+
+            it("should fail put mob [cross mobs]", function(done) {
+                var flag = true
+                var mob = {"x": 1.5, "y": 1.5}
+                var map = [
+                    [".", ".", "."],
+                    [".", ".", "."],
+                    [".", ".", "."]
+                ]
+                socket.setOnMessage(function(e) {
+                    //console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, userData.sid)
+                        break
+                    case "putMob":
+                        if (flag) {
+                            flag = false
+                            assert.equal("ok", data.result, "put mob1")
+                            socket.putMob(mob.x+0.5, mob.y+0.5, {}, [], [], "ORC", defaultDamage, userData.sid)
+                        } else {
+                            assert.equal("badPlacing", data.result, "put mob2")
                             mob.id = data.id
                             socket.singleExamine(mob.id, userData.sid)
                         }
