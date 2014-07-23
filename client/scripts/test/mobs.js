@@ -1,5 +1,5 @@
-define(["jquery", "lib/chai", "utils/utils", "utils/socket"],
-function($, chai, utils, ws) {
+define(["jquery", "lib/chai", "utils/utils", "utils/socket", "test/items"],
+function($, chai, utils, ws, it_) {
 
 var socket
 var userData
@@ -64,7 +64,7 @@ function test() {
             socket.setUpConst(consts)
         })
 
-        /*describe("Put Mob", function() {
+        describe("Put Mob", function() {
             beforeEach(runBeforeEach)
 
             it("should fail put mob [badSid]", function(done) {
@@ -617,13 +617,55 @@ function test() {
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })*/
-        //})
+
+            it("should successfully put mob with inventory", function(done) {
+                var item = {}
+                var mob = {"x": 0.5, "y": 0.5,
+                            "race": "ORC",
+                            "stats": {"HP": 200, "MAX_HP": 200},
+                            "flags": ["HATE_TROLL", "CAN_BLOW"],
+                            "inventory": [it_.makeItem()]
+                }
+                var map = [["."]]
+                this.timeout(6000)
+                socket.setOnMessage(function(e) {
+                    //console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    switch (data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putMob(mob.x, mob.y,
+                                      mob.stats, mob.inventory, mob.flags,
+                                      mob.race, defaultDamage, userData.sid)
+                        break
+                    case "putMob":
+                            assert.equal("ok", data.result, "put mob")
+                            mob.id = data.id
+                            socket.singleExamine(mob.id, userData.sid)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "mob: examine request")
+                        assert.property(data, "inventory")
+                        assert.isDefined(data.inventory[0])
+                        socket.setOnMessage(undefined)
+                        done()
+                        break
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
+            })
+        })
 
         describe("Attack Mob", function() {
             beforeEach(runBeforeEach)
 
             it("mob should fail attack itself", function(done) {
-                var mob = {"x": 0.5, "y": 0.5, "HP": 50, "MAX_HP": 100}
+                var mob = {"x": 0.5, "y": 0.5,
+                            "race": "ORC",
+                            "stats": {"HP": 200, "MAX_HP": 200},
+                            "flags": ["HATE_ORC", "CAN_BLOW"],
+                            "inventory": []
+                }
                 var map = [["."]]
                 this.timeout(4000)
                 socket.setOnMessage(function(e) {
@@ -632,9 +674,9 @@ function test() {
                     switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putMob(mob.x, mob.y, {"HP": mob.HP, "MAX_HP": mob.MAX_HP},
-                                      [/*inventory*/], ["HATE_ORC", "CAN_BLOW"],
-                                      "ORC", defaultDamage, userData.sid)
+                        socket.putMob(mob.x, mob.y,
+                                      mob.stats, mob.inventory, mob.flags,
+                                      mob.race, defaultDamage, userData.sid)
                         break
                     case "putMob":
                         assert.equal("ok", data.result, "put mob")
