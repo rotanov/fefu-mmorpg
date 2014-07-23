@@ -836,7 +836,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
-                        assert.equal(player.HP, data.health, "health hasn't changed")
+                        assert.equal(player.stats.HP, data.health, "health hasn't changed")
                         socket.setOnMessage(undefined)
                         done()
                     }
@@ -852,7 +852,7 @@ function test() {
                            "flags": [],
                            "inventory": []
                 }
-                var player = {"x": mob.x+1, "y": mob.y,
+                var player = {"x": 2.5, "y": 0.5,
                               "stats": {"HP": 100, "MAX_HP": 100},
                               "slots": {},
                               "inventory": []
@@ -913,7 +913,7 @@ function test() {
                            "flags": ["CAN_BLOW", "HATE_PLAYER"],
                            "inventory": []
                 }
-                var player = {"x": mob.x+1, "y": mob.y,
+                var player = {"x": 2.5, "y": 0.5,
                               "stats": {"HP": 100, "MAX_HP": 100},
                               "slots": {},
                               "inventory": []
