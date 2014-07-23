@@ -425,6 +425,42 @@ function test() {
         describe("Move Player", function() {
             beforeEach(runBeforeEach)
 
+            it("should fail move [out of map]", function(done) {
+                var tick = null
+                var player = {"x": 0.5, "y": 0.5}
+                var map = [["."]]
+                socket.setOnMessage(function(e) {
+                    //console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    if (data.tick) {
+                        tick = data.tick
+                    }
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
+                        break
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player")
+                        player.id = data.id
+                        player.sid = data.sid
+                        socket.move("west", tick, player.sid)
+                        break
+                    case "move":
+                        assert.equal("ok", data.result, "move request")
+                        socket.singleExamine(player.id, player.sid)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        assert.equal(player.x, data.x, "west: equal coordinate by x")
+                        assert.equal(player.y, data.y, "west: equal coordinate by y")
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
+            })
+
             it("should successfully move in all directions", function(done) {
                 var dirs = ["west", "east", "north", "south"]
                 var counter = 0
