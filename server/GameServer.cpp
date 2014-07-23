@@ -633,6 +633,27 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
   {
     auto m = static_cast<Monster*>(actor);
     response["mobType"] = m->GetName();
+
+    QVariantList items;
+    for (auto& a: m->items)
+    {
+      QVariantMap item;
+      item["id"] = a->GetId();
+      item["name"] = a->Getname();
+      item["type"] = a->GetTypeItem();
+      item["class"] = a->GetClass();
+      item["subtype"] = a->GetSubtype();
+      item["weight"] = a->GetWeight();
+      items << item;
+    }
+    response["inventory"] = items;
+
+    QVariantMap stats;
+    for (auto i = StringToStat.begin(); i != StringToStat.end(); i++)
+    {
+      stats[i.key()] = m->GetStatValue(i.value());
+    }
+    response["stats"] = stats;
   }
 
   if (actor->GetType() == "item")

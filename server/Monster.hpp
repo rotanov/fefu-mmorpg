@@ -58,6 +58,7 @@ public:
   QString name;
   QString symbol;
   QString description;
+  QVector<Item*> items;
 
   QStringList Flags;
   QStringList Blows;
