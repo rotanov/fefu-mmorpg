@@ -946,6 +946,63 @@ function test() {
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
+            it("mob should attack player \
+                [mob has CAN_BLOW & HATE_PLAYER]", function(done) {
+                var flag = true
+                var mob = {"x": 1.5, "y": 0.5,
+                           "race": "TROLL",
+                           "stats": {"HP": 100, "MAX_HP": 100},
+                           "flags": ["CAN_BLOW", "HATE_PLAYER"],
+                           "inventory": []
+                }
+                var player = {"x": mob.x+1, "y": mob.y,
+                              "stats": {"HP": 100, "MAX_HP": 100},
+                              "slots": [],
+                              "inventory": []
+                }
+                var map = [["#", ".", ".", "#"]]
+                this.timeout(6000)
+                socket.setOnMessage(function(e) {
+                    //console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    switch (data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putMob(mob.x, mob.y,
+                                      mob.stats, mob.inventory, mob.flags,
+                                      mob.race, defaultDamage, userData.sid)
+                        break
+                    case "putMob":
+                        assert.equal("ok", data.result, "put mob")
+                        mob.id = data.id
+                        socket.putPlayer(player.x, player.y,
+                                         player.stats, player.inventory,
+                                         player.slots, userData.sid)
+                        break
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player")
+                        player.id = data.id
+                        player.sid = data.sid
+                        setTimeout(function() {socket.singleExamine(player.id, player.sid)}, 3000)
+                        setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 3000)
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        if (flag) {
+                            flag = false
+                            assert.equal("ok", data.result, "player: examine request")
+                            assert.notEqual(player.stats.HP, data.health, "player: health has changed")
+                            assert.isTrue(player.stats.HP > data.health, "player: health has decreased")
+                        } else {
+                            assert.equal("ok", data.result, "mob: examine request")
+                            assert.equal(mob.stats.HP, data.health, "mob: health hasn't changed")
+                            socket.setOnMessage(undefined)
+                            done()
+                        }
+                        break
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
+            })
         })
 
     })
