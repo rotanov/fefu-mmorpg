@@ -1,5 +1,5 @@
-define(["jquery", "lib/chai", "utils/utils", "utils/socket"],
-function($, chai, utils, ws) {
+define(["jquery", "lib/chai", "utils/utils", "utils/socket", "test/items"],
+function($, chai, utils, ws, it_) {
 
 var socket
 var userData
@@ -137,7 +137,7 @@ function test() {
                     switch(data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
+                        socket.putPlayer(player.x, player.y, {}, [it_.makeItem()], {}, userData.sid)
                         break
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player")
@@ -150,6 +150,8 @@ function test() {
                         assert.equal("ok", data.result, "examine request")
                         assert.equal(player.x, (data.x).toFixed(1))
                         assert.equal(player.y, (data.y).toFixed(1))
+                        assert.property(data, "inventory")
+                        assert.isDefined(data.inventory[0])
                         socket.setOnMessage(undefined)
                         done()
                     }
