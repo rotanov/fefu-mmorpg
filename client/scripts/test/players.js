@@ -229,7 +229,7 @@ function test() {
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
-            it("should fail put player [narrow corridor]", function(done) {
+            it("should successfully put player [narrow corridor]", function(done) {
                 var flag = true
                 var player = {"x": 1.5, "y": 0.5}
                 var map = [["#", ".", ".", "#"]]
