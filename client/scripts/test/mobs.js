@@ -583,8 +583,9 @@ function test() {
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
-            it("mob1 should attack mob2 [mob2 hasn't CAN_BLOW]", function(done) {
-                var flag = true
+            it("mob1 should attack mob2 [mob2 hasn't CAN_BLOW & HATE_ORC]", function(done) {
+                var mobFlag = true
+                var examineFlag = true
                 var mob1 = {"x": 0.5, "y": 0.5,
                             "race": "ORC",
                             "stats": {"HP": 200, "MAX_HP": 200},
@@ -596,7 +597,7 @@ function test() {
                             "flags": []
                 }
                 var map = [[".", ".", "."]]
-                this.timeout(8000)
+                this.timeout(6000)
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
@@ -608,15 +609,14 @@ function test() {
                                       mob1.race, defaultDamage, userData.sid)
                         break
                     case "putMob":
-                        if (flag) {
-                            flag = false
+                        if (mobFlag) {
+                            mobFlag = false
                             assert.equal("ok", data.result, "put mob1")
                             mob1.id = data.id
                             socket.putMob(mob2.x, mob2.y,
                                           mob2.stats, [/*inventory*/], mob2.flags,
                                           mob2.race, defaultDamage, userData.sid)
                         } else {
-                            flag = true
                             assert.equal("ok", data.result, "put mob2")
                             mob2.id = data.id
                             setTimeout(function() {socket.singleExamine(mob1.id, userData.sid)}, 3000)
@@ -624,10 +624,68 @@ function test() {
                         }
                         break
                     case "examine":
-                        if (flag) {
-                            flag = false
+                        if (examineFlag) {
+                            examineFlag = false
                             assert.equal("ok", data.result, "mob1: examine request")
                             assert.equal(mob1.stats.HP, data.health, "mob1: health hasn't changed")
+                        } else {
+                            assert.equal("ok", data.result, "mob2: examine request")
+                            assert.notEqual(mob2.stats.HP, data.health, "mob2: health has changed")
+                            assert.isTrue(mob2.stats.HP > data.health, "mob2: health has decreased")
+                            socket.setOnMessage(undefined)
+                            done()
+                        }
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
+            })
+
+            it("mob1 should attack mob2 [mob1 and mob2 has CAN_BLOW]", function(done) {
+                var mobFlag = true
+                var examineFlag = true
+                var mob1 = {"x": 0.5, "y": 0.5,
+                            "race": "ORC",
+                            "stats": {"HP": 200, "MAX_HP": 200},
+                            "flags": ["HATE_TROLL", "CAN_BLOW"]
+                }
+                var mob2 = {"x": 1.7, "y": 0.5,
+                            "race": "TROLL",
+                            "stats": {"HP": 100, "MAX_HP": 100},
+                            "flags": ["HATE_ORC", "CAN_BLOW"]
+                }
+                var map = [[".", ".", "."]]
+                this.timeout(6000)
+                socket.setOnMessage(function(e) {
+                    //console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putMob(mob1.x, mob1.y,
+                                      mob1.stats, [/*inventory*/], mob1.flags,
+                                      mob1.race, defaultDamage, userData.sid)
+                        break
+                    case "putMob":
+                        if (mobFlag) {
+                            mobFlag = false
+                            assert.equal("ok", data.result, "put mob1")
+                            mob1.id = data.id
+                            socket.putMob(mob2.x, mob2.y,
+                                          mob2.stats, [/*inventory*/], mob2.flags,
+                                          mob2.race, defaultDamage, userData.sid)
+                        } else {
+                            assert.equal("ok", data.result, "put mob2")
+                            mob2.id = data.id
+                            setTimeout(function() {socket.singleExamine(mob1.id, userData.sid)}, 3000)
+                            setTimeout(function() {socket.singleExamine(mob2.id, userData.sid)}, 3000)
+                        }
+                        break
+                    case "examine":
+                        if (examineFlag) {
+                            examineFlag = false
+                            assert.equal("ok", data.result, "mob1: examine request")
+                            assert.notEqual(mob1.stats.HP, data.health, "mob1: health has changed")
+                            assert.isTrue(mob1.stats.HP > data.health, "mob1: health has decreased")
                         } else {
                             assert.equal("ok", data.result, "mob2: examine request")
                             assert.notEqual(mob2.stats.HP, data.health, "mob2: health has changed")
