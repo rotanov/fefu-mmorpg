@@ -1034,6 +1034,15 @@ void GameServer::HandlePutMob_(const QVariantMap& request, QVariantMap& response
     monster->SetStat(stat, val.toFloat());
   }
 
+  auto inventory = request["inventory"].toList();
+  for (auto elem: inventory)
+  {
+    Item* item = CreateActor_<Item>();
+    SetItemDescription(elem.toMap(), item);
+    monster->items.push_back(item);
+    actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());//???
+  }
+
   QStringList damage;
   damage << request["dealtDamage"].toString().split("d");
   if (damage.size() < 2 || !damage[0].toInt() || !damage[1].toInt())
