@@ -943,7 +943,7 @@ function test() {
                 }
                 var player = {"x": mob.x+1, "y": mob.y,
                               "stats": {"HP": 100, "MAX_HP": 100},
-                              "slots": [],
+                              "slots": {},
                               "inventory": []
                 }
                 var map = [["#", ".", ".", "#"]]
@@ -999,7 +999,7 @@ function test() {
                 }
                 var player = {"x": mob.x+1, "y": mob.y,
                               "stats": {"HP": 100, "MAX_HP": 100},
-                              "slots": [],
+                              "slots": {},
                               "inventory": []
                 }
                 var map = [["#", ".", ".", "#"]]
