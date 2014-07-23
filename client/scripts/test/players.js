@@ -149,8 +149,8 @@ function test() {
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
-                        assert.equal(player.x, (data.x).toFixed(1))
-                        assert.equal(player.y, (data.y).toFixed(1))
+                        assert.equal(player.x, data.x)
+                        assert.equal(player.y, data.y)
                         assert.property(data, "inventory")
                         assert.isDefined(data.inventory[0])
                         socket.setOnMessage(undefined)

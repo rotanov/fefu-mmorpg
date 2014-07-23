@@ -85,7 +85,7 @@ void LevelMap::Resize(int columnCount, int rowCount)
 void LevelMap::IndexActor(Actor* actor)
 {
   auto cells = actor->GetOccupiedCells();
-  for (auto p : cells)
+  for (auto p: cells)
   {
     int column = p.first;
     int row = p.second;
@@ -102,7 +102,7 @@ void LevelMap::IndexActor(Actor* actor)
 void LevelMap::RemoveActor(const Actor* actor)
 {
   auto cells = actor->GetOccupiedCells();
-  for (auto p : cells)
+  for (auto p: cells)
   {
     int column = p.first;
     int row = p.second;

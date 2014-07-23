@@ -187,8 +187,8 @@ function test() {
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
-                        assert.equal(mob.x, (data.x).toFixed(1))
-                        assert.equal(mob.y, (data.y).toFixed(1))
+                        assert.equal(mob.x, data.x)
+                        assert.equal(mob.y, data.y)
                         socket.setOnMessage(undefined)
                         done()
                     }
@@ -685,7 +685,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
-                        assert.equal(mob.HP, data.health, "health hasn't changed")
+                        assert.equal(mob.stats.HP, data.health, "health hasn't changed")
                         socket.setOnMessage(undefined)
                         done()
                     }
@@ -702,14 +702,14 @@ function test() {
                             "flags": ["HATE_TROLL", "CAN_BLOW"],
                             "inventory": []
                 }
-                var mob2 = {"x": 1.7, "y": 0.5,
+                var mob2 = {"x": 1.5, "y": 0.5,
                             "race": "TROLL",
                             "stats": {"HP": 100, "MAX_HP": 100},
                             "flags": [],
                             "inventory": []
                 }
-                var map = [[".", ".", "."]]
-                this.timeout(6000)
+                var map = [[".", "."]]
+                this.timeout(8000)
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
@@ -762,14 +762,14 @@ function test() {
                             "flags": ["HATE_TROLL", "CAN_BLOW"],
                             "inventory": []
                 }
-                var mob2 = {"x": 1.7, "y": 0.5,
+                var mob2 = {"x": 1.5, "y": 0.5,
                             "race": "TROLL",
                             "stats": {"HP": 100, "MAX_HP": 100},
                             "flags": ["HATE_ORC", "CAN_BLOW"],
                             "inventory": []
                 }
-                var map = [[".", ".", "."]]
-                this.timeout(6000)
+                var map = [[".", "."]]
+                this.timeout(8000)
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
@@ -823,14 +823,14 @@ function test() {
                             "flags": ["HATE_TROLL"],
                             "inventory": []
                 }
-                var mob2 = {"x": 1.7, "y": 0.5,
+                var mob2 = {"x": 1.5, "y": 0.5,
                             "race": "TROLL",
                             "stats": {"HP": 100, "MAX_HP": 100},
                             "flags": ["HATE_ORC"],
                             "inventory": []
                 }
-                var map = [[".", ".", "."]]
-                this.timeout(6000)
+                var map = [[".", "."]]
+                this.timeout(8000)
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
@@ -853,7 +853,6 @@ function test() {
                             assert.equal("ok", data.result, "put mob2")
                             mob2.id = data.id
                             setTimeout(function() {socket.singleExamine(mob1.id, userData.sid)}, 3000)
-                            setTimeout(function() {socket.singleExamine(mob2.id, userData.sid)}, 3000)
                         }
                         break
                     case "examine":
@@ -861,6 +860,7 @@ function test() {
                             examineFlag = false
                             assert.equal("ok", data.result, "mob1: examine request")
                             assert.equal(mob1.stats.HP, data.health, "mob1: health hasn't changed")
+                            setTimeout(function() {socket.singleExamine(mob2.id, userData.sid)}, 3000)
                         } else {
                             assert.equal("ok", data.result, "mob2: examine request")
                             assert.equal(mob2.stats.HP, data.health, "mob2: health hasn't changed")
@@ -912,7 +912,6 @@ function test() {
                             assert.equal("ok", data.result, "put mob2")
                             mob2.id = data.id
                             setTimeout(function() {socket.singleExamine(mob1.id, userData.sid)}, 3000)
-                            setTimeout(function() {socket.singleExamine(mob2.id, userData.sid)}, 3000)
                         }
                         break
                     case "examine":
@@ -920,6 +919,7 @@ function test() {
                             examineFlag = false
                             assert.equal("ok", data.result, "mob1: examine request")
                             assert.equal(mob1.stats.HP, data.health, "mob1: health hasn't changed")
+                            setTimeout(function() {socket.singleExamine(mob2.id, userData.sid)}, 3000)
                         } else {
                             assert.equal("ok", data.result, "mob2: examine request")
                             assert.equal(mob2.stats.HP, data.health, "mob2: health hasn't changed")
@@ -934,20 +934,19 @@ function test() {
 
             it("mob shouldn't attack player \
                 [mob hasn't CAN_BLOW & HATE_PLAYER]", function(done) {
-                var flag = true
                 var mob = {"x": 1.5, "y": 0.5,
                            "race": "TROLL",
                            "stats": {"HP": 100, "MAX_HP": 100},
                            "flags": [],
                            "inventory": []
                 }
-                var player = {"x": mob.x+1, "y": mob.y,
+                var player = {"x": 2.5, "y": 0.5,
                               "stats": {"HP": 100, "MAX_HP": 100},
                               "slots": {},
                               "inventory": []
                 }
                 var map = [["#", ".", ".", "#"]]
-                this.timeout(6000)
+                this.timeout(8000)
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
@@ -972,11 +971,10 @@ function test() {
                         setTimeout(function() {socket.singleExamine(player.id, player.sid)}, 3000)
                         setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 3000)
                     case "examine":
-                        if (flag) {
-                            flag = false
+                        if (data.type == "player") {
                             assert.equal("ok", data.result, "player: examine request")
                             assert.equal(player.stats.HP, data.health, "player: health hasn't changed")
-                        } else {
+                        } else if (data.type == "monster") {
                             assert.equal("ok", data.result, "mob: examine request")
                             assert.equal(mob.stats.HP, data.health, "mob: health hasn't changed")
                             socket.setOnMessage(undefined)
@@ -990,20 +988,19 @@ function test() {
 
             it("mob should attack player \
                 [mob has CAN_BLOW & HATE_PLAYER]", function(done) {
-                var flag = true
                 var mob = {"x": 1.5, "y": 0.5,
                            "race": "TROLL",
                            "stats": {"HP": 100, "MAX_HP": 100},
                            "flags": ["CAN_BLOW", "HATE_PLAYER"],
                            "inventory": []
                 }
-                var player = {"x": mob.x+1, "y": mob.y,
+                var player = {"x": 2.5, "y": 0.5,
                               "stats": {"HP": 100, "MAX_HP": 100},
                               "slots": {},
                               "inventory": []
                 }
                 var map = [["#", ".", ".", "#"]]
-                this.timeout(6000)
+                this.timeout(8000)
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
@@ -1029,12 +1026,12 @@ function test() {
                         setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 3000)
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
-                        if (flag) {
+                        if (data.type == "player") {
                             flag = false
                             assert.equal("ok", data.result, "player: examine request")
                             assert.notEqual(player.stats.HP, data.health, "player: health has changed")
                             assert.isTrue(player.stats.HP > data.health, "player: health has decreased")
-                        } else {
+                        } else if (data.type == "monster") {
                             assert.equal("ok", data.result, "mob: examine request")
                             assert.equal(mob.stats.HP, data.health, "mob: health hasn't changed")
                             socket.setOnMessage(undefined)
@@ -1048,20 +1045,19 @@ function test() {
 
             it("mob should attack player \
                 [mob has CAN_MOVE & CAN_BLOW & HATE_PLAYER]", function(done) {
-                var flag = true
                 var mob = {"x": 1.5, "y": 0.5,
                            "race": "TROLL",
                            "stats": {"HP": 100, "MAX_HP": 100},
                            "flags": ["CAN_MOVE", "CAN_BLOW", "HATE_PLAYER"],
                            "inventory": []
                 }
-                var player = {"x": 8.5, "y": mob.y,
+                var player = {"x": 8.5, "y": 0.5,
                               "stats": {"HP": 100, "MAX_HP": 100},
                               "slots": [],
                               "inventory": []
                 }
                 var map = [["#", ".", ".", ".", ".", ".", ".", ".", ".", "#"]]
-                this.timeout(6000)
+                this.timeout(8000)
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
@@ -1087,12 +1083,12 @@ function test() {
                         setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 3000)
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
-                        if (flag) {
+                        if (data.type == "player") {
                             flag = false
                             assert.equal("ok", data.result, "player: examine request")
                             assert.notEqual(player.stats.HP, data.health, "player: health has changed")
                             assert.isTrue(player.stats.HP > data.health, "player: health has decreased")
-                        } else {
+                        } else if (data.type == "monster") {
                             assert.equal("ok", data.result, "mob: examine request")
                             assert.equal(mob.stats.HP, data.health, "mob: health hasn't changed")
                             socket.setOnMessage(undefined)
