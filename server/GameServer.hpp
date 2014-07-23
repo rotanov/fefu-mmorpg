@@ -140,7 +140,7 @@ private:
   void SetActorPosition_(Actor* actor, const Vector2& position);
   void SetItemDescription(const QVariantMap &request, Item* item);
   bool IsIncorrectPosition(float x, float y, Actor *actor);
-  bool CollideWithGrid(Actor* actor);
+
   template <typename T>
   T* CreateActor_();
 
@@ -163,7 +163,9 @@ private:
   QTime time_;
   float lastTime_ = 0.0f;
   unsigned tick_ = 0;
+
   QVariantList events_;
+
   float playerVelocity_ = 0.2;
   float slideThreshold_ = 0.1;
   int ticksPerSecond_ = 40;
@@ -171,6 +173,7 @@ private:
   int screenColumnCount_ = 9;
   float epsilon_ = 0.00001;
   float pickUpRadius_ = 1.5f;
+
   int FistId_ = -5;
 
   bool testingStageActive_ = false;

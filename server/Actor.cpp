@@ -79,7 +79,7 @@ void Actor::SetSize(const float size)
 void Actor::Update(float dt)
 {
   position_ += velocity_ * dt;
-  SetDirection(EActorDirection::NONE);
+  SetDirection(EActorDirection::NONE);//???
 }
 
 int Actor::GetId() const
