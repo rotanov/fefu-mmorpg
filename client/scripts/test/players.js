@@ -229,6 +229,38 @@ function test() {
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
+            it("should fail put player [narrow corridor]", function(done) {
+                var flag = true
+                var player = {"x": 1.5, "y": 0.5}
+                var map = [["#", ".", ".", "#"]]
+                socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
+                        break
+                    case "putPlayer":
+                        if (flag) {
+                            flag = false
+                            assert.equal("ok", data.result, "put player1")
+                            socket.putPlayer(player.x+1, player.y, {}, [], {}, userData.sid)
+                        } else {
+                            assert.equal("ok", data.result, "put player2")
+                            player.id = data.id
+                            socket.singleExamine(player.id, userData.sid)
+                        }
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "examine request")
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
+            })
+
             it("should fail put player [badPlacing: out of map]", function(done) {
                 var player = {"x": 3.5, "y": 3.5}
                 var map = [["."]]
