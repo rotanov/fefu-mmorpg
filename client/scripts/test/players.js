@@ -4,6 +4,7 @@ function($, chai, utils, ws, it_) {
 var socket
 var userData
 var consts = {}
+var defaultDamage = "3d2"
 
 function testPlayers() {
     utils.serverHandler({
@@ -845,7 +846,6 @@ function test() {
 
             it("player should attack mob \
                 [mob hasn't CAN_BLOW & HATE_PLAYER]", function(done) {
-                var flag = true
                 var mob = {"x": 1.5, "y": 0.5,
                            "race": "TROLL",
                            "stats": {"HP": 100, "MAX_HP": 100},
@@ -879,6 +879,7 @@ function test() {
                         assert.equal("ok", data.result, "put player")
                         player.id = data.id
                         player.sid = data.sid
+                        player.fistId = data.fistId
                         socket.use(player.fistId, player.sid, mob.x, mob.y)
                         break
                     case "use":
@@ -886,11 +887,73 @@ function test() {
                         socket.singleExamine(player.id, player.sid)
                         socket.singleExamine(mob.id, userData.sid)
                     case "examine":
-                        if (flag) {
+                        if (data.type == "player") {
                             flag = false
                             assert.equal("ok", data.result, "player: examine request")
                             assert.equal(player.stats.HP, data.health, "player: health hasn't changed")
-                        } else {
+                        } else if (data.type == "monster") {
+                            assert.equal("ok", data.result, "mob: examine request")
+                            assert.notEqual(mob.stats.HP, data.health, "mob: health has changed")
+                            assert.isTrue(mob.stats.HP > data.health, "mob: health has decreased")
+                            socket.setOnMessage(undefined)
+                            done()
+                        }
+                        break
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
+            })
+
+            it("player should attack mob \
+                [mob has CAN_BLOW & HATE_PLAYER]", function(done) {
+                var flag = true
+                var mob = {"x": 1.5, "y": 0.5,
+                           "race": "TROLL",
+                           "stats": {"HP": 100, "MAX_HP": 100},
+                           "flags": ["CAN_BLOW", "HATE_PLAYER"],
+                           "inventory": []
+                }
+                var player = {"x": mob.x+1, "y": mob.y,
+                              "stats": {"HP": 100, "MAX_HP": 100},
+                              "slots": {},
+                              "inventory": []
+                }
+                var map = [["#", ".", ".", "#"]]
+                socket.setOnMessage(function(e) {
+                    //console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    switch (data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putMob(mob.x, mob.y,
+                                      mob.stats, mob.inventory, mob.flags,
+                                      mob.race, defaultDamage, userData.sid)
+                        break
+                    case "putMob":
+                        assert.equal("ok", data.result, "put mob")
+                        mob.id = data.id
+                        socket.putPlayer(player.x, player.y,
+                                         player.stats, player.inventory,
+                                         player.slots, userData.sid)
+                        break
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player")
+                        player.id = data.id
+                        player.sid = data.sid
+                        player.fistId = data.fistId
+                        socket.use(player.fistId, player.sid, mob.x, mob.y)
+                        break
+                    case "use":
+                        assert.equal("ok", data.result, "use fists")
+                        setTimeout(function() {socket.singleExamine(player.id, player.sid)}, 500)
+                        setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 500)
+                    case "examine":
+                        if (data.type == "player") {
+                            flag = false
+                            assert.equal("ok", data.result, "player: examine request")
+                            assert.notEqual(player.stats.HP, data.health, "player: health has changed")
+                            assert.isTrue(player.stats.HP > data.health, "player: health has decreased")
+                        } else if (data.type == "monster") {
                             assert.equal("ok", data.result, "mob: examine request")
                             assert.notEqual(mob.stats.HP, data.health, "mob: health has changed")
                             assert.isTrue(mob.stats.HP > data.health, "mob: health has decreased")
