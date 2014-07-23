@@ -71,7 +71,7 @@ function test() {
                 var mob = {"x": 0.5, "y": 0.5}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "putMob":
                         assert.equal("badSid", data.result, "put mob")
                         mob.id = data.id
@@ -91,7 +91,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "putMob":
                         assert.equal("badPlacing", data.result, "put mob")
                         mob.id = data.id
@@ -116,7 +116,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, userData.sid)
@@ -144,7 +144,7 @@ function test() {
                     ]
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {}, [], ["CAN_MOVE"], "ORC", defaultDamage, userData.sid)
@@ -175,7 +175,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, userData.sid)
@@ -207,7 +207,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, userData.sid)
@@ -243,7 +243,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, userData.sid)
@@ -275,7 +275,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, userData.sid)
@@ -312,7 +312,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         for (var i = 0, l = races.length; i < l; ++i) {
@@ -338,7 +338,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {}, [], [], "BAD RACE", defaultDamage, userData.sid)
@@ -363,7 +363,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, userData.sid)
@@ -388,7 +388,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, userData.sid)
@@ -418,7 +418,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         for (var i = 0, l = map.length; i < l; ++i) {
@@ -445,7 +445,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {}, [], [], "ORC", "ddd", userData.sid)
@@ -470,7 +470,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {}, [], [], "ORC", "2g3", userData.sid)
@@ -501,7 +501,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob1.x, mob1.y, {}, [], [], "ORC", defaultDamage, userData.sid)
@@ -537,7 +537,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {}, [], ["CAN_MOVE"], "ORC", defaultDamage, userData.sid)
@@ -569,7 +569,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {}, [], ["BAD_FLAG"], "ORC", defaultDamage, userData.sid)
@@ -598,7 +598,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {}, [{
@@ -629,7 +629,7 @@ function test() {
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob.x, mob.y, {"HP": mob.HP, "MAX_HP": mob.MAX_HP},
@@ -657,23 +657,25 @@ function test() {
                 var mob1 = {"x": 0.5, "y": 0.5,
                             "race": "ORC",
                             "stats": {"HP": 200, "MAX_HP": 200},
-                            "flags": ["HATE_TROLL", "CAN_BLOW"]
+                            "flags": ["HATE_TROLL", "CAN_BLOW"],
+                            "inventory": []
                 }
                 var mob2 = {"x": 1.7, "y": 0.5,
                             "race": "TROLL",
                             "stats": {"HP": 100, "MAX_HP": 100},
-                            "flags": []
+                            "flags": [],
+                            "inventory": []
                 }
                 var map = [[".", ".", "."]]
                 this.timeout(6000)
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob1.x, mob1.y,
-                                      mob1.stats, [/*inventory*/], mob1.flags,
+                                      mob1.stats, mob1.inventory, mob1.flags,
                                       mob1.race, defaultDamage, userData.sid)
                         break
                     case "putMob":
@@ -682,7 +684,7 @@ function test() {
                             assert.equal("ok", data.result, "put mob1")
                             mob1.id = data.id
                             socket.putMob(mob2.x, mob2.y,
-                                          mob2.stats, [/*inventory*/], mob2.flags,
+                                          mob2.stats, mob2.inventory, mob2.flags,
                                           mob2.race, defaultDamage, userData.sid)
                         } else {
                             assert.equal("ok", data.result, "put mob2")
@@ -703,6 +705,7 @@ function test() {
                             socket.setOnMessage(undefined)
                             done()
                         }
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -714,23 +717,25 @@ function test() {
                 var mob1 = {"x": 0.5, "y": 0.5,
                             "race": "ORC",
                             "stats": {"HP": 200, "MAX_HP": 200},
-                            "flags": ["HATE_TROLL", "CAN_BLOW"]
+                            "flags": ["HATE_TROLL", "CAN_BLOW"],
+                            "inventory": []
                 }
                 var mob2 = {"x": 1.7, "y": 0.5,
                             "race": "TROLL",
                             "stats": {"HP": 100, "MAX_HP": 100},
-                            "flags": ["HATE_ORC", "CAN_BLOW"]
+                            "flags": ["HATE_ORC", "CAN_BLOW"],
+                            "inventory": []
                 }
                 var map = [[".", ".", "."]]
                 this.timeout(6000)
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob1.x, mob1.y,
-                                      mob1.stats, [/*inventory*/], mob1.flags,
+                                      mob1.stats, mob1.inventory, mob1.flags,
                                       mob1.race, defaultDamage, userData.sid)
                         break
                     case "putMob":
@@ -739,7 +744,7 @@ function test() {
                             assert.equal("ok", data.result, "put mob1")
                             mob1.id = data.id
                             socket.putMob(mob2.x, mob2.y,
-                                          mob2.stats, [/*inventory*/], mob2.flags,
+                                          mob2.stats, mob2.inventory, mob2.flags,
                                           mob2.race, defaultDamage, userData.sid)
                         } else {
                             assert.equal("ok", data.result, "put mob2")
@@ -761,6 +766,7 @@ function test() {
                             socket.setOnMessage(undefined)
                             done()
                         }
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -772,23 +778,25 @@ function test() {
                 var mob1 = {"x": 0.5, "y": 0.5,
                             "race": "ORC",
                             "stats": {"HP": 200, "MAX_HP": 200},
-                            "flags": ["HATE_TROLL"]
+                            "flags": ["HATE_TROLL"],
+                            "inventory": []
                 }
                 var mob2 = {"x": 1.7, "y": 0.5,
                             "race": "TROLL",
                             "stats": {"HP": 100, "MAX_HP": 100},
-                            "flags": ["HATE_ORC"]
+                            "flags": ["HATE_ORC"],
+                            "inventory": []
                 }
                 var map = [[".", ".", "."]]
                 this.timeout(6000)
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob1.x, mob1.y,
-                                      mob1.stats, [/*inventory*/], mob1.flags,
+                                      mob1.stats, mob1.inventory, mob1.flags,
                                       mob1.race, defaultDamage, userData.sid)
                         break
                     case "putMob":
@@ -797,7 +805,7 @@ function test() {
                             assert.equal("ok", data.result, "put mob1")
                             mob1.id = data.id
                             socket.putMob(mob2.x, mob2.y,
-                                          mob2.stats, [/*inventory*/], mob2.flags,
+                                          mob2.stats, mob2.inventory, mob2.flags,
                                           mob2.race, defaultDamage, userData.sid)
                         } else {
                             assert.equal("ok", data.result, "put mob2")
@@ -817,6 +825,7 @@ function test() {
                             socket.setOnMessage(undefined)
                             done()
                         }
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -828,23 +837,25 @@ function test() {
                 var mob1 = {"x": 0.5, "y": 0.5,
                             "race": "ORC",
                             "stats": {"HP": 200, "MAX_HP": 200},
-                            "flags": ["HATE_TROLL", "CAN_BLOW"]
+                            "flags": ["HATE_TROLL", "CAN_BLOW"],
+                            "inventory": []
                 }
                 var mob2 = {"x": 7.7, "y": 0.5,
                             "race": "TROLL",
                             "stats": {"HP": 100, "MAX_HP": 100},
-                            "flags": ["HATE_ORC", "CAN_BLOW"]
+                            "flags": ["HATE_ORC", "CAN_BLOW"],
+                            "inventory": []
                 }
                 var map = [[".", ".", ".", ".", ".", ".", ".", "."]]
                 this.timeout(6000)
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
-                    switch(data.action) {
+                    switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
                         socket.putMob(mob1.x, mob1.y,
-                                      mob1.stats, [/*inventory*/], mob1.flags,
+                                      mob1.stats, mob1.inventory, mob1.flags,
                                       mob1.race, defaultDamage, userData.sid)
                         break
                     case "putMob":
@@ -853,7 +864,7 @@ function test() {
                             assert.equal("ok", data.result, "put mob1")
                             mob1.id = data.id
                             socket.putMob(mob2.x, mob2.y,
-                                          mob2.stats, [/*inventory*/], mob2.flags,
+                                          mob2.stats, mob2.inventory, mob2.flags,
                                           mob2.race, defaultDamage, userData.sid)
                         } else {
                             assert.equal("ok", data.result, "put mob2")
@@ -873,10 +884,68 @@ function test() {
                             socket.setOnMessage(undefined)
                             done()
                         }
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
+
+            it("mob shouldn't attack player \
+                [mob hasn't CAN_BLOW & HATE_PLAYER]", function(done) {
+                var flag = true
+                var mob = {"x": 1.5, "y": 0.5,
+                           "race": "TROLL",
+                           "stats": {"HP": 100, "MAX_HP": 100},
+                           "flags": [],
+                           "inventory": []
+                }
+                var player = {"x": mob.x+1, "y": mob.y,
+                              "stats": {"HP": 100, "MAX_HP": 100},
+                              "slots": [],
+                              "inventory": []
+                }
+                var map = [["#", ".", ".", "#"]]
+                this.timeout(6000)
+                socket.setOnMessage(function(e) {
+                    //console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    switch (data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putMob(mob.x, mob.y,
+                                      mob.stats, mob.inventory, mob.flags,
+                                      mob.race, defaultDamage, userData.sid)
+                        break
+                    case "putMob":
+                        assert.equal("ok", data.result, "put mob")
+                        mob.id = data.id
+                        socket.putPlayer(player.x, player.y,
+                                         player.stats, player.inventory,
+                                         player.slots, userData.sid)
+                        break
+                    case "putPlayer":
+                        assert.equal("ok", data.result, "put player")
+                        player.id = data.id
+                        player.sid = data.sid
+                        setTimeout(function() {socket.singleExamine(player.id, player.sid)}, 3000)
+                        setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 3000)
+                    case "examine":
+                        if (flag) {
+                            flag = false
+                            assert.equal("ok", data.result, "player: examine request")
+                            assert.equal(player.stats.HP, data.health, "player: health hasn't changed")
+                        } else {
+                            assert.equal("ok", data.result, "mob: examine request")
+                            assert.equal(mob.stats.HP, data.health, "mob: health hasn't changed")
+                            socket.setOnMessage(undefined)
+                            done()
+                        }
+                        break
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
+            })
+
         })
 
     })
