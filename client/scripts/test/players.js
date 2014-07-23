@@ -176,10 +176,46 @@ function test() {
                     case "putPlayer":
                         if (flag) {
                             flag = false
-                            assert.equal("ok", data.result, "put player")
+                            assert.equal("ok", data.result, "put player1")
                             socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
                         } else {
-                            assert.equal("badPlacing", data.result, "put player")
+                            assert.equal("badPlacing", data.result, "put player2")
+                            player.id = data.id
+                            socket.singleExamine(player.id, userData.sid)
+                        }
+                        break
+                    case "examine":
+                        assert.equal("badId", data.result, "examine request")
+                        socket.setOnMessage(undefined)
+                        done()
+                    }
+                })
+                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
+            })
+
+            it("should fail put player [cross players]", function(done) {
+                var flag = true
+                var player = {"x": 1.5, "y": 1.5}
+                var map = [
+                    [".", ".", "."],
+                    [".", ".", "."],
+                    [".", ".", "."]
+                ]
+                socket.setOnMessage(function(e) {
+                    console.log(JSON.parse(e.data))
+                    var data = JSON.parse(e.data)
+                    switch(data.action) {
+                    case "setUpMap":
+                        assert.equal("ok", data.result, "load map")
+                        socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
+                        break
+                    case "putPlayer":
+                        if (flag) {
+                            flag = false
+                            assert.equal("ok", data.result, "put player1")
+                            socket.putPlayer(player.x+0.5, player.y+0.5, {}, [], {}, userData.sid)
+                        } else {
+                            assert.equal("badPlacing", data.result, "put player2")
                             player.id = data.id
                             socket.singleExamine(player.id, userData.sid)
                         }
