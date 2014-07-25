@@ -202,10 +202,10 @@ void GameServer::tick()
   /*float dt = (time_.elapsed() - lastTime_) * 0.001f;*/
   lastTime_ = time_.elapsed();
 
-  if (actors_.size() < 100 && !testingStageActive_)//???
+  /*if (actors_.size() < 100 && !testingStageActive_)
   {
     GenMonsters_();
-  }
+  }*/
 
   auto collideWithGrid = [=](Actor* actor)
   {
@@ -262,7 +262,16 @@ void GameServer::tick()
     auto v = directionToVector[static_cast<unsigned>(actor->GetDirection())] /* * playerVelocity_*/;
     actor->SetVelocity(v);
     levelMap_.RemoveActor(actor);
-    actor->Update(static_cast<Creature*>(actor)->GetSpeed()); /*actor->Update(dt);*/
+
+    float dt = static_cast<Creature*>(actor)->GetSpeed();
+    Vector2 old_pos = actor->GetPosition();
+    Vector2 new_pos = old_pos + v * dt;
+
+    if (levelMap_.GetCell(new_pos.x, new_pos.y) == '.'
+        && actor->GetDirection() != EActorDirection::NONE)
+    {
+      actor->Update(dt);
+    }
 
     collideWithGrid(actor);
 
@@ -309,6 +318,7 @@ void GameServer::tick()
       {
          actor->OnCollideActor(neighbour);
          neighbour->OnCollideActor(actor);
+         actor->SetPosition(old_pos);
       }
     }
 
@@ -1102,6 +1112,11 @@ void GameServer::HandlePutPlayer_(const QVariantMap& request, QVariantMap& respo
     player->SetStat(stat, val.toFloat());
   }
 
+  if (stats.size() == 0)
+  {
+    player->SetSpeed(playerVelocity_);
+  }
+
   QVariantList items;
   for (auto& elem: player->items_)
   {
@@ -1201,6 +1216,7 @@ void GameServer::GenMonsters_()
         if (monsterCounter % 10 == 0)
         {
           Monster* monster = CreateActor_<Monster>();
+          monster->SetType("monster");
           Monster& m = *monster;
           SetActorPosition_(monster, Vector2(j + 0.5f, i + 0.5f));
           m.SetDirection(static_cast<EActorDirection>(rand() % 4 + 1));
