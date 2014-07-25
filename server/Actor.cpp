@@ -79,7 +79,7 @@ void Actor::SetSize(const float size)
 void Actor::Update(float dt)
 {
   position_ += velocity_ * dt;
-  SetDirection(EActorDirection::NONE);//???
+  SetDirection(EActorDirection::NONE);
 }
 
 int Actor::GetId() const
@@ -105,6 +105,11 @@ bool Actor::OnCollideActor(Actor* /*actor*/)
 QString Actor::GetType() const
 {
   return type_;
+}
+
+void Actor::SetType(QString type)
+{
+  type_ = type;
 }
 
 std::vector<std::pair<int, int>> Actor::GetOccupiedCells() const

@@ -62,16 +62,15 @@ public:
   float GetSize() const;
   void SetSize(const float size);
 
-  virtual void Update(float dt);
+  QString GetType() const;
+  void SetType(QString type);
 
   int GetId() const;
   void SetId(int id);
 
+  virtual void Update(float dt);
   virtual void OnCollideWorld();
   virtual bool OnCollideActor(Actor* actor);
-
-  QString GetType() const;
-
   virtual std::vector<std::pair<int, int>> GetOccupiedCells() const;
 
 protected:
