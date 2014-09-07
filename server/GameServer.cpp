@@ -215,31 +215,30 @@ void GameServer::tick()
     float x = p.GetPosition().x;
     float y = p.GetPosition().y;
 
-    /*EActorDirection dir = actor->GetDirection();*/
     bool collided = false;
 
-    if (/*dir == EActorDirection::EAST && */levelMap_.GetCell(x + 0.5f, y) == '#')
+    if (levelMap_.GetCell(x + 0.5f, y) != '.' )
     {
       p.SetPosition(Vector2(round(x + 0.5f) - 0.5f, p.GetPosition().y));
       collided = true;
       col++;
     }
 
-    if (/*dir == EActorDirection::WEST && */levelMap_.GetCell(x - 0.5f, y) == '#')
+    if (levelMap_.GetCell(x - 0.5f, y) != '.')
     {
       p.SetPosition(Vector2(round(x - 0.5f) + 0.5f, p.GetPosition().y));
       collided = true;
       col++;
     }
 
-    if (/*dir == EActorDirection::SOUTH && */levelMap_.GetCell(x, y + 0.5f) == '#')
+    if (levelMap_.GetCell(x, y + 0.5f) != '.')
     {
       p.SetPosition(Vector2(p.GetPosition().x, round(y + 0.5f) - 0.5f));
       collided = true;
       col++;
     }
 
-    if (/*dir == EActorDirection::NORTH &&  */levelMap_.GetCell(x, y - 0.5f) == '#')
+    if (levelMap_.GetCell(x, y - 0.5f) != '.')
     {
       p.SetPosition(Vector2(p.GetPosition().x, round(y - 0.5f) + 0.5f));
       collided = true;
@@ -250,19 +249,71 @@ void GameServer::tick()
     {
       actor->OnCollideWorld();
     }
-
-    /*if (col > 3)
-    {
-      p.SetDirection(EActorDirection::NONE);
-    }*/
   };
-
+  for (Actor* actor: actors_)
+  {
+    if (actor->GetType() == "monster")
+    {
+      Monster* monster = static_cast<Monster*>(actor);
+      Creature* target = monster->target;
+      float distance;
+      Vector2 m_pos = actor->GetPosition();
+      if (target)
+      {
+        Vector2 t_pos = target->GetPosition();
+        distance = sqrt((m_pos.x - t_pos.x)*(m_pos.x - t_pos.x) +
+                        (m_pos.y - t_pos.y)*(m_pos.y - t_pos.y));
+        if (distance < 5)
+        {
+          if (m_pos.x < t_pos.x )
+            monster->SetDirection (EActorDirection::EAST);
+          if (m_pos.x > t_pos.x )
+            monster->SetDirection (EActorDirection::WEST);
+          if (m_pos.y < t_pos.y )
+            monster->SetDirection (EActorDirection::NORTH);
+          if (m_pos.y > t_pos.y )
+            monster->SetDirection (EActorDirection::SOUTH);
+        }
+      }
+      if (!target || distance >= 5)
+      {
+        for (Actor* target: actors_)
+        {
+          Creature* m = static_cast<Creature*>(target);
+          bool b = false;
+          QStringList str = monster->Flags.filter("HATE");
+          for (QString hate: str)
+            if (Hates[hate] == m->GetRace () && m != monster) {
+              b = true;
+              break;
+            }
+          if (b)
+          {
+            Vector2 t_pos = target->GetPosition();
+            distance = sqrt((m_pos.x - t_pos.x)*(m_pos.x - t_pos.x) +
+                        (m_pos.y - t_pos.y)*(m_pos.y - t_pos.y));
+           if (distance < 5 )
+           {
+             monster->target = m;
+             break;
+           }
+          }
+        }
+       }
+    }
+  }
   for (Actor* actor: actors_)
   {
     auto v = directionToVector[static_cast<unsigned>(actor->GetDirection())] /* * playerVelocity_*/;
     actor->SetVelocity(v);
-    levelMap_.RemoveActor(actor);
 
+   /* if (static_cast<Creature*>(actor)->GetHealth () <= 0)
+    {
+      Creature* b = static_cast<Creature*>(actor);
+      KillActor_(b);
+      break;
+    }*/
+    levelMap_.RemoveActor(actor);
     float dt = static_cast<Creature*>(actor)->GetSpeed();
     Vector2 old_pos = actor->GetPosition();
     Vector2 new_pos = old_pos + v * dt;

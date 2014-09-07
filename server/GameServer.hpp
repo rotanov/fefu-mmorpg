@@ -212,6 +212,19 @@ private:
     {"MP", MP},
     {"MAX_MP", MAX_MP}
   };
+  QMap<QString,QString> Hates =
+  {
+    {"HATE_ORC", "ORC"},
+    {"HATE_EVIL", "EVIL"},
+    {"HATE_TROLL", "TROLL"},
+    {"HATE_GIANT", "GIANT"},
+    {"HATE_DEMON", "DEMON"},
+    {"HATE_METAL", "METAL"},
+    {"HATE_PLAYER", "PLAYER"},
+    {"HATE_DRAGON", "DRAGON"},
+    {"HATE_UNDEAD", "UNDEAD"},
+    {"HATE_ANIMAL", "ANIMAL"}
+  };
 };
 
 template <typename T>
