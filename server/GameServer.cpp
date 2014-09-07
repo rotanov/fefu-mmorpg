@@ -326,8 +326,6 @@ void GameServer::tick()
 
     collideWithGrid(actor);
 
-    //if (actor->GetHealth() < 0) ???
-
     if (actor->GetType() == "player")
     {
       Creature* player = static_cast<Creature*>(actor);
@@ -363,13 +361,13 @@ void GameServer::tick()
         continue;
       }
 
-      Box box0(neighbour->GetPosition(), neighbour->GetSize(), neighbour->GetSize());
-      Box box1(actor->GetPosition(), actor->GetSize(), actor->GetSize());
+      Box box0(neighbour->GetPosition(), 0.8f, 0.8f);
+      Box box1(actor->GetPosition(), 0.8f, 0.8f);
       if (box0.Intersect(box1))
       {
-         actor->OnCollideActor(neighbour);
-         neighbour->OnCollideActor(actor);
-         actor->SetPosition(old_pos);
+        actor->OnCollideActor(neighbour);
+        neighbour->OnCollideActor(actor);
+        actor->SetPosition(old_pos);
       }
     }
 
@@ -639,11 +637,11 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
       actor["name"] = static_cast<Item*>(a)->Getname();
     }
 
-    if (actor["health"] <= 0 && (actor["type"] == "monster"))
+   /* if (actor["health"] <= 0 && (actor["type"] == "monster"))
     {
       Creature* b = static_cast<Creature*>(a);
       KillActor_(b);
-    }
+    }*/
 
     if (actor["type"] == "item" || actor["health"] > 0)
     {
