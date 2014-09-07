@@ -50,6 +50,11 @@ void Creature::SetRace()
 
 }
 
+QString Creature::GetRace()
+{
+  return race_;
+}
+
 void Creature::SetStat(bool flag, Item* item)
 {
   for (auto i = item->bonuses.begin(); i != item->bonuses.end(); i++)
