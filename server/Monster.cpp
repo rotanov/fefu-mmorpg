@@ -20,19 +20,9 @@ void Monster::OnCollideWorld()
   }
 }
 
-bool Monster::OnCollideActor(Actor* actor)
+bool Monster::OnCollideActor(Actor* /*actor*/)
 {
-  if (actor->GetType() == "monster" || actor->GetType() == "player")
-  {
-    QStringList str = Flags.filter("HATE");
-    for (auto& a: str)
-    {
-      if (Hates[a] == race_)
-        return true;
-    }
-  }
   OnCollideWorld();
-  return false;
 }
 
 void Monster::Update(float dt)

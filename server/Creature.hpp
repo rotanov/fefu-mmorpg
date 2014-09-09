@@ -37,6 +37,7 @@ public:
 
   virtual QVariantMap atack(Creature* actor);
   virtual void SetRace();
+  virtual QString GetRace();
 
   QString race_ = "NONE";
 
