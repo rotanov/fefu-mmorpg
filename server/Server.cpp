@@ -118,6 +118,28 @@ void Server::handleRequest(QHttpRequest *request, QHttpResponse *response)
   }
     break;
 
+  case QHttpRequest::HTTP_OPTIONS:
+  {
+    auto path = request->path();
+    if (path == "/")
+    {
+      path = "/index.html";
+    }
+    response->setHeader("Access-Control-Allow-Origin", "*");
+    response->setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    response->setHeader("Access-Control-Allow-Headers", "Content-Type");
+    response->setHeader("Content-Type", "text/html; charset=utf-8");
+
+    QFile index("../client" + path);
+    QByteArray body;
+
+    body = index.readAll();
+    response->setHeader("Content-Length", QString::number(body.size()));
+    response->writeHead(QHttpResponse::STATUS_OK);
+    response->end(body);
+  }
+    break;
+
   default:
   {
     QByteArray body;
