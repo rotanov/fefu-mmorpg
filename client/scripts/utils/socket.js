@@ -24,7 +24,7 @@ define(function() {
     Socket.prototype.singleExamine = function(id, sid) {
         this.sock.send(JSON.stringify({
             "action": "examine",
-            "id": id,
+            "id": parseInt(id),
             "sid": sid
         }))
     }
@@ -79,7 +79,7 @@ define(function() {
     Socket.prototype.destroyItem = function(id, sid) {
         this.sock.send(JSON.stringify({
             "action": "destroyItem",
-            "id": id,
+            "id": parseInt(id),
             "sid": sid
         }))
     }
@@ -87,7 +87,7 @@ define(function() {
     Socket.prototype.drop = function(id, sid) {
         this.sock.send(JSON.stringify({
             "action": "drop",
-            "id": id,
+            "id": parseInt(id),
             "sid": sid
         }))
     }
@@ -95,7 +95,7 @@ define(function() {
     Socket.prototype.equip = function(id, sid, slot) {
         this.sock.send(JSON.stringify({
             "action": "equip",
-            "id": id,
+            "id": parseInt(id),
             "sid": sid,
             "slot": slot
         }))
@@ -112,7 +112,7 @@ define(function() {
     Socket.prototype.pickUp = function(id, sid) {
         this.sock.send(JSON.stringify({
             "action": "pickUp",
-            "id": id,
+            "id": parseInt(id),
             "sid": sid
         }))
     }
@@ -120,7 +120,7 @@ define(function() {
     Socket.prototype.use = function(id, sid, x, y) {
         var request = {
             "action": "use",
-            "id": id,
+            "id": parseInt(id),
             "sid": sid
         }
         if (x && y) {
