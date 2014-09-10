@@ -47,6 +47,7 @@ const std::vector<QString> fempResultToString =
   [EFEMPResult::BAD_RACE] = "badRace",
   [EFEMPResult::BAD_FLAG] = "badFlag",
   [EFEMPResult::BAD_DAMAGE] = "badDamage",
+
 };
 
 // TODO: separate module
@@ -212,7 +213,7 @@ private:
     {"MP", MP},
     {"MAX_MP", MAX_MP}
   };
-  QMap<QString,QString> Hates =
+    QMap<QString,QString> Hates =
   {
     {"HATE_ORC", "ORC"},
     {"HATE_EVIL", "EVIL"},

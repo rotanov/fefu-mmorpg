@@ -202,7 +202,7 @@ void GameServer::tick()
   /*float dt = (time_.elapsed() - lastTime_) * 0.001f;*/
   lastTime_ = time_.elapsed();
 
-  /*if (actors_.size() < 100 && !testingStageActive_)
+ /* if (actors_.size() < 100 && !testingStageActive_)
   {
     GenMonsters_();
   }*/
@@ -283,7 +283,7 @@ void GameServer::tick()
           bool b = false;
           QStringList str = monster->Flags.filter("HATE");
           for (QString hate: str)
-            if (Hates[hate] == m->GetRace () && m != monster) {
+            if (Hates[hate] == m->GetRace ()) {
               b = true;
               break;
             }
@@ -304,7 +304,7 @@ void GameServer::tick()
   }
   for (Actor* actor: actors_)
   {
-    auto v = directionToVector[static_cast<unsigned>(actor->GetDirection())] /* * playerVelocity_*/;
+    auto v = directionToVector[static_cast<unsigned>(actor->GetDirection())]  * playerVelocity_;
     actor->SetVelocity(v);
 
    /* if (static_cast<Creature*>(actor)->GetHealth () <= 0)
@@ -387,12 +387,13 @@ void GameServer::tick()
 void GameServer::HandleSetUpConstants_(const QVariantMap& request, QVariantMap& response)
 {
   if (!testingStageActive_
-      || !request["playerVelocity"].toFloat()
-      || !request["slideThreshold"].toFloat()
-      || !request["ticksPerSecond"].toInt()
-      || !request["screenRowCount"].toInt()
-      || !request["screenColumnCount"].toInt()
-      || !request["pickUpRadius"].toFloat()) {
+      || !request["playerVelocity"].canConvert<float>()
+      || !request["slideThreshold"].canConvert<float>()
+      || !request["ticksPerSecond"].canConvert<int>()
+      || !request["screenRowCount"].canConvert<int>()
+      || !request["screenColumnCount"].canConvert<int>()
+      || !request["pickUpRadius"].canConvert<float>()
+      ) {
     WriteResult_(response, EFEMPResult::BAD_ACTION);
     return;
   }
