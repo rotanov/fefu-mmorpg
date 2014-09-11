@@ -23,6 +23,7 @@ void Monster::OnCollideWorld()
 bool Monster::OnCollideActor(Actor* /*actor*/)
 {
   OnCollideWorld();
+  return false;
 }
 
 void Monster::Update(float dt)

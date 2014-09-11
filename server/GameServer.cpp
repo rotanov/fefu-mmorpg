@@ -304,7 +304,7 @@ void GameServer::tick()
   }
   for (Actor* actor: actors_)
   {
-    auto v = directionToVector[static_cast<unsigned>(actor->GetDirection())]  * playerVelocity_;
+    auto v = directionToVector[static_cast<unsigned>(actor->GetDirection())] ;
     actor->SetVelocity(v);
 
    /* if (static_cast<Creature*>(actor)->GetHealth () <= 0)
@@ -367,7 +367,15 @@ void GameServer::tick()
       {
         actor->OnCollideActor(neighbour);
         neighbour->OnCollideActor(actor);
-        actor->SetPosition(old_pos);
+        if (actor->GetType () == "projectile")
+        {
+          idToActor_.erase(actor->GetId());
+          levelMap_.RemoveActor(actor);
+          actors_.erase(std::remove(actors_.begin(), actors_.end(), actor), actors_.end());
+          delete actor;
+          actor = NULL;
+        } else
+          actor->SetPosition(old_pos);
       }
     }
 
