@@ -876,40 +876,48 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
     WriteResult_(response, EFEMPResult::BAD_PLACING);
     return;
   }
-
-  //float x = request["x"].toFloat();
-  //float y = request["y"].toFloat();
-
   for (Actor* actor: actors_)
   {
-    if (actor->GetType() != "monster" && actor->GetType() != "player")
+    if (actor->GetType() == "monster" || actor->GetType() == "player")
     {
-      continue;
-    }
-    Creature* target = static_cast<Creature*>(actor);
-    //Box box0(actor->GetPosition(), 1f, 1f);
-    //Box box1(Vector2(x, y), 1f, 1f);
-    if ((p->GetId() != target->GetId()) && (target->GetHealth() > 0))
-    {
-      Vector2 player_pos = p->GetPosition();
-      Vector2 target_pos = target->GetPosition();
-      float distance = sqrt((player_pos.x - target_pos.x)*(player_pos.x - target_pos.x) +
-                            (player_pos.y - target_pos.y)*(player_pos.y - target_pos.y));
-      if (distance <= pickUpRadius_)
+      Creature* target = static_cast<Creature*>(actor);
+      if ((p->GetId() != target->GetId()) && (target->GetHealth() > 0))
       {
-        QVariantMap a = p->atack(target, id);
-        events_ << a;
-        a = target->atack(p);
-        if (target->GetHealth() < 0)
+        Vector2 player_pos = p->GetPosition();
+        Vector2 target_pos = target->GetPosition();
+        float distance = sqrt((player_pos.x - target_pos.x)*(player_pos.x - target_pos.x) +
+                              (player_pos.y - target_pos.y)*(player_pos.y - target_pos.y));
+        if (distance <= pickUpRadius_)
         {
-          GetItems(target);
+          QVariantMap a = p->atack(target, id);
+          events_ << a;
+          a = target->atack(p);
+          if (target->GetHealth() < 0)
+          {
+            GetItems(target);
+          }
+          events_ << a;
+          WriteResult_(response, EFEMPResult::OK);
+          return;
         }
-        events_ << a;
-        WriteResult_(response, EFEMPResult::OK);
-        return;
       }
     }
   }
+}
+
+//==============================================================================
+void GameServer::HandleUseSkill_(const QVariantMap& request, QVariantMap& response)
+{
+  auto sid = request["sid"].toByteArray();
+  Player* p = sidToPlayer_[sid];
+  if (!request["x"].toFloat() || !request["y"].toFloat())
+  {
+    WriteResult_(response, EFEMPResult::BAD_PLACING);
+    return;
+  }
+  Projectile* project = CreateActor_<Projectile>();
+  SetActorPosition_(project, p->GetPosition ());
+  project->SetDirection(EActorDirection::EAST);
 }
 
 //==============================================================================

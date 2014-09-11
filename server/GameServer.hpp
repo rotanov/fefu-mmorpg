@@ -12,6 +12,7 @@
 #include "PermaStorage.hpp"
 #include "Player.hpp"
 #include "Monster.hpp"
+#include "Projectile.hpp"
 
 enum class EFEMPResult
 {
@@ -103,6 +104,7 @@ private:
     {"drop", &GameServer::HandleDrop_},// положить
     {"equip", &GameServer::HandleEquip_},// одеть
     {"enforce", &GameServer::HandleEnforce_},
+    {"useSkill", &GameServer::HandleUseSkill_}
   };
 
   void HandleStartTesting_(const QVariantMap& request, QVariantMap& response);
@@ -128,6 +130,7 @@ private:
   void HandlePickUp_(const QVariantMap& request, QVariantMap& response);
   void HandleUnequip_(const QVariantMap& request, QVariantMap& response);
   void HandleUse_(const QVariantMap& request, QVariantMap& response);
+  void HandleUseSkill_(const QVariantMap& request, QVariantMap& response);
   void HandleDrop_(const QVariantMap& request, QVariantMap& response);
   void HandleEquip_(const QVariantMap& request, QVariantMap& response);
 //==============================================================================
