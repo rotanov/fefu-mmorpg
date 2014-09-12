@@ -449,7 +449,7 @@ function test() {
                         break
                     case "move":
                         assert.equal("ok", data.result, "move request")
-                        setTimeout(function(){socket.singleExamine(player.id, player.sid), 200})
+                        setTimeout(function(){socket.singleExamine(player.id, player.sid)}, 200)
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
@@ -492,7 +492,7 @@ function test() {
                         break
                     case "move":
                         assert.equal("ok", data.result, "move request")
-                        setTimeout(function(){socket.singleExamine(player.id, player.sid), 200})
+                        setTimeout(function(){socket.singleExamine(player.id, player.sid)}, 200)
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
@@ -542,7 +542,7 @@ function test() {
                         break
                     case "move":
                         assert.equal("ok", data.result, "move request")
-                        setTimeout(function(){socket.singleExamine(player.id, player.sid), 200})
+                        setTimeout(function(){socket.singleExamine(player.id, player.sid)}, 200)
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
@@ -917,16 +917,17 @@ function test() {
                         break
                     case "use":
                         assert.equal("ok", data.result, "use fists")
-                        socket.singleExamine(player.id, player.sid)
-                        socket.singleExamine(mob.id, userData.sid)
+                        setTimeout(function() {socket.singleExamine(player.id, player.sid)}, 200)
+                        break
                     case "examine":
                         if (data.type == "player") {
                             flag = false
                             assert.equal("ok", data.result, "player: examine request")
-                            assert.notEqual(player.stats.HP, data.health, "player: health hasn't changed")
+                            assert.equal(player.stats.HP, data.health, "player: health changed")
+                            setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 200)
                         } else if (data.type == "monster") {
                             assert.equal("ok", data.result, "mob: examine request")
-                            assert.notEqual(mob.stats.HP, data.health, "mob: health has changed")
+                            assert.notEqual(mob.stats.HP, data.health, "mob: health hasn't changed")
                             assert.isTrue(mob.stats.HP > data.health, "mob: health has decreased")
                             socket.setOnMessage(undefined)
                             done()
@@ -975,24 +976,26 @@ function test() {
                         player.id = data.id
                         player.sid = data.sid
                         player.fistId = data.fistId
-                       // socket.use(player.fistId, player.sid, mob.x, mob.y)
-                       // break
-                   // case "use":
-                     //   assert.equal("ok", data.result, "use fists")
-                        setTimeout(function() {socket.singleExamine(player.id, player.sid)}, 5000)
-                        setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 5000)
+                        socket.use(player.fistId, player.sid, mob.x, mob.y)
+                        break
+                    case "use":
+                        assert.equal("ok", data.result, "use fists")
+                        
+                        setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 200)   
+                        
                     case "examine":
                         if (data.type == "player") {
                             flag = false
                             assert.equal("ok", data.result, "player: examine request")
-                            assert.notEqual(player.stats.HP, data.health, "player: health has changed")
-                            assert.isTrue(player.stats.HP > data.health, "player: health has decreased")
-                        } else if (data.type == "monster") {
-                            assert.equal("ok", data.result, "mob: examine request")
-                            assert.equal(mob.stats.HP, data.health, "mob: health has changed")
-                           // assert.isTrue(mob.stats.HP > data.health, "mob: health has decreased")
+                            assert.notEqual(player.stats.HP, data.health, "player: health hasn't changed")
+                            assert.isTrue(player.stats.HP > data.health, "player: health hasn't decreased")
                             socket.setOnMessage(undefined)
                             done()
+                        } else if (data.type == "monster") {
+                            assert.equal("ok", data.result, "mob: examine request")
+                            assert.notEqual(mob.stats.HP, data.health, "mob: health hasn't changed")
+                            assert.isTrue(mob.stats.HP > data.health, "mob: health hasn't decreased")
+                            setTimeout(function() {socket.singleExamine(player.id, player.sid)}, 200)   
                         }
                         break
                     }
