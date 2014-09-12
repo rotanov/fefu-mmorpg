@@ -533,7 +533,7 @@ function test() {
                         ["#", ".", ".", ".", "#"],
                         ["#", "#", "#", "#", "#"]
                     ]
-                this.timeout(8000)
+                this.timeout(15000)
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
@@ -545,8 +545,7 @@ function test() {
                     case "putMob":
                         assert.equal("ok", data.result, "put mob")
                         mob.id = data.id
-                        $.when(setTimeout(function(){}, 6000))
-                        .done(function(data) {socket.singleExamine(mob.id, userData.sid)})
+                        setTimeout(function(){socket.singleExamine(mob.id, userData.sid)}, 4000)
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
@@ -882,14 +881,14 @@ function test() {
                             "flags": ["HATE_TROLL", "CAN_BLOW"],
                             "inventory": []
                 }
-                var mob2 = {"x": 7.7, "y": 0.5,
+                var mob2 = {"x": 4.5, "y": 0.5,
                             "race": "TROLL",
                             "stats": {"HP": 100, "MAX_HP": 100},
                             "flags": ["HATE_ORC", "CAN_BLOW"],
                             "inventory": []
                 }
                 var map = [[".", ".", ".", ".", ".", ".", ".", "."]]
-                this.timeout(10000)
+                this.timeout(20000)
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
@@ -1051,7 +1050,7 @@ function test() {
                            "flags": ["CAN_MOVE", "CAN_BLOW", "HATE_PLAYER"],
                            "inventory": []
                 }
-                var player = {"x": 8.5, "y": 0.5,
+                var player = {"x": 5.5, "y": 0.5,
                               "stats": {"HP": 100, "MAX_HP": 100},
                               "slots": [],
                               "inventory": []
