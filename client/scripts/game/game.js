@@ -140,19 +140,24 @@ function OnMessage(e) {
             utils.cryBabyCry(data.result)
             break
         }
+        break
+    case "getConst":
+        if (data.result == "ok") {
+            width = data.screenColumnCount//*2 + 1
+            height = data.screenRowCount//*2 + 1
+            break
+        }
+        break
     }
 }
 
-function Start(data, h, w) {
+function Start(data) {
     id_ = data.id
     sid_ = data.sid
     fistId = data.fistId
-
-    height = h
-    width = w
-
+    socket.getConst(sid_)
     game = new phaser.Game(
-        64 * w, 64 * h,
+        64 * width, 64 * height,
         phaser.CANVAS,
         "",
         {
@@ -239,6 +244,15 @@ function updateSlot(data) {
 function onUpdate() {
     fpsText.setText("FPS: " + game.time.fps)
     if (game.input.mousePointer.isDown) {
+        var x = game.input.x
+        var y = game.input.y
+        var x1 = UnCoordinate(gPlayerX, x, width)
+        var y1 = UnCoordinate(gPlayerY, y, height)
+        if (lifespan) {
+            if (zKey.isDown) {
+                socket.use(fistId, sid_, x1, y1)
+            }
+        }
         var data = getObgect()
         if (data.id && lifespan) {
             if (aKey.isDown) {
@@ -264,11 +278,6 @@ function onUpdate() {
         route = 11
         socket.move("east", tick_, sid_)
     }
-
-    if (zKey.isDown && lifespan) {
-        socket.use(fistId, sid_, gPlayerX, gPlayerY)
-    }
-
     if (lifespan) {
         socket.look(sid_)
     }
@@ -277,7 +286,9 @@ function onUpdate() {
 function coordinate(x, coord, g) {
     return (-(x - coord) + g * 0.5) * step
 }
-
+function UnCoordinate(x, coord, g) {
+    return -(coord / step - g * 0.5 - x)
+}
 function createActors(start) {
     var frameIndex = 31
     var length = width * height * (start+1)
