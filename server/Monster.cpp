@@ -86,7 +86,7 @@ QVariantMap Monster::atack(Creature* actor)
   QVariantMap ans;
   ans["dealtDamage"] = val;
   ans["target"] = actor->GetId();
-  //ans["blowType"] = s[0];
+  ans["blowType"] = "BITE";
   ans["attacker"] = GetId();
   return ans;
 }
