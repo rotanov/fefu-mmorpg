@@ -161,16 +161,22 @@ void PermaStorage::GetItem(Item* i, const int id )
     {
       QStringList k;
       k << a.split(":");
-      for (auto j: k[1].split("|"))
+      if (k.length () > 1)
       {
-        i->bonuses[Stats[j]]["value"] = k[0];
+        for (auto j: k[1].split("|"))
+        {
+          i->bonuses[Stats[j]]["value"] = k[0];
+        }
       }
     }
     QStringList s ;
     s << q.value("atype").toString().split(":");
-    i->SetClass(s[0]);
-    i->SetTypeItem(s[1].toInt());
-    i->SetSubtype(s[2]);
+    if (s.length () > 2)
+    {
+      i->SetClass(s[0]);
+      i->SetTypeItem(s[1].toInt());
+      i->SetSubtype(s[2]);
+    }
     QStringList str1 ;
     str1 << q.value("power_info").toString().split(":");
     if (str1.length() > 0)

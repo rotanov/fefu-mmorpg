@@ -279,26 +279,29 @@ void GameServer::tick()
       {
         for (Actor* target: actors_)
         {
-          Creature* m = static_cast<Creature*>(target);
-          bool b = false;
-          QStringList str = monster->Flags.filter("HATE");
-          for (QString hate: str)
-            if (Hates[hate] == m->GetRace ()) {
-              b = true;
-              break;
-            }
-          if (b)
+          if (target != monster)
           {
-            Vector2 t_pos = target->GetPosition();
-            distance = sqrt((m_pos.x - t_pos.x)*(m_pos.x - t_pos.x) +
-                        (m_pos.y - t_pos.y)*(m_pos.y - t_pos.y));
-           if (distance < 5 )
-           {
-             monster->target = m;
-             break;
-           }
+            Creature* m = static_cast<Creature*>(target);
+            bool b = false;
+            QStringList str = monster->Flags.filter("HATE");
+            for (QString hate: str)
+              if (Hates[hate] == m->GetRace ()) {
+                b = true;
+                break;
+              }
+            if (b)
+            {
+              Vector2 t_pos = target->GetPosition();
+              distance = sqrt((m_pos.x - t_pos.x)*(m_pos.x - t_pos.x) +
+                          (m_pos.y - t_pos.y)*(m_pos.y - t_pos.y));
+             if (distance < 5 )
+             {
+               monster->target = m;
+               break;
+             }
+            }
           }
-        }
+         }
        }
     }
   }
@@ -306,13 +309,6 @@ void GameServer::tick()
   {
     auto v = directionToVector[static_cast<unsigned>(actor->GetDirection())] ;
     actor->SetVelocity(v);
-
-   /* if (static_cast<Creature*>(actor)->GetHealth () <= 0)
-    {
-      Creature* b = static_cast<Creature*>(actor);
-      KillActor_(b);
-      break;
-    }*/
     levelMap_.RemoveActor(actor);
     float dt = static_cast<Creature*>(actor)->GetSpeed();
     Vector2 old_pos = actor->GetPosition();
@@ -900,7 +896,7 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
           QVariantMap a = p->atack(target, id);
           events_ << a;
           a = target->atack(p);
-          if (target->GetHealth() < 0)
+          if (target->GetHealth() <= 0)
           {
             GetItems(target);
           }
@@ -911,6 +907,8 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
       }
     }
   }
+  WriteResult_ (response, EFEMPResult::OK);
+  return;
 }
 
 //==============================================================================
@@ -1381,6 +1379,11 @@ void GameServer::SetItemDescription(const QVariantMap& request, Item* item)
 bool GameServer::IsIncorrectPosition(float x, float y, Actor* actor)
 {
   if (levelMap_.GetCell(x, y) != '.')
+  {
+   return true;
+  }
+  if (levelMap_.GetCell(x + 0.4f, y) != '.' || levelMap_.GetCell(x - 0.4f, y) != '.'
+    || levelMap_.GetCell(x, y - 0.4f) != '.' || levelMap_.GetCell(x, y + 0.4f) != '.')
   {
     return true;
   }

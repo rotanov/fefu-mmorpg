@@ -445,7 +445,7 @@ function test() {
                         assert.equal("ok", data.result, "put player")
                         player.id = data.id
                         player.sid = data.sid
-                        setTimeout(function(){socket.move("west", tick, player.sid)}, 5000)
+                        setTimeout(function(){socket.move("east", tick, player.sid)}, 5000)
                         break
                     case "move":
                         assert.equal("ok", data.result, "move request")
@@ -453,8 +453,8 @@ function test() {
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
-                        assert.equal(player.x, data.x, "west: equal coordinate by x")
-                        assert.equal(player.y, data.y, "west: equal coordinate by y")
+                        assert.equal(player.x, data.x, "east: equal coordinate by x")
+                        assert.equal(player.y, data.y, "east: equal coordinate by y")
                         socket.setOnMessage(undefined)
                         done()
                     }
