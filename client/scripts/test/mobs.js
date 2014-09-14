@@ -81,6 +81,7 @@ function test() {
                         assert.equal("badId", data.result, "examine request")
                         socket.setOnMessage(undefined)
                         done()
+                        break
                     }
                 })
                 socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, -1)
@@ -101,6 +102,7 @@ function test() {
                         assert.equal("badId", data.result, "examine request")
                         socket.setOnMessage(undefined)
                         done()
+                        break
                     }
                 })
                 socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, userData.sid)
@@ -130,6 +132,7 @@ function test() {
                         assert.equal("badId", data.result, "examine request")
                         socket.setOnMessage(undefined)
                         done()
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -160,6 +163,7 @@ function test() {
                         assert.equal(mob.y, data.y, "can't move by y")
                         socket.setOnMessage(undefined)
                         done()
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -191,6 +195,7 @@ function test() {
                         assert.equal(mob.y, data.y)
                         socket.setOnMessage(undefined)
                         done()
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -227,6 +232,7 @@ function test() {
                         assert.equal("badId", data.result, "examine request")
                         socket.setOnMessage(undefined)
                         done()
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -263,6 +269,7 @@ function test() {
                         assert.equal("badId", data.result, "examine request")
                         socket.setOnMessage(undefined)
                         done()
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -295,6 +302,7 @@ function test() {
                         assert.equal("ok", data.result, "examine request")
                         socket.setOnMessage(undefined)
                         done()
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -352,6 +360,7 @@ function test() {
                         assert.equal("badId", data.result, "examine request")
                         socket.setOnMessage(undefined)
                         done()
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -377,6 +386,7 @@ function test() {
                         assert.equal("badId", data.result, "examine request")
                         socket.setOnMessage(undefined)
                         done()
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -402,6 +412,7 @@ function test() {
                         assert.equal("badId", data.result, "examine request")
                         socket.setOnMessage(undefined)
                         done()
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -434,6 +445,7 @@ function test() {
                             socket.setOnMessage(undefined)
                             done()
                         }
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -459,6 +471,7 @@ function test() {
                         assert.equal("badId", data.result, "examine request")
                         socket.setOnMessage(undefined)
                         done()
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -484,6 +497,7 @@ function test() {
                         assert.equal("badId", data.result, "examine request")
                         socket.setOnMessage(undefined)
                         done()
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -519,6 +533,7 @@ function test() {
                             socket.setOnMessage(undefined)
                             done()
                         }
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -583,6 +598,7 @@ function test() {
                         assert.equal("badId", data.result, "examine request")
                         socket.setOnMessage(undefined)
                         done()
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -618,42 +634,7 @@ function test() {
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })*/
 
-            it("should successfully put mob with inventory", function(done) {
-                var item = {}
-                var mob = {"x": 0.5, "y": 0.5,
-                            "race": "ORC",
-                            "stats": {"HP": 200, "MAX_HP": 200},
-                            "flags": ["HATE_TROLL", "CAN_BLOW"],
-                            "inventory": [it_.makeItem()]
-                }
-                var map = [["."]]
-                this.timeout(6000)
-                socket.setOnMessage(function(e) {
-                    //console.log(JSON.parse(e.data))
-                    var data = JSON.parse(e.data)
-                    switch (data.action) {
-                    case "setUpMap":
-                        assert.equal("ok", data.result, "load map")
-                        socket.putMob(mob.x, mob.y,
-                                      mob.stats, mob.inventory, mob.flags,
-                                      mob.race, defaultDamage, userData.sid)
-                        break
-                    case "putMob":
-                            assert.equal("ok", data.result, "put mob")
-                            mob.id = data.id
-                            socket.singleExamine(mob.id, userData.sid)
-                        break
-                    case "examine":
-                        assert.equal("ok", data.result, "mob: examine request")
-                        assert.property(data, "inventory")
-                        assert.isDefined(data.inventory[0])
-                        socket.setOnMessage(undefined)
-                        done()
-                        break
-                    }
-                })
-                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
-            })
+            
         })
 
         describe("Attack Mob", function() {
@@ -688,6 +669,7 @@ function test() {
                         assert.equal(mob.stats.HP, data.health, "health hasn't changed")
                         socket.setOnMessage(undefined)
                         done()
+                        break
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -731,8 +713,7 @@ function test() {
                         } else {
                             assert.equal("ok", data.result, "put mob2")
                             mob2.id = data.id
-                            setTimeout(function() {socket.singleExamine(mob1.id, userData.sid)}, 3000)
-                            setTimeout(function() {socket.singleExamine(mob2.id, userData.sid)}, 3000)
+                            setTimeout(function() {socket.singleExamine(mob1.id, userData.sid)}, 1000)
                         }
                         break
                     case "examine":
@@ -740,6 +721,7 @@ function test() {
                             examineFlag = false
                             assert.equal("ok", data.result, "mob1: examine request")
                             assert.equal(mob1.stats.HP, data.health, "mob1: health hasn't changed")
+                            setTimeout(function() {socket.singleExamine(mob2.id, userData.sid)}, 1000)
                         } else {
                             assert.equal("ok", data.result, "mob2: examine request")
                             assert.notEqual(mob2.stats.HP, data.health, "mob2: health has changed")
@@ -791,8 +773,7 @@ function test() {
                         } else {
                             assert.equal("ok", data.result, "put mob2")
                             mob2.id = data.id
-                            setTimeout(function() {socket.singleExamine(mob1.id, userData.sid)}, 3000)
-                            setTimeout(function() {socket.singleExamine(mob2.id, userData.sid)}, 3000)
+                            setTimeout(function() {socket.singleExamine(mob1.id, userData.sid)}, 200)
                         }
                         break
                     case "examine":
@@ -801,6 +782,7 @@ function test() {
                             assert.equal("ok", data.result, "mob1: examine request")
                             assert.notEqual(mob1.stats.HP, data.health, "mob1: health has changed")
                             assert.isTrue(mob1.stats.HP > data.health, "mob1: health has decreased")
+                            setTimeout(function() {socket.singleExamine(mob2.id, userData.sid)}, 200)
                         } else {
                             assert.equal("ok", data.result, "mob2: examine request")
                             assert.notEqual(mob2.stats.HP, data.health, "mob2: health has changed")
@@ -911,18 +893,18 @@ function test() {
                         } else {
                             assert.equal("ok", data.result, "put mob2")
                             mob2.id = data.id
-                            setTimeout(function() {socket.singleExamine(mob1.id, userData.sid)}, 3000)
+                            setTimeout(function() {socket.singleExamine(mob1.id, userData.sid)}, 1000)
                         }
                         break
                     case "examine":
                         if (examineFlag) {
                             examineFlag = false
                             assert.equal("ok", data.result, "mob1: examine request")
-                            assert.notEqual(mob1.stats.HP, data.health, "mob1: health hasn't changed")
-                            setTimeout(function() {socket.singleExamine(mob2.id, userData.sid)}, 3000)
+                            assert.equal(mob1.stats.HP, data.health, "mob1: health has changed")
+                            setTimeout(function() {socket.singleExamine(mob2.id, userData.sid)}, 1000)
                         } else {
                             assert.equal("ok", data.result, "mob2: examine request")
-                            assert.notEqual(mob2.stats.HP, data.health, "mob2: health hasn't changed")
+                            assert.equal(mob2.stats.HP, data.health, "mob2: health has changed")
                             socket.setOnMessage(undefined)
                             done()
                         }
@@ -970,6 +952,7 @@ function test() {
                         player.sid = data.sid
                         setTimeout(function() {socket.singleExamine(player.id, player.sid)}, 3000)
                         setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 3000)
+                        break
                     case "examine":
                         if (data.type == "player") {
                             assert.equal("ok", data.result, "player: examine request")
@@ -1022,8 +1005,9 @@ function test() {
                         assert.equal("ok", data.result, "put player")
                         player.id = data.id
                         player.sid = data.sid
-                        setTimeout(function() {socket.singleExamine(player.id, player.sid)}, 3000)
-                        setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 3000)
+                        
+                        setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 1000)
+                        break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
                         if (data.type == "player") {
@@ -1031,11 +1015,12 @@ function test() {
                             assert.equal("ok", data.result, "player: examine request")
                             assert.notEqual(player.stats.HP, data.health, "player: health has changed")
                             assert.isTrue(player.stats.HP > data.health, "player: health has decreased")
+                            socket.setOnMessage(undefined)
+                            done()
                         } else if (data.type == "monster") {
                             assert.equal("ok", data.result, "mob: examine request")
                             assert.equal(mob.stats.HP, data.health, "mob: health hasn't changed")
-                            socket.setOnMessage(undefined)
-                            done()
+                            setTimeout(function() {socket.singleExamine(player.id, player.sid)}, 1000)
                         }
                         break
                     }
@@ -1057,7 +1042,7 @@ function test() {
                               "inventory": []
                 }
                 var map = [["#", ".", ".", ".", ".", ".", ".", ".", ".", "#"]]
-                this.timeout(8000)
+                this.timeout(40000)
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
@@ -1079,8 +1064,8 @@ function test() {
                         assert.equal("ok", data.result, "put player")
                         player.id = data.id
                         player.sid = data.sid
-                        setTimeout(function() {socket.singleExamine(player.id, player.sid)}, 5000)
-                        setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 5000)
+                        setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 20000)
+                        break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
                         if (data.type == "player") {
@@ -1088,11 +1073,12 @@ function test() {
                             assert.equal("ok", data.result, "player: examine request")
                             assert.notEqual(player.stats.HP, data.health, "player: health has changed")
                             assert.isTrue(player.stats.HP > data.health, "player: health has decreased")
+                            socket.setOnMessage(undefined)
+                            done()
                         } else if (data.type == "monster") {
                             assert.equal("ok", data.result, "mob: examine request")
                             assert.equal(mob.stats.HP, data.health, "mob: health hasn't changed")
-                            socket.setOnMessage(undefined)
-                            done()
+                            setTimeout(function() {socket.singleExamine(player.id, player.sid)}, 10000)
                         }
                         break
                     }

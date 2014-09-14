@@ -1044,12 +1044,12 @@ function test() {
                     case "use":
                         assert.equal("ok", data.result, "use fists")
                         setTimeout(function() {socket.singleExamine(player.id, player.sid)}, 500)
-                        setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 500)
                     case "examine":
                         if (data.type == "player") {
                             flag = false
                             assert.equal("ok", data.result, "player: examine request")
                             assert.equal(player.stats.HP, data.health, "player: health hasn't changed")
+                            setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 500)
                         } else if (data.type == "monster") {
                             assert.equal("ok", data.result, "mob: examine request")
                             assert.equal(mob.stats.HP, data.health, "mob: health hasn't changed")
