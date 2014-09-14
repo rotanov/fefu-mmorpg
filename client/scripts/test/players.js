@@ -24,7 +24,7 @@ function testPlayers() {
         "playerVelocity": 0.5,
         "slideThreshold": 0.1,
         "ticksPerSecond": 60,
-        "screenRowCount": 1.5,
+        "screenRowCount": 4,
         "screenColumnCount": 3,
         "pickUpRadius": 3,
         "sid": userData.sid
