@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <QDebug>
 
 #include "utils.hpp"
 
@@ -79,6 +80,8 @@ void Actor::SetSize(const float size)
 void Actor::Update(float dt)
 {
   position_ += velocity_ * dt;
+  qDebug() << "x " << position_.x;
+  qDebug() << "y " << position_.y;
   SetDirection(EActorDirection::NONE);
 }
 

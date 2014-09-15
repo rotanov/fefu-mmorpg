@@ -217,7 +217,7 @@ void GameServer::tick()
 
     bool collided = false;
 
-    if (levelMap_.GetCell(x + 0.5f, y) != '.' )
+    if (levelMap_.GetCell(x + 0.5f, y) != '.')
     {
       p.SetPosition(Vector2(round(x + 0.5f) - 0.5f, p.GetPosition().y));
       collided = true;
@@ -282,7 +282,7 @@ void GameServer::tick()
           if (tar != monster)
           {
             bool b = false;
-            if (tar->GetType () != "item")
+            if (tar->GetType () != "item" && tar->GetPosition ().x >= 0)
             {
               Creature* m = static_cast<Creature*>(tar);
 
@@ -451,7 +451,11 @@ void GameServer::HandleSetUpMap_(const QVariantMap& request, QVariantMap& respon
       levelMap_.SetCell(j, i, value);
     }
   }
-  actors_.clear();
+ // for (Actor* actor: actors_)
+ // {
+//    actor->SetPosition (Vector2(-1,-1));
+//  }
+  actors_.clear ();
 #undef BAD_MAP
 }
 
@@ -549,6 +553,7 @@ void GameServer::HandleStopTesting_(const QVariantMap& request, QVariantMap& res
     WriteResult_(response, EFEMPResult::BAD_ACTION);
     return;
   }
+  //actors_.clear();
 
   testingStageActive_ = false;
 }
@@ -681,6 +686,19 @@ void GameServer::HandleSetLocation_(const QVariantMap& request, QVariantMap& res
   float y = request["y"].toFloat();
   auto sid = request["sid"].toByteArray();
   Player* p = sidToPlayer_[sid];
+  bool b = false;
+  for (Actor* actor:actors_)
+  {
+    if (p == actor)
+    {
+      b = true;
+    }
+  }
+  if (!b)
+  {
+    levelMap_.IndexActor(p);
+    actors_.push_back(p);
+  }
   p->SetPosition(Vector2(x,y));
 }
 
@@ -703,7 +721,7 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
     response["health"] = m->GetHealth();
     response["maxHealth"] = m->GetMaxHealth();
   }
-  if (response["health"] <= 0)
+  if (response["health"] <= 0 && response["type"] != "item")
   {
     WriteResult_ (response, EFEMPResult::BAD_ID);
     return;
@@ -1337,7 +1355,7 @@ Player* GameServer::CreatePlayer_(const QString login)
       }
     }
   }
-
+  player->SetSpeed(playerVelocity_);
   SetActorPosition_(player, Vector2(x + 0.5f, y + 0.5f));
 
   return player;
@@ -1402,19 +1420,21 @@ bool GameServer::IsIncorrectPosition(float x, float y, Actor* actor)
   {
     return true;
   }
-  for (auto p: actors_)
+  for (Actor* p: actors_)
   {
     if (p == actor || p->GetType() == "item")
     {
       continue;
     }
-
-    Box box0(actor->GetPosition(), actor->GetSize(), actor->GetSize());
-    Box box1(p->GetPosition(), p->GetSize(), p->GetSize());
-    if (box0.Intersect(box1))
+    if (p->GetPosition().x >= 0 && p->GetPosition().y >= 0 )
     {
-      return true;
-    }
+      Box box0(actor->GetPosition(), actor->GetSize(), actor->GetSize());
+      Box box1(p->GetPosition(), p->GetSize(), p->GetSize());
+      if (box0.Intersect(box1))
+      {
+        return true;
+      }
+     }
   }
   return false;
 }
