@@ -1029,13 +1029,12 @@ function test() {
                         if (data.type == "player") {
                             flag = false
                             assert.equal("ok", data.result, "player: examine request")
-                            assert.notEqual(player.stats.HP, data.health, "player: health hasn't changed")
-                            assert.isTrue(player.stats.HP > data.health, "player: health hasn't decreased")
+                            assert.notEqual(player.stats.HP, data.health, "player: health has changed")
                             socket.setOnMessage(undefined)
                             done()
                         } else if (data.type == "monster") {
                             assert.equal("ok", data.result, "mob: examine request")
-                            assert.equal(mob.stats.HP, data.health, "mob: health hasn't changed")
+                            assert.notEqual(mob.stats.HP, data.health, "mob: health has changed")
                             setTimeout(function() {socket.singleExamine(player.id, player.sid)}, 200)   
                         }
                         break
