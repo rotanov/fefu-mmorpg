@@ -318,6 +318,7 @@ function test() {
                 var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
+                    //console.log(data)
                     switch(data.action) {
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player")
@@ -652,7 +653,7 @@ function test() {
                             assert.equal(undefined, data.inventory[0], "no item in inventory")
                             socket.singleExamine(item.id, userData.sid)
                         } else if (data.type == "item") {
-                            assert.equal("badId", data.id, "item isn't exist")
+                            assert.equal(item.id, data.id, "item isn't exist")
                             socket.setOnMessage(undefined)
                             done()
                         }
