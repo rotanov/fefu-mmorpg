@@ -170,6 +170,7 @@ void GameServer::HandleDestroyItem_(const QVariantMap& request, QVariantMap& res
       if (item->GetId() == id)
       {
         p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
+        idToActor_.erase(id);
         break;
       }
     }

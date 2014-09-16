@@ -474,6 +474,7 @@ function test() {
                 var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
+                    //console.log(data)
                     switch(data.action) {
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player with item")
@@ -488,10 +489,15 @@ function test() {
                         socket.singleExamine(player.id, userData.sid)
                         break
                     case "examine":
-                        assert.equal("ok", data.result, "examine request")
-                        assert.equal(undefined, data.inventory[0], "no item in inventory")
-                        socket.setOnMessage(undefined)
-                        done()
+                        if (data.type == "player") {
+                            assert.equal("ok", data.result, "examine request")
+                            assert.equal(undefined, data.inventory[0], "no item in inventory")
+                            socket.singleExamine(item.id, userData.sid)
+                        } else {
+                            assert.equal("badId", data.result, "item isn't exist")
+                            socket.setOnMessage(undefined)
+                            done()
+                        }
                     }
                 })
                 socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
@@ -626,6 +632,7 @@ function test() {
                 var item = {}
                 socket.setOnMessage(function(e) {
                     var data = JSON.parse(e.data)
+                    //console.log(data)
                     switch(data.action) {
                     case "putPlayer":
                         assert.equal("ok", data.result, "put player with item")
@@ -641,9 +648,14 @@ function test() {
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
-                        assert.equal(undefined, data.inventory[0], "no item in inventory")
-                        socket.setOnMessage(undefined)
-                        done()
+                        if (data.type == "player") {
+                            assert.equal(undefined, data.inventory[0], "no item in inventory")
+                            socket.singleExamine(item.id, userData.sid)
+                        } else if (data.type == "item") {
+                            assert.equal("badId", data.id, "item isn't exist")
+                            socket.setOnMessage(undefined)
+                            done()
+                        }
                     }
                 })
                 socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
@@ -1506,7 +1518,6 @@ function test() {
                 socket.putPlayer(player.x, player.y, {}, [makeItem()], {"left-hand": makeItem()}, userData.sid)
             })
 
-            /*it("should successfully equip/unequip item [slot is already occupied]", function(done) {
                 var flag = true
                 var player = {"x": 3.5, "y": 3.5}
                 var item = {"x": player.x + 0.5, "y": player.y + 0.5}
@@ -1555,7 +1566,6 @@ function test() {
                     }
                 })
                 socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
-            })*/
 
             it("should fail unequip item [object in other player's slot]", function(done) {
                 var flag = true
