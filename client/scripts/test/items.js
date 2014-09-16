@@ -1518,6 +1518,7 @@ function test() {
                 socket.putPlayer(player.x, player.y, {}, [makeItem()], {"left-hand": makeItem()}, userData.sid)
             })
 
+            it("should successfully equip/unequip item [slot is already occupied]", function(done) {
                 var flag = true
                 var player = {"x": 3.5, "y": 3.5}
                 var item = {"x": player.x + 0.5, "y": player.y + 0.5}
@@ -1566,6 +1567,7 @@ function test() {
                     }
                 })
                 socket.putPlayer(player.x, player.y, {}, [makeItem()], {}, userData.sid)
+            })
 
             it("should fail unequip item [object in other player's slot]", function(done) {
                 var flag = true
