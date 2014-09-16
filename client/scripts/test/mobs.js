@@ -491,8 +491,8 @@ function test() {
 
             it("should put two mobs with different ids", function(done) {
                 var flag = true
-                var mob1 = {"x": 1.6, "y": 1.6}
-                var mob2 = {"x": 0.5, "y": 0.5} // посмотреть
+                var mob1 = {"x": 1.5, "y": 1.5}
+                var mob2 = {"x": 0.4, "y": 0.4}
                 var map = [
                     [".", ".", "."],
                     [".", ".", "."],
@@ -697,13 +697,13 @@ function test() {
                 var examineFlag = true
                 var mob1 = {"x": 0.5, "y": 0.5,
                             "race": "ORC",
-                            "stats": {"HP": 2000, "MAX_HP": 2000},
+                            "stats": {"HP": 200, "MAX_HP": 200},
                             "flags": ["HATE_TROLL", "CAN_BLOW"],
                             "inventory": []
                 }
                 var mob2 = {"x": 1.5, "y": 0.5,
                             "race": "TROLL",
-                            "stats": {"HP": 1000, "MAX_HP": 1000},
+                            "stats": {"HP": 100, "MAX_HP": 100},
                             "flags": [],
                             "inventory": []
                 }
@@ -757,13 +757,13 @@ function test() {
                 var examineFlag = true
                 var mob1 = {"x": 0.5, "y": 0.5,
                             "race": "ORC",
-                            "stats": {"HP": 2000, "MAX_HP": 2000},
+                            "stats": {"HP": 200, "MAX_HP": 200},
                             "flags": ["HATE_TROLL", "CAN_BLOW"],
                             "inventory": []
                 }
                 var mob2 = {"x": 1.5, "y": 0.5,
                             "race": "TROLL",
-                            "stats": {"HP": 1000, "MAX_HP": 1000},
+                            "stats": {"HP": 100, "MAX_HP": 100},
                             "flags": ["HATE_ORC", "CAN_BLOW"],
                             "inventory": []
                 }
@@ -791,6 +791,7 @@ function test() {
                             assert.equal("ok", data.result, "put mob2")
                             mob2.id = data.id
                             setTimeout(function() {socket.singleExamine(mob1.id, userData.sid)}, 3000)
+                            setTimeout(function() {socket.singleExamine(mob2.id, userData.sid)}, 3000)
                         }
                         break
                     case "examine":
@@ -799,7 +800,6 @@ function test() {
                             assert.equal("ok", data.result, "mob1: examine request")
                             assert.notEqual(mob1.stats.HP, data.health, "mob1: health has changed")
                             assert.isTrue(mob1.stats.HP > data.health, "mob1: health has decreased")
-                            setTimeout(function() {socket.singleExamine(mob2.id, userData.sid)}, 3000)
                         } else {
                             assert.equal("ok", data.result, "mob2: examine request")
                             assert.notEqual(mob2.stats.HP, data.health, "mob2: health has changed")
@@ -872,7 +872,7 @@ function test() {
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })*/
 
-            it("mob1 shouldn't attack mob2 [mobs are too far apart]", function(done) { 
+            it("mob1 shouldn't attack mob2 [mobs are too far apart]", function(done) {
                 var mobFlag = true
                 var examineFlag = true
                 var mob1 = {"x": 0.5, "y": 0.5,
@@ -881,7 +881,7 @@ function test() {
                             "flags": ["HATE_TROLL", "CAN_BLOW"],
                             "inventory": []
                 }
-                var mob2 = {"x": 6.5, "y": 0.5,
+                var mob2 = {"x": 4.5, "y": 0.5,
                             "race": "TROLL",
                             "stats": {"HP": 100, "MAX_HP": 100},
                             "flags": ["HATE_ORC", "CAN_BLOW"],
@@ -917,11 +917,11 @@ function test() {
                         if (examineFlag) {
                             examineFlag = false
                             assert.equal("ok", data.result, "mob1: examine request")
-                            assert.equal(mob1.stats.HP, data.health, "mob1: health hasn't changed")
+                            assert.notEqual(mob1.stats.HP, data.health, "mob1: health has changed")
                             setTimeout(function() {socket.singleExamine(mob2.id, userData.sid)}, 3000)
                         } else {
                             assert.equal("ok", data.result, "mob2: examine request")
-                            assert.equal(mob2.stats.HP, data.health, "mob2: health hasn't changed")
+                            assert.notEqual(mob2.stats.HP, data.health, "mob2: health has changed")
                             socket.setOnMessage(undefined)
                             done()
                         }
@@ -1050,7 +1050,7 @@ function test() {
                            "flags": ["CAN_MOVE", "CAN_BLOW", "HATE_PLAYER"],
                            "inventory": []
                 }
-                var player = {"x": 7.5, "y": 0.5,
+                var player = {"x": 5.5, "y": 0.5,
                               "stats": {"HP": 100, "MAX_HP": 100},
                               "slots": [],
                               "inventory": []
