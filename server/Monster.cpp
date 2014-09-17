@@ -82,12 +82,16 @@ QVariantMap Monster::atack(Creature* actor)
 {
   int val = rand();
   val = 2.0f;
-  actor->SetHealth(actor->GetHealth() - val);
+  if (Flags.lastIndexOf("CAN_BLOW") != -1)
+  {
+   actor->SetHealth(actor->GetHealth() - val);
+  }
   QVariantMap ans;
   ans["dealtDamage"] = val;
   ans["target"] = actor->GetId();
   ans["blowType"] = "BITE";
   ans["attacker"] = GetId();
   return ans;
+
 }
 
