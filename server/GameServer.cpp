@@ -396,13 +396,12 @@ void GameServer::tick()
 void GameServer::HandleSetUpConstants_(const QVariantMap& request, QVariantMap& response)
 {
   if (!testingStageActive_
-      || !request["playerVelocity"].canConvert<float>()
-      || !request["slideThreshold"].canConvert<float>()
-      || !request["ticksPerSecond"].canConvert<int>()
-      || !request["screenRowCount"].canConvert<int>()
-      || !request["screenColumnCount"].canConvert<int>()
-      || !request["pickUpRadius"].canConvert<float>()
-      )
+      || !request["playerVelocity"].toFloat()
+      || !request["slideThreshold"].toFloat()
+      || !request["ticksPerSecond"].toInt()
+      || !request["screenRowCount"].toInt()
+      || !request["screenColumnCount"].toFloat()
+      || !request["pickUpRadius"].toFloat())
   {
     WriteResult_(response, EFEMPResult::BAD_ACTION);
     return;
