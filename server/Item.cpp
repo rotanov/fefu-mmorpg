@@ -2,7 +2,7 @@
 
 Item::Item()
 {
-  type_ = "item";
+  type_ = ITEM;
 }
 
 Item::~Item()

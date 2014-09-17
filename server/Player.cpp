@@ -2,7 +2,7 @@
 
 Player::Player()
 {
-  type_ = "player";
+  type_ = PLAYER;
   SetRace();
   SetMaxHealth(1000);
   SetHealth(1000);

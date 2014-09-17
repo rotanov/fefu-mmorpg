@@ -80,8 +80,8 @@ void Actor::SetSize(const float size)
 void Actor::Update(float dt)
 {
   position_ += velocity_ * dt;
-  qDebug() << "x " << position_.x;
-  qDebug() << "y " << position_.y;
+ // qDebug() << "x " << position_.x;
+ // qDebug() << "y " << position_.y;
   SetDirection(EActorDirection::NONE);
 }
 
@@ -105,12 +105,12 @@ bool Actor::OnCollideActor(Actor* /*actor*/)
   return false;
 }
 
-QString Actor::GetType() const
+Type Actor::GetType() const
 {
   return type_;
 }
 
-void Actor::SetType(QString type)
+void Actor::SetType(Type type)
 {
   type_ = type;
 }

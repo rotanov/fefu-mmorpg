@@ -3,7 +3,7 @@
 
 Monster::Monster()
 {
-  type_ = "monster";
+  type_ = MONSTER;
 }
 
 Monster::~Monster()

@@ -171,7 +171,7 @@ private:
   QVariantList events_;
 
   float playerVelocity_ = 0.2;
-  float slideThreshold_ = 0.1;
+  float slideThreshold_ = 0.2;
   int ticksPerSecond_ = 40;
   int screenRowCount_ = 7;
   int screenColumnCount_ = 9;
@@ -215,6 +215,13 @@ private:
     {"MAX_HP", MAX_HP},
     {"MP", MP},
     {"MAX_MP", MAX_MP}
+  };
+  QMap <Type, QString> TypeToString =
+  {
+    {MONSTER, "monster"},
+    {PLAYER, "player"},
+    {ITEM, "item"},
+    {PROJECTILE, "projectile"},
   };
     QMap<QString,QString> Hates =
   {
