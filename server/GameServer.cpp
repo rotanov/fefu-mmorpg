@@ -170,6 +170,7 @@ void GameServer::HandleDestroyItem_(const QVariantMap& request, QVariantMap& res
       if (item->GetId() == id)
       {
         p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
+        idToActor_.erase(id);
         break;
       }
     }
@@ -314,7 +315,7 @@ void GameServer::tick()
     auto v = directionToVector[static_cast<unsigned>(actor->GetDirection())] ;
     actor->SetVelocity(v);
     levelMap_.RemoveActor(actor);
-    float dt = static_cast<Creature*>(actor)->GetSpeed();
+    float dt = playerVelocity_;//static_cast<Creature*>(actor)->GetSpeed();
     Vector2 old_pos = actor->GetPosition();
     Vector2 new_pos = old_pos + v * dt;
 
@@ -322,9 +323,26 @@ void GameServer::tick()
         && actor->GetDirection() != EActorDirection::NONE)
     {
       actor->Update(dt);
+      collideWithGrid(actor);
+    }
+    if (levelMap_.GetCell(new_pos.x, new_pos.y) != '.'
+    && actor->GetDirection() != EActorDirection::NONE )
+    {
+      bool b = false;
+      for (float i = 0.01; i <= dt; i += 0.01)
+      {
+        new_pos = old_pos + v * i;
+        if (levelMap_.GetCell(new_pos.x, new_pos.y) != '.' && !b)
+        {
+          actor->Update(i - 0.5);
+          b = true;
+          break;
+        }
+
+      }
     }
 
-    collideWithGrid(actor);
+
 
     if (actor->GetType() == "player")
     {
@@ -350,6 +368,7 @@ void GameServer::tick()
         if (distance <= pickUpRadius_)
         {
           events_ << monster->atack(target);
+          events_ << target->atack (monster);
         }
       }
     }
@@ -361,8 +380,8 @@ void GameServer::tick()
         continue;
       }
 
-      Box box0(neighbour->GetPosition(), 0.8f, 0.8f);
-      Box box1(actor->GetPosition(), 0.8f, 0.8f);
+      Box box0(neighbour->GetPosition(), 0.9f, 0.9f);
+      Box box1(actor->GetPosition(), 0.9f, 0.9f);
       if (box0.Intersect(box1))
       {
         actor->OnCollideActor(neighbour);
@@ -525,7 +544,7 @@ void GameServer::HandleLogout_(const QVariantMap& request, QVariantMap& response
   Player* p = it.value();
   qDebug() << "Logging out, login: " << p->GetLogin();
   sidToPlayer_.erase(it);
-  KillActor_(p);
+ // KillActor_(p);
 }
 
 //==============================================================================
@@ -553,8 +572,6 @@ void GameServer::HandleStopTesting_(const QVariantMap& request, QVariantMap& res
     WriteResult_(response, EFEMPResult::BAD_ACTION);
     return;
   }
-  //actors_.clear();
-
   testingStageActive_ = false;
 }
 
@@ -699,6 +716,7 @@ void GameServer::HandleSetLocation_(const QVariantMap& request, QVariantMap& res
     levelMap_.IndexActor(p);
     actors_.push_back(p);
   }
+  p->SetSpeed(playerVelocity_);
   p->SetPosition(Vector2(x,y));
 }
 
