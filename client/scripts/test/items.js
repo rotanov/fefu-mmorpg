@@ -653,7 +653,7 @@ function test() {
                             assert.equal(undefined, data.inventory[0], "no item in inventory")
                             socket.singleExamine(item.id, userData.sid)
                         } else if (data.type == "item") {
-                            assert.equal(item.id, data.id, "item isn't exist")
+                            assert.equal(item.id, data.id, "item is exist")
                             socket.setOnMessage(undefined)
                             done()
                         }
