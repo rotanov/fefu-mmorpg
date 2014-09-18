@@ -395,13 +395,15 @@ void GameServer::tick()
 //==============================================================================
 void GameServer::HandleSetUpConstants_(const QVariantMap& request, QVariantMap& response)
 {
+  QString* str = new QString("QString");
+
   if (!testingStageActive_
-      || !request["playerVelocity"].toFloat()
-      || !request["slideThreshold"].toFloat()
-      || !request["ticksPerSecond"].toInt()
-      || !request["screenRowCount"].toInt()
-      || !request["screenColumnCount"].toFloat()
-      || !request["pickUpRadius"].toFloat())
+      || (QString)request["playerVelocity"].typeName() == str
+      || (QString)request["slideThreshold"].typeName() == str
+      || (QString)request["ticksPerSecond"].typeName() == str
+      || (QString)request["screenRowCount"].typeName() == str
+      || (QString)request["screenColumnCount"].typeName() == str
+      || (QString)request["pickUpRadius"].typeName() == str)
   {
     WriteResult_(response, EFEMPResult::BAD_ACTION);
     return;
