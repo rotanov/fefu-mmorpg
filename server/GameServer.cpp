@@ -826,11 +826,20 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
     return;
   }
 
-
   Actor* item = idToActor_[id];
   if (item->GetType() != "item")
   {
     WriteResult_(response, EFEMPResult::BAD_ID);
+    return;
+  }
+
+  int totalWeight = player->GetTotalWeigh();
+  float carryingCapacity = player->GetCarryingSapacity();
+  int weight = dynamic_cast<Item*>(item)->GetWeight();
+
+  if (totalWeight + weight >= carryingCapacity)
+  {
+    WriteResult_(response, EFEMPResult::TOO_HEAVY);
     return;
   }
 

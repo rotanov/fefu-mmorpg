@@ -30,6 +30,7 @@ enum class EFEMPResult
   BAD_RACE,
   BAD_FLAG,
   BAD_DAMAGE,
+  TOO_HEAVY,
 };
 
 const std::vector<QString> fempResultToString =
@@ -48,7 +49,7 @@ const std::vector<QString> fempResultToString =
   [EFEMPResult::BAD_RACE] = "badRace",
   [EFEMPResult::BAD_FLAG] = "badFlag",
   [EFEMPResult::BAD_DAMAGE] = "badDamage",
-
+  [EFEMPResult::TOO_HEAVY] = "tooHeavy",
 };
 
 // TODO: separate module
