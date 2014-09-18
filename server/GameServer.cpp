@@ -1322,6 +1322,7 @@ void GameServer::HandlePutPlayer_(const QVariantMap& request, QVariantMap& respo
       SetItemDescription(slot[i.key()].toMap(), item);
       player->items_.push_back(item);
       player->SetSlot(i.value(), item);
+      player->SetStat(true, item);
       id_slot[i.key()] = item->GetId();
     }
   }
