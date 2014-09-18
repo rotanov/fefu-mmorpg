@@ -137,3 +137,13 @@ bool Player::GetItemId(int id)
   }
   return false;
 }
+
+int Player::GetTotalWeigh()
+{
+  int totalWeigh = 0;
+  for (auto& item: items_)
+  {
+    totalWeigh += item->GetWeight();
+  }
+  return totalWeigh;
+}
