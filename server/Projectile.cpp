@@ -2,7 +2,7 @@
 
 Projectile::Projectile()
 {
-  type_ = "projectile";
+  type_ = PROJECTILE;
 }
 
 Projectile::~Projectile()
@@ -17,7 +17,7 @@ void Projectile::OnCollideWorld()
 
 bool Projectile::OnCollideActor(Actor* actor)
 {
-  if (actor->GetType () == "monster" || actor->GetType () == "player")
+  if (actor->GetType () == MONSTER || actor->GetType () == PLAYER)
   {
     Creature * a = static_cast<Creature*>(actor);
     a->SetHealth (a->GetHealth () - blow_);
