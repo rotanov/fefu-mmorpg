@@ -441,14 +441,16 @@ void GameServer::tick()
 //==============================================================================
 void GameServer::HandleSetUpConstants_(const QVariantMap& request, QVariantMap& response)
 {
+  QString* str = new QString("QString");
+
   if (!testingStageActive_
-      || !request["playerVelocity"].canConvert<float>()
-      || !request["slideThreshold"].canConvert<float>()
-      || !request["ticksPerSecond"].canConvert<int>()
-      || !request["screenRowCount"].canConvert<int>()
-      || !request["screenColumnCount"].canConvert<int>()
-      || !request["pickUpRadius"].canConvert<float>()
-      ) {
+      || (QString)request["playerVelocity"].typeName() == str
+      || (QString)request["slideThreshold"].typeName() == str
+      || (QString)request["ticksPerSecond"].typeName() == str
+      || (QString)request["screenRowCount"].typeName() == str
+      || (QString)request["screenColumnCount"].typeName() == str
+      || (QString)request["pickUpRadius"].typeName() == str)
+  {
     WriteResult_(response, EFEMPResult::BAD_ACTION);
     return;
   }
@@ -859,19 +861,29 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
 {
   auto sid = request["sid"].toByteArray();
   Player* player = sidToPlayer_[sid];
+  int id = request["id"].toInt();
 
-  if (!request["id"].toInt()
-      || !idToActor_[request["id"].toInt()]
-      || player->GetItemId(request["id"].toInt()))
+  if (!id
+      || !idToActor_[id]
+      || player->GetItemId(id))
+  {
+    WriteResult_(response, EFEMPResult::BAD_ID);
+    return;
+  }
+  Actor* item = idToActor_[id];
+  if (item->GetType() != ITEM)
   {
     WriteResult_(response, EFEMPResult::BAD_ID);
     return;
   }
 
-  Actor* item = idToActor_[request["id"].toInt()];
-  if (item->GetType() != ITEM)
+  int totalWeight = player->GetTotalWeigh();
+  float carryingCapacity = player->GetCarryingSapacity();
+  int weight = dynamic_cast<Item*>(item)->GetWeight();
+
+  if (totalWeight + weight >= carryingCapacity)
   {
-    WriteResult_(response, EFEMPResult::BAD_ID);
+    WriteResult_(response, EFEMPResult::TOO_HEAVY);
     return;
   }
 
@@ -887,6 +899,7 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
 
   levelMap_.RemoveActor(item);
   actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());
+  idToActor_.erase(id);
   player->items_.push_back(static_cast<Item*>(item));
 }
 
@@ -1245,7 +1258,8 @@ void GameServer::HandlePutPlayer_(const QVariantMap& request, QVariantMap& respo
     Item* item = CreateActor_<Item>();
     SetItemDescription(elem.toMap(), item);
     player->items_.push_back(item);
-    actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());//???
+    actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());
+    idToActor_.erase(item->GetId());
   }
 
   auto stats = request["stats"].toMap();

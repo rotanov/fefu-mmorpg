@@ -35,6 +35,8 @@ public:
   void SetStat(bool flag, Item* item);
   void SetStat(Stat_const key, float value);
 
+  float GetCarryingSapacity();
+
   virtual QVariantMap atack(Creature* actor);
   virtual void SetRace();
   virtual QString GetRace();

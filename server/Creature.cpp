@@ -88,3 +88,10 @@ QVariantMap Creature::atack(Creature* /*actor*/)
   ans["ok"] = "ok";
   return ans;
 }
+
+float Creature::GetCarryingSapacity()
+{
+  int capacityMultiplier = 50;
+  float strength = GetStatValue(STRENGTH);
+  return strength * capacityMultiplier;
+}
