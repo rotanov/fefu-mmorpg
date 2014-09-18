@@ -1548,11 +1548,11 @@ function test() {
                         } else if (data.actionResult.action == "examine") {
                             if (flag) {
                                 flag = false
-                                assert.equal(p_item_id, data.actionResult.slots["left-hand"], "equip item")
+                                assert.equal(p_item_id, data.actionResult.slots["left-hand"].id, "#1 equip item")
                                 socket.enforce({"action": "equip", "id": item.id, "sid": player.sid, "slot": "left-hand"}, userData.sid)
 
                             } else {
-                                assert.equal(item.id, data.actionResult.slots["left-hand"], "equip item")
+                                assert.equal(item.id, data.actionResult.slots["left-hand"].id, "#2 equip item")
                                 socket.enforce({"action": "unequip", "sid": player.sid, "slot": "left-hand"}, userData.sid)
                             }
 
@@ -1612,7 +1612,7 @@ function test() {
                             }
 
                         } else if (data.actionResult.action == "unequip") {
-                            assert.equal("badSlot", data.actionResult.result, "unequip request")
+                            assert.equal("badId", data.actionResult.result, "unequip request")
                             socket.enforce({"action": "examine", "id": player2.id, "sid": player2.sid}, userData.sid)
                         }
                         break
