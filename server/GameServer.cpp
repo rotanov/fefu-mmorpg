@@ -217,8 +217,8 @@ void GameServer::tick()
 
     bool collided = false;
 
-    if (( levelMap_.GetCell(x + 0.5f, y - 0.5f) != '.'
-        ||  levelMap_.GetCell(x + 0.5f, y + 0.5f ) != '.')
+    if (( levelMap_.GetCell(x + 0.49f, y - 0.51f) != '.'
+        ||  levelMap_.GetCell(x + 0.49f, y + 0.49f ) != '.')
         && levelMap_.GetCell(x - slideThreshold_+ 0.5f , y) == '.'
         && (direction == EActorDirection::NORTH
         || direction == EActorDirection::SOUTH) )
@@ -228,8 +228,8 @@ void GameServer::tick()
     }
 
     if (levelMap_.GetCell(x + slideThreshold_- 0.5f, y) == '.'
-        && (levelMap_.GetCell(x - 0.5f, y - 0.5f) != '.'
-        ||  levelMap_.GetCell(x - 0.5f, y + 0.5f ) != '.')
+        && (levelMap_.GetCell(x - 0.5f, y - 0.51f) != '.'
+        ||  levelMap_.GetCell(x - 0.5f, y + 0.49f ) != '.')
         && (direction == EActorDirection::NORTH
         || direction == EActorDirection::SOUTH))
     {
@@ -237,16 +237,16 @@ void GameServer::tick()
     }
 
     if (levelMap_.GetCell(x, y - slideThreshold_ + 0.5f) == '.'
-        && ( levelMap_.GetCell(x - 0.5f, y + 0.5f) != '.'
-        ||  levelMap_.GetCell(x + 0.5f, y + 0.5f ) != '.')
+        && ( levelMap_.GetCell(x - 0.51f, y + 0.49f) != '.'
+        ||  levelMap_.GetCell(x + 0.49f, y + 0.49f ) != '.')
         && (direction == EActorDirection::EAST
         || direction == EActorDirection::WEST))
     {
       p.SetPosition(Vector2(p.GetPosition().x, y - slideThreshold_));
     }
 
-    if (( levelMap_.GetCell(x + 0.5f, y - 0.5f) != '.'
-        ||  levelMap_.GetCell(x - 0.5f, y - 0.5f ) != '.')
+    if (( levelMap_.GetCell(x + 0.49f, y - 0.5f) != '.'
+        ||  levelMap_.GetCell(x - 0.51f, y - 0.5f ) != '.')
         && levelMap_.GetCell(x, y + slideThreshold_-  0.5f) == '.'
         && (direction == EActorDirection::EAST
         || direction == EActorDirection::WEST))
@@ -366,11 +366,8 @@ void GameServer::tick()
           b = true;
           break;
         }
-
       }
     }
-
-
 
     if (actor->GetType() == PLAYER)
     {
@@ -500,10 +497,6 @@ void GameServer::HandleSetUpMap_(const QVariantMap& request, QVariantMap& respon
       levelMap_.SetCell(j, i, value);
     }
   }
- // for (Actor* actor: actors_)
- // {
-//    actor->SetPosition (Vector2(-1,-1));
-//  }
   actors_.clear ();
 #undef BAD_MAP
 }
