@@ -616,7 +616,7 @@ void GameServer::HandleMove_(const QVariantMap& request, QVariantMap& response)
 
   auto sid = request["sid"].toByteArray();
   unsigned tick = request["tick"].toUInt();
-  //qDebug() << "tick diff: " << tick_ - tick;
+  qDebug() << request["direction"].toString();
   auto direction = request["direction"].toString();
 
   Player* p = sidToPlayer_[sid];
@@ -855,16 +855,9 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
   auto sid = request["sid"].toByteArray();
   Player* player = sidToPlayer_[sid];
   int id = request["id"].toInt();
-
-  if (!id
-      || !idToActor_[id]
-      || player->GetItemId(id))
-  {
-    WriteResult_(response, EFEMPResult::BAD_ID);
-    return;
-  }
-  Actor* item = idToActor_[id];
-  if (item->GetType() != ITEM)
+  Item* item = dynamic_cast<Item*>(idToActor_[id]);
+  if (!id || !item
+      || !item->GetOnTheGround())
   {
     WriteResult_(response, EFEMPResult::BAD_ID);
     return;
@@ -872,7 +865,7 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
 
   int totalWeight = player->GetTotalWeigh();
   float carryingCapacity = player->GetCarryingSapacity();
-  int weight = dynamic_cast<Item*>(item)->GetWeight();
+  int weight = item->GetWeight();
 
   if (totalWeight + weight >= carryingCapacity)
   {
@@ -889,10 +882,10 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
     WriteResult_(response, EFEMPResult::BAD_ID);
     return;
   }
-
+  item->SetOnTheGround(false);
   levelMap_.RemoveActor(item);
   actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());
-  idToActor_.erase(id);
+  //idToActor_.erase(id);
   player->items_.push_back(static_cast<Item*>(item));
 }
 
@@ -1202,6 +1195,7 @@ void GameServer::HandlePutMob_(const QVariantMap& request, QVariantMap& response
   {
     Item* item = CreateActor_<Item>();
     SetItemDescription(elem.toMap(), item);
+    item->SetOnTheGround(false);
     monster->items.push_back(item);
     actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());//???
   }
@@ -1250,9 +1244,10 @@ void GameServer::HandlePutPlayer_(const QVariantMap& request, QVariantMap& respo
   {
     Item* item = CreateActor_<Item>();
     SetItemDescription(elem.toMap(), item);
+    item->SetOnTheGround(false);
     player->items_.push_back(item);
     actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());
-    idToActor_.erase(item->GetId());
+    //idToActor_.erase(item->GetId());
   }
 
   auto stats = request["stats"].toMap();

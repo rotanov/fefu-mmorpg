@@ -3,6 +3,7 @@
 Item::Item()
 {
   type_ = ITEM;
+  isOnTheGround_ = true;
 }
 
 Item::~Item()
@@ -22,7 +23,7 @@ int Item::GetWeight()
 
 QString Item::GetTypeItem()
 {
-  return type_item_;
+  return typeItem_;
 }
 
 QString Item::GetSubtype()
@@ -37,7 +38,7 @@ QString Item::GetMessage()
 
 QString Item::GetClass()
 {
-  return class_item_;
+  return classItem_;
 }
 
 int Item::GetTime()
@@ -62,17 +63,27 @@ void Item::SetMessage(QString str)
 
 void Item::SetTypeItem(QString str)
 {
-  type_item_ = str;
+  typeItem_ = str;
 }
 
 void Item::SetTypeItem(int str)
 {
-  type_item_ = type[str];
+  typeItem_ = type[str];
 }
 
 void Item::SetTime(int str)
 {
   time_= str;
+}
+
+bool Item::GetOnTheGround() const
+{
+  return isOnTheGround_;
+}
+
+void Item::SetOnTheGround(const bool isOnTheGround)
+{
+  isOnTheGround_ = isOnTheGround;
 }
 
 void Item::SetSubtype(QString str)
@@ -84,5 +95,5 @@ void Item::SetSubtype(QString str)
 void Item::SetClass(QString str)
 {
   int i = str.toInt() > 0 ? str.toInt() : 0;
-  class_item_ = class_[i];
+  classItem_ = class_[i];
 }

@@ -30,6 +30,9 @@ public:
   int GetTime();
   void SetTime(int str);
 
+  bool GetOnTheGround() const;
+  void SetOnTheGround(const bool isOnTheGround);
+
   void SetSubtype(QString str);
 
   void SetClass(QString str);
@@ -42,11 +45,11 @@ private:
   int time_;
   int weight_;
   QString name_;
-  QString type_item_;
-  QString class_item_;
+  QString typeItem_;
+  QString classItem_;
   QString subtype_;
   QString massege_;
-
+  bool isOnTheGround_;
   std::vector<QString> class_ =
   {
     "garment",
