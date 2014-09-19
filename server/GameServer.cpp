@@ -299,11 +299,11 @@ void GameServer::tick()
         {
           if (m_pos.x < t_pos.x )
             monster->SetDirection (EActorDirection::EAST);
-          if (m_pos.x > t_pos.x )
+          else if (m_pos.x > t_pos.x )
             monster->SetDirection (EActorDirection::WEST);
-          if (m_pos.y < t_pos.y )
+          else if (m_pos.y < t_pos.y )
             monster->SetDirection (EActorDirection::NORTH);
-          if (m_pos.y > t_pos.y )
+          else if (m_pos.y > t_pos.y )
             monster->SetDirection (EActorDirection::SOUTH);
         }
       }
@@ -620,7 +620,7 @@ void GameServer::HandleMove_(const QVariantMap& request, QVariantMap& response)
 
   auto sid = request["sid"].toByteArray();
   unsigned tick = request["tick"].toUInt();
-  qDebug() << request["direction"].toString();
+  //qDebug() << request["direction"].toString();
   auto direction = request["direction"].toString();
 
   Player* p = sidToPlayer_[sid];
@@ -1500,8 +1500,8 @@ bool GameServer::IsIncorrectPosition(float x, float y, Actor* actor)
     }
     if (p->GetPosition().x >= 0 && p->GetPosition().y >= 0 )
     {
-      Box box0(actor->GetPosition(), actor->GetSize(), actor->GetSize());
-      Box box1(p->GetPosition(), p->GetSize(), p->GetSize());
+      Box box0(actor->GetPosition(), actor->GetSize()- 0.01f, actor->GetSize()- 0.01f);
+      Box box1(p->GetPosition(), p->GetSize()- 0.01f, p->GetSize()- 0.01f);
       if (box0.Intersect(box1))
       {
         return true;
