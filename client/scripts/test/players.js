@@ -717,6 +717,7 @@ function test() {
             
             it('should successfully move player[wall sliding(left, north)]', function(done){
                     var player = { x: 1.5 - 1 + consts.slideThreshold, y: 2.5 };
+                    var tick = null
                     var map = [
                                 [".", ".", ".", "."],
                                 [".", "#", ".", "."],
@@ -734,6 +735,7 @@ function test() {
                         case "setUpMap":
                             assert.equal("ok", data.result, "load map")
                             socket.putPlayer(player.x, player.y, {}, [], {},userData.sid)
+                            break
                         case "putPlayer":
                             assert.equal("ok", data.result, "put player")
                             player.id = data.id
@@ -758,6 +760,7 @@ function test() {
         
             it('should successfully move player[wall sliding(right, north)]', function(done){
                     var player = { x: 1.5 + 1 - consts.slideThreshold, y: 2.5 };
+                    var tick = null
                     var map = [
                                 [".", ".", ".", "."],
                                 [".", "#", ".", "."],
@@ -775,6 +778,7 @@ function test() {
                         case "setUpMap":
                             assert.equal("ok", data.result, "load map")
                             socket.putPlayer(player.x, player.y, {}, [], {},userData.sid)
+                            break
                         case "putPlayer":
                             assert.equal("ok", data.result, "put player")
                             player.id = data.id
@@ -799,6 +803,7 @@ function test() {
                  
                  it('should successfully move player[wall sliding(left, south)]', function(done){
                     var player = { x: 1.5 - 1 + consts.slideThreshold, y: 0.5 };
+                    var tick = null
                     var map = [
                                 [".", ".", ".", "."],
                                 [".", "#", ".", "."],
@@ -816,6 +821,7 @@ function test() {
                         case "setUpMap":
                             assert.equal("ok", data.result, "load map")
                             socket.putPlayer(player.x, player.y, {}, [], {},userData.sid)
+                            break
                         case "putPlayer":
                             assert.equal("ok", data.result, "put player")
                             player.id = data.id
@@ -840,6 +846,7 @@ function test() {
         
             it('should successfully move player[wall sliding(right, south)]', function(done){
                     var player = { x: 1.5 + 1 - consts.slideThreshold, y: 0.5 };
+                    var tick = null
                     var map = [
                                 [".", ".", ".", "."],
                                 [".", "#", ".", "."],
@@ -857,6 +864,7 @@ function test() {
                         case "setUpMap":
                             assert.equal("ok", data.result, "load map")
                             socket.putPlayer(player.x, player.y, {}, [], {},userData.sid)
+                            break
                         case "putPlayer":
                             assert.equal("ok", data.result, "put player")
                             player.id = data.id
@@ -881,6 +889,7 @@ function test() {
                  
                  it('should successfully move player[wall sliding(top, east)]', function(done){
                     var player = { x: 0.5, y: 1.5 - 1 + consts.slideThreshold  };
+                    var tick = null
                     var map = [
                                 [".", ".", ".", "."],
                                 [".", "#", ".", "."],
@@ -898,6 +907,7 @@ function test() {
                         case "setUpMap":
                             assert.equal("ok", data.result, "load map")
                             socket.putPlayer(player.x, player.y, {}, [], {},userData.sid)
+                            break
                         case "putPlayer":
                             assert.equal("ok", data.result, "put player")
                             player.id = data.id
@@ -922,6 +932,7 @@ function test() {
         
             it('should successfully move player[wall sliding(bottom, east)]', function(done){
                     var player = {x: 0.5, y: 1.5 + 1 - consts.slideThreshold };
+                    var tick = null
                     var map = [
                                 [".", ".", ".", "."],
                                 [".", "#", ".", "."],
@@ -939,6 +950,7 @@ function test() {
                         case "setUpMap":
                             assert.equal("ok", data.result, "load map")
                             socket.putPlayer(player.x, player.y, {}, [], {},userData.sid)
+                            break
                         case "putPlayer":
                             assert.equal("ok", data.result, "put player")
                             player.id = data.id
@@ -963,6 +975,7 @@ function test() {
                  
                  it('should successfully move player[wall sliding(top, west)]', function(done){
                     var player = { x: 2.5, y: 1.5 - 1 + consts.slideThreshold };
+                    var tick = null
                     var map = [
                                 [".", ".", ".", "."],
                                 [".", "#", ".", "."],
@@ -980,6 +993,7 @@ function test() {
                         case "setUpMap":
                             assert.equal("ok", data.result, "load map")
                             socket.putPlayer(player.x, player.y, {}, [], {},userData.sid)
+                            break
                         case "putPlayer":
                             assert.equal("ok", data.result, "put player")
                             player.id = data.id
@@ -1004,6 +1018,7 @@ function test() {
         
             it('should successfully move player[wall sliding(bottom , west)]', function(done){
                     var player = { x: 2.5, y: 1.5 + 1 - consts.slideThreshold };
+                    var tick = null
                     var map = [
                                 [".", ".", ".", "."],
                                 [".", "#", ".", "."],
@@ -1021,6 +1036,7 @@ function test() {
                         case "setUpMap":
                             assert.equal("ok", data.result, "load map")
                             socket.putPlayer(player.x, player.y, {}, [], {},userData.sid)
+                            break
                         case "putPlayer":
                             assert.equal("ok", data.result, "put player")
                             player.id = data.id
@@ -1038,6 +1054,58 @@ function test() {
                             assert.equal(true, (Math.abs(data.y - 2.5) < 0.01), "diff coordinate y")
                             socket.setOnMessage(undefined)
                             done();
+                        }
+                    })
+                    socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
+                 })
+                 
+                 it('should successfully move player in all directions[bound collision with walls]', function(done){
+                    var originX = 1.5, originY = 1.5;
+                    var tick = null
+                    var player = { x: originX, y: originY };
+                    var counter = 0;
+                    var dirs = ["north", "south", "west", "east", "south", "north", "east", "west"];
+                    var map = [
+                                ["#", ".", "#"],
+                                [".", ".", "."],
+                                ["#", ".", "#"],
+                            ]
+   
+                    this.timeout(50000)
+                    socket.setOnMessage(function(e) {
+                       var data = JSON.parse(e.data);
+                       if (data.tick) {
+                        tick = data.tick
+                        }
+                       switch (data.action) {
+                        case "setUpMap":
+                            assert.equal("ok", data.result, "load map")
+                            socket.putPlayer(player.x, player.y, {}, [], {},userData.sid)
+                            break
+                        case "putPlayer":
+                            assert.equal("ok", data.result, "put player")
+                            player.id = data.id
+                            player.sid = data.sid
+                            player.fistId = data.fistId
+                            setTimeout(function(){socket.move(dirs[counter], tick, player.sid)}, 1000)
+                            break
+                        case "move":
+                            assert.equal("ok", data.result, "move request")
+                            setTimeout(function(){socket.singleExamine(player.id, player.sid)}, 2000)
+                            break
+                        case "examine":
+                            assert.equal("ok", data.result, "examine")
+                            var newCoor = shift(dirs[counter], player.x, player.y, consts.playerVelocity)
+                            assert.equal(true, Math.abs(newCoor.x - data.x) < 0.01, dirs[counter]+": equal coordinate by x")
+                            assert.equal(true, Math.abs(newCoor.y - data.y) < 0.01, dirs[counter]+": equal coordinate by y")
+                            player.x = newCoor.x
+                            player.y = newCoor.y
+                            if (++counter < dirs.length) {
+                                socket.move(dirs[counter], tick, player.sid)
+                            } else {
+                                socket.setOnMessage(undefined)
+                                done()
+                            }
                         }
                     })
                     socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
@@ -1352,7 +1420,7 @@ function test() {
                     case "use":
                         assert.equal("ok", data.result, "use fists")
                         setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 2000)   
-                        
+                        break
                     case "examine":
                         if (data.type == "player") {
                             flag = false
