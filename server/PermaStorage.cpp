@@ -129,6 +129,10 @@ void PermaStorage::GetMonster (Monster * m, const int id)
         m->description = q.value("description").toString();
         QString str = q.value("flags").toString();
         m->Flags << str.split("|");
+        if (m->Flags.lastIndexOf("NEVER_MOVE") == -1 )
+        {
+          m->Flags << "CAN_MOVE";
+        }
         QString st = q.value("blow_method").toString();
         m->Blows << st.split("@");
         QStringList s;

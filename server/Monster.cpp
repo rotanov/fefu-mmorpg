@@ -28,7 +28,7 @@ bool Monster::OnCollideActor(Actor* /*actor*/)
 
 void Monster::Update(float dt)
 {
-  if (Flags.lastIndexOf("NEVER_MOVE") == -1)
+  if (Flags.lastIndexOf("CAN_MOVE") != -1)
   {
     position_ += velocity_ * dt;
   }
