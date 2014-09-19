@@ -1330,6 +1330,7 @@ function test() {
                               "inventory": []
                 }
                 var map = [["#", ".", ".", "#"]]
+                this.timeout(10000)
                 socket.setOnMessage(function(e) {
                     //console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
@@ -1356,14 +1357,14 @@ function test() {
                         break
                     case "use":
                         assert.equal("ok", data.result, "use fists")
-                        setTimeout(function() {socket.singleExamine(player.id, player.sid)}, 200)
+                        setTimeout(function() {socket.singleExamine(player.id, player.sid)}, 2000)
                         break
                     case "examine":
                         if (data.type == "player") {
                             flag = false
                             assert.equal("ok", data.result, "player: examine request")
                             assert.equal(player.stats.HP, data.health, "player: health changed")
-                            setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 200)
+                            setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 2000)
                         } else if (data.type == "monster") {
                             assert.equal("ok", data.result, "mob: examine request")
                             assert.notEqual(mob.stats.HP, data.health, "mob: health hasn't changed")
