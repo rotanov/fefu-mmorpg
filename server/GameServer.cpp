@@ -157,11 +157,13 @@ void GameServer::HandleDestroyItem_(const QVariantMap& request, QVariantMap& res
   }\
 
   BAD_ID(request.find("id") == request.end());
-  BAD_ID(!request["id"].toInt());
-
   int id = request["id"].toInt();
+  BAD_ID(!id);
+
   Player* p = sidToPlayer_[request["sid"].toByteArray()];
-  BAD_ID((idToActor_.find(id) == idToActor_.end()) && !p->GetItemId(id));
+  BAD_ID((idToActor_.find(id) == idToActor_.end())
+         && !p->GetItemId(id)
+         && !p->DropItemFromSlot(id));
 
   if (p->GetItemId(id))
   {//destroy item from inventory
@@ -258,6 +260,7 @@ void GameServer::tick()
       p.SetPosition(Vector2(round(x + 0.5f) - 0.5f, p.GetPosition().y));
       collided = true;
     }
+
     if (levelMap_.GetCell(x - 0.5f, y) != '.')
     {
       p.SetPosition(Vector2(round(x - 0.5f) + 0.5f, p.GetPosition().y));
@@ -273,6 +276,7 @@ void GameServer::tick()
       p.SetPosition(Vector2(p.GetPosition().x, round(y - 0.5f) + 0.5f));
       collided = true;
     }
+
     if (collided)
     {
       actor->OnCollideWorld();
@@ -746,14 +750,13 @@ void GameServer::HandleSetLocation_(const QVariantMap& request, QVariantMap& res
 //==============================================================================
 void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& response)
 {
-  if (!request["id"].toInt()
-      || idToActor_.count(request["id"].toInt()) == 0)
+  auto id = request["id"].toInt();
+  if (!id || idToActor_.count(id) == 0)
   {
     WriteResult_(response, EFEMPResult::BAD_ID);
     return;
   }
 
-  auto id = request["id"].toInt();
   Actor* actor = idToActor_[id];
   response["type"] = TypeToString[actor->GetType()];
   if (actor->GetType() != ITEM)
@@ -762,6 +765,7 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
     response["health"] = m->GetHealth();
     response["maxHealth"] = m->GetMaxHealth();
   }
+
   if (response["health"] <= 0 && response["type"] != "item")
   {
     WriteResult_ (response, EFEMPResult::BAD_ID);
@@ -825,16 +829,23 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
     }
     response["inventory"] = items;
 
-    QVariantMap id_slot;
+    QVariantMap slots_;
     for (auto i = SlotToString.begin(); i != SlotToString.end(); i++)
     {
-      Item* k = p->GetSlot(i.value());
-      if (k && k->GetId() != -1)
+      Item* item_ = p->GetSlot(i.value());
+      if (item_ && item_->GetId() != -1)
       {
-        id_slot[i.key()] = k->GetId();
+          QVariantMap item;
+          item["id"] = item_->GetId();
+          item["name"] = item_->Getname();
+          item["type"] = item_->GetTypeItem();
+          item["class"] = item_->GetClass();
+          item["subtype"] = item_->GetSubtype();
+          item["weight"] = item_->GetWeight();
+          slots_[i.key()] = item;
       }
     }
-    response["slots"] = id_slot;
+    response["slots"] = slots_;
 
     QVariantMap stats;
     for (auto i = StringToStat.begin(); i != StringToStat.end(); i++)
@@ -981,7 +992,6 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
             a = target->atack(p);
             events_ << a;
           }
-
           WriteResult_(response, EFEMPResult::OK);
           return;
         }
@@ -1008,15 +1018,21 @@ void GameServer::HandleUseSkill_(const QVariantMap& request, QVariantMap& respon
 //==============================================================================
 void GameServer::HandleDrop_(const QVariantMap& request, QVariantMap& response)
 {
-  if (!request["id"].toInt())
+  int id = request["id"].toInt();
+  if (!id)
   {
     WriteResult_(response, EFEMPResult::BAD_ID);
     return;
   }
 
-  int id = request["id"].toInt();
   auto sid = request["sid"].toByteArray();
   Player* p = sidToPlayer_[sid];
+
+  if (p->DropItemFromSlot(id))
+  {
+    WriteResult_(response, EFEMPResult::OK);
+    return;
+  }
 
   for (auto& item: p->items_)
   {
@@ -1026,7 +1042,9 @@ void GameServer::HandleDrop_(const QVariantMap& request, QVariantMap& response)
       actors_.push_back(item);
       item->SetPosition(p->GetPosition());
       levelMap_.IndexActor(item);
+
       p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
+
       WriteResult_(response, EFEMPResult::OK);
       return;
     }
@@ -1083,6 +1101,7 @@ void GameServer::HandleEquip_(const QVariantMap& request, QVariantMap& response)
         return;
       }
     }
+    BAD_ID(true);
   }
   else
   {//item is on the ground
@@ -1099,8 +1118,11 @@ void GameServer::HandleEquip_(const QVariantMap& request, QVariantMap& response)
       return;
     }
     p->SetStat(true, item);
-    KillActor_(item);
+    //KillActor_(item);
+    idToActor_.erase(item->GetId());
+    actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());
   }
+
 #undef BAD_ID
 }
 
@@ -1287,6 +1309,7 @@ void GameServer::HandlePutPlayer_(const QVariantMap& request, QVariantMap& respo
       SetItemDescription(slot[i.key()].toMap(), item);
       player->items_.push_back(item);
       player->SetSlot(i.value(), item);
+      player->SetStat(true, item);
       id_slot[i.key()] = item->GetId();
     }
   }

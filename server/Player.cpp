@@ -147,3 +147,18 @@ int Player::GetTotalWeigh()
   }
   return totalWeigh;
 }
+
+bool Player::DropItemFromSlot(int id)
+{
+  bool result = false;
+  for (auto slot = slots_.begin(); slot != slots_.end(); ++slot)
+  {
+    if (slot.value()->GetId() == id)
+    {
+      slots_.erase(slots_.find(slot.key()));
+      result = true;
+      break;
+    }
+  }
+  return result;
+}

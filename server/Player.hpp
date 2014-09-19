@@ -44,7 +44,10 @@ public:
   void SetDamage(QString str, bool b);
 
   bool GetItemId (int id);
+
   int GetTotalWeigh();
+
+  bool DropItemFromSlot(int);
 
   virtual void SetRace();
 
