@@ -874,8 +874,7 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
   Player* player = sidToPlayer_[sid];
   int id = request["id"].toInt();
   Item* item = dynamic_cast<Item*>(idToActor_[id]);
-  if (!id || !item
-      || !item->GetOnTheGround())
+  if (!id || !item || !item->GetOnTheGround())
   {
     WriteResult_(response, EFEMPResult::BAD_ID);
     return;
@@ -1049,8 +1048,8 @@ void GameServer::HandleDrop_(const QVariantMap& request, QVariantMap& response)
       actors_.push_back(item);
       item->SetPosition(p->GetPosition());
       levelMap_.IndexActor(item);
+      item->SetOnTheGround(true);
       p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
-
       WriteResult_(response, EFEMPResult::OK);
       return;
     }
