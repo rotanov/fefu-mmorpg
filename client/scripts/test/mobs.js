@@ -156,7 +156,7 @@ function test() {
                         break
                     case "examine":
                         assert.equal("ok", data.result, "examine request")
-                        assert.equal(true, mob.x- data.x < 0.01, "can't move by x")
+                        assert.equal(true, mob.x - data.x < 0.01, "can't move by x")
                         assert.equal(true, mob.y - data.y < 0.01, "can't move by y")
                         socket.setOnMessage(undefined)
                         done()

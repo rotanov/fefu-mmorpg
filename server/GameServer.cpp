@@ -160,12 +160,17 @@ void GameServer::HandleDestroyItem_(const QVariantMap& request, QVariantMap& res
   int id = request["id"].toInt();
   BAD_ID(!id);
   Player* p = sidToPlayer_[request["sid"].toByteArray()];
-  BAD_ID((idToActor_.find(id) == idToActor_.end())
-         && !p->GetItemId(id)
-         && !p->DropItemFromSlot(id));
+
+  if (p->DropItemFromSlot(id))
+  {
+    //destroy item from slot
+    WriteResult_(response, EFEMPResult::OK);
+    return;
+  }
 
   if (p->GetItemId(id))
-  {//destroy item from inventory
+  {
+    //destroy item from inventory
     for (auto& item: p->items_)
     {
       if (item->GetId() == id)
@@ -177,9 +182,11 @@ void GameServer::HandleDestroyItem_(const QVariantMap& request, QVariantMap& res
     }
   }
   else
-  {//item is on the ground
+  {
+    //item is on the ground
     Item* item = static_cast<Item*>(idToActor_[id]);
-    BAD_ID(!item);
+    BAD_ID(!item || !item->GetOnTheGround());
+
     Vector2 player_pos = p->GetPosition();
     Vector2 item_pos = item->GetPosition();
     float distance = sqrt((player_pos.x - item_pos.x)*(player_pos.x - item_pos.x) +
@@ -297,13 +304,13 @@ void GameServer::tick()
         if (distance < 5)
         {
           if (m_pos.x < t_pos.x )
-            monster->SetDirection (EActorDirection::EAST);
+            monster->SetDirection(EActorDirection::EAST);
           else if (m_pos.x > t_pos.x )
-            monster->SetDirection (EActorDirection::WEST);
+            monster->SetDirection(EActorDirection::WEST);
           else if (m_pos.y < t_pos.y )
-            monster->SetDirection (EActorDirection::NORTH);
+            monster->SetDirection(EActorDirection::NORTH);
           else if (m_pos.y > t_pos.y )
-            monster->SetDirection (EActorDirection::SOUTH);
+            monster->SetDirection(EActorDirection::SOUTH);
         }
       }
       if (!target || distance >= 5)
@@ -871,8 +878,7 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
   Player* player = sidToPlayer_[sid];
   int id = request["id"].toInt();
   Item* item = dynamic_cast<Item*>(idToActor_[id]);
-  if (!id || !item
-      || !item->GetOnTheGround())
+  if (!id || !item || !item->GetOnTheGround())
   {
     WriteResult_(response, EFEMPResult::BAD_ID);
     return;
@@ -1015,7 +1021,7 @@ void GameServer::HandleUseSkill_(const QVariantMap& request, QVariantMap& respon
     return;
   }
   Projectile* project = CreateActor_<Projectile>();
-  SetActorPosition_(project, p->GetPosition ());
+  SetActorPosition_(project, p->GetPosition());
   project->SetDirection(EActorDirection::EAST);
 }
 
@@ -1046,9 +1052,8 @@ void GameServer::HandleDrop_(const QVariantMap& request, QVariantMap& response)
       actors_.push_back(item);
       item->SetPosition(p->GetPosition());
       levelMap_.IndexActor(item);
-
+      item->SetOnTheGround(true);
       p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
-
       WriteResult_(response, EFEMPResult::OK);
       return;
     }

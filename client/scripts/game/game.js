@@ -17,6 +17,7 @@ var leftKey
 var rightKey
 var zKey //attack
 var aKey //+ click = pickUp
+var xKey //+ click = useSkill
 
 var width  = 9
 var height = 7
@@ -195,6 +196,7 @@ function onCreate() {
     rightKey = game.input.keyboard.addKey(phaser.Keyboard.RIGHT)
     zKey = game.input.keyboard.addKey(phaser.Keyboard.Z)
     aKey = game.input.keyboard.addKey(phaser.Keyboard.A)
+    xKey = game.input.keyboard.addKey(phaser.Keyboard.X)
 
     createActors(0)
     socket.look(sid_)
@@ -257,6 +259,8 @@ function onUpdate() {
         if (data.id && lifespan) {
             if (aKey.isDown) {
                 socket.pickUp(data.id, sid_)
+            } else if (xKey.isDown) {
+                socket.useSkill(data.id, sid_, x1, y1)
             } else {
                 socket.singleExamine(data.id, sid_)
             }
