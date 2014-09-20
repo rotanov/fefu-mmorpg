@@ -161,12 +161,17 @@ void GameServer::HandleDestroyItem_(const QVariantMap& request, QVariantMap& res
   BAD_ID(!id);
 
   Player* p = sidToPlayer_[request["sid"].toByteArray()];
-  BAD_ID((idToActor_.find(id) == idToActor_.end())
-         && !p->GetItemId(id)
-         && !p->DropItemFromSlot(id));
+
+  if (p->DropItemFromSlot(id))
+  {
+    //destroy item from slot
+    WriteResult_(response, EFEMPResult::OK);
+    return;
+  }
 
   if (p->GetItemId(id))
-  {//destroy item from inventory
+  {
+    //destroy item from inventory
     for (auto& item: p->items_)
     {
       if (item->GetId() == id)
@@ -178,9 +183,11 @@ void GameServer::HandleDestroyItem_(const QVariantMap& request, QVariantMap& res
     }
   }
   else
-  {//item is on the ground
+  {
+    //item is on the ground
     Item* item = static_cast<Item*>(idToActor_[id]);
-    BAD_ID(!item);
+    BAD_ID(!item || !item->GetOnTheGround());
+
     Vector2 player_pos = p->GetPosition();
     Vector2 item_pos = item->GetPosition();
     float distance = sqrt((player_pos.x - item_pos.x)*(player_pos.x - item_pos.x) +
@@ -1042,7 +1049,6 @@ void GameServer::HandleDrop_(const QVariantMap& request, QVariantMap& response)
       actors_.push_back(item);
       item->SetPosition(p->GetPosition());
       levelMap_.IndexActor(item);
-
       p->items_.erase(std::remove(p->items_.begin(), p->items_.end(), item), p->items_.end());
 
       WriteResult_(response, EFEMPResult::OK);
