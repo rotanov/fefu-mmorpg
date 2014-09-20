@@ -159,7 +159,6 @@ void GameServer::HandleDestroyItem_(const QVariantMap& request, QVariantMap& res
   BAD_ID(request.find("id") == request.end());
   int id = request["id"].toInt();
   BAD_ID(!id);
-
   Player* p = sidToPlayer_[request["sid"].toByteArray()];
   BAD_ID((idToActor_.find(id) == idToActor_.end())
          && !p->GetItemId(id)
@@ -210,7 +209,7 @@ void GameServer::tick()
     GenMonsters_();
   }*/
 
-  auto collideWithGrid = [=](Actor* actor, EActorDirection direction)
+  auto collideWithGrid = [=](Actor* actor, EActorDirection direction)// Vector2 oldpos)
   {
     auto& p = *actor;
 
@@ -230,10 +229,10 @@ void GameServer::tick()
     }
 
     if (levelMap_.GetCell(x + slideThreshold_- 0.5f, y) == '.'
-        && (levelMap_.GetCell(x - 0.5f, y - 0.51f) != '.'
-        ||  levelMap_.GetCell(x - 0.5f, y + 0.49f ) != '.')
-        && (direction == EActorDirection::NORTH
-        || direction == EActorDirection::SOUTH))
+        &&((levelMap_.GetCell(x - 0.5f, y - 0.51f) != '.'
+        && direction == EActorDirection::NORTH)
+        || ( levelMap_.GetCell(x - 0.5f, y + 0.49f ) != '.'
+        &&  direction == EActorDirection::SOUTH)))
     {
       p.SetPosition(Vector2(x + slideThreshold_, p.GetPosition().y));
     }
@@ -261,7 +260,7 @@ void GameServer::tick()
       collided = true;
     }
 
-    if (levelMap_.GetCell(x - 0.5f, y) != '.')
+    if (levelMap_.GetCell(x - 0.51f, y) != '.')
     {
       p.SetPosition(Vector2(round(x - 0.5f) + 0.5f, p.GetPosition().y));
       collided = true;
@@ -271,7 +270,7 @@ void GameServer::tick()
       p.SetPosition(Vector2(p.GetPosition().x, round(y + 0.5f) - 0.5f));
       collided = true;
     }
-    if (levelMap_.GetCell(x, y - 0.5f) != '.')
+    if ( levelMap_.GetCell(x, y - 0.51f) != '.')
     {
       p.SetPosition(Vector2(p.GetPosition().x, round(y - 0.5f) + 0.5f));
       collided = true;
@@ -355,7 +354,7 @@ void GameServer::tick()
     {
       EActorDirection d = actor->GetDirection();
       actor->Update(dt);
-      collideWithGrid(actor, d);
+      collideWithGrid(actor, d);//, old_pos);
     }
     if (levelMap_.GetCell(new_pos.x, new_pos.y) != '.'
     && actor->GetDirection() != EActorDirection::NONE )
@@ -366,7 +365,8 @@ void GameServer::tick()
         new_pos = old_pos + v * i;
         if (levelMap_.GetCell(new_pos.x, new_pos.y) != '.' && !b)
         {
-          actor->Update(i - 0.5);
+          actor->Update(i - 0.51);
+          //collideWithGrid(actor, d);
           b = true;
           break;
         }
@@ -415,6 +415,7 @@ void GameServer::tick()
       {
         actor->OnCollideActor(neighbour);
         neighbour->OnCollideActor(actor);
+
         if (actor->GetType () == PROJECTILE)
         {
           idToActor_.erase(actor->GetId());
@@ -600,6 +601,7 @@ void GameServer::HandleStopTesting_(const QVariantMap& request, QVariantMap& res
     return;
   }
   testingStageActive_ = false;
+  playerVelocity_ = 0.35f;
 }
 
 //==============================================================================
@@ -1500,8 +1502,8 @@ bool GameServer::IsIncorrectPosition(float x, float y, Actor* actor)
     }
     if (p->GetPosition().x >= 0 && p->GetPosition().y >= 0 )
     {
-      Box box0(actor->GetPosition(), actor->GetSize()- 0.01f, actor->GetSize()- 0.01f);
-      Box box1(p->GetPosition(), p->GetSize()- 0.01f, p->GetSize()- 0.01f);
+      Box box0(actor->GetPosition(), actor->GetSize(), actor->GetSize());
+      Box box1(p->GetPosition(), p->GetSize(), p->GetSize());
       if (box0.Intersect(box1))
       {
         return true;

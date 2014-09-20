@@ -172,7 +172,7 @@ private:
   QVariantList events_;
 
   float playerVelocity_ = 0.2;
-  float slideThreshold_ = 0.2;
+  float slideThreshold_ = 0.24;
   int ticksPerSecond_ = 40;
   int screenRowCount_ = 7;
   int screenColumnCount_ = 9;
