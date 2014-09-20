@@ -1026,10 +1026,30 @@ void GameServer::HandleUseSkill_(const QVariantMap& request, QVariantMap& respon
     WriteResult_(response, EFEMPResult::BAD_PLACING);
     return;
   }
-  Projectile* project = CreateActor_<Projectile>();
-  SetActorPosition_(project, p->GetPosition());
-  project->SetPoint(Vector2(x, y));
-  project->SetDirection(EActorDirection::EAST);
+  bool b = true;
+  for (auto actor: actors_)
+  {
+    Projectile* projects = dynamic_cast<Projectile*>(actor);
+    if (projects
+    && projects->GetPosition().x == p->GetPosition().x
+    && projects->GetPosition().y == p->GetPosition().y)
+    {
+      b = false;
+      break;
+    }
+  }
+  if (b)
+  {
+   Projectile* project = CreateActor_<Projectile>();
+   project->SetPosition (Vector2(p->GetPosition().x, p->GetPosition().y));
+   project->SetPoint(Vector2(x, y));
+   project->SetPlayer(p);
+   project->Update(1.0f);
+   levelMap_.IndexActor(project);
+   WriteResult_(response, EFEMPResult::OK);
+   return;
+  }
+
 }
 
 //==============================================================================
