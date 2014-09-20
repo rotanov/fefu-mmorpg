@@ -17,10 +17,10 @@ void Projectile::OnCollideWorld()
 
 bool Projectile::OnCollideActor(Actor* actor)
 {
-  if (actor->GetType () == MONSTER || actor->GetType () == PLAYER)
+  if (actor->GetType() == MONSTER || actor->GetType() == PLAYER)
   {
     Creature * a = static_cast<Creature*>(actor);
-    a->SetHealth (a->GetHealth () - blow_);
+    a->SetHealth(a->GetHealth() - blow_);
   }
   return false;
 }
@@ -28,14 +28,14 @@ bool Projectile::OnCollideActor(Actor* actor)
 void Projectile::Update(float dt)
 {
   if (position_.x < point_attack_.x )
-     SetDirection (EActorDirection::EAST);
+     SetDirection(EActorDirection::EAST);
   if (position_.x > point_attack_.x )
-     SetDirection (EActorDirection::WEST);
+     SetDirection(EActorDirection::WEST);
   if (position_.y < point_attack_.y )
-     SetDirection (EActorDirection::NORTH);
+     SetDirection(EActorDirection::NORTH);
   if (position_.y > point_attack_.y )
-    SetDirection (EActorDirection::SOUTH);
-  SetVelocity (directionToVector[static_cast<unsigned>(GetDirection())]);
+    SetDirection(EActorDirection::SOUTH);
+  SetVelocity(directionToVector[static_cast<unsigned>(GetDirection())]);
   position_ +=  velocity_*dt;
 }
 

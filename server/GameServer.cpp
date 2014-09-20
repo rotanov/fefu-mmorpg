@@ -305,13 +305,13 @@ void GameServer::tick()
         if (distance < 5)
         {
           if (m_pos.x < t_pos.x )
-            monster->SetDirection (EActorDirection::EAST);
+            monster->SetDirection(EActorDirection::EAST);
           else if (m_pos.x > t_pos.x )
-            monster->SetDirection (EActorDirection::WEST);
+            monster->SetDirection(EActorDirection::WEST);
           else if (m_pos.y < t_pos.y )
-            monster->SetDirection (EActorDirection::NORTH);
+            monster->SetDirection(EActorDirection::NORTH);
           else if (m_pos.y > t_pos.y )
-            monster->SetDirection (EActorDirection::SOUTH);
+            monster->SetDirection(EActorDirection::SOUTH);
         }
       }
       if (!target || distance >= 5)
@@ -1017,7 +1017,7 @@ void GameServer::HandleUseSkill_(const QVariantMap& request, QVariantMap& respon
     return;
   }
   Projectile* project = CreateActor_<Projectile>();
-  SetActorPosition_(project, p->GetPosition ());
+  SetActorPosition_(project, p->GetPosition());
   project->SetDirection(EActorDirection::EAST);
 }
 
