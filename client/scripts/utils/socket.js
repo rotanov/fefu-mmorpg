@@ -130,6 +130,18 @@ define(function() {
         this.sock.send(JSON.stringify(request))
     }
 
+    Socket.prototype.useSkill = function(id, sid, x, y) {
+        console.log("useSkill")
+        var request = {
+            "action": "useSkill",
+            "id": parseInt(id),
+            "sid": sid,
+            "x": x,
+            "y": y
+        }
+        this.sock.send(JSON.stringify(request))
+    }
+
     /*Testing*/
 
     Socket.prototype.startTesting = function(sid) {
