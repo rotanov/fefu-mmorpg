@@ -347,26 +347,28 @@ void GameServer::tick()
     levelMap_.RemoveActor(actor);
     float dt = playerVelocity_;//static_cast<Creature*>(actor)->GetSpeed();
     Vector2 old_pos = actor->GetPosition();
-    Vector2 new_pos = old_pos + v * dt;
+    Vector2 new_pos = old_pos + v * dt ;
 
-    if (levelMap_.GetCell(new_pos.x, new_pos.y) == '.' &&
+    if ((levelMap_.GetCell(new_pos.x, new_pos.y) == '.')&&
          actor->GetDirection() != EActorDirection::NONE)
     {
       EActorDirection d = actor->GetDirection();
       actor->Update(dt);
       collideWithGrid(actor, d);//, old_pos);
     }
-    if (levelMap_.GetCell(new_pos.x, new_pos.y) != '.'
+
+    else if ((levelMap_.GetCell(new_pos.x , new_pos.y) != '.'|| playerVelocity_ >= 1)
     && actor->GetDirection() != EActorDirection::NONE )
     {
       bool b = false;
       for (float i = 0.01; i <= dt; i += 0.01)
       {
-        new_pos = old_pos + v * i;
+        new_pos = old_pos + v * i + v*0.5;
         if (levelMap_.GetCell(new_pos.x, new_pos.y) != '.' && !b)
         {
-          actor->Update(i - 0.51);
-          //collideWithGrid(actor, d);
+          //EActorDirection d = actor->GetDirection();
+          actor->Update(i - 0.01);
+         // collideWithGrid(actor, d);
           b = true;
           break;
         }
