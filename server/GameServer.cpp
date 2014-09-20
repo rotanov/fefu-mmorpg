@@ -1015,14 +1015,18 @@ void GameServer::HandleUseSkill_(const QVariantMap& request, QVariantMap& respon
 {
   auto sid = request["sid"].toByteArray();
   Player* p = sidToPlayer_[sid];
-  if (!request["x"].toFloat() || !request["y"].toFloat())
+
+  float x = request["x"].toFloat();
+  float y = request["y"].toFloat();
+
+  if (!x || !y)
   {
     WriteResult_(response, EFEMPResult::BAD_PLACING);
     return;
   }
   Projectile* project = CreateActor_<Projectile>();
   SetActorPosition_(project, p->GetPosition());
-  project->point_attack_ = Vector2(request["x"].toFloat(),request["x"].toFloat());
+  project->SetPoint(Vector2(x, y));
   project->SetDirection(EActorDirection::EAST);
 }
 
@@ -1481,12 +1485,12 @@ void GameServer::SetItemDescription(const QVariantMap& request, Item* item)
   auto bonuses_ = request["bonuses"].toList();
   for (auto i = bonuses_.begin(); i != bonuses_.end(); i++)
   {
-      auto elem = (*i).toMap();
-      auto stat = elem["stat"].toString();
-      QMap <QString, QVariant> m;
-      m["effectCalculation"] = elem["effectCalculation"].toString();
-      m["value"] = elem["value"];
-      item->bonuses[StringToStat[stat]] = m;
+    auto elem = (*i).toMap();
+    auto stat = elem["stat"].toString();
+    QMap <QString, QVariant> m;
+    m["effectCalculation"] = elem["effectCalculation"].toString();
+    m["value"] = elem["value"];
+    item->bonuses[StringToStat[stat]] = m;
   }
 }
 

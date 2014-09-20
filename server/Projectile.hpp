@@ -20,6 +20,7 @@ public:
 
   QString GetName();
   void SetPoint(Vector2 p);
+
 private:
   Vector2 point_attack_ = Const::Math::V2_ZERO;
   float blow_ = 10.0f;
