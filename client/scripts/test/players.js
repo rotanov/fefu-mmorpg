@@ -462,49 +462,6 @@ function test() {
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
-            /*it("should fail move [out of map]", function(done) {
-                var tick = null
-                var player = {"x": 2, "y": 3}
-                var map = [
-                        ["#", "#", "#", "#", "#", "#", "#"],
-                        ["#", ".", ".", "#", ".", ".", "#"],
-                        ["#", ".", ".", ".", ".", ".", "#"],
-                        ["#", ".", ".", "#", ".", ".", "#"],
-                        ["#", "#", "#", "#", "#", "#", "#"]
-                    ]
-                this.timeout(10000)
-                socket.setOnMessage(function(e) {
-                    //console.log(JSON.parse(e.data))
-                    var data = JSON.parse(e.data)
-                    if (data.tick) {
-                        tick = data.tick
-                    }
-                    switch(data.action) {
-                    case "setUpMap":
-                        assert.equal("ok", data.result, "load map")
-                        socket.putPlayer(player.x, player.y, {}, [], {}, userData.sid)
-                        break
-                    case "putPlayer":
-                        assert.equal("ok", data.result, "put player")
-                        player.id = data.id
-                        player.sid = data.sid
-                        setTimeout(function(){socket.move("north", tick, player.sid)}, 5000)
-                        break
-                    case "move":
-                        assert.equal("ok", data.result, "move request")
-                        setTimeout(function(){socket.singleExamine(player.id, player.sid)}, 200)
-                        break
-                    case "look":
-                        assert.equal("ok", data.result, "examine request")
-                        assert.equal(player.x, data.x, "east: equal coordinate by x")
-                        assert.equal(player.y, data.y, "east: equal coordinate by y")
-                        socket.setOnMessage(undefined)
-                        done()
-                    }
-                })
-                socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
-            })*/
-
             it("should successfully move in all directions", function(done) {
                 var dirs = ["west", "east", "north", "south"]
                 var counter = 0
