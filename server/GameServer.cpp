@@ -1022,6 +1022,7 @@ void GameServer::HandleUseSkill_(const QVariantMap& request, QVariantMap& respon
   }
   Projectile* project = CreateActor_<Projectile>();
   SetActorPosition_(project, p->GetPosition());
+  project->point_attack_ = Vector2(request["x"].toFloat(),request["x"].toFloat());
   project->SetDirection(EActorDirection::EAST);
 }
 
