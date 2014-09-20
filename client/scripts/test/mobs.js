@@ -587,35 +587,37 @@ function test() {
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
             })
 
-            /*it("should fail put mob [badInventory]", function(done) {
-                var mob = {"x": 1.5, "y": 1.5}
+            it("should successfully stay in place", function(done) {
+                var mob = {"x": 1.5, "y": 1.2}
                 var map = [
-                    [".", ".", "."],
-                    [".", ".", "."],
-                    [".", ".", "."]
+                    ["#", ".", ".", "#"],
+                    [".", ".", ".", "."],
+                    [".", ".", ".", "."],
+                    ["#", ".", ".", "#"]
                 ]
+                this.timeout(6000)
                 socket.setOnMessage(function(e) {
                     console.log(JSON.parse(e.data))
                     var data = JSON.parse(e.data)
                     switch (data.action) {
                     case "setUpMap":
                         assert.equal("ok", data.result, "load map")
-                        socket.putMob(mob.x, mob.y, {}, [{
-                            "weight": "BAD_WEIGHT",
-                            "class": "BAD_CLASS",
-                            "type": "BAD_TYPE",
-                            "bonuses": "BAD_BONUSES",
-                            "effects": "BAD_EFFECTS"
-                        }], [], "ORC", defaultDamage, userData.sid)
+                        socket.putMob(mob.x, mob.y, {}, [], [], "ORC", defaultDamage, userData.sid)
                         break
                     case "putMob":
-                        assert.equal("badInventory", data.result, "put mob")
+                        assert.equal("ok", data.result, "put mob")
+                        mob.id = data.id
+                        setTimeout(function() {socket.singleExamine(mob.id, userData.sid)}, 5000)
+                        break
+                    case "examine":
+                        assert.equal("ok", data.result, "mob: examine request")
+                        assert.equal(true, mob.x -  data.x < 0.01 && mob.y - data.y < 0.01)    
                         socket.setOnMessage(undefined)
                         done()
                     }
                 })
                 socket.setUpMap({"action": "setUpMap", "map": map, "sid": userData.sid})
-            })*/
+            })
 
             it("should successfully put mob with inventory", function(done) {
                 var item = {}
