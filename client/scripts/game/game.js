@@ -40,12 +40,14 @@ var health
 var lifespan = 1
 var curr_slot = {"slot": null, "id": null}
 
+var fireBall = 283
+
 function initSocket(wsUri) {
     socket = sock.WSConnect(wsUri, null, OnMessage)
 }
 
 function OnMessage(e) {
-    var data = JSON.parse(e.data);
+    var data = JSON.parse(e.data)
 
     if (data.tick) {
         tick_ = data.tick
@@ -148,6 +150,9 @@ function OnMessage(e) {
             height = data.screenRowCount//*2 + 1
             break
         }
+        break
+    case "useSkill":
+        console.log()
         break
     }
 }
@@ -363,6 +368,7 @@ function setProperties(actor, idx) {
         actors[idx].loadTexture("tileset_monster", items.getFrame(actor.name))
         break
     case "projectile":
+        actors[idx].loadTexture("tileset_monster", fireBall)
         break
     }
 }
