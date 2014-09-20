@@ -105,7 +105,7 @@ private:
     {"drop", &GameServer::HandleDrop_},// положить
     {"equip", &GameServer::HandleEquip_},// одеть
     {"enforce", &GameServer::HandleEnforce_},
-    {"useSkill", &GameServer::HandleUseSkill_}
+    {"useSkill", &GameServer::HandleUseSkill_},
   };
 
   void HandleStartTesting_(const QVariantMap& request, QVariantMap& response);
@@ -223,6 +223,7 @@ private:
     {PLAYER, "player"},
     {ITEM, "item"},
     {PROJECTILE, "projectile"},
+    {undefined, "undefined"},
   };
     QMap<QString,QString> Hates =
   {

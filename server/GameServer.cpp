@@ -320,7 +320,7 @@ void GameServer::tick()
           if (tar != monster)
           {
             bool b = false;
-            if (tar->GetType () != ITEM)
+            if (tar->GetType () != ITEM && tar->GetType () != PROJECTILE)
             {
               Creature* m = static_cast<Creature*>(tar);
 
@@ -413,7 +413,7 @@ void GameServer::tick()
 
     for (Actor* neighbour: actors_)
     {
-      if (actor == neighbour || neighbour->GetType() == ITEM)
+      if (actor == NULL || actor == neighbour || neighbour->GetType() == ITEM)
       {
         continue;
       }
@@ -436,8 +436,8 @@ void GameServer::tick()
           actor->SetPosition(old_pos);
       }
     }
-
-    levelMap_.IndexActor(actor);
+    if (actor != NULL)
+      levelMap_.IndexActor(actor);
   }
 
   QVariantMap tickMessage;
@@ -694,7 +694,7 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
       actor["mobType"] = m->GetName();
     }
 
-    if (actor["type"] != "item")
+    if (actor["type"] != "item" && actor["type"] != "projectile")
     {
       auto m = static_cast<Creature*>(a);
       actor["health"] = m->GetHealth();
@@ -716,7 +716,8 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
       b = NULL;
     }
 
-    if (actor["type"] == "item" || actor["health"] > 0)
+    if (actor["type"] == "projectile"||
+     actor["type"] == "item" || actor["health"] > 0)
     {
       actors << actor;
     }
@@ -770,14 +771,15 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
 
   Actor* actor = idToActor_[id];
   response["type"] = TypeToString[actor->GetType()];
-  if (actor->GetType() != ITEM)
+  if (actor->GetType() != ITEM && actor->GetType() != PROJECTILE)
   {
     auto m = static_cast<Creature*>(actor);
     response["health"] = m->GetHealth();
     response["maxHealth"] = m->GetMaxHealth();
   }
 
-  if (response["health"] <= 0 && response["type"] != "item")
+  if (response["health"] <= 0 && response["type"] != "item"
+  && response["type"] != "projectile")
   {
     WriteResult_ (response, EFEMPResult::BAD_ID);
     return;
@@ -981,7 +983,7 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
   }
   for (Actor* actor: actors_)
   {
-    if (actor->GetType() != ITEM)
+    if (actor->GetType() != ITEM && actor->GetType() != PROJECTILE)
     {
       Creature* target = static_cast<Creature*>(actor);
       if ((p->GetId() != target->GetId()) && (target->GetHealth() > 0))

@@ -59,8 +59,9 @@ SOURCES += Server.cpp \
     LevelMap.cpp \
     Creature.cpp \
     Item.cpp \
+    Projectile.cpp\
     ../3rd/deku2d/2de_Box.cpp \
-    Projectile.cpp
+
 
 HEADERS += Server.hpp \
     MainWindow.hpp \
@@ -75,8 +76,9 @@ HEADERS += Server.hpp \
     LevelMap.hpp \
     Creature.hpp \
     Item.hpp \
+    Projectile.hpp\
     ../3rd/deku2d/2de_Box.h \
-    Projectile.hpp
+
 
 FORMS += \
     mainwindow.ui
