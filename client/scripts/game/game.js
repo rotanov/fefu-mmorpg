@@ -253,14 +253,14 @@ function onUpdate() {
         if (lifespan) {
             if (zKey.isDown) {
                 socket.use(fistId, sid_, x1, y1)
+            } else if (xKey.isDown) {
+                socket.useSkill(sid_, x1, y1)
             }
         }
         var data = getObgect()
         if (data.id && lifespan) {
             if (aKey.isDown) {
                 socket.pickUp(data.id, sid_)
-            } else if (xKey.isDown) {
-                socket.useSkill(data.id, sid_, x1, y1)
             } else {
                 socket.singleExamine(data.id, sid_)
             }
