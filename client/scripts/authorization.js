@@ -79,7 +79,8 @@ function($, utils, game) {
             var js = {
                 "action": action,
                 "login": $("#username").val(),
-                "password": $("#password").val()
+                "password": $("#password").val(),
+                "class": $("#player-classes").find(":selected").text()
             }
         }
 
