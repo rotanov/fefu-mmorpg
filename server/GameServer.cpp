@@ -111,6 +111,7 @@ void GameServer::HandleRegister_(const QVariantMap& request, QVariantMap& respon
 {
   QString login = request["login"].toString();
   QString password = request["password"].toString();
+  QString class_ = request["class"].toString();
 
   bool passHasInvalidChars = false;
 
@@ -135,6 +136,10 @@ void GameServer::HandleRegister_(const QVariantMap& request, QVariantMap& respon
            || passHasInvalidChars)
   {
     WriteResult_(response, EFEMPResult::BAD_PASS);
+  }
+  else if (class_ != "warrior" && class_ != "rouge" && class_ != "mage")
+  {
+    WriteResult_(response, EFEMPResult::BAD_CLASS);
   }
   else
   {
@@ -211,7 +216,7 @@ void GameServer::tick()
   /*float dt = (time_.elapsed() - lastTime_) * 0.001f;*/
   lastTime_ = time_.elapsed();
 
- /* if (actors_.size() < 100 && !testingStageActive_)
+  /*if (actors_.size() < 100 && !testingStageActive_)
   {
     GenMonsters_();
   }*/
@@ -303,13 +308,13 @@ void GameServer::tick()
                         (m_pos.y - t_pos.y)*(m_pos.y - t_pos.y));
         if (distance < 5)
         {
-          if (m_pos.x < t_pos.x )
+          if (m_pos.x < t_pos.x)
             monster->SetDirection(EActorDirection::EAST);
-          else if (m_pos.x > t_pos.x )
+          else if (m_pos.x > t_pos.x)
             monster->SetDirection(EActorDirection::WEST);
-          else if (m_pos.y < t_pos.y )
+          else if (m_pos.y < t_pos.y)
             monster->SetDirection(EActorDirection::NORTH);
-          else if (m_pos.y > t_pos.y )
+          else if (m_pos.y > t_pos.y)
             monster->SetDirection(EActorDirection::SOUTH);
         }
       }
@@ -320,22 +325,24 @@ void GameServer::tick()
           if (tar != monster)
           {
             bool b = false;
-            if (tar->GetType () != ITEM && tar->GetType () != PROJECTILE)
+            if (tar->GetType() != ITEM && tar->GetType () != PROJECTILE)
             {
               Creature* m = static_cast<Creature*>(tar);
 
               QStringList str = monster->Flags.filter("HATE");
               for (QString hate: str)
-                if (Hates[hate] == m->GetRace ()) {
+                if (Hates[hate] == m->GetRace())
+                {
                   b = true;
                   break;
                 }
+
               if (b)
               {
                 Vector2 t_pos = tar->GetPosition();
                 distance = sqrt((m_pos.x - t_pos.x)*(m_pos.x - t_pos.x) +
                                 (m_pos.y - t_pos.y)*(m_pos.y - t_pos.y));
-                if (distance < 5 )
+                if (distance < 5)
                 {
                   monster->target = m;
                   break;
@@ -983,11 +990,13 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
     WriteResult_ (response, EFEMPResult::OK);
     return;
   }
+
   if (!request["x"].toFloat() || !request["y"].toFloat())
   {
     WriteResult_(response, EFEMPResult::BAD_PLACING);
     return;
   }
+
   for (Actor* actor: actors_)
   {
     if (actor->GetType() != ITEM && actor->GetType() != PROJECTILE)

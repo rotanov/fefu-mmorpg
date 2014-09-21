@@ -7,28 +7,39 @@ function($, utils, game) {
 
         var serverAnswer = $("#server-answer")
 
-        if (data == null)
-        {
+        if (data == null) {
             serverAnswer.text("Data is null, request might be failed.").css("color", "red")
+        }
 
-        } else if (data.result === "ok") {
+        switch (data.result) {
+        case "ok":
             //serverAnswer.text("Registration is successful.").css("color", "green")
             jsonHandle("login", loginCallback)
+            break
 
-        } else if (data.result === "loginExists") {
+        case "loginExists":
             $("#username, #password").val("")
             serverAnswer.text("This login already exists.").css("color", "red")
+            break
 
-        } else if (data.result === "badLogin") {
+        case "badLogin":
             $("#username, #password").val("")
             serverAnswer.text("Login: minimal length is 2 symbols and "
                 + "maximum length is 36 symbols. Allowed charset is "
                 + "latin symbols and numbers.").css("color", "red")
+            break
 
-        } else if (data.result === "badPassword") {
+        case "badPassword":
             $("#username, #password").val("")
             serverAnswer.text("Password: minimal length is 6 symbols and "
                 + "maximum length is 36 symbols.").css("color", "red")
+            break
+
+        case "badClass":
+            $("#username, #password").val("")
+            serverAnswer.text("Class: one of the following options: "
+                + "warrior, rogue, mage.").css("color", "red")
+            break
         }
     }
 
@@ -79,7 +90,8 @@ function($, utils, game) {
             var js = {
                 "action": action,
                 "login": $("#username").val(),
-                "password": $("#password").val()
+                "password": $("#password").val(),
+                "class": $("#player-classes").find(":selected").text()
             }
         }
 
