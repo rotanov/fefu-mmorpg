@@ -408,8 +408,11 @@ void GameServer::tick()
 
         if (distance <= pickUpRadius_)
         {
-          events_ << monster->atack(target);
-          events_ << target->atack (monster);
+          if (monster->Flags.lastIndexOf("CAN_BLOW") != -1)
+          {
+            events_ << monster->atack(target);
+            events_ << target->atack (monster);
+          }
         }
       }
     }
