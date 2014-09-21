@@ -420,14 +420,10 @@ void GameServer::tick()
         Vector2 t_pos = target->GetPosition();
         float distance = sqrt((m_pos.x - t_pos.x)*(m_pos.x - t_pos.x) +
                               (m_pos.y - t_pos.y)*(m_pos.y - t_pos.y));
-
         if (distance <= pickUpRadius_)
         {
-          if (monster->Flags.lastIndexOf("CAN_BLOW") != -1)
-          {
-            events_ << monster->atack(target);
-            events_ << target->atack (monster);
-          }
+          events_ << monster->atack(target);
+          events_ << target->atack(monster);
         }
       }
     }
