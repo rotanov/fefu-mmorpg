@@ -237,9 +237,9 @@ void GameServer::tick()
 
     if (levelMap_.GetCell(x + slideThreshold_- 0.5f, y) == '.'
         &&((levelMap_.GetCell(x - 0.5f, y - 0.51f) != '.'
-        && direction == EActorDirection::NORTH)
-        || ( levelMap_.GetCell(x - 0.5f, y + 0.49f ) != '.'
-        &&  direction == EActorDirection::SOUTH)))
+         || levelMap_.GetCell(x - 0.5f, y + 0.49f)!= '.')
+        && ( direction == EActorDirection::NORTH
+        ||  direction == EActorDirection::SOUTH)))
     {
       p.SetPosition(Vector2(x + slideThreshold_, p.GetPosition().y));
     }
@@ -267,7 +267,7 @@ void GameServer::tick()
       collided = true;
     }
 
-    if (levelMap_.GetCell(x - 0.51f, y) != '.')
+    if (levelMap_.GetCell(x - 0.5f, y) != '.')
     {
       p.SetPosition(Vector2(round(x - 0.5f) + 0.5f, p.GetPosition().y));
       collided = true;
@@ -277,7 +277,7 @@ void GameServer::tick()
       p.SetPosition(Vector2(p.GetPosition().x, round(y + 0.5f) - 0.5f));
       collided = true;
     }
-    if ( levelMap_.GetCell(x, y - 0.51f) != '.')
+    if ( levelMap_.GetCell(x, y - 0.5f) != '.')
     {
       p.SetPosition(Vector2(p.GetPosition().x, round(y - 0.5f) + 0.5f));
       collided = true;
@@ -351,37 +351,40 @@ void GameServer::tick()
   {
     auto v = directionToVector[static_cast<unsigned>(actor->GetDirection())] ;
     actor->SetVelocity(v);
-    levelMap_.RemoveActor(actor);
     float dt = playerVelocity_;//static_cast<Creature*>(actor)->GetSpeed();
     Vector2 old_pos = actor->GetPosition();
-    Vector2 new_pos = old_pos + v * dt ;
+    Vector2 new_pos = old_pos + v * dt;
+    Vector2 old_pos2 = old_pos + v * 0.51;
 
-    if ((levelMap_.GetCell(new_pos.x, new_pos.y) == '.')&&
-         actor->GetDirection() != EActorDirection::NONE)
+    if (levelMap_.GetCell(old_pos2.x, old_pos2.y) != '#')
     {
-      EActorDirection d = actor->GetDirection();
-      actor->Update(dt);
-      collideWithGrid(actor, d);//, old_pos);
-    }
-
-    else if ((levelMap_.GetCell(new_pos.x , new_pos.y) != '.'|| playerVelocity_ >= 1)
-    && actor->GetDirection() != EActorDirection::NONE )
-    {
-      bool b = false;
-      for (float i = 0.01; i <= dt; i += 0.01)
+      if ((levelMap_.GetCell(new_pos.x, new_pos.y) == '.')&&
+          actor->GetDirection() != EActorDirection::NONE)
       {
-        new_pos = old_pos + v * i + v*0.5;
-        if (levelMap_.GetCell(new_pos.x, new_pos.y) != '.' && !b)
+        EActorDirection d = actor->GetDirection();
+        actor->Update(dt);
+        collideWithGrid(actor, d);
+      }
+
+      else if ((levelMap_.GetCell(new_pos.x , new_pos.y) != '.' && playerVelocity_ >= 1)
+               && actor->GetDirection() != EActorDirection::NONE )
+      {
+        bool b = false;
+        for (float i = 0.01; i <= dt; i += 0.01)
         {
-          //EActorDirection d = actor->GetDirection();
-          actor->Update(i - 0.01);
-         // collideWithGrid(actor, d);
-          b = true;
-          break;
+          new_pos = old_pos + v * i + v*0.5;
+          if (levelMap_.GetCell(new_pos.x, new_pos.y) == '#' && !b)
+          {
+            actor->Update(i - 0.01);
+            b = true;
+          }
         }
       }
+    } else
+    {
+      actor->OnCollideWorld();
     }
-
+    levelMap_.RemoveActor(actor);
     if (actor->GetType() == PLAYER)
     {
       Creature* player = static_cast<Creature*>(actor);
@@ -610,7 +613,7 @@ void GameServer::HandleStopTesting_(const QVariantMap& request, QVariantMap& res
     return;
   }
   testingStageActive_ = false;
-  playerVelocity_ = 0.35f;
+  playerVelocity_ = 0.25f;
 }
 
 //==============================================================================
@@ -756,7 +759,8 @@ void GameServer::HandleSetLocation_(const QVariantMap& request, QVariantMap& res
     actors_.push_back(p);
   }
   p->SetSpeed(playerVelocity_);
-  p->SetPosition(Vector2(x,y));
+  p->SetDirection (EActorDirection::NONE);
+  SetActorPosition_(p, Vector2(x,y));
 }
 
 //==============================================================================
