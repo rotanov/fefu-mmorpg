@@ -111,6 +111,7 @@ void GameServer::HandleRegister_(const QVariantMap& request, QVariantMap& respon
 {
   QString login = request["login"].toString();
   QString password = request["password"].toString();
+  QString class_ = request["class"].toString();
 
   bool passHasInvalidChars = false;
 
@@ -135,6 +136,10 @@ void GameServer::HandleRegister_(const QVariantMap& request, QVariantMap& respon
            || passHasInvalidChars)
   {
     WriteResult_(response, EFEMPResult::BAD_PASS);
+  }
+  else if (class_ != "warrior" && class_ != "rouge" && class_ != "mage")
+  {
+    WriteResult_(response, EFEMPResult::BAD_CLASS);
   }
   else
   {
