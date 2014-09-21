@@ -46,8 +46,19 @@
                 <input type="password" id="password" name="password"/>
             </div>
 
-            <input type="button" value="Register" id="register"/>
-            <input type="button" value="Sign in" id="login" />
+            <div>
+                <label for="player-class">Player Class</label>
+                <form>
+                    <select id="player-classes" name="player-classes">
+                        <option selected value="warrior">warrior</option>
+                        <option value="rogue">rogue</option>
+                        <option value="mage">mage</option>
+                    </select>
+                </form>
+
+                <input type="button" value="Register" id="register"/>
+                <input type="button" value="Sign in" id="login" />
+            </div>
         </form>
 
         <div id="server-answer"></div>
