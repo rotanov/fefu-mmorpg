@@ -69,20 +69,20 @@ void Player::SetDamage(QString str, bool b)
 QVariantMap Player::atack(Creature* actor, int id)
 {
   int val = rand();
-  //int n = blows.damage->count, m = blows.damage->to;
+  int n = blows.damage->count, m = blows.damage->to;
   if (id == 1)
   {
-   // Item* item = GetSlot(left_hand);
-   // n = item->damage.count;
-  //  m = item->damage.to;
+    Item* item = GetSlot(left_hand);
+    n = item->damage.count;
+    m = item->damage.to;
   }
   else if (id == 2)
   {
-   // Item* item = GetSlot(right_hand);
-   // n = item->damage.count;
-   // m = item->damage.to;
+    Item* item = GetSlot(right_hand);
+    n = item->damage.count;
+    m = item->damage.to;
   }
-  val = 100;//(val % (n * m));
+  val = (val % (n * m));
   actor->SetHealth(actor->GetHealth() - val);
   QVariantMap ans;
   ans["dealtDamage"] = val;
