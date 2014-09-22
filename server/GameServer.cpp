@@ -230,48 +230,47 @@ void GameServer::tick()
 
     bool collided = false;
 
-    if (( levelMap_.GetCell(x + 0.49f, y - 0.51f) != '.'
-        ||  levelMap_.GetCell(x + 0.49f, y + 0.49f ) != '.')
-        && levelMap_.GetCell(x - slideThreshold_+ 0.5f , y) == '.'
+    if ((levelMap_.GetCell(x + 0.49f, y - 0.51f) != '.'
+        || levelMap_.GetCell(x + 0.49f, y + 0.49f) != '.')
+        && levelMap_.GetCell(x - slideThreshold_+ 0.5f, y) == '.'
         && (direction == EActorDirection::NORTH
-        || direction == EActorDirection::SOUTH) )
+        || direction == EActorDirection::SOUTH))
     {
       p.SetPosition(Vector2(x - slideThreshold_+ 0.0001f, p.GetPosition().y));
-
     }
 
     if (levelMap_.GetCell(x + slideThreshold_- 0.5f, y) == '.'
         &&((levelMap_.GetCell(x - 0.5f, y - 0.51f) != '.'
-         || levelMap_.GetCell(x - 0.5f, y + 0.49f)!= '.')
-        && ( direction == EActorDirection::NORTH
-        ||  direction == EActorDirection::SOUTH)))
+        || levelMap_.GetCell(x - 0.5f, y + 0.49f) != '.')
+        && (direction == EActorDirection::NORTH
+        || direction == EActorDirection::SOUTH)))
     {
       p.SetPosition(Vector2(x + slideThreshold_- 0.0001f, p.GetPosition().y));
     }
 
     if (levelMap_.GetCell(x, y - slideThreshold_ + 0.5f) == '.'
-        && ( levelMap_.GetCell(x - 0.51f, y + 0.49f) != '.'
-        ||  levelMap_.GetCell(x + 0.49f, y + 0.49f ) != '.')
+        && (levelMap_.GetCell(x - 0.51f, y + 0.49f) != '.'
+        || levelMap_.GetCell(x + 0.49f, y + 0.49f) != '.')
         && (direction == EActorDirection::EAST
         || direction == EActorDirection::WEST))
     {
       p.SetPosition(Vector2(p.GetPosition().x, y - slideThreshold_+ 0.0001f));
     }
 
-    if (( levelMap_.GetCell(x + 0.49f, y - 0.5f) != '.'
-        ||  levelMap_.GetCell(x - 0.51f, y - 0.5f ) != '.')
-        && levelMap_.GetCell(x, y + slideThreshold_-  0.5f) == '.'
+    if ((levelMap_.GetCell(x + 0.49f, y - 0.5f) != '.'
+        || levelMap_.GetCell(x - 0.51f, y - 0.5f) != '.')
+        && levelMap_.GetCell(x, y + slideThreshold_- 0.5f) == '.'
         && (direction == EActorDirection::EAST
         || direction == EActorDirection::WEST))
     {
       p.SetPosition(Vector2(p.GetPosition().x, y + slideThreshold_ - 0.001f));
     }
+
     if (levelMap_.GetCell(x + 0.5f, y) != '.')
     {
       p.SetPosition(Vector2(round(x + 0.5f) - 0.5f, p.GetPosition().y));
       collided = true;
     }
-
     if (levelMap_.GetCell(x - 0.51f, y) != '.')
     {
       p.SetPosition(Vector2(round(x - 0.5f) + 0.5f, p.GetPosition().y));
@@ -282,7 +281,7 @@ void GameServer::tick()
       p.SetPosition(Vector2(p.GetPosition().x, round(y + 0.5f) - 0.5f));
       collided = true;
     }
-    if ( levelMap_.GetCell(x, y - 0.51f) != '.')
+    if (levelMap_.GetCell(x, y - 0.51f) != '.')
     {
       p.SetPosition(Vector2(p.GetPosition().x, round(y - 0.5f) + 0.5f));
       collided = true;
@@ -373,7 +372,7 @@ void GameServer::tick()
     actor->SetVelocity(v);
     float dt = playerVelocity_;
     Vector2 old_pos = actor->GetPosition();
-    Vector2 new_pos = old_pos + v * (dt+0.001);
+    Vector2 new_pos = old_pos + v * (dt + 0.001);
     Vector2 old_pos2 = old_pos + v * 0.51;
     EActorDirection d = actor->GetDirection();
     float x = new_pos.x;
@@ -382,25 +381,25 @@ void GameServer::tick()
     && d != EActorDirection::NONE)
     {
       if (levelMap_.GetCell(new_pos.x, new_pos.y) == '.'
-      && (((levelMap_.GetCell(x - slideThreshold_+ 0.5f , y) == '.'
-     && levelMap_.GetCell(x + slideThreshold_- 0.5f , y) == '.')
-     && (d == EActorDirection::NORTH
-     ||  d == EActorDirection::SOUTH))
-     || ((levelMap_.GetCell(x, y - slideThreshold_+ 0.5f) == '.'
-     && levelMap_.GetCell(x, y + slideThreshold_- 0.5f) == '.')
-     && (d == EActorDirection::EAST
-        || d == EActorDirection::WEST))))
+          && (((levelMap_.GetCell(x - slideThreshold_+ 0.5f, y) == '.'
+          && levelMap_.GetCell(x + slideThreshold_- 0.5f, y) == '.')
+          && (d == EActorDirection::NORTH
+          || d == EActorDirection::SOUTH))
+          || ((levelMap_.GetCell(x, y - slideThreshold_+ 0.5f) == '.'
+          && levelMap_.GetCell(x, y + slideThreshold_- 0.5f) == '.')
+          && (d == EActorDirection::EAST
+          || d == EActorDirection::WEST))))
       {
         actor->Update(dt);
         collideWithGrid(actor, d);
       }
       else if (levelMap_.GetCell(x , y) != '.'
-       && playerVelocity_ >= 1)
+               && playerVelocity_ >= 1)
       {
         bool b = false;
         for (float i = 0.01; i <= dt; i += 0.01)
         {
-          new_pos = old_pos + v * i + v*0.5f;
+          new_pos = old_pos + v * i + v * 0.5f;
           if (levelMap_.GetCell(new_pos.x, new_pos.y) == '#' && !b)
           {
             actor->Update(i - 0.01);
@@ -425,7 +424,7 @@ void GameServer::tick()
     if (actor->GetType() == MONSTER)
     {
       Monster* monster = static_cast<Monster*>(actor);
-      Creature* target = monster->target;//where target is initialized? is always zero?
+      Creature* target = monster->target;
 
       if (target && target->GetHealth() > 0)
       {
@@ -455,15 +454,18 @@ void GameServer::tick()
         actor->OnCollideActor(neighbour);
         neighbour->OnCollideActor(actor);
 
-        if (actor->GetType () == PROJECTILE)
+        if (actor->GetType() == PROJECTILE)
         {
           idToActor_.erase(actor->GetId());
           levelMap_.RemoveActor(actor);
           actors_.erase(std::remove(actors_.begin(), actors_.end(), actor), actors_.end());
           delete actor;
           actor = NULL;
-        } else
+        }
+        else
+        {
           actor->SetPosition(old_pos);
+        }
       }
     }
     if (actor != NULL)
@@ -747,7 +749,7 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
     }
 
     if (actor["type"] == "projectile"||
-     actor["type"] == "item" || actor["health"] > 0)
+        actor["type"] == "item" || actor["health"] > 0)
     {
       actors << actor;
     }
@@ -810,7 +812,7 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
   }
 
   if (response["health"] <= 0 && response["type"] != "item"
-  && response["type"] != "projectile")
+      && response["type"] != "projectile")
   {
     WriteResult_ (response, EFEMPResult::BAD_ID);
     return;
@@ -1059,13 +1061,14 @@ void GameServer::HandleUseSkill_(const QVariantMap& request, QVariantMap& respon
     WriteResult_(response, EFEMPResult::BAD_PLACING);
     return;
   }
+
   bool b = true;
   for (auto actor: actors_)
   {
     Projectile* projects = dynamic_cast<Projectile*>(actor);
     if (projects
-    && projects->GetPosition().x == p->GetPosition().x
-    && projects->GetPosition().y == p->GetPosition().y)
+        && projects->GetPosition().x == p->GetPosition().x
+        && projects->GetPosition().y == p->GetPosition().y)
     {
       b = false;
       break;
@@ -1073,16 +1076,13 @@ void GameServer::HandleUseSkill_(const QVariantMap& request, QVariantMap& respon
   }
   if (b)
   {
-   Projectile* project = CreateActor_<Projectile>();
-   project->SetPosition (Vector2(p->GetPosition().x, p->GetPosition().y));
-   project->SetPoint(Vector2(x, y));
-   project->SetPlayer(p);
-   project->Update(1.0f);
-   levelMap_.IndexActor(project);
-   WriteResult_(response, EFEMPResult::OK);
-   return;
+    Projectile* project = CreateActor_<Projectile>();
+    project->SetPosition (Vector2(p->GetPosition().x, p->GetPosition().y));
+    project->SetPoint(Vector2(x, y));
+    project->SetPlayer(p);
+    project->Update(1.0f);
+    levelMap_.IndexActor(project);
   }
-
 }
 
 //==============================================================================
