@@ -295,10 +295,10 @@ void GameServer::tick()
   for (Actor* actor: actors_)
   {
     if (actor->GetType() == MONSTER
-    || actor->GetType() == PLAYER)
+        || actor->GetType() == PLAYER)
     {
       Creature* monster = dynamic_cast<Creature*>(actor);
-      if (monster->GetHealth () < 0)
+      if (monster->GetHealth() < 0)
       {
         KillActor_(actor);
         break;
@@ -371,8 +371,8 @@ void GameServer::tick()
               }
             }
           }
-         }
-       }
+        }
+      }
     }
   }
   for (Actor* actor: actors_)
@@ -392,7 +392,7 @@ void GameServer::tick()
     float x = new_pos.x;
     float y = new_pos.y;
     if (levelMap_.GetCell(old_pos2.x, old_pos2.y) != '#'
-    && d != EActorDirection::NONE)
+        && d != EActorDirection::NONE)
     {
       if (levelMap_.GetCell(new_pos.x, new_pos.y) == '.'
           && (((levelMap_.GetCell(x - slideThreshold_+ 0.5f, y) == '.'
@@ -407,8 +407,7 @@ void GameServer::tick()
         actor->Update(dt);
         collideWithGrid(actor, d);
       }
-      else if (levelMap_.GetCell(x , y) != '.'
-               && playerVelocity_ >= 1)
+      else if (levelMap_.GetCell(x , y) != '.' && playerVelocity_ >= 1)
       {
         bool b = false;
         for (float i = 0.01; i <= dt; i += 0.01)
@@ -421,15 +420,19 @@ void GameServer::tick()
           }
         }
       }
-    } else
+    }
+    else
     {
       if (actor && actor != NULL)
       {
         if (actor->GetType () == PROJECTILE)
         {
           static_cast<Projectile*>(actor)->death = true;
-        } else
+        }
+        else
+        {
           actor->OnCollideWorld();
+        }
       }
     }
 
@@ -444,7 +447,6 @@ void GameServer::tick()
 
     if (actor->GetType() == MONSTER)
     {
-
       Monster* monster = dynamic_cast<Monster*>(actor);
       Creature* target = monster->target;
       if (target && target->GetHealth() > 0)
@@ -464,8 +466,8 @@ void GameServer::tick()
     for (Actor* neighbour: actors_)
     {
       if (actor == NULL || neighbour == NULL
-      ||actor == neighbour || neighbour->GetType() == ITEM
-      || actor->GetType () == ITEM)
+          || actor == neighbour || neighbour->GetType() == ITEM
+          || actor->GetType() == ITEM)
       {
         continue;
       }
@@ -476,21 +478,26 @@ void GameServer::tick()
       {
         actor->OnCollideActor(neighbour);
         neighbour->OnCollideActor(actor);
-        if (actor->GetType () == PROJECTILE
-        && neighbour->GetType () == PROJECTILE)
+        if (actor->GetType() == PROJECTILE
+            && neighbour->GetType() == PROJECTILE)
         {
           static_cast<Projectile*>(actor)->death = static_cast<Projectile*>(actor)->death;
-        } else if (actor->GetType () == PROJECTILE)
+        }
+        else if (actor->GetType() == PROJECTILE)
         {
           static_cast<Projectile*>(actor)->death = true;
-        } else if (neighbour->GetType () == PROJECTILE)
+        }
+        else if (neighbour->GetType() == PROJECTILE)
         {
           static_cast<Projectile*>(neighbour)->death = true;
-        } else
+        }
+        else
+        {
           actor->SetPosition(old_pos);
       }
     }
-    if (actor->GetType () == PROJECTILE
+
+    if (actor->GetType() == PROJECTILE
         && static_cast<Projectile*>(actor)->death)
     {
        idToActor_.erase(actor->GetId());
@@ -498,8 +505,11 @@ void GameServer::tick()
        delete actor;
        actor = NULL;
        break;
-    } else
+    }
+    else
+    {
       levelMap_.IndexActor(actor);
+    }
   }
 
   QVariantMap tickMessage;

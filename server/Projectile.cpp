@@ -51,19 +51,27 @@ void Projectile::Update(float dt)
     position_.y = point_attack_.y;
     SetDirection(EActorDirection::NONE);
   }
-  if (position_.x < point_attack_.x )
+  if (position_.x < point_attack_.x)
+  {
     SetDirection(EActorDirection::WEST);
-  else if (position_.x > point_attack_.x )
-     SetDirection(EActorDirection::EAST);
+  }
+  else if (position_.x > point_attack_.x)
+  {
+    SetDirection(EActorDirection::EAST);
+  }
   if (position_.x != point_attack_.x)
   {
     SetVelocity(directionToVector[static_cast<unsigned>(GetDirection())]);
     position_ +=  velocity_*dt;
   }
-  if (position_.y < point_attack_.y )
+  if (position_.y < point_attack_.y)
+  {
     SetDirection(EActorDirection::NORTH);
-  else if (position_.y > point_attack_.y )
-     SetDirection(EActorDirection::SOUTH);
+  }
+  else if (position_.y > point_attack_.y)
+  {
+    SetDirection(EActorDirection::SOUTH);
+  }
   if (position_.y != point_attack_.y)
   {
     SetVelocity(directionToVector[static_cast<unsigned>(GetDirection())]);
