@@ -101,6 +101,8 @@ void LevelMap::IndexActor(Actor* actor)
 
 void LevelMap::RemoveActor(const Actor* actor)
 {
+  if (actor == NULL || !actor)
+    return;
   auto cells = actor->GetOccupiedCells();
   for (auto p: cells)
   {
