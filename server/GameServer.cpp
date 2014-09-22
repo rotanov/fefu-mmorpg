@@ -230,48 +230,47 @@ void GameServer::tick()
 
     bool collided = false;
 
-    if (( levelMap_.GetCell(x + 0.49f, y - 0.51f) != '.'
-        ||  levelMap_.GetCell(x + 0.49f, y + 0.49f ) != '.')
-        && levelMap_.GetCell(x - slideThreshold_+ 0.5f , y) == '.'
+    if ((levelMap_.GetCell(x + 0.49f, y - 0.51f) != '.'
+        || levelMap_.GetCell(x + 0.49f, y + 0.49f) != '.')
+        && levelMap_.GetCell(x - slideThreshold_+ 0.5f, y) == '.'
         && (direction == EActorDirection::NORTH
-        || direction == EActorDirection::SOUTH) )
+        || direction == EActorDirection::SOUTH))
     {
       p.SetPosition(Vector2(x - slideThreshold_+ 0.0001f, p.GetPosition().y));
-
     }
 
     if (levelMap_.GetCell(x + slideThreshold_- 0.5f, y) == '.'
         &&((levelMap_.GetCell(x - 0.5f, y - 0.51f) != '.'
-         || levelMap_.GetCell(x - 0.5f, y + 0.49f)!= '.')
-        && ( direction == EActorDirection::NORTH
-        ||  direction == EActorDirection::SOUTH)))
+        || levelMap_.GetCell(x - 0.5f, y + 0.49f) != '.')
+        && (direction == EActorDirection::NORTH
+        || direction == EActorDirection::SOUTH)))
     {
       p.SetPosition(Vector2(x + slideThreshold_- 0.0001f, p.GetPosition().y));
     }
 
     if (levelMap_.GetCell(x, y - slideThreshold_ + 0.5f) == '.'
-        && ( levelMap_.GetCell(x - 0.51f, y + 0.49f) != '.'
-        ||  levelMap_.GetCell(x + 0.49f, y + 0.49f ) != '.')
+        && (levelMap_.GetCell(x - 0.51f, y + 0.49f) != '.'
+        || levelMap_.GetCell(x + 0.49f, y + 0.49f) != '.')
         && (direction == EActorDirection::EAST
         || direction == EActorDirection::WEST))
     {
       p.SetPosition(Vector2(p.GetPosition().x, y - slideThreshold_+ 0.0001f));
     }
 
-    if (( levelMap_.GetCell(x + 0.49f, y - 0.5f) != '.'
-        ||  levelMap_.GetCell(x - 0.51f, y - 0.5f ) != '.')
-        && levelMap_.GetCell(x, y + slideThreshold_-  0.5f) == '.'
+    if ((levelMap_.GetCell(x + 0.49f, y - 0.5f) != '.'
+        || levelMap_.GetCell(x - 0.51f, y - 0.5f) != '.')
+        && levelMap_.GetCell(x, y + slideThreshold_- 0.5f) == '.'
         && (direction == EActorDirection::EAST
         || direction == EActorDirection::WEST))
     {
       p.SetPosition(Vector2(p.GetPosition().x, y + slideThreshold_ - 0.001f));
     }
+
     if (levelMap_.GetCell(x + 0.5f, y) != '.')
     {
       p.SetPosition(Vector2(round(x + 0.5f) - 0.5f, p.GetPosition().y));
       collided = true;
     }
-
     if (levelMap_.GetCell(x - 0.51f, y) != '.')
     {
       p.SetPosition(Vector2(round(x - 0.5f) + 0.5f, p.GetPosition().y));
@@ -282,7 +281,7 @@ void GameServer::tick()
       p.SetPosition(Vector2(p.GetPosition().x, round(y + 0.5f) - 0.5f));
       collided = true;
     }
-    if ( levelMap_.GetCell(x, y - 0.51f) != '.')
+    if (levelMap_.GetCell(x, y - 0.51f) != '.')
     {
       p.SetPosition(Vector2(p.GetPosition().x, round(y - 0.5f) + 0.5f));
       collided = true;
@@ -318,14 +317,27 @@ void GameServer::tick()
                         (m_pos.y - t_pos.y)*(m_pos.y - t_pos.y));
         if (distance < 10)
         {
-          if (m_pos.x < t_pos.x)
+          if (abs(m_pos.x - t_pos.x - 1.0f) < playerVelocity_
+              && m_pos.x - t_pos.x - 1.0f != 0)
+          {
+            monster->SetPosition(Vector2(t_pos.x + 1.0f, m_pos.y));
+            monster->SetDirection(EActorDirection::NONE);
+          }
+          if (abs(m_pos.y - t_pos.y + 1.0f) < playerVelocity_
+              && m_pos.y - t_pos.y + 1.0f != 0)
+          {
+            monster->SetPosition(Vector2(m_pos.x, t_pos.y - 1.0f));
+            monster->SetDirection(EActorDirection::NONE);
+          }
+
+          if (m_pos.x < t_pos.x - 1.0f)
             monster->SetDirection(EActorDirection::EAST);
-          else if (m_pos.x > t_pos.x)
+          else if (m_pos.x > t_pos.x + 1.0f)
             monster->SetDirection(EActorDirection::WEST);
-          else if (m_pos.y < t_pos.y)
-            monster->SetDirection(EActorDirection::NORTH);
-          else if (m_pos.y > t_pos.y)
+          else if (m_pos.y < t_pos.y - 1.0f)
             monster->SetDirection(EActorDirection::SOUTH);
+          else if (m_pos.y > t_pos.y + 1.0f)
+            monster->SetDirection(EActorDirection::NORTH);
         }
       }
       if (!target || distance >= 10)
@@ -374,7 +386,7 @@ void GameServer::tick()
     actor->SetVelocity(v);
     float dt = playerVelocity_;
     Vector2 old_pos = actor->GetPosition();
-    Vector2 new_pos = old_pos + v * (dt+0.001);
+    Vector2 new_pos = old_pos + v * (dt + 0.001);
     Vector2 old_pos2 = old_pos + v * 0.51;
     levelMap_.RemoveActor(actor);
     EActorDirection d = actor->GetDirection();
@@ -383,26 +395,26 @@ void GameServer::tick()
     if (levelMap_.GetCell(old_pos2.x, old_pos2.y) != '#'
     && d != EActorDirection::NONE)
     {
-      if (levelMap_.GetCell(x, y) == '.'
-      && (((levelMap_.GetCell(x - slideThreshold_+ 0.5f , y) == '.'
-     && levelMap_.GetCell(x + slideThreshold_- 0.5f , y) == '.')
-     && (d == EActorDirection::NORTH
-     ||  d == EActorDirection::SOUTH))
-     || ((levelMap_.GetCell(x, y - slideThreshold_+ 0.5f) == '.'
-     && levelMap_.GetCell(x, y + slideThreshold_- 0.5f) == '.')
-     && (d == EActorDirection::EAST
-        || d == EActorDirection::WEST))))
+      if (levelMap_.GetCell(new_pos.x, new_pos.y) == '.'
+          && (((levelMap_.GetCell(x - slideThreshold_+ 0.5f, y) == '.'
+          && levelMap_.GetCell(x + slideThreshold_- 0.5f, y) == '.')
+          && (d == EActorDirection::NORTH
+          || d == EActorDirection::SOUTH))
+          || ((levelMap_.GetCell(x, y - slideThreshold_+ 0.5f) == '.'
+          && levelMap_.GetCell(x, y + slideThreshold_- 0.5f) == '.')
+          && (d == EActorDirection::EAST
+          || d == EActorDirection::WEST))))
       {
         actor->Update(dt);
         collideWithGrid(actor, d);
       }
       else if (levelMap_.GetCell(x , y) != '.'
-       && playerVelocity_ >= 1)
+               && playerVelocity_ >= 1)
       {
         bool b = false;
         for (float i = 0.01; i <= dt; i += 0.01)
         {
-          new_pos = old_pos + v * i + v*0.5f;
+          new_pos = old_pos + v * i + v * 0.5f;
           if (levelMap_.GetCell(new_pos.x, new_pos.y) == '#' && !b)
           {
             actor->Update(i - 0.01);
@@ -433,9 +445,9 @@ void GameServer::tick()
 
     if (actor->GetType() == MONSTER)
     {
-      Monster* monster = dynamic_cast<Monster*>(actor);
-      Creature* target = monster->target;//where target is initialized? is always zero?
 
+      Monster* monster = dynamic_cast<Monster*>(actor);
+      Creature* target = monster->target;
       if (target && target->GetHealth() > 0)
       {
         Vector2 m_pos = actor->GetPosition();
@@ -477,6 +489,7 @@ void GameServer::tick()
           static_cast<Projectile*>(neighbour)->death = true;
         } else
           actor->SetPosition(old_pos);
+        }
       }
     }
     if (actor->GetType () == PROJECTILE
@@ -647,7 +660,7 @@ void GameServer::HandleStartTesting_(const QVariantMap& request, QVariantMap& re
   }
 
   testingStageActive_ = true;
- // storage_.Reset();
+  //storage_.Reset(); //for Alexander's tests
 }
 
 //==============================================================================
@@ -769,7 +782,7 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
     }
 
     if (actor["type"] == "projectile"||
-     actor["type"] == "item" || actor["health"] > 0)
+        actor["type"] == "item" || actor["health"] > 0)
     {
       actors << actor;
     }
@@ -832,7 +845,7 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
   }
 
   if (response["health"] <= 0 && response["type"] != "item"
-  && response["type"] != "projectile")
+      && response["type"] != "projectile")
   {
     WriteResult_ (response, EFEMPResult::BAD_ID);
     return;
