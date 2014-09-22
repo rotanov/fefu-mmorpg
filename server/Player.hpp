@@ -40,6 +40,8 @@ public:
   bool SetSlot(Slot st);
 
   void SetBlows();
+ // void SetBlows();
+ // void SetBlows();
 
   void SetDamage(QString str, bool b);
 
@@ -57,4 +59,5 @@ private:
   QString login_;
   unsigned clientTick_ = 0;
   QMap<Slot, Item*> slots_;
+  int opt_ = 0;
 };

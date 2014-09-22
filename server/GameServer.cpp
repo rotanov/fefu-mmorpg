@@ -329,7 +329,6 @@ void GameServer::tick()
             monster->SetPosition(Vector2(m_pos.x, t_pos.y - 1.0f));
             monster->SetDirection(EActorDirection::NONE);
           }
-
           if (m_pos.x < t_pos.x - 1.0f)
             monster->SetDirection(EActorDirection::EAST);
           else if (m_pos.x > t_pos.x + 1.0f)
@@ -489,7 +488,6 @@ void GameServer::tick()
           static_cast<Projectile*>(neighbour)->death = true;
         } else
           actor->SetPosition(old_pos);
-        }
       }
     }
     if (actor->GetType () == PROJECTILE
@@ -1051,6 +1049,7 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
 
   for (Actor* actor: actors_)
   {
+
     if (actor->GetType() != ITEM && actor->GetType() != PROJECTILE)
     {
       Creature* target = dynamic_cast<Creature*>(actor);
@@ -1068,6 +1067,7 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
           if (target->GetHealth() <= 0)
           {
             GetItems(target);
+
           } else {
             a = target->atack(p);
             events_ << a;
