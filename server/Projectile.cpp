@@ -3,6 +3,7 @@
 Projectile::Projectile()
 {
   type_ = PROJECTILE;
+  death = false;
 }
 
 Projectile::~Projectile()
@@ -20,7 +21,7 @@ bool Projectile::OnCollideActor(Actor* actor)
   if ((actor->GetType() == MONSTER || actor->GetType() == PLAYER)
       && actor != player_)
   {
-    Creature * a = static_cast<Creature*>(actor);
+    Creature* a = static_cast<Creature*>(actor);
     a->SetHealth(a->GetHealth() - blow_);
   }
   return false;
@@ -38,8 +39,20 @@ Player* Projectile::GetPlayer()
 
 void Projectile::Update(float dt)
 {
+  if (dt != 1)
+    dt = speed_;
+  if (abs(position_.x - point_attack_.x) < dt)
+  {
+    position_.x = point_attack_.x;
+    SetDirection(EActorDirection::NONE);
+  }
+  if (abs(position_.y - point_attack_.y) < dt)
+  {
+    position_.y = point_attack_.y;
+    SetDirection(EActorDirection::NONE);
+  }
   if (position_.x < point_attack_.x )
-     SetDirection(EActorDirection::WEST);
+    SetDirection(EActorDirection::WEST);
   else if (position_.x > point_attack_.x )
      SetDirection(EActorDirection::EAST);
   if (position_.x != point_attack_.x)
@@ -48,9 +61,9 @@ void Projectile::Update(float dt)
     position_ +=  velocity_*dt;
   }
   if (position_.y < point_attack_.y )
-     SetDirection(EActorDirection::NORTH);
+    SetDirection(EActorDirection::NORTH);
   else if (position_.y > point_attack_.y )
-    SetDirection(EActorDirection::SOUTH);
+     SetDirection(EActorDirection::SOUTH);
   if (position_.y != point_attack_.y)
   {
     SetVelocity(directionToVector[static_cast<unsigned>(GetDirection())]);
