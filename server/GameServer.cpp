@@ -626,7 +626,7 @@ void GameServer::HandleStartTesting_(const QVariantMap& request, QVariantMap& re
   }
 
   testingStageActive_ = true;
-  storage_.Reset();
+  //storage_.Reset(); //for Alexander's tests
 }
 
 //==============================================================================
