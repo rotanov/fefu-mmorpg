@@ -189,7 +189,7 @@ void GameServer::HandleDestroyItem_(const QVariantMap& request, QVariantMap& res
   else
   {
     //item is on the ground
-    Item* item = static_cast<Item*>(idToActor_[id]);
+    Item* item = dynamic_cast<Item*>(idToActor_[id]);
     BAD_ID(!item || !item->GetOnTheGround());
 
     Vector2 player_pos = p->GetPosition();
@@ -295,9 +295,19 @@ void GameServer::tick()
   };
   for (Actor* actor: actors_)
   {
+    if (actor->GetType() == MONSTER
+    || actor->GetType() == PLAYER)
+    {
+      Creature* monster = dynamic_cast<Creature*>(actor);
+      if (monster->GetHealth () < 0)
+      {
+        KillActor_(actor);
+        break;
+      }
+    }
     if (actor->GetType() == MONSTER)
     {
-      Monster* monster = static_cast<Monster*>(actor);
+      Monster* monster = dynamic_cast<Monster*>(actor);
       Creature* target = monster->target;
       float distance;
       Vector2 m_pos = actor->GetPosition();
@@ -306,7 +316,7 @@ void GameServer::tick()
         Vector2 t_pos = target->GetPosition();
         distance = sqrt((m_pos.x - t_pos.x)*(m_pos.x - t_pos.x) +
                         (m_pos.y - t_pos.y)*(m_pos.y - t_pos.y));
-        if (distance < 5)
+        if (distance < 10)
         {
           if (m_pos.x < t_pos.x)
             monster->SetDirection(EActorDirection::EAST);
@@ -318,7 +328,7 @@ void GameServer::tick()
             monster->SetDirection(EActorDirection::SOUTH);
         }
       }
-      if (!target || distance >= 5)
+      if (!target || distance >= 10)
       {
         for (Actor* tar: actors_)
         {
@@ -327,7 +337,7 @@ void GameServer::tick()
             bool b = false;
             if (tar->GetType() != ITEM && tar->GetType () != PROJECTILE)
             {
-              Creature* m = static_cast<Creature*>(tar);
+              Creature* m = dynamic_cast<Creature*>(tar);
 
               QStringList str = monster->Flags.filter("HATE");
               for (QString hate: str)
@@ -342,7 +352,7 @@ void GameServer::tick()
                 Vector2 t_pos = tar->GetPosition();
                 distance = sqrt((m_pos.x - t_pos.x)*(m_pos.x - t_pos.x) +
                                 (m_pos.y - t_pos.y)*(m_pos.y - t_pos.y));
-                if (distance < 5)
+                if (distance < 10)
                 {
                   monster->target = m;
                   break;
@@ -356,19 +366,24 @@ void GameServer::tick()
   }
   for (Actor* actor: actors_)
   {
+    if (!actor || actor == NULL)
+    {
+      continue;
+    }
     auto v = directionToVector[static_cast<unsigned>(actor->GetDirection())] ;
     actor->SetVelocity(v);
     float dt = playerVelocity_;
     Vector2 old_pos = actor->GetPosition();
     Vector2 new_pos = old_pos + v * (dt+0.001);
     Vector2 old_pos2 = old_pos + v * 0.51;
+    levelMap_.RemoveActor(actor);
     EActorDirection d = actor->GetDirection();
     float x = new_pos.x;
     float y = new_pos.y;
     if (levelMap_.GetCell(old_pos2.x, old_pos2.y) != '#'
     && d != EActorDirection::NONE)
     {
-      if (levelMap_.GetCell(new_pos.x, new_pos.y) == '.'
+      if (levelMap_.GetCell(x, y) == '.'
       && (((levelMap_.GetCell(x - slideThreshold_+ 0.5f , y) == '.'
      && levelMap_.GetCell(x + slideThreshold_- 0.5f , y) == '.')
      && (d == EActorDirection::NORTH
@@ -397,12 +412,19 @@ void GameServer::tick()
       }
     } else
     {
-      actor->OnCollideWorld();
+      if (actor && actor != NULL)
+      {
+        if (actor->GetType () == PROJECTILE)
+        {
+          static_cast<Projectile*>(actor)->death = true;
+        } else
+          actor->OnCollideWorld();
+      }
     }
-    levelMap_.RemoveActor(actor);
+
     if (actor->GetType() == PLAYER)
     {
-      Creature* player = static_cast<Creature*>(actor);
+      Creature* player = dynamic_cast<Creature*>(actor);
       if (player->GetHealth() < player->GetMaxHealth())
       {
         player->SetHealth(player->GetHealth() + 1);
@@ -411,7 +433,7 @@ void GameServer::tick()
 
     if (actor->GetType() == MONSTER)
     {
-      Monster* monster = static_cast<Monster*>(actor);
+      Monster* monster = dynamic_cast<Monster*>(actor);
       Creature* target = monster->target;//where target is initialized? is always zero?
 
       if (target && target->GetHealth() > 0)
@@ -430,7 +452,9 @@ void GameServer::tick()
 
     for (Actor* neighbour: actors_)
     {
-      if (actor == NULL || actor == neighbour || neighbour->GetType() == ITEM)
+      if (actor == NULL || neighbour == NULL
+      ||actor == neighbour || neighbour->GetType() == ITEM
+      || actor->GetType () == ITEM)
       {
         continue;
       }
@@ -441,19 +465,29 @@ void GameServer::tick()
       {
         actor->OnCollideActor(neighbour);
         neighbour->OnCollideActor(actor);
-
-        if (actor->GetType () == PROJECTILE)
+        if (actor->GetType () == PROJECTILE
+        && neighbour->GetType () == PROJECTILE)
         {
-          idToActor_.erase(actor->GetId());
-          levelMap_.RemoveActor(actor);
-          actors_.erase(std::remove(actors_.begin(), actors_.end(), actor), actors_.end());
-          delete actor;
-          actor = NULL;
+          static_cast<Projectile*>(actor)->death = static_cast<Projectile*>(actor)->death;
+        } else if (actor->GetType () == PROJECTILE)
+        {
+          static_cast<Projectile*>(actor)->death = true;
+        } else if (neighbour->GetType () == PROJECTILE)
+        {
+          static_cast<Projectile*>(neighbour)->death = true;
         } else
           actor->SetPosition(old_pos);
       }
     }
-    if (actor != NULL)
+    if (actor->GetType () == PROJECTILE
+        && static_cast<Projectile*>(actor)->death)
+    {
+       idToActor_.erase(actor->GetId());
+       actors_.erase(std::remove(actors_.begin(), actors_.end(), actor), actors_.end());
+       delete actor;
+       actor = NULL;
+       break;
+    } else
       levelMap_.IndexActor(actor);
   }
 
@@ -613,7 +647,7 @@ void GameServer::HandleStartTesting_(const QVariantMap& request, QVariantMap& re
   }
 
   testingStageActive_ = true;
-  storage_.Reset();
+ // storage_.Reset();
 }
 
 //==============================================================================
@@ -628,6 +662,7 @@ void GameServer::HandleStopTesting_(const QVariantMap& request, QVariantMap& res
   }
   testingStageActive_ = false;
   playerVelocity_ = 0.25f;
+  storage_.Reset();
 }
 
 //==============================================================================
@@ -707,25 +742,25 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
 
     if (actor["type"] == "monster")
     {
-      auto m = static_cast<Monster*>(a);
+      auto m = dynamic_cast<Monster*>(a);
       actor["mobType"] = m->GetName();
     }
 
     if (actor["type"] != "item" && actor["type"] != "projectile")
     {
-      auto m = static_cast<Creature*>(a);
+      auto m = dynamic_cast<Creature*>(a);
       actor["health"] = m->GetHealth();
       actor["maxHealth"] = m->GetMaxHealth();
     }
 
     if (actor["type"] == "item")
     {
-      actor["name"] = static_cast<Item*>(a)->Getname();
+      actor["name"] = dynamic_cast<Item*>(a)->Getname();
     }
 
     if (actor["health"] <= 0 && (actor["type"] == "monster"))
     {
-      Creature* b = static_cast<Creature*>(a);
+      Creature* b = dynamic_cast<Creature*>(a);
       idToActor_.erase(b->GetId());
       levelMap_.RemoveActor(b);
       actors_.erase(std::remove(actors_.begin(), actors_.end(), b), actors_.end());
@@ -791,7 +826,7 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
   response["type"] = TypeToString[actor->GetType()];
   if (actor->GetType() != ITEM && actor->GetType() != PROJECTILE)
   {
-    auto m = static_cast<Creature*>(actor);
+    auto m = dynamic_cast<Creature*>(actor);
     response["health"] = m->GetHealth();
     response["maxHealth"] = m->GetMaxHealth();
   }
@@ -804,7 +839,7 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
   }
   if (actor->GetType() == MONSTER)
   {
-    auto m = static_cast<Monster*>(actor);
+    auto m = dynamic_cast<Monster*>(actor);
     response["mobType"] = m->GetName();
 
     QVariantList items;
@@ -831,7 +866,7 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
 
   if (actor->GetType() == ITEM)
   {
-    auto m = static_cast<Item*>(actor);
+    auto m = dynamic_cast<Item*>(actor);
     QVariantMap item;
     item["name"] = m->Getname();
     item["type"] = m->GetTypeItem();
@@ -843,7 +878,7 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
 
   if (actor->GetType() == PLAYER)
   {
-    auto p = static_cast<Player*>(actor);
+    auto p = dynamic_cast<Player*>(actor);
     response["login"] = p->GetLogin();
 
     QVariantList items;
@@ -927,7 +962,7 @@ void GameServer::HandlePickUp_(const QVariantMap& request, QVariantMap& response
   levelMap_.RemoveActor(item);
   actors_.erase(std::remove(actors_.begin(), actors_.end(), item), actors_.end());
   //idToActor_.erase(id);
-  player->items_.push_back(static_cast<Item*>(item));
+  player->items_.push_back(dynamic_cast<Item*>(item));
 }
 
 //==============================================================================
@@ -967,7 +1002,7 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
   }
   int id = request["id"].toInt();
 
-  Item* item = static_cast<Item*>(idToActor_[request["id"].toInt()]);
+  Item* item = dynamic_cast<Item*>(idToActor_[request["id"].toInt()]);
   if (item)
   {
     if (request.find("x") == request.end() && request.find("y") == request.end())
@@ -1005,7 +1040,7 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
   {
     if (actor->GetType() != ITEM && actor->GetType() != PROJECTILE)
     {
-      Creature* target = static_cast<Creature*>(actor);
+      Creature* target = dynamic_cast<Creature*>(actor);
       if ((p->GetId() != target->GetId()) && (target->GetHealth() > 0))
       {
         Vector2 player_pos = p->GetPosition();
@@ -1046,30 +1081,14 @@ void GameServer::HandleUseSkill_(const QVariantMap& request, QVariantMap& respon
     WriteResult_(response, EFEMPResult::BAD_PLACING);
     return;
   }
-  bool b = true;
-  for (auto actor: actors_)
-  {
-    Projectile* projects = dynamic_cast<Projectile*>(actor);
-    if (projects
-    && projects->GetPosition().x == p->GetPosition().x
-    && projects->GetPosition().y == p->GetPosition().y)
-    {
-      b = false;
-      break;
-    }
-  }
-  if (b)
-  {
-   Projectile* project = CreateActor_<Projectile>();
-   project->SetPosition (Vector2(p->GetPosition().x, p->GetPosition().y));
-   project->SetPoint(Vector2(x, y));
-   project->SetPlayer(p);
-   project->Update(1.0f);
-   levelMap_.IndexActor(project);
-   WriteResult_(response, EFEMPResult::OK);
-   return;
-  }
-
+  Projectile* project = CreateActor_<Projectile>();
+  project->SetPosition (Vector2(p->GetPosition().x, p->GetPosition().y));
+  project->SetPoint(Vector2(x, y));
+  project->SetPlayer(p);
+  project->Update(1.0f);
+  levelMap_.IndexActor(project);
+  WriteResult_(response, EFEMPResult::OK);
+  return;
 }
 
 //==============================================================================
@@ -1161,7 +1180,7 @@ void GameServer::HandleEquip_(const QVariantMap& request, QVariantMap& response)
   }
   else
   {//item is on the ground
-    Item* item = static_cast<Item*>(idToActor_[id]);
+    Item* item = dynamic_cast<Item*>(idToActor_[id]);
     BAD_ID(!item);
     Vector2 player_pos = p->GetPosition();
     Vector2 item_pos = item->GetPosition();
@@ -1494,7 +1513,7 @@ void GameServer::GetItems(Creature* actor)
 {
   if (actor->GetType() == PLAYER)
   {
-    for(Item* item: static_cast<Player*>(actor)->items_)
+    for(Item* item: dynamic_cast<Player*>(actor)->items_)
     {
       item->SetPosition(actor->GetPosition());
       actors_.push_back(item);
