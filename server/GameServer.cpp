@@ -308,14 +308,27 @@ void GameServer::tick()
                         (m_pos.y - t_pos.y)*(m_pos.y - t_pos.y));
         if (distance < 5)
         {
-          if (m_pos.x < t_pos.x)
+          if (abs(m_pos.x - t_pos.x - 1.0f) < playerVelocity_
+              && m_pos.x - t_pos.x - 1.0f != 0)
+          {
+            monster->SetPosition(Vector2(t_pos.x + 1.0f, m_pos.y));
+            monster->SetDirection(EActorDirection::NONE);
+          }
+          if (abs(m_pos.y - t_pos.y + 1.0f) < playerVelocity_
+              && m_pos.y - t_pos.y + 1.0f != 0)
+          {
+            monster->SetPosition(Vector2(m_pos.x, t_pos.y - 1.0f));
+            monster->SetDirection(EActorDirection::NONE);
+          }
+
+          if (m_pos.x < t_pos.x - 1.0f)
             monster->SetDirection(EActorDirection::EAST);
-          else if (m_pos.x > t_pos.x)
+          else if (m_pos.x > t_pos.x + 1.0f)
             monster->SetDirection(EActorDirection::WEST);
-          else if (m_pos.y < t_pos.y)
-            monster->SetDirection(EActorDirection::NORTH);
-          else if (m_pos.y > t_pos.y)
+          else if (m_pos.y < t_pos.y - 1.0f)
             monster->SetDirection(EActorDirection::SOUTH);
+          else if (m_pos.y > t_pos.y + 1.0f)
+            monster->SetDirection(EActorDirection::NORTH);
         }
       }
       if (!target || distance >= 5)
