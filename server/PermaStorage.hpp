@@ -13,9 +13,10 @@ public:
   void Reset();
   void DropAll();
   void InitSchema();
-  void AddUser(const QString login, const QString passHash, const QString salt);
+  void AddUser(const QString login, const QString passHash, const QString salt, const QString class_);
   QString GetSalt(const QString login);
   QString GetPassHash(const QString login);
+  QString GetClass(const QString login);
   void GetMonster(Monster* m, const int id);
   void GetItem (Item* i, const int id );
   bool IfLoginPresent(const QString login);

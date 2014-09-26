@@ -63,6 +63,7 @@ void PermaStorage::InitSchema()
       login varchar(36) NOT NULL UNIQUE,
       pass varchar(128) NOT NULL,
       salt varchar(64) NOT NULL,
+      class_ varchar(64) NOT NULL,
       sid varchar(40) NOT NULL DEFAULT '',
       x real NOT NULL DEFAULT 0.0,
       y real NOT NULL DEFAULT 0.0
@@ -70,17 +71,18 @@ void PermaStorage::InitSchema()
   )=");
 }
 
-void PermaStorage::AddUser(const QString login, const QString passHash, const QString salt)
+void PermaStorage::AddUser(const QString login, const QString passHash, const QString salt, const QString class_)
 {
   QSqlQuery q;
   q.prepare(R"=(
-    INSERT INTO users (login, pass, salt)
-    VALUES (:login, :passhash, :salt)
+    INSERT INTO users (login, pass, salt, class_)
+    VALUES (:login, :passhash, :salt, :class_)
   )=");
 
   q.bindValue(":login", login);
   q.bindValue(":passhash", passHash);
   q.bindValue(":salt", salt);
+  q.bindValue(":class_", class_);
   ExecQuery_(q);
 }
 
@@ -109,6 +111,22 @@ QString PermaStorage::GetPassHash(const QString login)
   {
     q.next();
     return q.value("pass").toString();
+  }
+  else
+  {
+    return "";
+  }
+}
+
+QString PermaStorage::GetClass(const QString login)
+{
+  QSqlQuery q;
+  q.prepare("SELECT class_ FROM users WHERE login = :login");
+  q.bindValue(":login", login);
+  if (ExecQuery_(q))
+  {
+    q.next();
+    return q.value("class_").toString();
   }
   else
   {
@@ -183,11 +201,11 @@ void PermaStorage::GetItem(Item* i, const int id )
     }
     QStringList str1 ;
     str1 << q.value("power_info").toString().split(":");
-    if (str1.length() > 0)
+    if (str1.length() > 1)
     {
       QStringList s ;
       s << str1[1].split("d");
-      if (s.length() > 0)
+      if (s.length() > 1)
       {
         i->damage.count = s[0].toInt();
         i->damage.to = s[1].toInt();
