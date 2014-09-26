@@ -451,7 +451,7 @@ void GameServer::tick()
 
     if (actor->GetType() == PLAYER)
     {
-      Creature* player = dynamic_cast<Creature*>(actor);
+      Player* player = dynamic_cast<Player*>(actor);
       if (player->GetHealth() < player->GetMaxHealth())
       {
         player->SetHealth(player->GetHealth() + 1);
@@ -480,9 +480,10 @@ void GameServer::tick()
     {
       if (actor == NULL || neighbour == NULL
           || actor == neighbour || neighbour->GetType() == ITEM
-          || actor->GetType() == ITEM)
+          || (actor->GetType() == PROJECTILE
+            && neighbour->GetType() == PROJECTILE))
       {
-        continue;
+        break;
       }
 
       Box box0(neighbour->GetPosition(), 0.9f, 0.9f);
@@ -491,47 +492,61 @@ void GameServer::tick()
       {
         actor->OnCollideActor(neighbour);
         neighbour->OnCollideActor(actor);
-        if (actor->GetType() == PROJECTILE
-            && neighbour->GetType() == PROJECTILE)
-        {
-          static_cast<Projectile*>(actor)->death = static_cast<Projectile*>(actor)->death;
-        }
-        else if (actor->GetType() == PROJECTILE)
+        if (actor->GetType() == PROJECTILE)
         {
           static_cast<Projectile*>(actor)->death = true;
+          if (neighbour->GetType () == MONSTER)
+          {
+            Monster* monster = dynamic_cast<Monster*>(neighbour);
+            if (monster->GetHealth () <= 0)
+            {
+              GetItems(monster);
+            }
+          }
         }
         else if (neighbour->GetType() == PROJECTILE)
         {
           static_cast<Projectile*>(neighbour)->death = true;
+          if (actor->GetType() == MONSTER)
+          {
+            Monster* monster = dynamic_cast<Monster*>(actor);
+            if (monster->GetHealth () <= 0)
+            {
+              GetItems(monster);
+            }
+          }
         }
-        else
-        {
+        else if (neighbour->GetType() != ITEM)
           actor->SetPosition(old_pos);
       }
     }
-
     if (actor->GetType() == PROJECTILE
         && static_cast<Projectile*>(actor)->death)
     {
-       idToActor_.erase(actor->GetId());
-       actors_.erase(std::remove(actors_.begin(), actors_.end(), actor), actors_.end());
-       delete actor;
-       actor = NULL;
-       break;
+      QVariantMap ans1;
+      ans1["radius"] = 1.0f;
+      ans1["x"] = actor->GetPosition ().x;
+      ans1["y"] = actor->GetPosition ().y;
+      QVariantMap ans;
+      ans["explode"] = ans1;
+      events_  << ans;
+      idToActor_.erase(actor->GetId());
+      actors_.erase(std::remove(actors_.begin(), actors_.end(), actor), actors_.end());
+      delete actor;
+      actor = NULL;
     }
     else
     {
       levelMap_.IndexActor(actor);
     }
   }
-
   QVariantMap tickMessage;
   tickMessage["tick"] = tick_;
   tickMessage["events"] = events_;
   events_.clear();
-
   emit broadcastMessage(QString(QJsonDocument::fromVariant(tickMessage).toJson()));
   tick_++;
+
 }
 
 //==============================================================================
@@ -1133,7 +1148,8 @@ void GameServer::HandleUseSkill_(const QVariantMap& request, QVariantMap& respon
   project->SetPosition (Vector2(p->GetPosition().x, p->GetPosition().y));
   project->SetPoint(Vector2(x, y));
   project->SetPlayer(p);
-  project->Update(1.0f);
+  project->GetCoord ();
+  project->SetDirection (EActorDirection::EAST);
   levelMap_.IndexActor(project);
   WriteResult_(response, EFEMPResult::OK);
   return;
