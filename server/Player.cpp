@@ -89,7 +89,9 @@ QVariantMap Player::atack(Creature* actor, int id)
   ans["target"] = actor->GetId();
   ans["blowType"] = blows.attack;
   ans["attacker"] = GetId();
-  return ans;
+  QVariantMap ans1;
+  ans1["attack"] = ans;
+  return ans1;
 }
 
 Item* Player::GetSlot(Slot st)
@@ -126,6 +128,73 @@ bool Player::SetSlot(Slot st)
 {
   slots_[st] = 0;
   return true;
+}
+
+void Player::SetExperience(int exp)
+{
+  experience_ = exp;
+}
+
+int Player::GetExperience()
+{
+  return experience_;
+}
+void Player::SetLevel(int lev)
+{
+  level_ = lev;
+}
+
+int Player::GetLevel()
+{
+  return level_;
+}
+
+void Player::SetClass(QString clas)
+{
+  if (clas == "warrior")
+   class_ = warrior;
+  else if (clas == "rouge")
+   class_ = rouge;
+  else
+   class_ = mage;
+}
+
+QString Player::GetClass()
+{
+  if (class_ == warrior)
+   return  "warrior";
+  else if (class_ == rouge)
+   return "rouge";
+  else
+   return "mage";
+}
+
+void Player::AddStat()
+{
+  if (class_ == warrior)
+  {
+    SetStat(STRENGTH, GetStatValue(STRENGTH) + 2);
+    SetStat(INTELLIGENCE, GetStatValue(INTELLIGENCE) + 1);
+    SetStat(DEXTERITY, GetStatValue(DEXTERITY) + 1);
+  }
+  if (class_ == rouge)
+  {
+    SetStat(STRENGTH, GetStatValue(STRENGTH) + 1);
+    SetStat(INTELLIGENCE, GetStatValue(INTELLIGENCE) + 2);
+    SetStat(DEXTERITY, GetStatValue(DEXTERITY) + 1);
+  }
+  if (class_ == mage)
+  {
+    SetStat(STRENGTH, GetStatValue(STRENGTH) + 1);
+    SetStat(INTELLIGENCE, GetStatValue(INTELLIGENCE) + 1);
+    SetStat(DEXTERITY, GetStatValue(DEXTERITY) + 2);
+  }
+}
+
+void Player::UpdateStat()
+{
+  SetStat (MAX_HP, GetStatValue(MAX_HP) + 5*STRENGTH + INTELLIGENCE);
+  SetStat (MAX_MP, GetStatValue(MAX_MP) + DEXTERITY + 4*INTELLIGENCE);
 }
 
 bool Player::GetItemId(int id)
