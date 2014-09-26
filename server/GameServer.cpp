@@ -123,6 +123,10 @@ void GameServer::HandleRegister_(const QVariantMap& request, QVariantMap& respon
       break;
     }
   }
+  if (class_ != "warrior" && class_ != "rouge" && class_ != "mage")
+  {
+    class_ = "mage";
+  }
 
   if (storage_.IfLoginPresent(login))
   {
@@ -137,17 +141,18 @@ void GameServer::HandleRegister_(const QVariantMap& request, QVariantMap& respon
   {
     WriteResult_(response, EFEMPResult::BAD_PASS);
   }
-//  else if (class_ != "warrior" && class_ != "rouge" && class_ != "mage")
-//  {
-//    WriteResult_(response, EFEMPResult::BAD_CLASS);
-//  }
+  //else if (class_ != "warrior" && class_ != "rouge" && class_ != "mage")
+  //{
+  //  class_ = "mage";
+    //WriteResult_(response, EFEMPResult::BAD_CLASS);
+ // }
   else
   {
     QByteArray salt = QString::number(qrand()).toLatin1();
     QByteArray passwordWithSalt = password.toUtf8();
     passwordWithSalt.append(salt);
     QByteArray hash = QCryptographicHash::hash(passwordWithSalt, QCryptographicHash::Sha3_256);
-    storage_.AddUser(login, QString(hash.toBase64()), QString(salt.toBase64()));
+    storage_.AddUser(login, QString(hash.toBase64()), QString(salt.toBase64()), class_);
   }
 }
 
@@ -294,16 +299,6 @@ void GameServer::tick()
   };
   for (Actor* actor: actors_)
   {
-    if (actor->GetType() == MONSTER
-        || actor->GetType() == PLAYER)
-    {
-      Creature* monster = dynamic_cast<Creature*>(actor);
-      if (monster->GetHealth() < 0)
-      {
-        KillActor_(actor);
-        break;
-      }
-    }
     if (actor->GetType() == MONSTER)
     {
       Monster* monster = dynamic_cast<Monster*>(actor);
@@ -315,7 +310,7 @@ void GameServer::tick()
         Vector2 t_pos = target->GetPosition();
         distance = sqrt((m_pos.x - t_pos.x)*(m_pos.x - t_pos.x) +
                         (m_pos.y - t_pos.y)*(m_pos.y - t_pos.y));
-        if (distance < 10)
+        if (distance < 5)
         {
           if (abs(m_pos.x - t_pos.x - 1.0f) < playerVelocity_
               && m_pos.x - t_pos.x - 1.0f != 0)
@@ -339,7 +334,7 @@ void GameServer::tick()
             monster->SetDirection(EActorDirection::NORTH);
         }
       }
-      if (!target || distance >= 10)
+      if (!target || target == NULL || distance >= 5)
       {
         for (Actor* tar: actors_)
         {
@@ -363,7 +358,7 @@ void GameServer::tick()
                 Vector2 t_pos = tar->GetPosition();
                 distance = sqrt((m_pos.x - t_pos.x)*(m_pos.x - t_pos.x) +
                                 (m_pos.y - t_pos.y)*(m_pos.y - t_pos.y));
-                if (distance < 10)
+                if (distance < 5)
                 {
                   monster->target = m;
                   break;
@@ -1062,7 +1057,7 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
 
     if (actor->GetType() != ITEM && actor->GetType() != PROJECTILE)
     {
-      Creature* target = dynamic_cast<Creature*>(actor);
+      Creature* target = static_cast<Creature*>(actor);
       if ((p->GetId() != target->GetId()) && (target->GetHealth() > 0))
       {
         Vector2 player_pos = p->GetPosition();
@@ -1077,7 +1072,14 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
           if (target->GetHealth() <= 0)
           {
             GetItems(target);
-
+            p->SetExperience(p->GetExperience () + 300);
+            int lev = p->GetLevel();
+            p->SetLevel (p->GetExperience() / 1000);
+            if (lev < p->GetLevel ())
+            {
+              p->AddStat ();
+              p->UpdateStat();
+            }
           } else {
             a = target->atack(p);
             events_ << a;
@@ -1137,7 +1139,7 @@ void GameServer::HandleDrop_(const QVariantMap& request, QVariantMap& response)
   {
     if (item->GetId() == id)
     {
-      idToActor_[item->GetId()] = item;
+      //idToActor_[item->GetId()] = item;
       actors_.push_back(item);
       item->SetPosition(p->GetPosition());
       levelMap_.IndexActor(item);
@@ -1526,6 +1528,8 @@ Player* GameServer::CreatePlayer_(const QString login)
     }
   }
   player->SetSpeed(playerVelocity_);
+  QString class_ = storage_.GetClass(login);
+  player->SetClass (class_);
   SetActorPosition_(player, Vector2(x + 0.5f, y + 0.5f));
 
   return player;
@@ -1545,6 +1549,7 @@ void GameServer::GetItems(Creature* actor)
   {
     Item* item = CreateActor_<Item>();
     SetActorPosition_(item, actor->GetPosition());
+    //storage_.GetItem(item, 22);
     storage_.GetItem(item, (item->GetId() % 31) + 1);
   }
 }
