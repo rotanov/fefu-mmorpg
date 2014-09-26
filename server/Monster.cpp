@@ -26,12 +26,13 @@ bool Monster::OnCollideActor(Actor* /*actor*/)
   return false;
 }
 
-void Monster::Update(float dt)
+bool Monster::Update(float dt)
 {
   if (Flags.lastIndexOf("CAN_MOVE") != -1)
   {
     position_ += velocity_ * dt;
   }
+  return true;
 }
 
 QString Monster::GetName()

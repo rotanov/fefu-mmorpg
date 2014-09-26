@@ -77,7 +77,7 @@ public:
   int GetId() const;
   void SetId(int id);
 
-  virtual void Update(float dt);
+  virtual bool Update(float dt);
   virtual void OnCollideWorld();
   virtual bool OnCollideActor(Actor* actor);
   virtual std::vector<std::pair<int, int>> GetOccupiedCells() const;
