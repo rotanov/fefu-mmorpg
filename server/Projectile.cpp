@@ -37,48 +37,43 @@ Player* Projectile::GetPlayer()
   return player_;
 }
 
-void Projectile::Update(float dt)
+bool Projectile::Update(float /*dt*/)
 {
-  if (dt != 1)
-    dt = speed_;
-  if (abs(position_.x - point_attack_.x) < dt)
+  float x = point_attack_.GetX() - position_.GetX();
+  float y =  point_attack_.GetY() - position_.GetY();
+  float norm = sqrt(x * x + y * y);
+  float dx = x * speed_ / norm;
+  float dy = y * speed_ / norm;
+  if ((y < 0 && signy_) || (y > 0 && !signy_) || y == 0)
   {
-    position_.x = point_attack_.x;
-    SetDirection(EActorDirection::NONE);
+    signyy_++;
   }
-  if (abs(position_.y - point_attack_.y) < dt)
+  if ((x < 0 && signx_) || (x > 0 && !signx_) || x == 0)
   {
-    position_.y = point_attack_.y;
-    SetDirection(EActorDirection::NONE);
+    signxx_++;
   }
-  if (position_.x < point_attack_.x)
-  {
-    SetDirection(EActorDirection::WEST);
-  }
-  else if (position_.x > point_attack_.x)
-  {
-    SetDirection(EActorDirection::EAST);
-  }
-  if (position_.x != point_attack_.x)
-  {
-    SetVelocity(directionToVector[static_cast<unsigned>(GetDirection())]);
-    position_ +=  velocity_*dt;
-  }
-  if (position_.y < point_attack_.y)
-  {
-    SetDirection(EActorDirection::NORTH);
-  }
-  else if (position_.y > point_attack_.y)
-  {
-    SetDirection(EActorDirection::SOUTH);
-  }
-  if (position_.y != point_attack_.y)
-  {
-    SetVelocity(directionToVector[static_cast<unsigned>(GetDirection())]);
-    position_ +=  velocity_*dt;
-  }
+  if (signxx_ > 0 && signyy_ > 0)
+    return false;
+  position_.x += dx;
+  position_.y += dy;
+  return true;
 }
 
+void Projectile::GetCoord()
+{
+  float shift = 1.2f;
+  float alpha = atan2(point_attack_.GetY()- position_.GetY(), point_attack_.GetX() - position_.GetX());
+  position_.x += shift * cos(alpha),
+  position_.y += shift * sin(alpha);
+  //if (point_attack_.GetY()- position_.GetY() > 0)
+    signy_ = point_attack_.GetY()- position_.GetY() > 0;
+//   else
+  //  signy_ = false;
+   if (point_attack_.GetX()- position_.GetX() > 0)
+    signx_ = true;
+   else
+    signx_ = false;
+}
 void Projectile::SetPoint(Vector2 p)
 {
   point_attack_ = p;
