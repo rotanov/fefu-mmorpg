@@ -127,7 +127,6 @@ void GameServer::HandleRegister_(const QVariantMap& request, QVariantMap& respon
   {
     class_ = "mage";
   }
-
   if (storage_.IfLoginPresent(login))
   {
     WriteResult_(response, EFEMPResult::LOGIN_EXISTS);
@@ -369,12 +368,22 @@ void GameServer::tick()
         }
       }
     }
+    if (actor->GetType() == MONSTER
+        || actor->GetType() == PLAYER)
+    {
+      Creature* monster = dynamic_cast<Creature*>(actor);
+      if (monster->GetHealth() <= 0)
+      {
+        KillActor_(actor);
+        break;
+      }
+    }
   }
   for (Actor* actor: actors_)
   {
     if (!actor || actor == NULL)
     {
-      continue;
+      break;
     }
     auto v = directionToVector[static_cast<unsigned>(actor->GetDirection())] ;
     actor->SetVelocity(v);
@@ -387,19 +396,23 @@ void GameServer::tick()
     float x = new_pos.x;
     float y = new_pos.y;
     if (levelMap_.GetCell(old_pos2.x, old_pos2.y) != '#'
-        && d != EActorDirection::NONE)
+        && d != EActorDirection::NONE
+        && (((levelMap_.GetCell(x - slideThreshold_+ 0.5f, y) == '.'
+        && levelMap_.GetCell(x + slideThreshold_- 0.5f, y) == '.')
+        && (d == EActorDirection::NORTH
+        || d == EActorDirection::SOUTH))
+        || ((levelMap_.GetCell(x, y - slideThreshold_+ 0.5f) == '.'
+        && levelMap_.GetCell(x, y + slideThreshold_- 0.5f) == '.')
+        && (d == EActorDirection::EAST
+        || d == EActorDirection::WEST))))
     {
-      if (levelMap_.GetCell(new_pos.x, new_pos.y) == '.'
-          && (((levelMap_.GetCell(x - slideThreshold_+ 0.5f, y) == '.'
-          && levelMap_.GetCell(x + slideThreshold_- 0.5f, y) == '.')
-          && (d == EActorDirection::NORTH
-          || d == EActorDirection::SOUTH))
-          || ((levelMap_.GetCell(x, y - slideThreshold_+ 0.5f) == '.'
-          && levelMap_.GetCell(x, y + slideThreshold_- 0.5f) == '.')
-          && (d == EActorDirection::EAST
-          || d == EActorDirection::WEST))))
+      if (levelMap_.GetCell(new_pos.x, new_pos.y) == '.')
       {
-        actor->Update(dt);
+
+        if (!actor->Update(dt) && actor->GetType () == PROJECTILE)
+        {
+          static_cast<Projectile*>(actor)->death = true;
+        }
         collideWithGrid(actor, d);
       }
       else if (levelMap_.GetCell(x , y) != '.' && playerVelocity_ >= 1)
@@ -413,6 +426,11 @@ void GameServer::tick()
             actor->Update(i - 0.01);
             b = true;
           }
+        }
+      } else {
+        if (actor->GetType () == PROJECTILE)
+        {
+          static_cast<Projectile*>(actor)->death = true;
         }
       }
     }
