@@ -590,8 +590,8 @@ void GameServer::HandleGetConst_(const QVariantMap& request, QVariantMap& respon
   response["playerVelocity"] = playerVelocity_;
   response["slideThreshold"] = slideThreshold_;
   response["ticksPerSecond"] = ticksPerSecond_;
-  response["screenRowCount"] = screenRowCount_;
-  response["screenColumnCount"] = screenColumnCount_;
+  response["screenRowCount"] = screenRowCount_ / 2;
+  response["screenColumnCount"] = screenColumnCount_ / 2;
   response["pickUpRadius"] = pickUpRadius_;
 }
 
@@ -760,18 +760,24 @@ void GameServer::HandleLook_(const QVariantMap& request, QVariantMap& response)
     {
       auto m = dynamic_cast<Monster*>(a);
       actor["mobType"] = m->GetName();
-    }
 
+    }
+    ;
     if (actor["type"] != "item" && actor["type"] != "projectile")
     {
       auto m = dynamic_cast<Creature*>(a);
       actor["health"] = m->GetHealth();
       actor["maxHealth"] = m->GetMaxHealth();
+      actor["race"] = m->GetRace();
     }
 
     if (actor["type"] == "item")
     {
       actor["name"] = dynamic_cast<Item*>(a)->Getname();
+    }
+    if (actor["type"] == "projectile")
+    {
+      actor["name"] = "fireball_projectile";
     }
 
     if (actor["health"] <= 0 && (actor["type"] == "monster"))
@@ -857,7 +863,7 @@ void GameServer::HandleExamine_(const QVariantMap& request, QVariantMap& respons
   {
     auto m = dynamic_cast<Monster*>(actor);
     response["mobType"] = m->GetName();
-
+    response["race"] = m->GetRace();
     QVariantList items;
     for (auto& a: m->items)
     {
@@ -1010,7 +1016,6 @@ void GameServer::HandleUse_(const QVariantMap& request, QVariantMap& response)
 {
   auto sid = request["sid"].toByteArray();
   Player* p = sidToPlayer_[sid];
-
   if (!request["id"].toInt())
   {
     WriteResult_(response, EFEMPResult::BAD_ID);
