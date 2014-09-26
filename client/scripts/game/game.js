@@ -21,6 +21,10 @@ var xKey //+ click = useSkill
 
 var width  = 9
 var height = 7
+//var width  = 23
+//var height = 23
+//var width  = 25
+//var height = 17
 var step   = 64
 var route  = 1
 
@@ -45,16 +49,19 @@ var fireBall = 283
 function initSocket(wsUri) {
     socket = sock.WSConnect(wsUri, null, OnMessage)
 }
+function GetConsts (data) {
+    socket.getConst(data.sid);
+}
 
 function OnMessage(e) {
     var data = JSON.parse(e.data)
 
     if (data.tick) {
         tick_ = data.tick
-        for (var i = 0, l = data.events.length; i < l; ++i)
+       /* for (var i = 0, l = data.events.length; i < l; ++i)
             if (data.events[i].attaker != id_) {
                 curr_h -= data.events[i].dealtDamage
-            }
+            }*/
         if (curr_h < max_h) ++curr_h
         updateHealth(curr_h, max_h)
     }
@@ -146,9 +153,14 @@ function OnMessage(e) {
         break
     case "getConst":
         if (data.result == "ok") {
-            width = data.screenColumnCount//*2 + 1
-            height = data.screenRowCount//*2 + 1
-            break
+            if (data.screenColumnCount  != 23) {
+                width = data.screenColumnCount *2 + 1
+                height = data.screenRowCount *2 + 1
+
+              //  width = data.screenColumnCount 
+               // height = data.screenRowCount 
+            }
+            
         }
         break
     case "useSkill":
@@ -161,7 +173,6 @@ function Start(data) {
     id_ = data.id
     sid_ = data.sid
     fistId = data.fistId
-    socket.getConst(sid_)
     game = new phaser.Game(
         64 * width, 64 * height,
         phaser.CANVAS,
@@ -178,6 +189,8 @@ function Start(data) {
 
 function onPreload() {
     game.load.tilemap("map", "assets/tilemap.json", null, phaser.Tilemap.TILED_JSON);
+    game.load.tilemap("map_mark&&lexa", "assets/tilemap1.json", null, phaser.Tilemap.TILED_JSON);
+    game.load.tilemap("map_sasha", "assets/tilemap2.json", null, phaser.Tilemap.TILED_JSON);
     game.load.image("tileset", "assets/tileset.png")
     game.load.spritesheet("tileset", "assets/tileset.png", 64, 64, 38)
     game.load.image("tileset_monster", "assets/tileset_monster.png")
@@ -188,7 +201,12 @@ function onPreload() {
 
 function onCreate() {
     game.stage.backgroundColor = "#ffeebb"
-    mapGlobal = game.add.tilemap("map")
+    if (width == 23)
+        mapGlobal = game.add.tilemap("map_mark&&lexa")
+    else if (width == 25)
+        mapGlobal = game.add.tilemap("map_sasha")
+    else
+        mapGlobal = game.add.tilemap("map")
     mapGlobal.addTilesetImage("tileset")
     mapGlobal.addTilesetImage("tileset_monster")
     mapGlobal.addTilesetImage("player")
@@ -203,7 +221,7 @@ function onCreate() {
     aKey = game.input.keyboard.addKey(phaser.Keyboard.A)
     xKey = game.input.keyboard.addKey(phaser.Keyboard.X)
 
-    createActors(0)
+    createActors(5)
     socket.look(sid_)
     socket.singleExamine(id_, sid_)
 
@@ -230,14 +248,14 @@ function onCreate() {
 }
 
 function updateHealth(h, m) {
-    health.setText("HEALTH: " + h + "/" + m);
-    if (h <= 0) {
+   // health.setText("HEALTH: " + h + "/" + m);
+   /* if (h <= 0) {
         for (var i = 0, l = actors.length; i < l; ++i) {
             actors[i].visible = false
         }
         msg.setText("GAME OVER")
         lifespan = 0
-    }
+    }*/
 }
 
 function updateSlot(data) {
@@ -296,7 +314,7 @@ function coordinate(x, coord, g) {
     return (-(x - coord) + g * 0.5) * step
 }
 function UnCoordinate(x, coord, g) {
-    return -(coord / step - g * 0.5 - x)
+    return coord / step - g * 0.5 + x
 }
 function createActors(start) {
     var frameIndex = 31
@@ -330,7 +348,14 @@ function renderWalls(map) {
 }
 
 function renderActors(actor) {
-    for (var i = 0, j = 0, l = actor.length; i < l; i++, j++) {
+    actors[0].id = id_
+    actors[0].name = "player"
+    actors[0].x = coordinate(gPlayerX, gPlayerX, width)
+    actors[0].y = coordinate(gPlayerY, gPlayerY, height)
+    actors[0].visible = true
+    var frameIndex = route 
+    actors[0].loadTexture("player", frameIndex)
+    for (var i = 0, j = 1, l = actor.length; i < l; i++, j++) {
         if (j == actors[j].length) {
             createActors(actors[j].length / width * height)
         }
@@ -459,7 +484,8 @@ $("#items select").on("change", function(e) {
 
 return {
     start: Start,
-    initSocket: initSocket
+    initSocket: initSocket,
+    GetConsts : GetConsts
 }
 
 })
