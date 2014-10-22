@@ -2,7 +2,7 @@
 
 Projectile::Projectile()
 {
-  type_ = PROJECTILE;
+  type_ = EActorType::PROJECTILE;
   death = false;
 }
 
@@ -18,7 +18,8 @@ void Projectile::OnCollideWorld()
 
 bool Projectile::OnCollideActor(Actor* actor)
 {
-  if ((actor->GetType() == MONSTER || actor->GetType() == PLAYER)
+  if ((actor->GetType() == EActorType::MONSTER
+       || actor->GetType() == EActorType::PLAYER)
       && actor != player_)
   {
     Creature* a = static_cast<Creature*>(actor);
@@ -74,6 +75,7 @@ void Projectile::GetCoord()
    else
     signx_ = false;
 }
+
 void Projectile::SetPoint(Vector2 p)
 {
   point_attack_ = p;

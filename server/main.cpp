@@ -4,7 +4,9 @@
 #include <QApplication>
 #include <QtMessageHandler>
 
-void HandleQDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+void HandleQDebugMessageOutput(QtMsgType type
+                             , const QMessageLogContext& context
+                             , const QString &msg)
 {
   Q_UNUSED(context);
 

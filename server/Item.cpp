@@ -2,7 +2,7 @@
 
 Item::Item()
 {
-  type_ = ITEM;
+  type_ = EActorType::ITEM;
   isOnTheGround_ = true;
 }
 

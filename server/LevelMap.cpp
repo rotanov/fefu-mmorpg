@@ -11,7 +11,7 @@
 LevelMap::LevelMap(int columnCount, int rowCount)
   : columnCount_(columnCount)
   , rowCount_(rowCount)
-  , data_(NULL)
+  , data_(nullptr)
 {
   InitData_();
 }
@@ -19,9 +19,9 @@ LevelMap::LevelMap(int columnCount, int rowCount)
 LevelMap::~LevelMap()
 {
   delete [] data_;
-  data_ = NULL;
+  data_ = nullptr;
   delete [] actors_;
-  actors_ = NULL;
+  actors_ = nullptr;
 }
 
 int LevelMap::GetRowCount() const
@@ -101,7 +101,7 @@ void LevelMap::IndexActor(Actor* actor)
 
 void LevelMap::RemoveActor(const Actor* actor)
 {
-  if (actor == NULL || !actor)
+  if (actor == nullptr || !actor)
     return;
   auto cells = actor->GetOccupiedCells();
   for (auto p: cells)
@@ -143,10 +143,10 @@ void LevelMap::ExportToImage(const QString filename)
 
 void LevelMap::InitData_()
 {
-  if (data_ != NULL)
+  if (data_ != nullptr)
   {
     delete [] data_;
-    data_ = NULL;
+    data_ = nullptr;
   }
 
   data_ = new int [columnCount_ * rowCount_];

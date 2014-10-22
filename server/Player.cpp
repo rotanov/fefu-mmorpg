@@ -2,7 +2,7 @@
 
 Player::Player()
 {
-  type_ = PLAYER;
+  type_ = EActorType::PLAYER;
   SetRace();
   SetMaxHealth(1000);
   SetHealth(1000);
@@ -173,28 +173,32 @@ void Player::AddStat()
 {
   if (class_ == warrior)
   {
-    SetStat(STRENGTH, GetStatValue(STRENGTH) + 2);
-    SetStat(INTELLIGENCE, GetStatValue(INTELLIGENCE) + 1);
-    SetStat(DEXTERITY, GetStatValue(DEXTERITY) + 1);
+    SetStat(EStatConst::STRENGTH, GetStatValue(EStatConst::STRENGTH) + 2);
+    SetStat(EStatConst::INTELLIGENCE, GetStatValue(EStatConst::INTELLIGENCE) + 1);
+    SetStat(EStatConst::DEXTERITY, GetStatValue(EStatConst::DEXTERITY) + 1);
   }
   if (class_ == rouge)
   {
-    SetStat(STRENGTH, GetStatValue(STRENGTH) + 1);
-    SetStat(INTELLIGENCE, GetStatValue(INTELLIGENCE) + 2);
-    SetStat(DEXTERITY, GetStatValue(DEXTERITY) + 1);
+    SetStat(EStatConst::STRENGTH, GetStatValue(EStatConst::STRENGTH) + 1);
+    SetStat(EStatConst::INTELLIGENCE, GetStatValue(EStatConst::INTELLIGENCE) + 2);
+    SetStat(EStatConst::DEXTERITY, GetStatValue(EStatConst::DEXTERITY) + 1);
   }
   if (class_ == mage)
   {
-    SetStat(STRENGTH, GetStatValue(STRENGTH) + 1);
-    SetStat(INTELLIGENCE, GetStatValue(INTELLIGENCE) + 1);
-    SetStat(DEXTERITY, GetStatValue(DEXTERITY) + 2);
+    SetStat(EStatConst::STRENGTH, GetStatValue(EStatConst::STRENGTH) + 1);
+    SetStat(EStatConst::INTELLIGENCE, GetStatValue(EStatConst::INTELLIGENCE) + 1);
+    SetStat(EStatConst::DEXTERITY, GetStatValue(EStatConst::DEXTERITY) + 2);
   }
 }
 
 void Player::UpdateStat()
 {
-  SetStat (MAX_HP, GetStatValue(MAX_HP) + 5*STRENGTH + INTELLIGENCE);
-  SetStat (MAX_MP, GetStatValue(MAX_MP) + DEXTERITY + 4*INTELLIGENCE);
+  SetStat(EStatConst::MAX_HP, GetStatValue(EStatConst::MAX_HP)
+          + 5 * GetStatValue(EStatConst::STRENGTH)
+          + GetStatValue(EStatConst::INTELLIGENCE));
+  SetStat(EStatConst::MAX_MP, GetStatValue(EStatConst::MAX_MP)
+          + GetStatValue(EStatConst::DEXTERITY)
+          + 4 * GetStatValue(EStatConst::INTELLIGENCE));
 }
 
 bool Player::GetItemId(int id)
@@ -202,8 +206,11 @@ bool Player::GetItemId(int id)
   for (auto& item: items_)
   {
     if (item->GetId() == id)
+    {
       return true;
+    }
   }
+
   return false;
 }
 
@@ -214,6 +221,7 @@ int Player::GetTotalWeigh()
   {
     totalWeigh += item->GetWeight();
   }
+
   return totalWeigh;
 }
 

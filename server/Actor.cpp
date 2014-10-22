@@ -106,12 +106,12 @@ bool Actor::OnCollideActor(Actor* /*actor*/)
   return false;
 }
 
-Type Actor::GetType() const
+EActorType Actor::GetType() const
 {
   return type_;
 }
 
-void Actor::SetType(Type type)
+void Actor::SetType(EActorType type)
 {
   type_ = type;
 }

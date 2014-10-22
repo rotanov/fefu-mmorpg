@@ -1,39 +1,44 @@
-﻿require(["jquery", "lib/phaser", "authorization", "test/tester", "utils/utils"],
-function($, phaser, auth, test, utils) {
+require([
+  'jquery',
+  'lib/phaser',
+  'authorization',
+  'test/tester',
+  'utils/utils'
 
-    $("#register").click(function() {
-        auth.jsonHandle("register", auth.registerCallback)
-    })
+], function ($, phaser, auth, test, utils) {
 
-    $("#login").click(function() {
-        auth.jsonHandle("login", auth.loginCallback)
-    })
+  $('#register').click(function () {
+    auth.jsonHandle('register', auth.registerCallback);
+  });
 
-    $("#logout").click(function() {
-        auth.jsonHandle("logout", auth.logoutCallback)
-    })
+  $('#login').click(function () {
+    auth.jsonHandle('login', auth.loginCallback);
+  });
 
-    $("#test").click(function() {
-        $("#content, #test-form").hide()
-        test.testHandler()
-    })
+  $('#logout').click(function () {
+    auth.jsonHandle('logout', auth.logoutCallback);
+  });
 
-    $(document).ready(function() {
-        $("#server-address").change(function() {
-            utils.setServerAddress($("#server-address").val())
-        })
+  $('#test').click(function () {
+    $('#content, #test-form').hide();
+    test.testHandler();
+  });
 
-        var serverAddress = location.origin
-        if (location.protocol == "file:") {
-            serverAddress = "http://localhost:6543"
-        }
+  $(document).ready(function () {
 
-        $("#server-address").attr("value", serverAddress)
-        utils.setServerAddress(serverAddress)
-    })
+    $('#server-address').change(function () {
+      utils.setServerAddress($('#server-address').val());
+    });
 
-    window.onbeforeunload = function() {
-        auth.jsonHandle("logout", auth.logoutCallback);
+    var serverAddress = location.origin;
+    if (location.protocol === 'file:') {
+      serverAddress = 'http://localhost:6543';
     }
+    $('#server-address').attr('value', serverAddress);
+    utils.setServerAddress(serverAddress);
+  });
 
-})
+  window.onbeforeunload = function () {
+    auth.jsonHandle('logout', auth.logoutCallback);
+  };
+});

@@ -31,9 +31,9 @@ public:
   float GetMaxHealth() const;
   void SetMaxHealth(const float maxHealth);
 
-  float GetStatValue(Stat_const key) const;
+  float GetStatValue(EStatConst key) const;
   void SetStat(bool flag, Item* item);
-  void SetStat(Stat_const key, float value);
+  void SetStat(EStatConst key, float value);
 
   float GetCarryingSapacity();
 
@@ -44,18 +44,18 @@ public:
   QString race_ = "NONE";
 
 private:
-  QMap <Stat_const, float> Stat =
+  QMap <EStatConst, float> Stat =
   {
-    {STRENGTH, 10},
-    {INTELLIGENCE, 10},
-    {DEXTERITY, 10},
-    {SPEED, 0.2},
-    {DEFENSE, 10},
-    {MAGIC_RESISTANCE, 5},
-    {CAPACITY, 5},
-    {HP, 100},
-    {MAX_HP, 100},
-    {MP, 500},
-    {MAX_MP, 500},
+    {EStatConst::STRENGTH, 10},
+    {EStatConst::INTELLIGENCE, 10},
+    {EStatConst::DEXTERITY, 10},
+    {EStatConst::SPEED, 0.2},
+    {EStatConst::DEFENSE, 10},
+    {EStatConst::MAGIC_RESISTANCE, 5},
+    {EStatConst::CAPACITY, 5},
+    {EStatConst::HP, 100},
+    {EStatConst::MAX_HP, 100},
+    {EStatConst::MP, 500},
+    {EStatConst::MAX_MP, 500},
   };
 };

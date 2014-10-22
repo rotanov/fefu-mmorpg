@@ -12,35 +12,35 @@ Creature::~Creature()
 
 float Creature::GetHealth() const
 {
-  return Stat[HP];
+  return Stat[EStatConst::HP];
 }
 
 void Creature::SetHealth(const float health)
 {
-  Stat[HP] = health;
+  Stat[EStatConst::HP] = health;
 }
 
 float Creature::GetMaxHealth() const
 {
-  return Stat[MAX_HP];
+  return Stat[EStatConst::MAX_HP];
 }
 
 void Creature::SetMaxHealth(const float maxHealth)
 {
-  Stat[MAX_HP] = maxHealth;
+  Stat[EStatConst::MAX_HP] = maxHealth;
 }
 
 void Creature::SetSpeed(const float speed)
 {
-  Stat[SPEED] = speed;
+  Stat[EStatConst::SPEED] = speed;
 }
 
 float Creature::GetSpeed() const
 {
-  return Stat[SPEED];
+  return Stat[EStatConst::SPEED];
 }
 
-float Creature::GetStatValue(Stat_const key) const
+float Creature::GetStatValue(EStatConst key) const
 {
   return Stat[key];
 }
@@ -77,7 +77,7 @@ void Creature::SetStat(bool flag, Item* item)
   }
 }
 
-void Creature::SetStat(Stat_const key, float value)
+void Creature::SetStat(EStatConst key, float value)
 {
   Stat[key] = value;
 }
@@ -92,6 +92,6 @@ QVariantMap Creature::atack(Creature* /*actor*/)
 float Creature::GetCarryingSapacity()
 {
   int capacityMultiplier = 50;
-  float strength = GetStatValue(STRENGTH);
+  float strength = GetStatValue(EStatConst::STRENGTH);
   return strength * capacityMultiplier;
 }

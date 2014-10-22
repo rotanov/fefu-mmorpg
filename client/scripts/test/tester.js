@@ -1,40 +1,45 @@
-﻿define(["lib/mocha", "test/register", "test/websocket", "test/items", "test/mobs", "test/players", "test/projectile"],
-function (m, tr, tw, ti, tm, tp, tpro) {
+define([
+  'lib/mocha',
+  'test/register',
+  'test/websocket',
+  'test/items',
+  'test/mobs',
+  'test/players',
+  'test/projectile'
 
-function testHandler(list) {
-    document.title = "Test"
-    $("#mocha, #msg").empty()
-    mocha.setup("bdd")
+], function (m, tr, tw, ti, tm, tp, tpro) {
 
-    switch ($("#tests").find(":selected").text()) {
-        case "register":
-            tr.testRegister()
-            break
+  function testHandler(list) {
+    document.title = 'Test';
+    $('#mocha, #msg').empty();
+    mocha.setup('bdd');
 
-        case "websocket":
-            tw.testWebSocket()
-            break
+    switch ($('#tests').find(':selected').text()) {
+    case 'register':
+      tr.testRegister();
+      break;
 
-        case "items":
-            ti.testItems()
-            break
+    case 'websocket':
+      tw.testWebSocket();
+      break;
 
-        case "mobs":
-            tm.testMobs()
-            break
+    case 'items':
+      ti.testItems();
+      break;
 
-        case "players":
-            tp.testPlayers()
-            break
-            
-        case "projectile":
-            tpro.testProjectile()
-            break    
+    case 'mobs':
+      tm.testMobs();
+      break;
+
+    case 'players':
+      tp.testPlayers();
+      break;
+
+    case 'projectile':
+      tpro.testProjectile();
+      break;
+
     }
-}
-
-return {
-    testHandler: testHandler
-}
-
-})
+  }
+  return { testHandler: testHandler };
+});

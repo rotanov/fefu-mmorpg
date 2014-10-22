@@ -38,7 +38,7 @@ public:
   void SetClass(QString str);
 
   QStringList Flags;
-  QMap <Stat_const, QMap <QString, QVariant> > bonuses;
+  QMap <EStatConst, QMap <QString, QVariant> > bonuses;
   Damage damage;
 
 private:

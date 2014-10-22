@@ -23,17 +23,17 @@ public:
 
 private:
   QSqlDatabase db_;
-  QMap <QString,Stat_const> Stats
+  QMap <QString,EStatConst> Stats
   {
-    {"STR", STRENGTH },
-    {"INT", INTELLIGENCE},
-    {"DEF", DEFENSE},
-    {"DEX", DEXTERITY},
-    {"MR", MAGIC_RESISTANCE},
-    {"SPEED", SPEED},
-    {"CAP", CAPACITY},
-    {"HP", MAX_HP},
-    {"MP", MAX_MP},
+    {"STR", EStatConst::STRENGTH },
+    {"INT", EStatConst::INTELLIGENCE},
+    {"DEF", EStatConst::DEFENSE},
+    {"DEX", EStatConst::DEXTERITY},
+    {"MR", EStatConst::MAGIC_RESISTANCE},
+    {"SPEED", EStatConst::SPEED},
+    {"CAP", EStatConst::CAPACITY},
+    {"HP", EStatConst::MAX_HP},
+    {"MP", EStatConst::MAX_MP},
   };
   bool ExecQuery_(QSqlQuery& query);
   bool ExecQuery_(QString query);

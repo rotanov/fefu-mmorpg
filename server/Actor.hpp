@@ -14,7 +14,7 @@ enum class EActorDirection
   WEST,
 };
 
-enum Stat_const
+enum class EStatConst
 {
   STRENGTH,
   INTELLIGENCE,
@@ -29,7 +29,10 @@ enum Stat_const
   MAX_MP,
 };
 
-struct Damage {
+
+
+struct Damage
+{
   int count;
   int to;
 };
@@ -43,7 +46,7 @@ const std::vector<Vector2> directionToVector =
   [EActorDirection::WEST] = Vector2(-1.0f, 0.0f),
 };
 
-enum Type
+enum class EActorType
 {
   undefined,
   MONSTER,
@@ -71,8 +74,8 @@ public:
   float GetSize() const;
   void SetSize(const float size);
 
-  Type GetType() const;
-  void SetType(Type type);
+  EActorType GetType() const;
+  void SetType(EActorType type);
 
   int GetId() const;
   void SetId(int id);
@@ -88,6 +91,6 @@ protected:
   EActorDirection direction_ = EActorDirection::NONE;
   float size_ = 1.0f;
   int id_ = -1;
-  Type type_ = undefined;
+  EActorType type_ = EActorType::undefined;
 };
 

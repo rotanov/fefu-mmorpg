@@ -167,7 +167,7 @@ void Server::dataEnd()
   auto responseJSON = QJsonDocument::fromVariant(response).toJson();
   //    qDebug() << "response JSON: " << responseJSON;
   response_->end(responseJSON);
-  response_ = NULL;
+  response_ = nullptr;
   data_.clear();
 }
 

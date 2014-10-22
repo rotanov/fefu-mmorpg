@@ -45,7 +45,7 @@ private:
   QWebSocketServer* wsServer_;
   //    QtWebsocket::QWsServer* wsServer_;
 
-  QHttpResponse* response_ = NULL;
+  QHttpResponse* response_ = nullptr;
   QByteArray data_;
   bool running_ = false;
 };

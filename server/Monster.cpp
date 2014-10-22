@@ -3,7 +3,7 @@
 
 Monster::Monster()
 {
-  type_ = MONSTER;
+  type_ = EActorType::MONSTER;
 }
 
 Monster::~Monster()

@@ -1,0 +1,22 @@
+{
+  "asi": false,
+  "boss": false,
+  "curly": true,
+  "eqeqeq": true,
+  "eqnull": true,
+  "esnext": true,
+  "expr": true,
+  "forin": true,
+  "immed": true,
+  "laxbreak": true,
+  "newcap": false,
+  "noarg": true,
+  "node": false,
+  "nonew": true,
+  "plusplus": false,
+  "quotmark": "single",
+  "strict": true,
+  "undef": true,
+  "unused": true,
+  "indent": 2
+}

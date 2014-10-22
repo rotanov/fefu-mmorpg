@@ -524,6 +524,6 @@ int main ()
         // i->second->AddToDataBase();
     }
     AddToDataBase();
-    //AddToDataBaseItem ();
+    AddToDataBaseItem ();
     return 0;
 }

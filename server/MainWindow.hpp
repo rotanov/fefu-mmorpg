@@ -24,9 +24,9 @@ private slots:
   void on_qpbClear_clicked();
 
 private:
-  Ui::MainWindow *ui = NULL;
-  DebugStream* debugStreamCout_ = NULL;
-  DebugStream* debugStreamCerr_ = NULL;
-  Server* server_ = NULL;
-  GameServer* gameServer_ = NULL;
+  Ui::MainWindow *ui = nullptr;
+  DebugStream* debugStreamCout_ = nullptr;
+  DebugStream* debugStreamCerr_ = nullptr;
+  Server* server_ = nullptr;
+  GameServer* gameServer_ = nullptr;
 };

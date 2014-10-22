@@ -146,7 +146,7 @@ private:
   Player* CreatePlayer_(const QString login);
   void SetActorPosition_(Actor* actor, const Vector2& position);
   void SetItemDescription(const QVariantMap &request, Item* item);
-  bool IsIncorrectPosition(float x, float y, Actor *actor);
+  bool IsPositionWrong(float x, float y, Actor *actor);
 
   template <typename T>
   T* CreateActor_();
@@ -166,7 +166,7 @@ private:
 
   PermaStorage storage_;
 
-  QTimer* timer_ = NULL;
+  QTimer* timer_ = nullptr;
   QTime time_;
   float lastTime_ = 0.0f;
   unsigned tick_ = 0;
@@ -205,29 +205,31 @@ private:
     {"right-hand", right_hand}
   };
 
-  QMap <QString, Stat_const> StringToStat =
+  QMap <QString, EStatConst> StringToStat =
   {
-    {"STRENGTH", STRENGTH},
-    {"INTELLIGENCE", INTELLIGENCE},
-    {"DEXTERITY", DEXTERITY},
-    {"SPEED", SPEED},
-    {"DEFENSE", DEFENSE},
-    {"MAGIC_RESISTANCE", MAGIC_RESISTANCE},
-    {"CAPACITY", CAPACITY},
-    {"HP", HP},
-    {"MAX_HP", MAX_HP},
-    {"MP", MP},
-    {"MAX_MP", MAX_MP}
+    {"STRENGTH", EStatConst::STRENGTH},
+    {"INTELLIGENCE", EStatConst::INTELLIGENCE},
+    {"DEXTERITY", EStatConst::DEXTERITY},
+    {"SPEED", EStatConst::SPEED},
+    {"DEFENSE", EStatConst::DEFENSE},
+    {"MAGIC_RESISTANCE", EStatConst::MAGIC_RESISTANCE},
+    {"CAPACITY", EStatConst::CAPACITY},
+    {"HP", EStatConst::HP},
+    {"MAX_HP", EStatConst::MAX_HP},
+    {"MP", EStatConst::MP},
+    {"MAX_MP", EStatConst::MAX_MP}
   };
-  QMap <Type, QString> TypeToString =
+
+  QMap <EActorType, QString> TypeToString =
   {
-    {MONSTER, "monster"},
-    {PLAYER, "player"},
-    {ITEM, "item"},
-    {PROJECTILE, "projectile"},
-    {undefined, "undefined"},
+    {EActorType::MONSTER, "monster"},
+    {EActorType::PLAYER, "player"},
+    {EActorType::ITEM, "item"},
+    {EActorType::PROJECTILE, "projectile"},
+    {EActorType::undefined, "undefined"},
   };
-    QMap<QString,QString> Hates =
+
+  QMap<QString, QString> Hates =
   {
     {"HATE_ORC", "ORC"},
     {"HATE_EVIL", "EVIL"},
@@ -261,5 +263,5 @@ void GameServer::KillActor_(T*& actor)
   levelMap_.RemoveActor(actor);
   actors_.erase(std::remove(actors_.begin(), actors_.end(), actor), actors_.end());
   delete actor;
-  actor = NULL;
+  actor = nullptr;
 }

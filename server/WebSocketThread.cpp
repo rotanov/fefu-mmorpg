@@ -69,7 +69,7 @@ void SocketThread::processMessage(QString message, bool lastFrame)
   //    {
   //        std::cerr << pes << std::endl;
   //        Sleep(1000);
-  //        WaitForSingleObject(NULL, 0);
+  //        WaitForSingleObject(nullptr, 0);
   //    }
   //    pes++;
   //    std::cerr << "pes interruprt" << pes << std::endl;
