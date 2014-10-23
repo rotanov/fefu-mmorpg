@@ -723,5 +723,5 @@ define([
       return false;
     }
   }
-  return { testWebSocket: testWebSocket };
+  return { run: testWebSocket };
 });

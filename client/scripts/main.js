@@ -21,7 +21,7 @@ require([
 
   $('#test').click(function () {
     $('#content, #test-form').hide();
-    test.testHandler();
+    test.runTestset($('#tests').find(':selected').text());
   });
 
   $(document).ready(function () {

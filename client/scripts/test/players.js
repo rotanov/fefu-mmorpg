@@ -2394,5 +2394,5 @@ define([
       'y': y
     };
   }
-  return { testPlayers: testPlayers };
+  return { run: testPlayers };
 });

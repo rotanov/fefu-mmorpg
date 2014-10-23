@@ -9,37 +9,18 @@ define([
 
 ], function (m, tr, tw, ti, tm, tp, tpro) {
 
-  function testHandler(list) {
-    document.title = 'Test';
+  function runTestset(testsetName) {
     $('#mocha, #msg').empty();
     mocha.setup('bdd');
 
-    switch ($('#tests').find(':selected').text()) {
-    case 'register':
-      tr.testRegister();
-      break;
+    ({'register': tr,
+      'websocket': tw,
+      'items': ti,
+      'mobs': tm,
+      'players': tp,
+      'projectile': tpro
+    })[testsetName].run();
 
-    case 'websocket':
-      tw.testWebSocket();
-      break;
-
-    case 'items':
-      ti.testItems();
-      break;
-
-    case 'mobs':
-      tm.testMobs();
-      break;
-
-    case 'players':
-      tp.testPlayers();
-      break;
-
-    case 'projectile':
-      tpro.testProjectile();
-      break;
-
-    }
   }
-  return { testHandler: testHandler };
+  return { runTestset: runTestset };
 });

@@ -196,5 +196,5 @@ define([
 
     mocha.run();
   }
-  return { testRegister: testRegister };
+  return { run: testRegister };
 });

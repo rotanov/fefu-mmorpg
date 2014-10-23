@@ -553,5 +553,5 @@ define([
       'y': y
     };
   }
-  return { testProjectile: testProjectile };
+  return { run: testProjectile };
 });

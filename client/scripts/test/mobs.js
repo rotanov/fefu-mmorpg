@@ -1789,5 +1789,5 @@ define([
 
     mocha.run();
   }
-  return { testMobs: testMobs };
+  return { run: testMobs };
 });

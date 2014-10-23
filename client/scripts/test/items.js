@@ -2517,8 +2517,9 @@ define([
     }
     return item;
   }
+
   return {
-    testItems: testItems,
+    run: testItems,
     makeItem: makeItem
   };
 });
