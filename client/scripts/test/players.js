@@ -12,13 +12,13 @@ define([
   var defaultDamage = '3d2';
 
   function testPlayers() {
-    utils.serverHandler({
+    utils.postToServer({
       'action': 'register',
       'login': 'testPlayers',
       'password': 'testPlayers'
     });
 
-    userData = utils.serverHandler({
+    userData = utils.postToServer({
       'action': 'login',
       'login': 'testPlayers',
       'password': 'testPlayers'

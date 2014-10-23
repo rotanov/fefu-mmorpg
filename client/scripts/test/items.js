@@ -82,13 +82,13 @@ define([
   var consts = {};
 
   function testItems() {
-    utils.serverHandler({
+    utils.postToServer({
       'action': 'register',
       'login': 'testItems',
       'password': 'testItems'
     });
 
-    userData = utils.serverHandler({
+    userData = utils.postToServer({
       'action': 'login',
       'login': 'testItems',
       'password': 'testItems'

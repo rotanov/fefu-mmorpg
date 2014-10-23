@@ -41,7 +41,7 @@ define(function () {
     }
   }
 
-  function serverHandler(object) {
+  function postToServer(object) {
     var responseResult;
 
     postRequest(object, function (response) {
@@ -68,7 +68,7 @@ define(function () {
     getServerAddress: getServerAddress,
     setServerAddress: setServerAddress,
     postRequest: postRequest,
-    serverHandler: serverHandler,
+    postToServer: postToServer,
     cryBabyCry: cryBabyCry,
     timeout: timeout
   };

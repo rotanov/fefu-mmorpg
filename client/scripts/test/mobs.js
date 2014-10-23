@@ -12,13 +12,13 @@ define([
   var consts = {};
 
   function testMobs() {
-    utils.serverHandler({
+    utils.postToServer({
       'action': 'register',
       'login': 'testMobs',
       'password': 'testMobs'
     });
 
-    userData = utils.serverHandler({
+    userData = utils.postToServer({
       'action': 'login',
       'login': 'testMobs',
       'password': 'testMobs'

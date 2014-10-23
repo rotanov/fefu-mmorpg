@@ -9,13 +9,13 @@ define([
   var userData;
 
   function testRegister() {
-    utils.serverHandler({
+    utils.postToServer({
       'action': 'register',
       'login': 'WebSocket',
       'password': 'WebSocket'
     });
 
-    userData = utils.serverHandler({
+    userData = utils.postToServer({
       'action': 'login',
       'login': 'WebSocket',
       'password': 'WebSocket'
@@ -42,7 +42,7 @@ define([
       describe.only('Registration', function () {
 
         it('should return ok', function () {
-          assert.equal('ok', utils.serverHandler({
+          assert.equal('ok', utils.postToServer({
             'action': 'register',
             'login': 'IvanPes',
             'password': '123456'
@@ -50,7 +50,7 @@ define([
         });
 
         it('should return ok', function () {
-          assert.equal('ok', utils.serverHandler({
+          assert.equal('ok', utils.postToServer({
             'action': 'register',
             'login': 'Ivan123',
             'password': '123456'
@@ -58,7 +58,7 @@ define([
         });
 
         it('should return badPassword [too short]', function () {
-          assert.equal('badPassword', utils.serverHandler({
+          assert.equal('badPassword', utils.postToServer({
             'action': 'register',
             'login': '123Ivan',
             'password': '123'
@@ -66,7 +66,7 @@ define([
         });
 
         it('should return badPassword [too long]', function () {
-          assert.equal('badPassword', utils.serverHandler({
+          assert.equal('badPassword', utils.postToServer({
             'action': 'register',
             'login': '00Ivan00',
             'password': '0123456789012345678901234567890123456789'
@@ -74,7 +74,7 @@ define([
         });
 
         it('should return badLogin [invalid characters]', function () {
-          assert.equal('badLogin', utils.serverHandler({
+          assert.equal('badLogin', utils.postToServer({
             'action': 'register',
             'login': '  ',
             'password': '0123456'
@@ -82,7 +82,7 @@ define([
         });
 
         it('should return badLogin [invalid characters]', function () {
-          assert.equal('badLogin', utils.serverHandler({
+          assert.equal('badLogin', utils.postToServer({
             'action': 'register',
             'login': '\uFFFD\uFFFD\uFFFD\uFFFD',
             'password': '0123456'
@@ -90,7 +90,7 @@ define([
         });
 
         it('should return badLogin [too short]', function () {
-          assert.equal('badLogin', utils.serverHandler({
+          assert.equal('badLogin', utils.postToServer({
             'action': 'register',
             'login': 'A',
             'password': '0123456'
@@ -98,7 +98,7 @@ define([
         });
 
         it('should return badLogin [too long]', function () {
-          assert.equal('badLogin', utils.serverHandler({
+          assert.equal('badLogin', utils.postToServer({
             'action': 'register',
             'login': 'AaaaaBbbbbCccccDddddEeeeeFffffGggggHhhhh',
             'password': '0123456'
@@ -106,7 +106,7 @@ define([
         });
 
         it('should return loginExists', function () {
-          assert.equal('loginExists', utils.serverHandler({
+          assert.equal('loginExists', utils.postToServer({
             'action': 'register',
             'login': 'IvanPes',
             'password': '123456'
@@ -120,7 +120,7 @@ define([
       describe('Login', function () {
 
         it('should return ok', function () {
-          data = utils.serverHandler({
+          data = utils.postToServer({
             'action': 'login',
             'login': 'IvanPes',
             'password': '123456'
@@ -132,7 +132,7 @@ define([
         });
 
         it('should return invalidCredentials' + '[login does not exist]', function () {
-          assert.equal('invalidCredentials', utils.serverHandler({
+          assert.equal('invalidCredentials', utils.postToServer({
             'action': 'login',
             'login': 'Unknown',
             'password': '123456'
@@ -140,7 +140,7 @@ define([
         });
 
         it('should return invalidCredentials' + '[incorrect password]', function () {
-          assert.equal('invalidCredentials', utils.serverHandler({
+          assert.equal('invalidCredentials', utils.postToServer({
             'action': 'login',
             'login': 'IvanPes',
             'password': 'Mumbo-jumbo'
@@ -152,21 +152,21 @@ define([
       describe('Logout', function () {
 
         it('should return ok', function () {
-          assert.equal('ok', utils.serverHandler({
+          assert.equal('ok', utils.postToServer({
             'action': 'logout',
             'sid': sid
           }).result);
         });
 
         it('should return badSid', function () {
-          assert.equal('badSid', utils.serverHandler({
+          assert.equal('badSid', utils.postToServer({
             'action': 'logout',
             'sid': sid
           }).result);
         });
 
         it('should return badSid', function () {
-          assert.equal('badSid', utils.serverHandler({
+          assert.equal('badSid', utils.postToServer({
             'action': 'logout',
             'sid': ''
           }).result);

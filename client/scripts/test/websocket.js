@@ -18,13 +18,13 @@ define([
   var pickUpRadius;
 
   function testWebSocket() {
-    utils.serverHandler({
+    utils.postToServer({
       'action': 'register',
       'login': 'WebSocket',
       'password': 'WebSocket'
     });
 
-    userData = utils.serverHandler({
+    userData = utils.postToServer({
       'action': 'login',
       'login': 'WebSocket',
       'password': 'WebSocket'
